@@ -46,7 +46,7 @@ public class Treasury extends JavaPlugin {
      * This allows Treasury to warn server owners if their Provider
      * does not support the latest Treasury API version.
      */
-    public static int apiVersion = 1;
+    public static short apiVersion = 1;
 
     @Override
     public void onEnable() {
