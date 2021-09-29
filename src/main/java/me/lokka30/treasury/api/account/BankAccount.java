@@ -41,7 +41,7 @@ public interface BankAccount {
     void depositBalance(BigDecimal amount, Currency currency);
 
     default void resetBalance(String worldName, Currency currency) {
-        setBalance(currency.getStartingBalance(), currency);
+        setBalance(BigDecimal.ZERO, currency);
     }
 
     default boolean canAfford(BigDecimal amount, String worldName, Currency currency) {

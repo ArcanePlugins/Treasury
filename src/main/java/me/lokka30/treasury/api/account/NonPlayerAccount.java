@@ -40,7 +40,7 @@ public interface NonPlayerAccount {
     void depositBalance(BigDecimal amount, String worldName, Currency currency);
 
     default void resetBalance(String worldName, Currency currency) {
-        setBalance(currency.getStartingBalance(), worldName, currency);
+        setBalance(BigDecimal.ZERO, worldName, currency);
     }
 
     default boolean canAfford(BigDecimal amount, String worldName, Currency currency) {
