@@ -38,7 +38,7 @@ public class Treasury extends JavaPlugin {
     /**
      * Any contributors to Treasury may add their name here! :)
      */
-    public static ArrayList<String> contributors = new ArrayList<>(Arrays.asList("lokka30 (Author, main developer)", "ExampleUser (Example description)"));
+    public static final ArrayList<String> contributors = new ArrayList<>(Arrays.asList("lokka30 (Author, main developer)", "ExampleUser (Example description)"));
 
     /**
      * This is Treasury's API version. This is NOT api-version from plugin.yml.
@@ -46,7 +46,7 @@ public class Treasury extends JavaPlugin {
      * This allows Treasury to warn server owners if their Provider
      * does not support the latest Treasury API version.
      */
-    public static short apiVersion = 1;
+    public static final short apiVersion = 1;
 
     @Override
     public void onEnable() {

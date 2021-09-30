@@ -39,6 +39,7 @@ import java.util.Locale;
 
 public class TreasuryCommand implements TabExecutor {
 
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     @NotNull private final Treasury main;
     public TreasuryCommand(@NotNull final Treasury main) {
         this.main = main;

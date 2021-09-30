@@ -26,6 +26,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class BankAccountTransactionEvent extends Event implements Cancellable {
 
     @Override
@@ -41,6 +42,7 @@ public class BankAccountTransactionEvent extends Event implements Cancellable {
     @NotNull
     @Override
     public HandlerList getHandlers() {
+        //noinspection ConstantConditions
         return null;
     }
 }

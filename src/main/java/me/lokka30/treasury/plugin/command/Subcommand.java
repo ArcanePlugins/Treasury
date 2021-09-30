@@ -29,8 +29,10 @@ import java.util.List;
 
 public interface Subcommand {
 
+    @SuppressWarnings("unused")
     void run(@NotNull final CommandSender sender, @NotNull final String label, @NotNull final String[] args);
 
+    @SuppressWarnings("unused")
     @NotNull
     default List<String> getTabSuggestions(@NotNull final CommandSender sender, @NotNull final String label, @NotNull final String[] args) {
         return Collections.emptyList();

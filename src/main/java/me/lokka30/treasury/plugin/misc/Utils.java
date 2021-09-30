@@ -30,6 +30,7 @@ public class Utils {
 
     public static final MicroLogger logger = new MicroLogger("&b&lTreasury: &7");
 
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "unused"})
     public static boolean checkPermissionForCommand(Treasury main, CommandSender sender, String permission) {
         if(sender.hasPermission(permission)) {
             return true;
