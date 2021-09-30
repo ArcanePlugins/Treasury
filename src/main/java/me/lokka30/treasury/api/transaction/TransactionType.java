@@ -19,26 +19,11 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.transaction;
 
-import me.lokka30.treasury.api.account.BankAccount;
-import me.lokka30.treasury.api.transaction.Transaction;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+public enum TransactionType {
 
-@SuppressWarnings("unused")
-public class BankAccountTransactionEvent extends AccountTransactionEvent {
-
-    public BankAccountTransactionEvent(@NotNull Transaction transaction, @NotNull BankAccount account) {
-        super(transaction, account);
-    }
-
-    public static HandlerList HANDLERS = new HandlerList();
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
+    DEPOSIT,
+    WITHDRAWAL
 
 }

@@ -21,6 +21,8 @@
 
 package me.lokka30.treasury.api.event;
 
+import me.lokka30.treasury.api.account.Account;
+import me.lokka30.treasury.api.transaction.Transaction;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -29,20 +31,36 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class AccountTransactionEvent extends Event implements Cancellable {
 
+    @NotNull private final Transaction transaction;
+    @NotNull private final Account account;
+    private boolean isCancelled = false;
+
+    public AccountTransactionEvent(@NotNull final Transaction transaction, @NotNull final Account account) {
+        this.transaction = transaction;
+        this.account = account;
+    }
+
+    @NotNull
+    public Transaction getTransaction() { return transaction; }
+
+    @NotNull
+    public Account getAccount() { return account; }
+
     @Override
     public boolean isCancelled() {
-        return false;
+        return isCancelled;
     }
 
     @Override
-    public void setCancelled(boolean b) {
-
+    public void setCancelled(boolean isCancelled) {
+        this.isCancelled = isCancelled;
     }
 
-    @SuppressWarnings("ConstantConditions")
+    public static HandlerList HANDLERS = new HandlerList();
+
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 }

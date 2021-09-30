@@ -138,7 +138,7 @@ public class MigrateSubcommand implements Subcommand {
                 }
 
                 for(String currencyId : migratedCurrencies.keySet()) {
-                    final BigDecimal balance = ensureNonZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                    final BigDecimal balance = Utils.ensureNonZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                     from.getPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                     to.getPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -161,7 +161,7 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final BigDecimal balance = ensureNonZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final BigDecimal balance = Utils.ensureNonZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                         from.getNonPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                         to.getNonPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -185,7 +185,7 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final BigDecimal balance = ensureNonZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final BigDecimal balance = Utils.ensureNonZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                         from.getBankAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                         to.getBankAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -208,14 +208,5 @@ public class MigrateSubcommand implements Subcommand {
         sender.sendMessage(ChatColor.GRAY + "- bank accounts processed: " + bankAccountsProcessed);
         sender.sendMessage(ChatColor.GRAY + "- migrated currencies: " + String.join(", ", migratedCurrencies.keySet()));
         sender.sendMessage(ChatColor.GRAY + "- unmigrated currencies: " + String.join(", ", nonMigratedCurrencies));
-    }
-
-    @NotNull
-    private BigDecimal ensureNonZero(@NotNull final BigDecimal amount) {
-        if(amount.compareTo(BigDecimal.ZERO) < 0) {
-            return BigDecimal.ZERO;
-        } else {
-            return amount;
-        }
     }
 }

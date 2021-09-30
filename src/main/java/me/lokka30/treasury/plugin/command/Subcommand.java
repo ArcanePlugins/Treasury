@@ -29,7 +29,6 @@ import java.util.List;
 
 public interface Subcommand {
 
-    @SuppressWarnings("unused")
     void run(@NotNull final CommandSender sender, @NotNull final String label, @NotNull final String[] args);
 
     @SuppressWarnings("unused")

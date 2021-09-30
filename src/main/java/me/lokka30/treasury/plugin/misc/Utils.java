@@ -25,6 +25,9 @@ import me.lokka30.microlib.messaging.MicroLogger;
 import me.lokka30.treasury.plugin.Treasury;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
 
 public class Utils {
 
@@ -37,6 +40,15 @@ public class Utils {
         } else {
             sender.sendMessage(ChatColor.RED + "You don't have access to that (requires permission " + permission + ").");
             return false;
+        }
+    }
+
+    @NotNull
+    public static BigDecimal ensureNonZero(@NotNull final BigDecimal amount) {
+        if(amount.compareTo(BigDecimal.ZERO) < 0) {
+            return BigDecimal.ZERO;
+        } else {
+            return amount;
         }
     }
 

@@ -21,17 +21,24 @@
 
 package me.lokka30.treasury.api.event;
 
+import me.lokka30.treasury.api.account.PlayerAccount;
+import me.lokka30.treasury.api.transaction.Transaction;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class PlayerAccountTransactionEvent extends AccountTransactionEvent {
 
-    @SuppressWarnings("ConstantConditions")
+    public PlayerAccountTransactionEvent(@NotNull Transaction transaction, @NotNull PlayerAccount account) {
+        super(transaction, account);
+    }
+
+    public static HandlerList HANDLERS = new HandlerList();
+
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return null;
+        return HANDLERS;
     }
 
 }
