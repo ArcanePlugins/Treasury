@@ -21,20 +21,29 @@
 
 package me.lokka30.treasury.api.currency;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @SuppressWarnings("unused")
 public interface Currency {
 
+    @NotNull
     String getCurrencyId();
 
     int getRoundedDigits();
 
-    BigDecimal getStartingBalance();
+    @NotNull
+    BigDecimal getStartingBalance(@Nullable UUID playerUUID, @Nullable String worldName);
 
+    @NotNull
     String getCurrencyNameSingular();
 
+    @NotNull
     String getCurrencyNamePlural();
 
-    String formatBalance(BigDecimal amount);
+    @NotNull
+    String formatBalance(@NotNull BigDecimal amount);
 }

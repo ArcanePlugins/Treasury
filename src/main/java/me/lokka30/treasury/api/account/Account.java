@@ -23,12 +23,30 @@ package me.lokka30.treasury.api.account;
 
 import me.lokka30.treasury.api.currency.Currency;
 
-@SuppressWarnings("unused")
-public interface PlayerAccount extends Account {
+import java.math.BigDecimal;
+import java.util.UUID;
 
-    @Override
+@SuppressWarnings("unused")
+public interface Account {
+
+    UUID getUniqueId();
+
+    BigDecimal getBalance(String worldName, Currency currency);
+
+    void setBalance(BigDecimal amount, String worldName, Currency currency);
+
+    void withdrawBalance(BigDecimal amount, String worldName, Currency currency);
+
+    void depositBalance(BigDecimal amount, String worldName, Currency currency);
+
     default void resetBalance(String worldName, Currency currency) {
-        setBalance(currency.getStartingBalance(null, null), worldName, currency);
+        setBalance(BigDecimal.ZERO, worldName, currency);
     }
+
+    default boolean canAfford(BigDecimal amount, String worldName, Currency currency) {
+        return getBalance(worldName, currency).compareTo(amount) >= 0;
+    }
+
+    void deleteAccount();
 
 }

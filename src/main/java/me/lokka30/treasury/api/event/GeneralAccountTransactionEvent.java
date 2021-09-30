@@ -19,16 +19,28 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.account;
+package me.lokka30.treasury.api.event;
 
-import me.lokka30.treasury.api.currency.Currency;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
-public interface PlayerAccount extends Account {
+public class GeneralAccountTransactionEvent extends Event implements Cancellable {
 
     @Override
-    default void resetBalance(String worldName, Currency currency) {
-        setBalance(currency.getStartingBalance(null, null), worldName, currency);
+    public boolean isCancelled() {
+        return false;
     }
 
+    @Override
+    public void setCancelled(boolean b) {
+
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return null;
+    }
 }

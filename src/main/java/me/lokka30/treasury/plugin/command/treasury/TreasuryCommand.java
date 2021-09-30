@@ -24,6 +24,7 @@ package me.lokka30.treasury.plugin.command.treasury;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.InfoSubcommand;
+import me.lokka30.treasury.plugin.command.treasury.subcommand.MigrateSubcommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -44,10 +45,12 @@ public class TreasuryCommand implements TabExecutor {
 
         this.helpSubcommand = new HelpSubcommand(main);
         this.infoSubcommand = new InfoSubcommand(main);
+        this.migrateSubcommand = new MigrateSubcommand(main);
     }
 
     @NotNull private final HelpSubcommand helpSubcommand;
     @NotNull private final InfoSubcommand infoSubcommand;
+    @NotNull private final MigrateSubcommand migrateSubcommand;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
@@ -62,6 +65,9 @@ public class TreasuryCommand implements TabExecutor {
                 case "INFO":
                     infoSubcommand.run(sender, label, args);
                     return true;
+                case "MIGRATE":
+                    migrateSubcommand.run(sender, label, args);
+                    return true;
                 default:
                     sender.sendMessage(ChatColor.RED + "Invalid subcommand '" + args[0] + "', run '/" + label + " help' for a list of available subcommands."); // TODO
                     return true;
@@ -69,7 +75,7 @@ public class TreasuryCommand implements TabExecutor {
         }
     }
 
-    @NotNull private final List<String> subcommands = Arrays.asList("help", "info");
+    @NotNull private final List<String> subcommands = Arrays.asList("help", "info", "migrate");
 
     @Nullable
     @Override
@@ -84,6 +90,8 @@ public class TreasuryCommand implements TabExecutor {
                     return helpSubcommand.getTabSuggestions(sender, label, args);
                 case "INFO":
                     return infoSubcommand.getTabSuggestions(sender, label, args);
+                case "MIGRATE":
+                    return migrateSubcommand.getTabSuggestions(sender, label, args);
                 default:
                     return Collections.emptyList();
             }

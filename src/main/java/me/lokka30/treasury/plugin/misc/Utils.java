@@ -22,9 +22,21 @@
 package me.lokka30.treasury.plugin.misc;
 
 import me.lokka30.microlib.messaging.MicroLogger;
+import me.lokka30.treasury.plugin.Treasury;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class Utils {
 
     public static final MicroLogger logger = new MicroLogger("&b&lTreasury: &7");
+
+    public static boolean checkPermissionForCommand(Treasury main, CommandSender sender, String permission) {
+        if(sender.hasPermission(permission)) {
+            return true;
+        } else {
+            sender.sendMessage(ChatColor.RED + "You don't have access to that (requires permission " + permission + ").");
+            return false;
+        }
+    }
 
 }

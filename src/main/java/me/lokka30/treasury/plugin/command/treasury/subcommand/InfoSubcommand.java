@@ -21,39 +21,59 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
+import me.lokka30.treasury.api.EconomyProvider;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
+import me.lokka30.treasury.plugin.misc.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
 public class InfoSubcommand implements Subcommand {
 
-    // Prints generic information about the plugin.
+    /*
+    inf: Prints generic information about the plugin.
+    cmd: /treasury info
+    arg:         |    0
+    len:         0    1
+     */
 
     @NotNull private final Treasury main;
     public InfoSubcommand(@NotNull final Treasury main) { this.main = main; }
 
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        sender.sendMessage(ChatColor.YELLOW + "Work in progress");
+        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.info")) return;
 
-        /*
-        Info about the plugin:
-            Name, Version
-            Description
-            Authors
-            Contributors
-            Current API Version
+        if(args.length != 1) {
+            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " info'.");
+            return;
+        }
 
-        Info about any installed Provider:
-            Name, Version
-            Supported API Version
-            Has non-player account support?
-            Has bank account support?
-            Has per-world balance support?
-            Has transaction event support?
-            Primary currency ID
-         */
+        final RegisteredServiceProvider<EconomyProvider> registeredServiceProvider = main.getServer().getServicesManager().getRegistration(EconomyProvider.class);
+
+        sender.sendMessage(ChatColor.WHITE + "" + ChatColor.UNDERLINE + "About Treasury");
+        sender.sendMessage(" ");
+        sender.sendMessage(ChatColor.GRAY + "Plugin:");
+        sender.sendMessage(ChatColor.GRAY + " - Running: " + main.getDescription().getName() + " v" + main.getDescription().getVersion());
+        sender.sendMessage(ChatColor.GRAY + " - Description: " + main.getDescription().getDescription());
+        sender.sendMessage(ChatColor.GRAY + " - Contributors: " + String.join(", ", Treasury.contributors));
+        sender.sendMessage(ChatColor.GRAY + " - API Version: " + Treasury.apiVersion);
+        sender.sendMessage(" ");
+        sender.sendMessage(ChatColor.GRAY + "Current Provider:");
+        if(registeredServiceProvider == null) {
+            sender.sendMessage(ChatColor.RED + " - No valid Economy provider is installed!");
+        } else {
+            EconomyProvider provider = registeredServiceProvider.getProvider();
+
+            sender.sendMessage(ChatColor.GRAY + " - Name: " + provider.getProvider().getName());
+            sender.sendMessage(ChatColor.GRAY + " - API Version: " + provider.getSupportedAPIVersion());
+            sender.sendMessage(ChatColor.GRAY + " - Supports non-player accounts: " + provider.hasNonPlayerAccountSupport());
+            sender.sendMessage(ChatColor.GRAY + " - Supports bank accounts: " + provider.hasBankAccountSupport());
+            sender.sendMessage(ChatColor.GRAY + " - Supports per-world balances: " + provider.hasPerWorldBalanceSupport());
+            sender.sendMessage(ChatColor.GRAY + " - Supports transaction events: " + provider.hasTransactionEventSupport());
+            sender.sendMessage(ChatColor.GRAY + " - Primary currency ID: " + provider.getPrimaryCurrency().getCurrencyId());
+        }
     }
 }

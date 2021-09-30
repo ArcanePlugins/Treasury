@@ -23,22 +23,35 @@ package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
+import me.lokka30.treasury.plugin.misc.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class HelpSubcommand implements Subcommand {
 
-    // Prints generic information about the plugin.
+    /*
+    inf: View the plugin's available commands.
+    cmd: /treasury help
+    arg:         |    0
+    len:         0    1
+     */
 
     @NotNull private final Treasury main;
     public HelpSubcommand(@NotNull final Treasury main) { this.main = main; }
 
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        sender.sendMessage(ChatColor.YELLOW + "Work in progress");
+        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.help")) return;
 
-        sender.sendMessage(ChatColor.GRAY + "/" + label + " help");
-        sender.sendMessage(ChatColor.GRAY + "/" + label + " info");
+        if(args.length != 1) {
+            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " help'.");
+            return;
+        }
+
+        sender.sendMessage(ChatColor.GRAY + "Available commands:");
+        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " help - view a list of Treasury's commands");
+        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " info - view info about Treasury and the Provider");
+        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " migrate - migrate from one Provider to another");
     }
 }
