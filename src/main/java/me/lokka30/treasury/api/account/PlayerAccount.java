@@ -22,6 +22,7 @@
 package me.lokka30.treasury.api.account;
 
 import me.lokka30.treasury.api.currency.Currency;
+import me.lokka30.treasury.api.exception.InvalidAmountException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -50,7 +51,7 @@ public interface PlayerAccount extends Account {
      * @param currency of the balance being reset
      */
     @Override
-    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) {
+    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException {
         setBalance(currency.getStartingBalance(null, ""), worldName, currency);
     }
 

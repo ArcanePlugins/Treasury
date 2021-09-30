@@ -21,6 +21,9 @@
 
 package me.lokka30.treasury.api.account;
 
+import me.lokka30.treasury.api.exception.InvalidBankMemberOperationException;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +33,7 @@ import java.util.UUID;
  * @see Account
  * TODO A description about what a Bank Account is in Treasury.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantThrows"})
 public interface BankAccount extends Account {
 
     /**
@@ -40,7 +43,7 @@ public interface BankAccount extends Account {
      * of a bankcan be changed at any point.
      * @return the UUID of the bank's owning player.
      */
-    UUID getOwningPlayerId();
+    @NotNull UUID getOwningPlayerId();
 
     /**
      * @author lokka30
@@ -49,7 +52,7 @@ public interface BankAccount extends Account {
      * @param uuid of the player to check.
      * @return whether the player with specified UUID owns the bank.
      */
-    default boolean isBankOwner(UUID uuid) {
+    default boolean isBankOwner(@NotNull UUID uuid) {
         return getOwningPlayerId() == uuid;
     }
 
@@ -59,7 +62,7 @@ public interface BankAccount extends Account {
      * Get a list of each UUID of each member of this bank.
      * @return the list of UUIDs.
      */
-    List<UUID> getBankMembersIds();
+    @NotNull List<UUID> getBankMembersIds();
 
     /**
      * @author lokka30
@@ -68,7 +71,7 @@ public interface BankAccount extends Account {
      * @param uuid of the player to check.
      * @return whether the player is a member of the bank.
      */
-    default boolean isBankMember(UUID uuid) {
+    default boolean isBankMember(@NotNull UUID uuid) {
         return getBankMembersIds().contains(uuid);
     }
 
@@ -78,7 +81,7 @@ public interface BankAccount extends Account {
      * Makes a player a member of the bank.
      * @param uuid of the player to make a member of the bank.
      */
-    void addBankMember(UUID uuid);
+    void addBankMember(@NotNull UUID uuid) throws InvalidBankMemberOperationException;
 
     /**
      * @author lokka30
@@ -86,5 +89,5 @@ public interface BankAccount extends Account {
      * Makes a player no longer a member of the bank.
      * @param uuid of the player to remove the member status of in the bank.
      */
-    void removeBankMember(UUID uuid);
+    void removeBankMember(@NotNull UUID uuid) throws InvalidBankMemberOperationException;
 }

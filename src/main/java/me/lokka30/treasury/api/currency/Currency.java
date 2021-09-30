@@ -25,13 +25,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
 public interface Currency {
 
     @NotNull
-    String getCurrencyId();
+    UUID getCurrencyId();
+
+    @NotNull
+    String getCurrencyName();
 
     /**
      * @author lokka30
@@ -58,12 +62,18 @@ public interface Currency {
     @NotNull
     BigDecimal getStartingBalance(@Nullable UUID playerUUID, @NotNull String worldName);
 
+    /*
+
+    TODO:  marked for removal, see second-last reply at:
+           <https://www.spigotmc.org/threads/looking-for-feedback-on-my-code.527805/#post-4273616>
+
     @NotNull
     String getCurrencyNameSingular();
 
     @NotNull
     String getCurrencyNamePlural();
+     */
 
     @NotNull
-    String formatBalance(@NotNull BigDecimal amount);
+    String formatBalance(@NotNull BigDecimal amount, @NotNull Locale locale);
 }

@@ -24,6 +24,10 @@ package me.lokka30.treasury.plugin.command.treasury.subcommand;
 import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.api.EconomyProvider;
 import me.lokka30.treasury.api.currency.Currency;
+import me.lokka30.treasury.api.exception.AccountAlreadyExistsException;
+import me.lokka30.treasury.api.exception.InvalidAmountException;
+import me.lokka30.treasury.api.exception.InvalidCurrencyException;
+import me.lokka30.treasury.api.exception.UnsupportedEconomyFeatureException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
@@ -112,63 +116,87 @@ public class MigrateSubcommand implements Subcommand {
         HashMap<String, Currency> migratedCurrencies = new HashMap<>();
         HashSet<String> nonMigratedCurrencies = new HashSet<>();
 
-        for(String currencyId : from.getCurrencyIds()) {
-            if(to.getCurrencyIds().contains(currencyId)) {
-                migratedCurrencies.put(currencyId, to.getCurrency(currencyId));
-            } else {
-                nonMigratedCurrencies.add(currencyId);
+        try {
+            for(String currencyId : from.getCurrencyNames()) {
+                if(to.getCurrencyNames().contains(currencyId)) {
+                    migratedCurrencies.put(currencyId, to.getCurrency(currencyId));
+                } else {
+                    nonMigratedCurrencies.add(currencyId);
+                }
             }
+        } catch(InvalidCurrencyException ex) {
+            // this should be impossible
+            sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+            return;
         }
 
         /* Migrate player accounts */
-        for(UUID uuid : from.getPlayerAccountIds()) {
-            if(!to.hasPlayerAccount(uuid)) {
-                to.createPlayerAccount(uuid);
+        try {
+            for(UUID uuid : from.getPlayerAccountIds()) {
+                if(!to.hasPlayerAccount(uuid)) {
+                    to.createPlayerAccount(uuid);
+                }
+
+                for(String currencyId : migratedCurrencies.keySet()) {
+                    final BigDecimal balance = ensureNonZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+
+                    from.getPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
+                    to.getPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
+                }
+
+                playerAccountsProcessed++;
             }
-
-            for(String currencyId : migratedCurrencies.keySet()) {
-                final BigDecimal balance = from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId));
-
-                from.getPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
-                to.getPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
-            }
-
-            playerAccountsProcessed++;
+        } catch(AccountAlreadyExistsException | InvalidCurrencyException | InvalidAmountException ex) {
+            // this should be impossible
+            sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+            return;
         }
 
         /* Migrate non-player accounts */
         if(from.hasNonPlayerAccountSupport() && to.hasNonPlayerAccountSupport()) {
-            for(UUID uuid : from.getNonPlayerAccountIds()) {
-                if(!to.hasNonPlayerAccount(uuid)) {
-                    to.createNonPlayerAccount(uuid);
+            try {
+                for(UUID uuid : from.getNonPlayerAccountIds()) {
+                    if(!to.hasNonPlayerAccount(uuid)) {
+                        to.createNonPlayerAccount(uuid);
+                    }
+
+                    for(String currencyId : migratedCurrencies.keySet()) {
+                        final BigDecimal balance = ensureNonZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+
+                        from.getNonPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
+                        to.getNonPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
+                    }
+
+                    nonPlayerAccountsProcessed++;
                 }
-
-                for(String currencyId : migratedCurrencies.keySet()) {
-                    final BigDecimal balance = from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId));
-
-                    from.getNonPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
-                    to.getNonPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
-                }
-
-                nonPlayerAccountsProcessed++;
+            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | InvalidAmountException ex) {
+                // this should be impossible
+                sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+                return;
             }
         }
 
         /* Migrate bank accounts */
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
-            for(UUID uuid : from.getBankAccountIds()) {
-                if(!to.hasBankAccount(uuid)) {
-                    to.createBankAccount(uuid, from.getBankAccount(uuid).getOwningPlayerId());
+            try {
+                for(UUID uuid : from.getBankAccountIds()) {
+                    if(!to.hasBankAccount(uuid)) {
+                        to.createBankAccount(uuid, from.getBankAccount(uuid).getOwningPlayerId());
+                    }
+
+                    for(String currencyId : migratedCurrencies.keySet()) {
+                        final BigDecimal balance = ensureNonZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+
+                        from.getBankAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
+                        to.getBankAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
+                    }
+
+                    bankAccountsProcessed++;
                 }
-
-                for(String currencyId : migratedCurrencies.keySet()) {
-                    final BigDecimal balance = from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId));
-
-                    from.getBankAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
-                    to.getBankAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
-                }
-
-                bankAccountsProcessed++;
+            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | InvalidAmountException ex) {
+                // this should be impossible
+                sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+                return;
             }
         }
 
@@ -180,5 +208,14 @@ public class MigrateSubcommand implements Subcommand {
         sender.sendMessage(ChatColor.GRAY + "- bank accounts processed: " + bankAccountsProcessed);
         sender.sendMessage(ChatColor.GRAY + "- migrated currencies: " + String.join(", ", migratedCurrencies.keySet()));
         sender.sendMessage(ChatColor.GRAY + "- unmigrated currencies: " + String.join(", ", nonMigratedCurrencies));
+    }
+
+    @NotNull
+    private BigDecimal ensureNonZero(@NotNull final BigDecimal amount) {
+        if(amount.compareTo(BigDecimal.ZERO) < 0) {
+            return BigDecimal.ZERO;
+        } else {
+            return amount;
+        }
     }
 }

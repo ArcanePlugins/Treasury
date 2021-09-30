@@ -19,19 +19,20 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.exception;
 
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
+public class InvalidCurrencyException extends Exception {
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return null;
+    @NotNull private final String currencyName;
+    public InvalidCurrencyException(@NotNull final String currencyName) {
+        this.currencyName = currencyName;
     }
 
+    @NotNull
+    public String getCurrencyName() {
+        return currencyName;
+    }
 }

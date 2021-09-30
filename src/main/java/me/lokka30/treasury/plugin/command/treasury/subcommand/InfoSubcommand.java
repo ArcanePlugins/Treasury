@@ -22,6 +22,7 @@
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
 import me.lokka30.treasury.api.EconomyProvider;
+import me.lokka30.treasury.api.exception.InvalidCurrencyException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
@@ -73,7 +74,11 @@ public class InfoSubcommand implements Subcommand {
             sender.sendMessage(ChatColor.GRAY + " - Supports bank accounts: " + provider.hasBankAccountSupport());
             sender.sendMessage(ChatColor.GRAY + " - Supports per-world balances: " + provider.hasPerWorldBalanceSupport());
             sender.sendMessage(ChatColor.GRAY + " - Supports transaction events: " + provider.hasTransactionEventSupport());
-            sender.sendMessage(ChatColor.GRAY + " - Primary currency ID: " + provider.getPrimaryCurrency().getCurrencyId());
+            try {
+                sender.sendMessage(ChatColor.GRAY + " - Primary currency ID: " + provider.getPrimaryCurrency().getCurrencyName());
+            } catch(InvalidCurrencyException ex) {
+                sender.sendMessage(ChatColor.RED + " - (Unable to get primary currency - currency is invalid!)");
+            }
         }
     }
 }

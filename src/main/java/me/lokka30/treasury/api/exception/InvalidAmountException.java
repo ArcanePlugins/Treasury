@@ -19,19 +19,18 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.exception;
 
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+
 @SuppressWarnings("unused")
-public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
+public class InvalidAmountException extends Exception {
 
-    @SuppressWarnings("ConstantConditions")
+    @NotNull private final BigDecimal amount;
+    public InvalidAmountException(@NotNull final BigDecimal amount) { this.amount = amount; }
+
     @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return null;
-    }
-
+    public BigDecimal getAmount() { return amount; }
 }

@@ -19,19 +19,18 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.exception;
 
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 @SuppressWarnings("unused")
-public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
+public class InvalidBankMemberOperationException extends Exception {
 
-    @SuppressWarnings("ConstantConditions")
+    @NotNull private final UUID memberUuid;
+    public InvalidBankMemberOperationException(@NotNull final UUID memberUuid) { this.memberUuid = memberUuid; }
+
     @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return null;
-    }
-
+    public UUID getMemberUuid() { return memberUuid; }
 }

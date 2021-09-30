@@ -27,7 +27,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class GeneralAccountTransactionEvent extends Event implements Cancellable {
+public class AccountTransactionEvent extends Event implements Cancellable {
 
     @Override
     public boolean isCancelled() {

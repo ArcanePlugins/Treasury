@@ -19,19 +19,8 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
-
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+package me.lokka30.treasury.api.exception;
 
 @SuppressWarnings("unused")
-public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
-
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return null;
-    }
-
+public class UnsupportedEconomyFeatureException extends Exception {
 }

@@ -105,3 +105,26 @@ Here are a list of plugins known to have Treasury support planned upon release:
 * [NanoEconomy](https://github.com/lokka30/NanoEconomy) by [lokka30](https://github.com/lokka30) - unreleased
 * [ElementalEconomy](https://github.com/lokka30/ElementalEconomy) by [lokka30](https://github.com/lokka30) - unreleased
 * Speaking to other developers about this resource's adoption as well.
+
+## 🙋‍♂️ Who made Treasury possible?
+
+### 😃 Maintainers:
+
+* [lokka30](https://github.com/lokka30)
+
+### 💻 Code Contributors:
+
+* N/A.
+
+### 🔍 Code Reviewers:
+
+* `Hugo5551#4042`
+* [Articdive](https://github.com/Articdive)
+* [kumpelblase2](https://www.spigotmc.org/members/kumpelblase2.14245/)
+
+### 💵 Donators:
+
+* A big thank you to everyone who has donated to the Treasury maintainers! ♥
+Although it is too difficult to list everyone's names here,
+many donators have opted to receive a role on our
+[Discord Server](https://www.discord.io/arcaneplugins). 😉

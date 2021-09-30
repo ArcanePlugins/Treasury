@@ -22,6 +22,8 @@
 package me.lokka30.treasury.api.account;
 
 import me.lokka30.treasury.api.currency.Currency;
+import me.lokka30.treasury.api.exception.InvalidAmountException;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -35,27 +37,36 @@ import java.util.UUID;
  * @see BankAccount
  * TODO A description about what an Account is in Treasury.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RedundantThrows"})
 public interface Account {
 
-    UUID getUniqueId();
+    @NotNull UUID getUniqueId();
 
-    BigDecimal getBalance(String worldName, Currency currency);
+    @NotNull BigDecimal getBalance(String worldName, Currency currency);
 
-    void setBalance(BigDecimal amount, String worldName, Currency currency);
+    void setBalance(BigDecimal amount, String worldName, Currency currency) throws InvalidAmountException;
 
-    void withdrawBalance(BigDecimal amount, String worldName, Currency currency);
+    void withdrawBalance(BigDecimal amount, String worldName, Currency currency) throws InvalidAmountException;
 
-    void depositBalance(BigDecimal amount, String worldName, Currency currency);
+    void depositBalance(BigDecimal amount, String worldName, Currency currency) throws InvalidAmountException;
 
-    default void resetBalance(String worldName, Currency currency) {
-        setBalance(BigDecimal.ZERO, worldName, currency);
+    default void resetBalance(String worldName, Currency currency) throws InvalidAmountException {
+        try {
+            setBalance(BigDecimal.ZERO, worldName, currency);
+        } catch(InvalidAmountException ex) {
+            // this should be an impossible exception
+            ex.printStackTrace();
+        }
     }
 
-    default boolean canAfford(BigDecimal amount, String worldName, Currency currency) {
+    default boolean canAfford(BigDecimal amount, String worldName, Currency currency) throws InvalidAmountException {
+
+        // amounts must be non-zero values
+        if(amount.compareTo(BigDecimal.ZERO) < 0) throw new InvalidAmountException(amount);
+
         return getBalance(worldName, currency).compareTo(amount) >= 0;
     }
 
-    void deleteAccount();
+    void deleteAccount() throws UnsupportedOperationException;
 
 }

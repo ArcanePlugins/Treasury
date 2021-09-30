@@ -19,19 +19,20 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.exception;
 
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
-public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
+import java.util.UUID;
 
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return null;
+@SuppressWarnings("unused")
+public class AccountAlreadyExistsException extends Exception {
+
+    @NotNull private final UUID uuid;
+    public AccountAlreadyExistsException(@NotNull final UUID uuid) {
+        this.uuid = uuid;
     }
 
+    @NotNull
+    public UUID getUuid() { return uuid; }
 }
