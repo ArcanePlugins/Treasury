@@ -33,10 +33,30 @@ public interface Currency {
     @NotNull
     String getCurrencyId();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Some economy providers like to round balances' decimals.
+     * Economy providers that do not round any digits should specify `-1`.
+     * @return how many rounded digits the provider uses, or `-1` for none
+     */
     int getRoundedDigits();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Get the starting balance of the currency.
+     * The player UUID is nullable, it should be specified if the starting balance
+     * concerns a PlayerAccount.
+     * The world name is NOT nullable, if no world name is applicable then specify
+     * an empty string, where the economy provider is expected to supply a 'global'
+     * balance instead.
+     * @param playerUUID a UUID of the player account concerned, otherwise, specify `null`.
+     * @param worldName a non-null world name. Use an empty string if no world name is applicable.
+     * @return the starting balance of the currency concerning specified player's UUID and world name.
+     */
     @NotNull
-    BigDecimal getStartingBalance(@Nullable UUID playerUUID, @Nullable String worldName);
+    BigDecimal getStartingBalance(@Nullable UUID playerUUID, @NotNull String worldName);
 
     @NotNull
     String getCurrencyNameSingular();

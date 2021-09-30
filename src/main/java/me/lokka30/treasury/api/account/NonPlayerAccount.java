@@ -21,5 +21,18 @@
 
 package me.lokka30.treasury.api.account;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * @see Account
+ * A Non-Player Account is an Account which contains balances
+ * for a subject which is not a Player. For example, if a plugin
+ * wanted to store the balance of an entity through Treasury.
+ * they must use the Non-Player Account functionality. To ensure
+ * conflicts are near impossible, UUIDs are also used with
+ * Non-Player Accounts, as with Player Accounts. The Non-Player
+ * interface does not make any modifications to the Account
+ * interface, it simply extends it with no new or overriden methods.
+ */
 @SuppressWarnings("unused")
 public interface NonPlayerAccount extends Account { }

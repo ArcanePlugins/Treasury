@@ -24,18 +24,67 @@ package me.lokka30.treasury.api.account;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * @see Account
+ * TODO A description about what a Bank Account is in Treasury.
+ */
 @SuppressWarnings("unused")
 public interface BankAccount extends Account {
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Bank accounts are owned by players. The owner
+     * of a bankcan be changed at any point.
+     * @return the UUID of the bank's owning player.
+     */
     UUID getOwningPlayerId();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Checks if a player owns the bank.
+     * @param uuid of the player to check.
+     * @return whether the player with specified UUID owns the bank.
+     */
     default boolean isBankOwner(UUID uuid) {
         return getOwningPlayerId() == uuid;
     }
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Get a list of each UUID of each member of this bank.
+     * @return the list of UUIDs.
+     */
     List<UUID> getBankMembersIds();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Check if the specified player is a member of the banks.
+     * @param uuid of the player to check.
+     * @return whether the player is a member of the bank.
+     */
     default boolean isBankMember(UUID uuid) {
         return getBankMembersIds().contains(uuid);
     }
+
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Makes a player a member of the bank.
+     * @param uuid of the player to make a member of the bank.
+     */
+    void addBankMember(UUID uuid);
+
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Makes a player no longer a member of the bank.
+     * @param uuid of the player to remove the member status of in the bank.
+     */
+    void removeBankMember(UUID uuid);
 }

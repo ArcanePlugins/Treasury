@@ -26,6 +26,15 @@ import me.lokka30.treasury.api.currency.Currency;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * @see me.lokka30.treasury.api.EconomyProvider
+ * @see PlayerAccount
+ * @see NonPlayerAccount
+ * @see BankAccount
+ * TODO A description about what an Account is in Treasury.
+ */
 @SuppressWarnings("unused")
 public interface Account {
 
