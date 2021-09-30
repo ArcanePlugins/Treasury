@@ -1,8 +1,6 @@
 # 💼 Welcome to Treasury
 
-## ⚠ Warning
-The resource and this page is work-in-progress. Currently, none of the links have URLs attached
-to them. If you've got any questions, please scroll down to see how to contact me. Cheers. :)
+## ⚠ This resource is work-in-progress. :)
 
 ## 📜 What is Treasury?
 
@@ -18,17 +16,17 @@ Service Manager.
 
 ## ❓ Why Treasury?
 
-The following is my personal opinion ([lokka30]()).
+The following is my personal opinion ([lokka30](https://github.com/lokka30)).
 
 I have a drive to make things better for server owners and plugin developers. I've found that the
 existing economy APIs are unsuitable for modern economy plugins, at least to my own criteria.
 
-Although I can deal with using [Vault](), it has not advanced its aging code which restricts the
+Although I can deal with using [Vault](https://github.com/MilkBowl/Vault), it has not advanced its aging code which restricts the
 capabilities of Economy providers through its limitations. For example, its API does not directly
 support non-player transactions (you have to use their deprecated methods which breaks economy
 provider plugins) and has zero multi currency support.
 
-I think [Reserve]() tried to get at this, but I think it is too bloated, and I really prefer the
+I think [Reserve](https://github.com/TheNewEconomy/Reserve) tried to get at this, but I think it is too bloated, and I really prefer the
 simplistic roots of Vault. Whilst Reserve is harder to use, Treasury is almost as simple as Vault
 to use in plugins. Reserve has been out for a few years and has seen very limited success especially
 relative to Vault. This is likely because plugin developers do not see it fit for adoption.
@@ -41,7 +39,7 @@ sufficient usage.
 Treasury is not released so there are no compiled files available. Please compile your own or
 contact lokka30 if you do not want to or can't compile it.
 
-Once released, it will be available on [SpigotMC.org]().
+Once released, it will be available on [SpigotMC.org](https://www.spigotmc.org).
 
 ## 📃 What's left to-do?
 
@@ -66,17 +64,17 @@ This involves a lot of peer review to make sure the API is suitable, easy to use
 
 In descending order of my preference - choose whichever suits you best:
 
-* [Post on the Issue Tracker]()
-* [Join my Discord Server]()
-* [Post in the Discussions Section on this repository]()
-* [PM me on SpigotMC.org]()
+* [Post on the Issue Tracker](https://github.com/lokka30/Treasury/issues)
+* [Join my Discord Server](https://www.discord.io/arcaneplugins)
+* [Post in the Discussions Section on this repository](https://github.com/lokka30/Treasury/discussions)
+* [PM me on SpigotMC.org](https://www.spigotmc.org/conversations/add?to=lokka30)
 
 ## 🤔 Vault is used on most servers. How will Treasury even compete?
 
 I have no idea. If it turns out to be a great API then it might be adopted by plugin developers,
 which should drive more server owners to use it, which then drives more plugin developers to use it.
 But it's unlikely anyone can beat Vault as it has been the only decent API (in my opinion - and this
-is backed up by the amount of servers and plugins using it) for **ages**, rather Treasury will be
+is backed up by the amount of servers and plugins using it) for *ages*, rather Treasury will be
 new against the big dog.
 
 ## 👩‍⚖️ What license does Treasury use?
@@ -104,5 +102,6 @@ please visit the <https://www.gnu.org/licenses/> website.
 ## 🧱 What plugins will work with Treasury when it is released?
 
 Here are a list of plugins known to have Treasury support planned upon release:
-* [NanoEconomy]() by [lokka30]() - unreleased
-* [ElementalEconomy]() by [lokka30]() - unreleased
+* [NanoEconomy](https://github.com/lokka30/NanoEconomy) by [lokka30](https://github.com/lokka30) - unreleased
+* [ElementalEconomy](https://github.com/lokka30/ElementalEconomy) by [lokka30](https://github.com/lokka30) - unreleased
+* Speaking to other developers about this resource's adoption as well.
