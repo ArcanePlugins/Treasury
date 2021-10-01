@@ -22,7 +22,7 @@ existing economy APIs are unsuitable for modern economy plugins, at least to my 
 Although I can deal with using [Vault](https://github.com/MilkBowl/Vault), it has not advanced its aging code which restricts the
 capabilities of Economy providers through its limitations. For example, its API does not directly
 support non-player transactions (you have to use their deprecated methods which breaks economy
-provider plugins) and has zero multi currency support.
+provider plugins) and has no multi currency support.
 
 I think [Reserve](https://github.com/TheNewEconomy/Reserve) tried to get at this, but I think it is too bloated, and I really prefer the
 simplistic roots of Vault. Whilst Reserve is harder to use, Treasury is almost as simple as Vault
@@ -32,21 +32,9 @@ relative to Vault. This is likely because plugin developers do not see it fit fo
 Vault and Reserve are the only key APIs currently out there that offer anything substantial and have
 sufficient usage.
 
-## 📂 Where can I download Treasury?
-
-Treasury is not released so there are no compiled files available. Please compile your own or
-contact lokka30 if you do not want to or can't compile it.
-
-Once released, it will be available on [SpigotMC.org](https://www.spigotmc.org).
-
 ## 📃 What's left to-do?
 
 See the Issue Tracker. :)
-
-## ☢ How stable is it?
-
-It's in alpha stage at the moment. I am aiming to make it as stable as possible after it is released.
-This involves a lot of peer review to make sure the API is suitable, easy to use, and future-proof.
 
 ## 💬 I'd like to chat / request assistance / report an issue / suggest something. Where can I go?
 
@@ -56,14 +44,6 @@ In descending order of my preference - choose whichever suits you best:
 * [Join my Discord Server](https://www.discord.io/arcaneplugins)
 * [Post in the Discussions Section on this repository](https://github.com/lokka30/Treasury/discussions)
 * [PM me on SpigotMC.org](https://www.spigotmc.org/conversations/add?to=lokka30)
-
-## 🤔 Vault is used on most servers. How will Treasury even compete?
-
-I have no idea. If it turns out to be a great API then it might be adopted by plugin developers,
-which should drive more server owners to use it, which then drives more plugin developers to use it.
-But it's unlikely anyone can beat Vault as it has been the only decent API (in my opinion - and this
-is backed up by the amount of servers and plugins using it) for *ages*, rather Treasury will be
-new against the big dog.
 
 ## 👩‍⚖️ What license does Treasury use?
 
@@ -89,14 +69,23 @@ please visit the <https://www.gnu.org/licenses/> website.
 
 ## 🧱 What plugins will work with Treasury when it is released?
 
-Here are a list of plugins known to have Treasury support planned upon release:
+As far as I know, here they are:
+
+### Economy Providers:
+
 * [NanoEconomy](https://github.com/lokka30/NanoEconomy) by [lokka30](https://github.com/lokka30) - unreleased
 * [ElementalEconomy](https://github.com/lokka30/ElementalEconomy) by [lokka30](https://github.com/lokka30) - unreleased
+
+### Plugins:
+
+* [TownyAdvanced](https://www.spigotmc.org/resources/towny-advanced.72694/) by [LlmDl](https://www.spigotmc.org/resources/authors/llmdl.33402/) is likely to include Treasury support.
 * Speaking to other developers about this resource's adoption as well.
+
+If you develop a plugin which will have Treasury support please let me know. :)
 
 ## 🙋‍♂️ Who made Treasury possible?
 
-### 😃 Maintainers:
+### 😎 Maintainers:
 
 * [lokka30](https://github.com/lokka30)
 
@@ -106,13 +95,13 @@ Here are a list of plugins known to have Treasury support planned upon release:
 
 ### 🔍 Code Reviewers:
 
-* `Hugo5551#4042`
+* [Hugo5551#4042](https://www.discord.com)
 * [Articdive](https://github.com/Articdive)
 * [kumpelblase2](https://www.spigotmc.org/members/kumpelblase2.14245/)
 
 ### 💵 Donators:
 
-* A big thank you to everyone who has donated to the Treasury maintainers! ♥
+A big thank you to everyone who has donated to the Treasury maintainers! ♥
 Although it is too difficult to list everyone's names here,
 many donators have opted to receive a role on our
 [Discord Server](https://www.discord.io/arcaneplugins). 😉
