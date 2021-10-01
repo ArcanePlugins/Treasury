@@ -25,6 +25,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * @see me.lokka30.treasury.api.EconomyProvider#hasPlayerAccount(UUID)
+ * @see me.lokka30.treasury.api.EconomyProvider#hasNonPlayerAccount(UUID)
+ * @see me.lokka30.treasury.api.EconomyProvider#hasBankAccount(UUID)
+ * This Exception is thrown when a plugin attempts to
+ * create an Account of specified UUID, but it already
+ * exists. Plugins should check 'has...Account' before
+ * attempting to create accounts.
+ */
 @SuppressWarnings("unused")
 public class AccountAlreadyExistsException extends Exception {
 
@@ -35,4 +46,9 @@ public class AccountAlreadyExistsException extends Exception {
 
     @NotNull
     public UUID getUuid() { return uuid; }
+
+    @Override
+    public String getMessage() {
+        return "The account of UUID '" + uuid + "' already exists.";
+    }
 }

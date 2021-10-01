@@ -24,6 +24,7 @@ package me.lokka30.treasury.plugin;
 import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.plugin.command.treasury.TreasuryCommand;
 import me.lokka30.treasury.plugin.misc.Utils;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,6 +33,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * This is the plugin's main class, loaded by Bukkit's plugin manager.
+ * It contains direct and indirect links to everything accessed within
+ * the plugin.
+ */
 @SuppressWarnings("unused")
 public class Treasury extends JavaPlugin {
 
@@ -48,13 +56,27 @@ public class Treasury extends JavaPlugin {
      */
     public static final short apiVersion = 1;
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Run the start-up procedure for the plugin.
+     * This is called by Bukkit's plugin manager.
+     */
     @Override
     public void onEnable() {
         final QuickTimer startupTimer = new QuickTimer();
 
+        new Metrics(this, 12927);
+
         Utils.logger.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
     }
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Run the shut-down procedure for the plugin.
+     * This is called by Bukkit's plugin manager.
+     */
     @Override
     public void onDisable() {
         final QuickTimer shutdownTimer = new QuickTimer();
@@ -62,11 +84,26 @@ public class Treasury extends JavaPlugin {
         Utils.logger.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * @see Treasury#registerCommand(String, TabExecutor)
+     * Registers all commands from Treasury.
+     */
     private void registerCommands() {
         Utils.logger.info("Registering commands...");
         registerCommand("treasury", new TreasuryCommand(this));
     }
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Attempts to register the specified command.
+     * If unsuccessful, console is notified.
+     * The base command is likely case-sensitive.
+     * @param baseCommand defined in plugin.yml.
+     * @param executor handling the execution of the command.
+     */
     private void registerCommand(@SuppressWarnings("SameParameterValue") @NotNull final String baseCommand, @NotNull final TabExecutor executor) {
         assert !baseCommand.isEmpty();
 

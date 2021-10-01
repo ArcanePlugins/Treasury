@@ -34,8 +34,8 @@ public class Transaction {
     @NotNull private final TransactionType transactionType;
 
     public Transaction(@NotNull final BigDecimal newBalance, @NotNull final BigDecimal transactionAmount, @NotNull final TransactionType transactionType) {
-        this.newBalance = Utils.ensureNonZero(newBalance);
-        this.transactionAmount = Utils.ensureNonZero(newBalance);
+        this.newBalance = Utils.ensureAtLeastZero(newBalance);
+        this.transactionAmount = Utils.ensureAtLeastZero(newBalance);
         this.transactionType = transactionType;
     }
 

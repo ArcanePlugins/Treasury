@@ -33,4 +33,10 @@ public class InvalidAmountException extends Exception {
 
     @NotNull
     public BigDecimal getAmount() { return amount; }
+
+    @Override
+    @NotNull
+    public String getMessage() {
+        return "Amounts must be greater than zero, but " + amount + " was specified.";
+    }
 }

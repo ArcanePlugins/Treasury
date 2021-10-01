@@ -24,10 +24,7 @@ package me.lokka30.treasury.plugin.command.treasury.subcommand;
 import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.api.EconomyProvider;
 import me.lokka30.treasury.api.currency.Currency;
-import me.lokka30.treasury.api.exception.AccountAlreadyExistsException;
-import me.lokka30.treasury.api.exception.InvalidAmountException;
-import me.lokka30.treasury.api.exception.InvalidCurrencyException;
-import me.lokka30.treasury.api.exception.UnsupportedEconomyFeatureException;
+import me.lokka30.treasury.api.exception.*;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
@@ -138,7 +135,7 @@ public class MigrateSubcommand implements Subcommand {
                 }
 
                 for(String currencyId : migratedCurrencies.keySet()) {
-                    final BigDecimal balance = Utils.ensureNonZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                    final BigDecimal balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                     from.getPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                     to.getPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -146,7 +143,7 @@ public class MigrateSubcommand implements Subcommand {
 
                 playerAccountsProcessed++;
             }
-        } catch(AccountAlreadyExistsException | InvalidCurrencyException | InvalidAmountException ex) {
+        } catch(AccountAlreadyExistsException | InvalidCurrencyException | InvalidAmountException | OversizedWithdrawalException ex) {
             // this should be impossible
             sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
             return;
@@ -161,7 +158,7 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final BigDecimal balance = Utils.ensureNonZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final BigDecimal balance = Utils.ensureAtLeastZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                         from.getNonPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                         to.getNonPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -169,7 +166,7 @@ public class MigrateSubcommand implements Subcommand {
 
                     nonPlayerAccountsProcessed++;
                 }
-            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | InvalidAmountException ex) {
+            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | InvalidAmountException | OversizedWithdrawalException ex) {
                 // this should be impossible
                 sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
                 return;
@@ -185,7 +182,7 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final BigDecimal balance = Utils.ensureNonZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final BigDecimal balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                         from.getBankAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                         to.getBankAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -193,7 +190,7 @@ public class MigrateSubcommand implements Subcommand {
 
                     bankAccountsProcessed++;
                 }
-            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | InvalidAmountException ex) {
+            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | InvalidAmountException | OversizedWithdrawalException ex) {
                 // this should be impossible
                 sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
                 return;

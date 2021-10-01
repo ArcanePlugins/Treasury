@@ -31,10 +31,24 @@ import java.math.BigDecimal;
 
 public class Utils {
 
-    public static final MicroLogger logger = new MicroLogger("&b&lTreasury: &7");
+    /**
+     * This stores Treasury's MicroLogger, facilitating all console logs.
+     */
+    public static final MicroLogger logger = new MicroLogger("&b&lTreasury:&7 ");
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Checks if the player has permission for the command.
+     * If the player does not have permission then a notification
+     * will be sent to them regarding their lack of permission.
+     * @param main a link to the main class to access configuration files.
+     * @param sender who ran a command and is being checked for the permission.
+     * @param permission to check.
+     * @return whether the sender has the specified permission.
+     */
     @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "unused"})
-    public static boolean checkPermissionForCommand(Treasury main, CommandSender sender, String permission) {
+    public static boolean checkPermissionForCommand(@NotNull final Treasury main, @NotNull final CommandSender sender, @NotNull final String permission) {
         if(sender.hasPermission(permission)) {
             return true;
         } else {
@@ -43,8 +57,18 @@ public class Utils {
         }
     }
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * If the specified amount is less than zero
+     * then zero is returned. Otherwise, the amount
+     * is returned. This ensures an amount is at least zero
+     * since negative values are not allowed in the API.
+     * @param amount to check for.
+     * @return the unmodified or modified amount.
+     */
     @NotNull
-    public static BigDecimal ensureNonZero(@NotNull final BigDecimal amount) {
+    public static BigDecimal ensureAtLeastZero(@NotNull final BigDecimal amount) {
         if(amount.compareTo(BigDecimal.ZERO) < 0) {
             return BigDecimal.ZERO;
         } else {

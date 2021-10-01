@@ -31,7 +31,11 @@ import java.util.UUID;
  * @author lokka30
  * @since v1.0.0
  * @see Account
- * TODO A description about what a Bank Account is in Treasury.
+ * A Bank Account is an Account which is associated with a Player
+ * although separate from a PlayerAccount. It is used to store a
+ * balance shared by multiple Bank Members, such as a 'town balance'
+ * or 'faction balance'. The linked Player can be changed at any
+ * time (Owning Player).
  */
 @SuppressWarnings({"unused", "RedundantThrows"})
 public interface BankAccount extends Account {

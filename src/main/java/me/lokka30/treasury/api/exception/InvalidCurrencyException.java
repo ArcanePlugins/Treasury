@@ -35,4 +35,9 @@ public class InvalidCurrencyException extends Exception {
     public String getCurrencyName() {
         return currencyName;
     }
+
+    @Override
+    public String getMessage() {
+        return "The currency being requested named '" + currencyName + "' does not exist.";
+    }
 }

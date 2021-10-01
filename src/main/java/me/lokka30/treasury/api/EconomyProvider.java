@@ -34,23 +34,58 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * Economy Providers (plugins facilitating the economy data) create
+ * a class which implements this interface and should then become a
+ * `RegisteredServiceProvider<EconomyProvider>`.
+ */
 @SuppressWarnings({"unused", "RedundantThrows"})
 public interface EconomyProvider {
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * @return the Plugin facilitating the economy - the 'Economy Provider'.
+     */
     @NotNull Plugin getProvider();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * @return which API version of Treasury the Provider is based on.
+     */
     short getSupportedAPIVersion();
 
     /**
      * @author lokka30
      * @since v1.0.0
-     * Check if the Provider supports non-player accounts.
+     * This method should be asserted before any Non-Player Account
+     * methods are accessed through the Treasury API.
      * @return whether the Provider supports non-player accounts.
      */
     boolean hasNonPlayerAccountSupport();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * This method should be asserted before any Bank Account
+     * methods are accessed through the Treasury API.
+     * @return whether the Provider supports bank accounts.
+     */
     boolean hasBankAccountSupport();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * This method should be checked to see if the Provider
+     * fully supports per-world balances. If the Provider does
+     * not use per-world balances then it is guaranteed safe to
+     * specify empty Strings for world names in methods such as
+     * 'getBalance'.
+     * @return whether the Provider supports per-world balances.
+     */
     boolean hasPerWorldBalanceSupport();
 
     boolean hasTransactionEventSupport();

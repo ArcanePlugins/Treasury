@@ -19,26 +19,19 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.transaction;
+package me.lokka30.treasury.api.exception;
 
-/**
- * @author lokka30
- * @since v1.0.0
- * @see Transaction
- * Denotes which type of transaction occured in a Transsaction.
- */
-public enum TransactionType {
+import org.jetbrains.annotations.NotNull;
 
-    /**
-     * @since v1.0.0
-     * The Account's new balance is greater than their previous balance.
-     */
-    DEPOSIT,
+import java.math.BigDecimal;
 
-    /**
-     * @since v1.0.0
-     * The Account's new balance is less than their previous balance.
-     */
-    WITHDRAWAL
+public class OversizedWithdrawalException extends Exception {
 
+    @NotNull private final BigDecimal amount;
+    public OversizedWithdrawalException(@NotNull final BigDecimal amount) { this.amount = amount; }
+
+    @Override
+    public String getMessage() {
+        return "If the withdrawal of '" + amount + "' was made then the Account's balance would be below zero.";
+    }
 }

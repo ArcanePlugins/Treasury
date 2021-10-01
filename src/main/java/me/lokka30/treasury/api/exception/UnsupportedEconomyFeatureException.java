@@ -23,4 +23,10 @@ package me.lokka30.treasury.api.exception;
 
 @SuppressWarnings("unused")
 public class UnsupportedEconomyFeatureException extends Exception {
+
+    @Override
+    public String getMessage() {
+        return "A Treasury method was ran which is unsupported by the economy provider. It is likely that the relevant 'has...Support' method was unutilised by the plugin calling the method.";
+    }
+
 }

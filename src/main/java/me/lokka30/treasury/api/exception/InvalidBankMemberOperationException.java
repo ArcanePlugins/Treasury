@@ -33,4 +33,9 @@ public class InvalidBankMemberOperationException extends Exception {
 
     @NotNull
     public UUID getMemberUuid() { return memberUuid; }
+
+    @Override
+    public String getMessage() {
+        return "Attempted to add or remove bank member of UUID '" + memberUuid + "' but they were already added or removed from the bank's members list.";
+    }
 }

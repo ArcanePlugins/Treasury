@@ -21,6 +21,7 @@
 
 package me.lokka30.treasury.api.currency;
 
+import me.lokka30.treasury.api.exception.InvalidAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,12 +29,33 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * One of Treasury's core features is multi-currency support.
+ * This allows economy providers and plugins to use different
+ * currencies for different transactions, e.g. a daily reward
+ * plugin can award players 'Tokens', but a job plugin
+ * can award players 'Dollars'. Facilitates great customisability.
+ */
 @SuppressWarnings("unused")
 public interface Currency {
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Get the UUID of the currency.
+     * @return the UUID of the currency.
+     */
     @NotNull
     UUID getCurrencyId();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Get the name of the currency, e.g. 'dollars' or 'tokens'.
+     * @return the name of the currency.
+     */
     @NotNull
     String getCurrencyName();
 
@@ -62,18 +84,14 @@ public interface Currency {
     @NotNull
     BigDecimal getStartingBalance(@Nullable UUID playerUUID, @NotNull String worldName);
 
-    /*
-
-    TODO:  marked for removal, see second-last reply at:
-           <https://www.spigotmc.org/threads/looking-for-feedback-on-my-code.527805/#post-4273616>
-
-    @NotNull
-    String getCurrencyNameSingular();
-
-    @NotNull
-    String getCurrencyNamePlural();
+    /**
+     * Gets a human-readable format of the balance.
+     * For example, '$1.50' or '1.50 dollars' or 'One dollar and fifty cents'.
+     * @param amount to be formatted.
+     * @param locale of the formatted balance being requested.
+     * @throws InvalidAmountException if the amount is BELOW zero.
+     * @return the human-readable format of the specified amount and locale.
      */
-
     @NotNull
-    String formatBalance(@NotNull BigDecimal amount, @NotNull Locale locale);
+    String formatBalance(@NotNull BigDecimal amount, @NotNull Locale locale) throws InvalidAmountException;
 }
