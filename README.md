@@ -2,11 +2,9 @@
 
 # 💼 Welcome to Treasury!
 
-## ⚠ This resource is work-in-progress. :)
-
 ## 📜 What is Treasury?
 
-Treasury is a possibly upcoming resource containing a modern API to facilitate virtual money
+Treasury is a upcoming resource containing a modern API to facilitate virtual money
 transactions on Minecraft servers between Economy providers (aka. Economy plugins) and plugins
 that wish to use them (e.g. JobsReborn, ShopGUIPlus).
 
