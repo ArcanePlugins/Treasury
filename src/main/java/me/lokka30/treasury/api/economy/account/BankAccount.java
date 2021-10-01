@@ -19,9 +19,9 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.account;
+package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.exception.InvalidBankMemberOperationException;
+import me.lokka30.treasury.api.economy.exception.InvalidBankMemberOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

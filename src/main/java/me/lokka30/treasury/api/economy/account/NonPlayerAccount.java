@@ -19,26 +19,20 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.account.BankAccount;
-import me.lokka30.treasury.api.transaction.Transaction;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * @see Account
+ * A Non-Player Account is an Account which contains balances
+ * for a subject which is not a Player. For example, if a plugin
+ * wanted to store the balance of an entity through Treasury.
+ * they must use the Non-Player Account functionality. To ensure
+ * conflicts are near impossible, UUIDs are also used with
+ * Non-Player Accounts, as with Player Accounts. The Non-Player
+ * interface does not make any modifications to the Account
+ * interface, it simply extends it with no new or overriden methods.
+ */
 @SuppressWarnings("unused")
-public class BankAccountTransactionEvent extends AccountTransactionEvent {
-
-    public BankAccountTransactionEvent(@NotNull Transaction transaction, @NotNull BankAccount account) {
-        super(transaction, account);
-    }
-
-    public static HandlerList HANDLERS = new HandlerList();
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-}
+public interface NonPlayerAccount extends Account { }

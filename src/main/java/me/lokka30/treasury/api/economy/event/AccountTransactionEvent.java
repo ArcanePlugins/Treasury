@@ -19,10 +19,10 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
+package me.lokka30.treasury.api.economy.event;
 
-import me.lokka30.treasury.api.account.Account;
-import me.lokka30.treasury.api.transaction.Transaction;
+import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.transaction.Transaction;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

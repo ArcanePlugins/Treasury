@@ -19,26 +19,14 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.event;
-
-import me.lokka30.treasury.api.account.PlayerAccount;
-import me.lokka30.treasury.api.transaction.Transaction;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+package me.lokka30.treasury.api.economy.exception;
 
 @SuppressWarnings("unused")
-public class PlayerAccountTransactionEvent extends AccountTransactionEvent {
+public class UnsupportedEconomyFeatureException extends Exception {
 
-    public PlayerAccountTransactionEvent(@NotNull Transaction transaction, @NotNull PlayerAccount account) {
-        super(transaction, account);
-    }
-
-    public static HandlerList HANDLERS = new HandlerList();
-
-    @NotNull
     @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
+    public String getMessage() {
+        return "A Treasury method was ran which is unsupported by the economy provider. It is likely that the relevant 'has...Support' method was unutilised by the plugin calling the method.";
     }
 
 }

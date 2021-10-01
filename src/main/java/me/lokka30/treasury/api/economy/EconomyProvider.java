@@ -19,16 +19,16 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api;
+package me.lokka30.treasury.api.economy;
 
 import com.sun.source.util.Plugin;
-import me.lokka30.treasury.api.account.BankAccount;
-import me.lokka30.treasury.api.account.NonPlayerAccount;
-import me.lokka30.treasury.api.account.PlayerAccount;
-import me.lokka30.treasury.api.currency.Currency;
-import me.lokka30.treasury.api.exception.AccountAlreadyExistsException;
-import me.lokka30.treasury.api.exception.InvalidCurrencyException;
-import me.lokka30.treasury.api.exception.UnsupportedEconomyFeatureException;
+import me.lokka30.treasury.api.economy.account.BankAccount;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
+import me.lokka30.treasury.api.economy.account.PlayerAccount;
+import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.exception.AccountAlreadyExistsException;
+import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
+import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

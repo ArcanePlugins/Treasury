@@ -19,14 +19,25 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.exception;
+package me.lokka30.treasury.api.economy.exception;
+
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class UnsupportedEconomyFeatureException extends Exception {
+public class InvalidCurrencyException extends Exception {
+
+    @NotNull private final String currencyName;
+    public InvalidCurrencyException(@NotNull final String currencyName) {
+        this.currencyName = currencyName;
+    }
+
+    @NotNull
+    public String getCurrencyName() {
+        return currencyName;
+    }
 
     @Override
     public String getMessage() {
-        return "A Treasury method was ran which is unsupported by the economy provider. It is likely that the relevant 'has...Support' method was unutilised by the plugin calling the method.";
+        return "The currency being requested named '" + currencyName + "' does not exist.";
     }
-
 }

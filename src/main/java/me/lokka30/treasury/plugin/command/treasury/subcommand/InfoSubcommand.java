@@ -21,8 +21,8 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
-import me.lokka30.treasury.api.EconomyProvider;
-import me.lokka30.treasury.api.exception.InvalidCurrencyException;
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;

@@ -19,9 +19,9 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.currency;
+package me.lokka30.treasury.api.economy.currency;
 
-import me.lokka30.treasury.api.exception.InvalidAmountException;
+import me.lokka30.treasury.api.economy.exception.InvalidAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

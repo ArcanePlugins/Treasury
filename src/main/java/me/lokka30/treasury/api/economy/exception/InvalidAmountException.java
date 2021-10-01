@@ -19,7 +19,7 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.exception;
+package me.lokka30.treasury.api.economy.exception;
 
 import org.jetbrains.annotations.NotNull;
 

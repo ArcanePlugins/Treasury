@@ -19,7 +19,7 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.transaction;
+package me.lokka30.treasury.api.economy.transaction;
 
 /**
  * @author lokka30

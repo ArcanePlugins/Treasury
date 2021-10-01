@@ -19,23 +19,26 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.exception;
+package me.lokka30.treasury.api.economy.event;
 
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
+import me.lokka30.treasury.api.economy.transaction.Transaction;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 @SuppressWarnings("unused")
-public class InvalidBankMemberOperationException extends Exception {
+public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
 
-    @NotNull private final UUID memberUuid;
-    public InvalidBankMemberOperationException(@NotNull final UUID memberUuid) { this.memberUuid = memberUuid; }
+    public NonPlayerAccountTransactionEvent(@NotNull Transaction transaction, @NotNull NonPlayerAccount account) {
+        super(transaction, account);
+    }
+
+    public static HandlerList HANDLERS = new HandlerList();
 
     @NotNull
-    public UUID getMemberUuid() { return memberUuid; }
-
     @Override
-    public String getMessage() {
-        return "Attempted to add or remove bank member of UUID '" + memberUuid + "' but they were already added or removed from the bank's members list.";
+    public HandlerList getHandlers() {
+        return HANDLERS;
     }
+
 }

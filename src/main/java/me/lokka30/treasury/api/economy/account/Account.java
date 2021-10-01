@@ -19,11 +19,12 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.account;
+package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.currency.Currency;
-import me.lokka30.treasury.api.exception.InvalidAmountException;
-import me.lokka30.treasury.api.exception.OversizedWithdrawalException;
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.exception.InvalidAmountException;
+import me.lokka30.treasury.api.economy.exception.OversizedWithdrawalException;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -32,7 +33,7 @@ import java.util.UUID;
 /**
  * @author lokka30
  * @since v1.0.0
- * @see me.lokka30.treasury.api.EconomyProvider
+ * @see EconomyProvider
  * @see PlayerAccount
  * @see NonPlayerAccount
  * @see BankAccount

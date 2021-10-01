@@ -19,19 +19,37 @@
  * Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  */
 
-package me.lokka30.treasury.api.exception;
+package me.lokka30.treasury.api.economy.exception;
 
+import me.lokka30.treasury.api.economy.EconomyProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
+import java.util.UUID;
 
-public class OversizedWithdrawalException extends Exception {
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * @see EconomyProvider#hasPlayerAccount(UUID)
+ * @see EconomyProvider#hasNonPlayerAccount(UUID)
+ * @see EconomyProvider#hasBankAccount(UUID)
+ * This Exception is thrown when a plugin attempts to
+ * create an Account of specified UUID, but it already
+ * exists. Plugins should check 'has...Account' before
+ * attempting to create accounts.
+ */
+@SuppressWarnings("unused")
+public class AccountAlreadyExistsException extends Exception {
 
-    @NotNull private final BigDecimal amount;
-    public OversizedWithdrawalException(@NotNull final BigDecimal amount) { this.amount = amount; }
+    @NotNull private final UUID uuid;
+    public AccountAlreadyExistsException(@NotNull final UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @NotNull
+    public UUID getUuid() { return uuid; }
 
     @Override
     public String getMessage() {
-        return "If the withdrawal of '" + amount + "' was made then the Account's balance would be below zero.";
+        return "The account of UUID '" + uuid + "' already exists.";
     }
 }

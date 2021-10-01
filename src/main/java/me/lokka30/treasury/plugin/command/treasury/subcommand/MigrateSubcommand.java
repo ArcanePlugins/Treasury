@@ -22,9 +22,9 @@
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
 import me.lokka30.microlib.maths.QuickTimer;
-import me.lokka30.treasury.api.EconomyProvider;
-import me.lokka30.treasury.api.currency.Currency;
-import me.lokka30.treasury.api.exception.*;
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.exception.*;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
