@@ -27,8 +27,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
-
 public class Utils {
 
     /**
@@ -67,13 +65,8 @@ public class Utils {
      * @param amount to check for.
      * @return the unmodified or modified amount.
      */
-    @NotNull
-    public static BigDecimal ensureAtLeastZero(@NotNull final BigDecimal amount) {
-        if(amount.compareTo(BigDecimal.ZERO) < 0) {
-            return BigDecimal.ZERO;
-        } else {
-            return amount;
-        }
+    public static double ensureAtLeastZero(final double amount) {
+        return Math.max(amount, 0.0d);
     }
 
 }

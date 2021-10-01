@@ -25,7 +25,6 @@ import me.lokka30.treasury.api.economy.exception.InvalidAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -81,8 +80,7 @@ public interface Currency {
      * @param worldName a non-null world name. Use an empty string if no world name is applicable.
      * @return the starting balance of the currency concerning specified player's UUID and world name.
      */
-    @NotNull
-    BigDecimal getStartingBalance(@Nullable UUID playerUUID, @NotNull String worldName);
+    double getStartingBalance(@Nullable UUID playerUUID, @NotNull String worldName);
 
     /**
      * Gets a human-readable format of the balance.
@@ -93,5 +91,5 @@ public interface Currency {
      * @return the human-readable format of the specified amount and locale.
      */
     @NotNull
-    String formatBalance(@NotNull BigDecimal amount, @NotNull Locale locale) throws InvalidAmountException;
+    String formatBalance(double amount, @NotNull Locale locale) throws InvalidAmountException;
 }

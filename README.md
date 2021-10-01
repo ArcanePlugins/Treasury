@@ -41,17 +41,7 @@ Once released, it will be available on [SpigotMC.org](https://www.spigotmc.org).
 
 ## 📃 What's left to-do?
 
-In descending order:
-
-- Get lots of opinions on the design of the API so it can be improved before release
-- Add config file loading code
-- Add functionality to the commands
-- Make all chat messages customisable
-- Add update checker
-- Add javadocs
-- Add documentation
-- Test it
-- Release it
+See the Issue Tracker. :)
 
 ## ☢ How stable is it?
 

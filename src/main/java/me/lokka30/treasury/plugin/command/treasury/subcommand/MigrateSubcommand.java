@@ -33,7 +33,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,7 +134,7 @@ public class MigrateSubcommand implements Subcommand {
                 }
 
                 for(String currencyId : migratedCurrencies.keySet()) {
-                    final BigDecimal balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                    final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                     from.getPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                     to.getPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -158,7 +157,7 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final BigDecimal balance = Utils.ensureAtLeastZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final double balance = Utils.ensureAtLeastZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                         from.getNonPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                         to.getNonPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
@@ -182,7 +181,7 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final BigDecimal balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
 
                         from.getBankAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
                         to.getBankAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));

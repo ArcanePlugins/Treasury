@@ -24,38 +24,33 @@ package me.lokka30.treasury.api.economy.transaction;
 import me.lokka30.treasury.plugin.misc.Utils;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
-
 @SuppressWarnings("unused")
 public class Transaction {
 
-    @NotNull private final BigDecimal newBalance;
-    @NotNull private final BigDecimal transactionAmount;
+    private final double newBalance;
+    private final double transactionAmount;
     @NotNull private final TransactionType transactionType;
 
-    public Transaction(@NotNull final BigDecimal newBalance, @NotNull final BigDecimal transactionAmount, @NotNull final TransactionType transactionType) {
+    public Transaction(final double newBalance, final double transactionAmount, @NotNull final TransactionType transactionType) {
         this.newBalance = Utils.ensureAtLeastZero(newBalance);
         this.transactionAmount = Utils.ensureAtLeastZero(newBalance);
         this.transactionType = transactionType;
     }
 
-    @NotNull
-    public BigDecimal getNewBalance() { return newBalance; }
+    public double getNewBalance() { return newBalance; }
 
-    @NotNull
-    public BigDecimal getPreviousBalance() {
+    public double getPreviousBalance() {
         switch(transactionType) {
             case DEPOSIT:
-                return newBalance.subtract(transactionAmount);
+                return newBalance - transactionAmount;
             case WITHDRAWAL:
-                return newBalance.add(transactionAmount);
+                return newBalance + transactionAmount;
             default:
                 throw new IllegalStateException("Unexpected state " + transactionType);
         }
     }
 
-    @NotNull
-    public BigDecimal getTransactionAmount() {
+    public double getTransactionAmount() {
         return transactionAmount;
     }
 

@@ -23,16 +23,13 @@ package me.lokka30.treasury.api.economy.exception;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
-
 @SuppressWarnings("unused")
 public class InvalidAmountException extends Exception {
 
-    @NotNull private final BigDecimal amount;
-    public InvalidAmountException(@NotNull final BigDecimal amount) { this.amount = amount; }
+    private final double amount;
+    public InvalidAmountException(final double amount) { this.amount = amount; }
 
-    @NotNull
-    public BigDecimal getAmount() { return amount; }
+    public double getAmount() { return amount; }
 
     @Override
     @NotNull

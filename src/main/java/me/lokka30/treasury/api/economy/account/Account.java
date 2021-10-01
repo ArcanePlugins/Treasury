@@ -27,7 +27,6 @@ import me.lokka30.treasury.api.economy.exception.InvalidAmountException;
 import me.lokka30.treasury.api.economy.exception.OversizedWithdrawalException;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -56,13 +55,13 @@ public interface Account {
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#setBalance(BigDecimal, String, Currency)
+     * @see Account#setBalance(double, String, Currency)
      * Get the balance of the Account.
      * @param worldName to get the balance of. Use an empty string to get the global balance.
      * @param currency of the balance being requested.
      * @return the balance of the account in specified world with specified currency.
      */
-    @NotNull BigDecimal getBalance(@NotNull String worldName, @NotNull Currency currency);
+    double getBalance(@NotNull String worldName, @NotNull Currency currency);
 
     /**
      * @author lokka30
@@ -75,12 +74,12 @@ public interface Account {
      * @param currency of the balance being set.
      * @throws InvalidAmountException if the amount is BELOW zero.
      */
-    void setBalance(@NotNull BigDecimal amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException;
+    void setBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException;
 
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#setBalance(BigDecimal, String, Currency)
+     * @see Account#setBalance(double, String, Currency)
      * Withdraw an amount from the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be reduced by.
@@ -89,12 +88,12 @@ public interface Account {
      * @throws InvalidAmountException if the amount is AT OR BELOW zero.
      * @throws OversizedWithdrawalException if the NEW BALANCE is BELOW zero.
      */
-    void withdrawBalance(@NotNull BigDecimal amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException, OversizedWithdrawalException;
+    void withdrawBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException, OversizedWithdrawalException;
 
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#setBalance(BigDecimal, String, Currency)
+     * @see Account#setBalance(double, String, Currency)
      * Deposit an amount into the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be increased by.
@@ -102,13 +101,13 @@ public interface Account {
      * @param currency of the balance being set.
      * @throws InvalidAmountException if the amount is AT OR BELOW zero.
      */
-    void depositBalance(@NotNull BigDecimal amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException;
+    void depositBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException;
 
     /**
      * @author lokka30
      * @since v1.0.0
      * @see PlayerAccount#resetBalance(String, Currency)
-     * @see Account#setBalance(BigDecimal, String, Currency)
+     * @see Account#setBalance(double, String, Currency)
      * Sets the Account's balance to `BigDecimal.ZERO`.
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
      * @param worldName to set the new balance in. Use an empty string to modify the global balance.
@@ -116,7 +115,7 @@ public interface Account {
      * @throws InvalidAmountException if the balance being reset to is BELOW zero.
      */
     default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException {
-        setBalance(BigDecimal.ZERO, worldName, currency);
+        setBalance(0.0d, worldName, currency);
     }
 
     /**
@@ -131,12 +130,12 @@ public interface Account {
      * @return whether the Account can afford the withdrawal.
      * @throws InvalidAmountException if the akmount is AT OR BELOW zero.
      */
-    default boolean canAfford(@NotNull BigDecimal amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException {
+    default boolean canAfford(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException {
 
         // amounts must be non-zero values
-        if(amount.compareTo(BigDecimal.ZERO) < 0) throw new InvalidAmountException(amount);
+        if(amount <= 0) throw new InvalidAmountException(amount);
 
-        return getBalance(worldName, currency).compareTo(amount) >= 0;
+        return getBalance(worldName, currency) >= amount;
     }
 
     /**

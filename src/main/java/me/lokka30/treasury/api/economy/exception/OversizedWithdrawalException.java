@@ -21,14 +21,10 @@
 
 package me.lokka30.treasury.api.economy.exception;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.math.BigDecimal;
-
 public class OversizedWithdrawalException extends Exception {
 
-    @NotNull private final BigDecimal amount;
-    public OversizedWithdrawalException(@NotNull final BigDecimal amount) { this.amount = amount; }
+    private final double amount;
+    public OversizedWithdrawalException(final double amount) { this.amount = amount; }
 
     @Override
     public String getMessage() {
