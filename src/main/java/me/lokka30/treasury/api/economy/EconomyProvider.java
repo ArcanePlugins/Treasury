@@ -49,7 +49,8 @@ public interface EconomyProvider {
      * @since v1.0.0
      * @return the Plugin facilitating the economy - the 'Economy Provider'.
      */
-    @NotNull Plugin getProvider();
+    @NotNull
+    Plugin getProvider();
 
     /**
      * @author lokka30
@@ -92,11 +93,13 @@ public interface EconomyProvider {
 
     boolean hasPlayerAccount(@NotNull UUID accountId);
 
-    @NotNull PlayerAccount getPlayerAccount(@NotNull UUID accountId);
+    @NotNull
+    PlayerAccount getPlayerAccount(@NotNull UUID accountId);
 
     void createPlayerAccount(@NotNull UUID accountId) throws AccountAlreadyExistsException;
 
-    @NotNull List<UUID> getPlayerAccountIds();
+    @NotNull
+    List<UUID> getPlayerAccountIds();
 
     /**
      * @author lokka30
@@ -108,32 +111,42 @@ public interface EconomyProvider {
      */
     boolean hasNonPlayerAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
-    @NotNull NonPlayerAccount getNonPlayerAccount(UUID accountId) throws UnsupportedEconomyFeatureException;
+    @NotNull
+    NonPlayerAccount getNonPlayerAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
     void createNonPlayerAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
 
-    @NotNull List<UUID> getNonPlayerAccountIds() throws UnsupportedEconomyFeatureException;
+    @NotNull
+    List<UUID> getNonPlayerAccountIds() throws UnsupportedEconomyFeatureException;
 
     boolean hasBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
-    @NotNull BankAccount getBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
+    @NotNull
+    BankAccount getBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
     void createBankAccount(@NotNull UUID accountId, @NotNull UUID owningPlayerId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
 
-    @NotNull List<UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;
+    @NotNull
+    List<UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;
 
-    @NotNull List<UUID> getCurrencyIds();
+    @NotNull
+    List<UUID> getCurrencyIds();
 
-    @NotNull List<String> getCurrencyNames();
+    @NotNull
+    List<String> getCurrencyNames();
 
-    @NotNull Currency getCurrency(UUID currencyId) throws InvalidCurrencyException;
+    @NotNull
+    Currency getCurrency(UUID currencyId) throws InvalidCurrencyException;
 
-    @NotNull Currency getCurrency(String currencyName) throws InvalidCurrencyException;
+    @NotNull
+    Currency getCurrency(String currencyName) throws InvalidCurrencyException;
 
-    @NotNull default Currency getPrimaryCurrency() throws InvalidCurrencyException {
+    @NotNull
+    default Currency getPrimaryCurrency() throws InvalidCurrencyException {
         return getCurrency(getPrimaryCurrencyId());
     }
 
-    @NotNull UUID getPrimaryCurrencyId() throws InvalidCurrencyException;
+    @NotNull
+    UUID getPrimaryCurrencyId() throws InvalidCurrencyException;
 
 }
