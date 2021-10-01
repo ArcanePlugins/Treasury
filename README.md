@@ -1,4 +1,6 @@
-# 💼 Welcome to Treasury
+![Treasury Logo](https://i.ibb.co/gPN6x5P/Treasury250.png)
+
+# 💼 Welcome to Treasury!
 
 ## ⚠ This resource is work-in-progress. :)
 
@@ -7,8 +9,6 @@
 Treasury is a possibly upcoming resource containing a modern API to facilitate virtual money
 transactions on Minecraft servers between Economy providers (aka. Economy plugins) and plugins
 that wish to use them (e.g. JobsReborn, ShopGUIPlus).
-
-**It is currently unlikely this will ever be released unless it gains enough traction.**
 
 Like Vault, Treasury is installed as a plugin on a server. The plugin only offers an information
 command and update checker. Treasury is used by economy provider plugins through Bukkit's
