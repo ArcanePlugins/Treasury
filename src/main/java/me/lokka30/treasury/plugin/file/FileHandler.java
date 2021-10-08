@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2021 lokka30.
+ * Copyright (c) 2021 lokka30.
  *
  * This code is part of Treasury, an Economy API for Minecraft servers. Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  *
@@ -10,40 +10,45 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.command.treasury.subcommand;
+package me.lokka30.treasury.plugin.file;
 
+import me.lokka30.microlib.files.YamlConfigFile;
 import me.lokka30.treasury.plugin.Treasury;
-import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class HelpSubcommand implements Subcommand {
+import java.io.IOException;
 
-    /*
-    inf: View the plugin's available commands.
-    cmd: /treasury help
-    arg:         |    0
-    len:         0    1
-     */
+public class FileHandler {
 
     @NotNull private final Treasury main;
-    public HelpSubcommand(@NotNull final Treasury main) { this.main = main; }
 
-    @Override
-    public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.help")) return;
+    public FileHandler(@NotNull final Treasury main) {
+        this.main = main;
+    }
 
-        if(args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " help'.");
-            return;
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * (Re)loads all config files.
+     */
+    public void loadFiles() {
+        loadFile(main.settingsCfg);
+        loadFile(main.messagesCfg);
+    }
+
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * (Re)load a particular config file.
+     * Notify the user if an IOException occured.
+     * @param cfg to be loaded
+     */
+    public void loadFile(@NotNull final YamlConfigFile cfg) {
+        try {
+            cfg.load();
+        } catch(IOException ex) {
+            Utils.logger.error("Unable to load &b" + cfg.getName() + "&7: " + ex.getMessage());
         }
-
-        sender.sendMessage(ChatColor.GRAY + "Available commands:");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " help - view a list of Treasury's commands.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " info - view info about Treasury and the Provider.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " migrate - migrate from one Provider to another.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " reload - re-load all of Treasury's configuration files.");
     }
 }

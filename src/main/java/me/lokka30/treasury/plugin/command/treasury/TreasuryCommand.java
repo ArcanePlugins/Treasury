@@ -16,6 +16,7 @@ import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.InfoSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.MigrateSubcommand;
+import me.lokka30.treasury.plugin.command.treasury.subcommand.ReloadSubcommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,11 +39,13 @@ public class TreasuryCommand implements TabExecutor {
         this.helpSubcommand = new HelpSubcommand(main);
         this.infoSubcommand = new InfoSubcommand(main);
         this.migrateSubcommand = new MigrateSubcommand(main);
+        this.reloadSubcommand = new ReloadSubcommand(main);
     }
 
     @NotNull private final HelpSubcommand helpSubcommand;
     @NotNull private final InfoSubcommand infoSubcommand;
     @NotNull private final MigrateSubcommand migrateSubcommand;
+    @NotNull private final ReloadSubcommand reloadSubcommand;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
@@ -59,6 +62,9 @@ public class TreasuryCommand implements TabExecutor {
                     return true;
                 case "MIGRATE":
                     migrateSubcommand.run(sender, label, args);
+                    return true;
+                case "RELOAD":
+                    reloadSubcommand.run(sender, label, args);
                     return true;
                 default:
                     sender.sendMessage(ChatColor.RED + "Invalid subcommand '" + args[0] + "', run '/" + label + " help' for a list of available subcommands."); // TODO
@@ -84,6 +90,8 @@ public class TreasuryCommand implements TabExecutor {
                     return infoSubcommand.getTabSuggestions(sender, label, args);
                 case "MIGRATE":
                     return migrateSubcommand.getTabSuggestions(sender, label, args);
+                case "RELOAD":
+                    return reloadSubcommand.getTabSuggestions(sender, label, args);
                 default:
                     return Collections.emptyList();
             }

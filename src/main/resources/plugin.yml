@@ -10,7 +10,7 @@ softdepend: []
 
 # General info for the plugin loader
 main: 'me.lokka30.treasury.plugin.Treasury'
-api-version: '1.13'
+api-version: '1.13' # This is Spigot's API version, NOT Treasury's API version.
 load: 'STARTUP'
 loadbefore: []
 
@@ -18,15 +18,26 @@ loadbefore: []
 commands:
   treasury:
     description: 'Manage the Treasury plugin.'
+    usage: '/<command> help'
 
 # All permissions used are listed here
 permissions:
   treasury.command.treasury:
     description: 'Ability to run `/treasury`.'
     default: true
+
   treasury.command.treasury.help:
     description: 'Ability to run `/treasury help`.'
     default: true
+
   treasury.command.treasury.info:
     description: 'Ability to run `/treasury info`.'
     default: true
+
+  treasury.command.treasury.migrate:
+    description: 'Ability to run `/treasury migrate`.'
+    default: op
+
+  treasury.command.treasury.reload:
+    description: 'Ability to run `/treasury reload`.'
+    default: op

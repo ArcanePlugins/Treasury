@@ -12,6 +12,7 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
+import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
@@ -19,31 +20,33 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class HelpSubcommand implements Subcommand {
+public class ReloadSubcommand implements Subcommand {
 
     /*
     inf: View the plugin's available commands.
-    cmd: /treasury help
-    arg:         |    0
-    len:         0    1
+    cmd: /treasury reload
+    arg:         |      0
+    len:         0      1
      */
 
     @NotNull private final Treasury main;
-    public HelpSubcommand(@NotNull final Treasury main) { this.main = main; }
+    public ReloadSubcommand(@NotNull final Treasury main) { this.main = main; }
 
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.help")) return;
+        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.reload")) return;
 
         if(args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " help'.");
+            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " reload'.");
             return;
         }
 
-        sender.sendMessage(ChatColor.GRAY + "Available commands:");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " help - view a list of Treasury's commands.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " info - view info about Treasury and the Provider.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " migrate - migrate from one Provider to another.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " reload - re-load all of Treasury's configuration files.");
+        sender.sendMessage(ChatColor.GRAY + "Reloading Treasury...");
+        final QuickTimer timer = new QuickTimer();
+
+        main.fileHandler.loadFiles();
+        main.debugHandler.loadEnabledCategories();
+
+        sender.sendMessage(ChatColor.GREEN + "Reload succssful (took " + timer.getTimer() + "ms).");
     }
 }

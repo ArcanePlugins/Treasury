@@ -52,6 +52,7 @@ public class InfoSubcommand implements Subcommand {
         sender.sendMessage(ChatColor.GRAY + " - Description: " + main.getDescription().getDescription());
         sender.sendMessage(ChatColor.GRAY + " - Contributors: " + String.join(", ", Treasury.contributors));
         sender.sendMessage(ChatColor.GRAY + " - API Version: " + Treasury.apiVersion);
+        sender.sendMessage(ChatColor.GRAY + " - Learn more at https://github.com/lokka30/Treasury/");
         sender.sendMessage(" ");
         sender.sendMessage(ChatColor.GRAY + "Current Provider:");
         if(registeredServiceProvider == null) {
@@ -60,7 +61,8 @@ public class InfoSubcommand implements Subcommand {
             EconomyProvider provider = registeredServiceProvider.getProvider();
 
             sender.sendMessage(ChatColor.GRAY + " - Name: " + provider.getProvider().getName());
-            sender.sendMessage(ChatColor.GRAY + " - API Version: " + provider.getSupportedAPIVersion());
+            sender.sendMessage(ChatColor.GRAY + " - Priority: " + registeredServiceProvider.getPriority());
+            sender.sendMessage(ChatColor.GRAY + " - Supported API Version: " + provider.getSupportedAPIVersion());
             sender.sendMessage(ChatColor.GRAY + " - Supports non-player accounts: " + provider.hasNonPlayerAccountSupport());
             sender.sendMessage(ChatColor.GRAY + " - Supports bank accounts: " + provider.hasBankAccountSupport());
             sender.sendMessage(ChatColor.GRAY + " - Supports per-world balances: " + provider.hasPerWorldBalanceSupport());
@@ -71,5 +73,8 @@ public class InfoSubcommand implements Subcommand {
                 sender.sendMessage(ChatColor.RED + " - (Unable to get primary currency - currency is invalid!)");
             }
         }
+        sender.sendMessage(" ");
+        sender.sendMessage(ChatColor.GRAY + "Miscellaneous Info:");
+        sender.sendMessage(ChatColor.GRAY + " - For command help, try '/treasury help'.");
     }
 }
