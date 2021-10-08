@@ -15,7 +15,7 @@ package me.lokka30.treasury.api.economy.exception;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class InvalidCurrencyException extends Exception {
+public class InvalidCurrencyException extends RuntimeException {
 
     @NotNull private final String currencyName;
     public InvalidCurrencyException(@NotNull final String currencyName) {

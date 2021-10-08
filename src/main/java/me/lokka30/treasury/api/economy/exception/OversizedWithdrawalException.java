@@ -12,7 +12,7 @@
 
 package me.lokka30.treasury.api.economy.exception;
 
-public class OversizedWithdrawalException extends Exception {
+public class OversizedWithdrawalException extends RuntimeException {
 
     private final double amount;
     public OversizedWithdrawalException(final double amount) { this.amount = amount; }

@@ -15,7 +15,7 @@ package me.lokka30.treasury.api.economy.exception;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class InvalidAmountException extends Exception {
+public class InvalidAmountException extends RuntimeException {
 
     private final double amount;
     public InvalidAmountException(final double amount) { this.amount = amount; }

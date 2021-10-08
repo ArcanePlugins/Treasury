@@ -13,7 +13,7 @@
 package me.lokka30.treasury.api.economy.exception;
 
 @SuppressWarnings("unused")
-public class UnsupportedEconomyFeatureException extends Exception {
+public class UnsupportedEconomyFeatureException extends RuntimeException {
 
     @Override
     public String getMessage() {

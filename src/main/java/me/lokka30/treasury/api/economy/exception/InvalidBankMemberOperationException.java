@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class InvalidBankMemberOperationException extends Exception {
+public class InvalidBankMemberOperationException extends RuntimeException {
 
     @NotNull private final UUID memberUuid;
     public InvalidBankMemberOperationException(@NotNull final UUID memberUuid) { this.memberUuid = memberUuid; }

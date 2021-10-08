@@ -29,7 +29,7 @@ import java.util.UUID;
  * attempting to create accounts.
  */
 @SuppressWarnings("unused")
-public class AccountAlreadyExistsException extends Exception {
+public class AccountAlreadyExistsException extends RuntimeException {
 
     @NotNull private final UUID uuid;
     public AccountAlreadyExistsException(@NotNull final UUID uuid) {
