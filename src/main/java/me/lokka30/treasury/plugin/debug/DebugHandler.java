@@ -31,6 +31,8 @@ public class DebugHandler {
     private final HashSet<DebugCategory> enabledCategories = new HashSet<>();
 
     public void loadEnabledCategories() {
+        Utils.logger.info("Loading enabled debug logging categories...");
+
         final HashSet<DebugCategory> listedCategories = new HashSet<>();
         for(String listedCategoryStr : main.settingsCfg.getConfig().getStringList("debug.enabled-categories.list")) {
             try {
@@ -56,5 +58,9 @@ public class DebugHandler {
 
     public boolean isCategoryEnabled(@NotNull final DebugCategory debugCategory) {
         return enabledCategories.contains(debugCategory);
+    }
+
+    public void log(@NotNull final DebugCategory debugCategory, @NotNull final String msg) {
+        Utils.logger.info("&8[&3DEBUG &8| &3" + debugCategory + "&8]: &7" + msg);
     }
 }

@@ -52,8 +52,8 @@ debug:
 
     ### Contents of the debug logger categories list.
     # Add entries to the whitelist/blacklist here.
-    # Use debug categories from the `DebugCategory` enum, available
-    # at: <>
+    # Use debug categories from the `DebugCategory` enum, available at:
+    # <https://github.com/lokka30/Treasury/blob/master/src/main/java/me/lokka30/treasury/plugin/debug/DebugCategory.java>
     # Type: `List<String>` (DebugCategory constants) | Default: `[ ]` (empty)
     list: [ ]
 

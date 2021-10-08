@@ -50,7 +50,7 @@ public class TreasuryCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if(args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Please specify a valid subcommand. For a list of available subcommands, run '/" + label + " help'."); // TODO
+            sender.sendMessage(ChatColor.RED + "Please specify a valid subcommand. For a list of available subcommands, run '/" + label + " help'.");
             return true;
         } else {
             switch(args[0].toUpperCase(Locale.ROOT)) {
@@ -67,13 +67,13 @@ public class TreasuryCommand implements TabExecutor {
                     reloadSubcommand.run(sender, label, args);
                     return true;
                 default:
-                    sender.sendMessage(ChatColor.RED + "Invalid subcommand '" + args[0] + "', run '/" + label + " help' for a list of available subcommands."); // TODO
+                    sender.sendMessage(ChatColor.RED + "Invalid subcommand '" + args[0] + "', run '/" + label + " help' for a list of available subcommands.");
                     return true;
             }
         }
     }
 
-    @NotNull private final List<String> subcommands = Arrays.asList("help", "info", "migrate");
+    @NotNull private final List<String> subcommands = Arrays.asList("help", "info", "migrate", "reload");
 
     @Nullable
     @Override

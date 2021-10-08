@@ -20,6 +20,10 @@ package me.lokka30.treasury.plugin.debug;
  */
 public enum DebugCategory {
 
-    //TODO add some here.
+    /**
+     * @since v1.0.0
+     * Various information about the process in the Migrate subcommand.
+     */
+    MIGRATE_SUBCOMMAND
 
 }

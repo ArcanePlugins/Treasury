@@ -18,6 +18,7 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.exception.*;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
+import me.lokka30.treasury.plugin.debug.DebugCategory;
 import me.lokka30.treasury.plugin.misc.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -43,6 +44,8 @@ public class MigrateSubcommand implements Subcommand {
 
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        final boolean debugEnabled = main.debugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
+
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.migrate")) return;
 
         if(args.length != 3) {
@@ -63,6 +66,9 @@ public class MigrateSubcommand implements Subcommand {
 
         for(RegisteredServiceProvider<EconomyProvider> serviceProvider : serviceProviders) {
             serviceProvidersNames.add(serviceProvider.getPlugin().getName());
+            if(debugEnabled) {
+                main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Found service provider: " + serviceProvider.getPlugin().getName());
+            }
         }
 
         if(args[1].equalsIgnoreCase(args[2])) {
@@ -93,6 +99,10 @@ public class MigrateSubcommand implements Subcommand {
             return;
         }
 
+        if(debugEnabled) {
+            main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating from '&b" + from.getProvider().getName() + "&7' to '&b" + to.getProvider().getName() + "&7'.");
+        }
+
         sender.sendMessage(ChatColor.GRAY + "Starting migration, please wait (this may briefly lag the server)...");
         final QuickTimer timer = new QuickTimer();
 
@@ -103,23 +113,33 @@ public class MigrateSubcommand implements Subcommand {
         HashMap<String, Currency> migratedCurrencies = new HashMap<>();
         HashSet<String> nonMigratedCurrencies = new HashSet<>();
 
-        try {
-            for(String currencyId : from.getCurrencyNames()) {
-                if(to.getCurrencyNames().contains(currencyId)) {
+        for(String currencyId : from.getCurrencyNames()) {
+            if(to.getCurrencyNames().contains(currencyId)) {
+                try {
                     migratedCurrencies.put(currencyId, to.getCurrency(currencyId));
-                } else {
-                    nonMigratedCurrencies.add(currencyId);
+                } catch(InvalidCurrencyException ex) {
+                    // this should be impossible
+                    sender.sendMessage(ChatColor.RED + "An internal error occured whilst processing currency of ID '&b" + currencyId + "&7': " + ex.getMessage());
+                    continue;
+                }
+
+                if(debugEnabled) {
+                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + currencyId + "&7' will be migrated.");
+                }
+            } else {
+                nonMigratedCurrencies.add(currencyId);
+
+                if(debugEnabled) {
+                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + currencyId + "&7' will not be migrated.");
                 }
             }
-        } catch(InvalidCurrencyException ex) {
-            // this should be impossible
-            sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
-            return;
         }
 
         /* Migrate player accounts */
         try {
             for(UUID uuid : from.getPlayerAccountIds()) {
+                if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating player account of UUID '&b" + uuid + "&7'.");
+
                 if(!to.hasPlayerAccount(uuid)) {
                     to.createPlayerAccount(uuid);
                 }
@@ -134,7 +154,7 @@ public class MigrateSubcommand implements Subcommand {
                 playerAccountsProcessed++;
             }
         } catch(AccountAlreadyExistsException | InvalidCurrencyException | InvalidAmountException | OversizedWithdrawalException ex) {
-            // this should be impossible
+            // these should be impossible
             sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
             return;
         }
@@ -143,6 +163,8 @@ public class MigrateSubcommand implements Subcommand {
         if(from.hasNonPlayerAccountSupport() && to.hasNonPlayerAccountSupport()) {
             try {
                 for(UUID uuid : from.getNonPlayerAccountIds()) {
+                    if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating non-player account of UUID '&b" + uuid + "&7'.");
+
                     if(!to.hasNonPlayerAccount(uuid)) {
                         to.createNonPlayerAccount(uuid);
                     }
@@ -157,7 +179,7 @@ public class MigrateSubcommand implements Subcommand {
                     nonPlayerAccountsProcessed++;
                 }
             } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | InvalidAmountException | OversizedWithdrawalException ex) {
-                // this should be impossible
+                // these should be impossible
                 sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
                 return;
             }
@@ -167,6 +189,8 @@ public class MigrateSubcommand implements Subcommand {
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
             try {
                 for(UUID uuid : from.getBankAccountIds()) {
+                    if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating bank account of UUID '&b" + uuid + "&7'.");
+
                     if(!to.hasBankAccount(uuid)) {
                         to.createBankAccount(uuid, from.getBankAccount(uuid).getOwningPlayerId());
                     }
@@ -181,7 +205,7 @@ public class MigrateSubcommand implements Subcommand {
                     bankAccountsProcessed++;
                 }
             } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | InvalidAmountException | OversizedWithdrawalException ex) {
-                // this should be impossible
+                // these should be impossible
                 sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
                 return;
             }
@@ -189,11 +213,11 @@ public class MigrateSubcommand implements Subcommand {
 
         sender.sendMessage(ChatColor.GREEN + "Migration complete!");
         sender.sendMessage(ChatColor.GRAY + "Statistics:");
-        sender.sendMessage(ChatColor.GRAY + "- took " + timer.getTimer() + "ms");
-        sender.sendMessage(ChatColor.GRAY + "- player accounts processed: " + playerAccountsProcessed);
-        sender.sendMessage(ChatColor.GRAY + "- nonPlayerAccountsProcessed accounts processed: " + nonPlayerAccountsProcessed);
-        sender.sendMessage(ChatColor.GRAY + "- bank accounts processed: " + bankAccountsProcessed);
-        sender.sendMessage(ChatColor.GRAY + "- migrated currencies: " + String.join(", ", migratedCurrencies.keySet()));
-        sender.sendMessage(ChatColor.GRAY + "- unmigrated currencies: " + String.join(", ", nonMigratedCurrencies));
+        sender.sendMessage(ChatColor.GRAY + " - took " + timer.getTimer() + "ms");
+        sender.sendMessage(ChatColor.GRAY + " - player accounts processed: " + playerAccountsProcessed);
+        sender.sendMessage(ChatColor.GRAY + " - nonPlayerAccountsProcessed accounts processed: " + nonPlayerAccountsProcessed);
+        sender.sendMessage(ChatColor.GRAY + " - bank accounts processed: " + bankAccountsProcessed);
+        sender.sendMessage(ChatColor.GRAY + " - migrated currencies: " + String.join(", ", migratedCurrencies.keySet()));
+        sender.sendMessage(ChatColor.GRAY + " - unmigrated currencies: " + String.join(", ", nonMigratedCurrencies));
     }
 }

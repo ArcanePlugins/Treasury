@@ -33,6 +33,8 @@ public class FileHandler {
      * (Re)loads all config files.
      */
     public void loadFiles() {
+        Utils.logger.info("Loading config files...");
+
         loadFile(main.settingsCfg);
         loadFile(main.messagesCfg);
     }
@@ -46,6 +48,7 @@ public class FileHandler {
      */
     public void loadFile(@NotNull final YamlConfigFile cfg) {
         try {
+            Utils.logger.info("Loading file '&b" + cfg.getName() + "&7'...");
             cfg.load();
         } catch(IOException ex) {
             Utils.logger.error("Unable to load &b" + cfg.getName() + "&7: " + ex.getMessage());
