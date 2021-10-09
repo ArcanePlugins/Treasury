@@ -39,8 +39,10 @@ As far as I know, here they are:
 
 ### Plugins:
 
-* [TownyAdvanced](https://www.spigotmc.org/resources/towny-advanced.72694/) by [LlmDl](https://www.spigotmc.org/resources/authors/llmdl.33402/) is likely to include Treasury support.
-* Speaking to other developers about this resource's adoption as well.
+* [TownyAdvanced](https://www.spigotmc.org/resources/towny-advanced.72694/) by [LlmDl](https://www.spigotmc.org/resources/authors/llmdl.33402/)
+* [EconomyPlus](https://www.spigotmc.org/resources/economyplus.92975/) by [_ItsWagPvP](https://www.spigotmc.org/resources/authors/_itswagpvp.445170/)
+* I am also developing an economy plugin that will support Treasury.
+* Speaking to other developers about this resource's adoption too.
 
 If you develop a plugin which will/may have Treasury support please let me know and I can link it here. 🙂
 
