@@ -14,6 +14,7 @@ package me.lokka30.treasury.plugin;
 
 import me.lokka30.microlib.files.YamlConfigFile;
 import me.lokka30.microlib.maths.QuickTimer;
+import me.lokka30.treasury.api.economy.conversion.CurrencyConverter;
 import me.lokka30.treasury.plugin.command.CommandHandler;
 import me.lokka30.treasury.plugin.debug.DebugHandler;
 import me.lokka30.treasury.plugin.file.FileHandler;
@@ -40,7 +41,7 @@ public class Treasury extends JavaPlugin {
     /**
      * Any contributors to Treasury may add their name here! :)
      */
-    @NotNull public static final ArrayList<String> contributors = new ArrayList<>(Arrays.asList("lokka30 (Author, main developer)", "ExampleUser (Example description)"));
+    @NotNull public static final ArrayList<String> codeContributors = new ArrayList<>(Arrays.asList("lokka30", "Articdive"));
 
     /**
      * This is Treasury's API version. (Not the same as api-version from plugin.yml!)
@@ -49,6 +50,9 @@ public class Treasury extends JavaPlugin {
      * does not support the latest Treasury API version.
      */
     public static final short apiVersion = 1;
+
+    @NotNull private final CurrencyConverter currencyConverter = new CurrencyConverter();
+    @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }
 
     @NotNull public final FileHandler fileHandler = new FileHandler(this);
     @NotNull public final DebugHandler debugHandler = new DebugHandler(this);

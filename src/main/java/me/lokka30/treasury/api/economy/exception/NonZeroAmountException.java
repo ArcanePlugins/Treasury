@@ -10,40 +10,21 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.api.economy.account;
+package me.lokka30.treasury.api.economy.exception;
 
-import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.NonZeroAmountException;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author lokka30
- * @since v1.0.0
- * @see Account
- * A PlayerAccount is an Account owned by a Player.
- * Economy providers are likely to create player accounts
- * for players when they join the server, although
- * this is optional, which should be taken into consideration
- * when trying to access a player account which may not exist
- * yet for a player.
- */
 @SuppressWarnings("unused")
-public interface PlayerAccount extends Account {
+public class NonZeroAmountException extends RuntimeException {
 
-    /**
-     * @author lokka30
-     * @since v1.0.0
-     * @see Account#resetBalance(String, Currency)
-     * Resets the player's balance. Unlike resetting balances of non-player
-     * and bank accounts, resetting a player account's balance will set the
-     * player's balance to the 'starting balance' of the currency (other
-     * accounts set it to zero instead). This is why the overriden method exists.
-     * @param worldName world name, or an empty string
-     * @param currency of the balance being reset
-     */
+    private final double amount;
+    public NonZeroAmountException(final double amount) { this.amount = amount; }
+
+    public double getAmount() { return amount; }
+
     @Override
-    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException {
-        setBalance(currency.getStartingBalance(null, ""), worldName, currency);
+    @NotNull
+    public String getMessage() {
+        return "Amount must be greater than 0, but " + amount + " was specified.";
     }
-
 }

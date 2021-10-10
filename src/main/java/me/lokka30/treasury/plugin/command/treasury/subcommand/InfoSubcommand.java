@@ -50,7 +50,7 @@ public class InfoSubcommand implements Subcommand {
         sender.sendMessage(ChatColor.GRAY + "Plugin:");
         sender.sendMessage(ChatColor.GRAY + " - Running: " + main.getDescription().getName() + " v" + main.getDescription().getVersion());
         sender.sendMessage(ChatColor.GRAY + " - Description: " + main.getDescription().getDescription());
-        sender.sendMessage(ChatColor.GRAY + " - Contributors: " + String.join(", ", Treasury.contributors));
+        sender.sendMessage(ChatColor.GRAY + " - Contributors: " + String.join(", ", Treasury.codeContributors));
         sender.sendMessage(ChatColor.GRAY + " - API Version: " + Treasury.apiVersion);
         sender.sendMessage(ChatColor.GRAY + " - Learn more at https://github.com/lokka30/Treasury/");
         sender.sendMessage(" ");

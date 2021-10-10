@@ -14,7 +14,7 @@ package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.InvalidAmountException;
+import me.lokka30.treasury.api.economy.exception.NonZeroAmountException;
 import me.lokka30.treasury.api.economy.exception.OversizedWithdrawalException;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,9 +63,9 @@ public interface Account {
      * @param amount of money the new balance will be.
      * @param worldName to set the new balance in. Use an empty string to modify the global balance.
      * @param currency of the balance being set.
-     * @throws InvalidAmountException if the amount is BELOW zero.
+     * @throws NonZeroAmountException if the amount is BELOW zero.
      */
-    void setBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException;
+    void setBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException;
 
     /**
      * @author lokka30
@@ -76,10 +76,10 @@ public interface Account {
      * @param amount of money the account's current balance should be reduced by.
      * @param worldName to set the new balance in. Use an empty string to modify the global balance.
      * @param currency of the balance being set.
-     * @throws InvalidAmountException if the amount is AT OR BELOW zero.
+     * @throws NonZeroAmountException if the amount is AT OR BELOW zero.
      * @throws OversizedWithdrawalException if the NEW BALANCE is BELOW zero.
      */
-    void withdrawBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException, OversizedWithdrawalException;
+    void withdrawBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException, OversizedWithdrawalException;
 
     /**
      * @author lokka30
@@ -90,9 +90,9 @@ public interface Account {
      * @param amount of money the account's current balance should be increased by.
      * @param worldName to set the new balance in. Use an empty string to modify the global balance.
      * @param currency of the balance being set.
-     * @throws InvalidAmountException if the amount is AT OR BELOW zero.
+     * @throws NonZeroAmountException if the amount is AT OR BELOW zero.
      */
-    void depositBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException;
+    void depositBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException;
 
     /**
      * @author lokka30
@@ -103,9 +103,9 @@ public interface Account {
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
      * @param worldName to set the new balance in. Use an empty string to modify the global balance.
      * @param currency of the balance being set.
-     * @throws InvalidAmountException if the balance being reset to is BELOW zero.
+     * @throws NonZeroAmountException if the balance being reset to is BELOW zero.
      */
-    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException {
+    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException {
         setBalance(0.0d, worldName, currency);
     }
 
@@ -119,12 +119,12 @@ public interface Account {
      * @param worldName of the balance being requested in.
      * @param currency of the balance being requested.
      * @return whether the Account can afford the withdrawal.
-     * @throws InvalidAmountException if the akmount is AT OR BELOW zero.
+     * @throws NonZeroAmountException if the akmount is AT OR BELOW zero.
      */
-    default boolean canAfford(double amount, @NotNull String worldName, @NotNull Currency currency) throws InvalidAmountException {
+    default boolean canAfford(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException {
 
         // amounts must be non-zero values
-        if(amount <= 0) throw new InvalidAmountException(amount);
+        if(amount <= 0) throw new NonZeroAmountException(amount);
 
         return getBalance(worldName, currency) >= amount;
     }

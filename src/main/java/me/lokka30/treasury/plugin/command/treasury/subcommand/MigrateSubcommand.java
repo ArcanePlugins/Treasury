@@ -153,7 +153,7 @@ public class MigrateSubcommand implements Subcommand {
 
                 playerAccountsProcessed++;
             }
-        } catch(AccountAlreadyExistsException | InvalidCurrencyException | InvalidAmountException | OversizedWithdrawalException ex) {
+        } catch(AccountAlreadyExistsException | InvalidCurrencyException | NonZeroAmountException | OversizedWithdrawalException ex) {
             // these should be impossible
             sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
             return;
@@ -178,7 +178,7 @@ public class MigrateSubcommand implements Subcommand {
 
                     nonPlayerAccountsProcessed++;
                 }
-            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | InvalidAmountException | OversizedWithdrawalException ex) {
+            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | NonZeroAmountException | OversizedWithdrawalException ex) {
                 // these should be impossible
                 sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
                 return;
@@ -204,7 +204,7 @@ public class MigrateSubcommand implements Subcommand {
 
                     bankAccountsProcessed++;
                 }
-            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | InvalidAmountException | OversizedWithdrawalException ex) {
+            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | NonZeroAmountException | OversizedWithdrawalException ex) {
                 // these should be impossible
                 sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
                 return;

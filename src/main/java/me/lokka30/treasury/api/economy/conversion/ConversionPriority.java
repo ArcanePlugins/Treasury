@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2021 lokka30.
+ * Copyright (c) 2021 lokka30.
  *
  * This code is part of Treasury, an Economy API for Minecraft servers. Please see <https://github.com/lokka30/Treasury> for more information on this resource.
  *
@@ -10,21 +10,17 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.api.economy.exception;
+package me.lokka30.treasury.api.economy.conversion;
 
-import org.jetbrains.annotations.NotNull;
+public enum ConversionPriority {
 
-@SuppressWarnings("unused")
-public class InvalidAmountException extends RuntimeException {
+    LOWEST(0),
+    LOW(1),
+    MEDIUM(2),
+    HIGH(3),
+    HIGHEST(4);
 
-    private final double amount;
-    public InvalidAmountException(final double amount) { this.amount = amount; }
+    public final int weight;
+    ConversionPriority(final int weight) { this.weight = weight; }
 
-    public double getAmount() { return amount; }
-
-    @Override
-    @NotNull
-    public String getMessage() {
-        return "Amounts must be greater than zero, but " + amount + " was specified.";
-    }
 }
