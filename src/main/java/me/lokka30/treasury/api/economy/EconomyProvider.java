@@ -12,7 +12,6 @@
 
 package me.lokka30.treasury.api.economy;
 
-import com.sun.source.util.Plugin;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -20,6 +19,8 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.exception.AccountAlreadyExistsException;
 import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
 import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
+
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
