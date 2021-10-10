@@ -1,6 +1,6 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/eclipse,intellij,maven,java,intellij+all,intellij+iml
-# Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,intellij,maven,java,intellij+all,intellij+iml
+# Created by https://www.toptal.com/developers/gitignore/api/eclipse,intellij,maven,java,intellij+all,intellij+iml,netbeans
+# Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,intellij,maven,java,intellij+all,intellij+iml,netbeans
 
 ### Eclipse ###
 .metadata
@@ -333,4 +333,14 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
-# End of https://www.toptal.com/developers/gitignore/api/eclipse,intellij,maven,java,intellij+all,intellij+iml
+### NetBeans ###
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# End of https://www.toptal.com/developers/gitignore/api/eclipse,intellij,maven,java,intellij+all,intellij+iml,netbeans
