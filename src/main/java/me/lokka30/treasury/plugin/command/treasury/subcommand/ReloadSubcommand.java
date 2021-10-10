@@ -13,12 +13,15 @@
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
 import me.lokka30.microlib.maths.QuickTimer;
+import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class ReloadSubcommand implements Subcommand {
 
@@ -37,16 +40,25 @@ public class ReloadSubcommand implements Subcommand {
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.reload")) return;
 
         if(args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " reload'.");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.reload.invalid-usage"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("label", label, false)
+            ));
             return;
         }
 
-        sender.sendMessage(ChatColor.GRAY + "Reloading Treasury...");
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.reload.reload-start"), Collections.singletonList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+        ));
+
         final QuickTimer timer = new QuickTimer();
 
         main.fileHandler.loadFiles();
         main.debugHandler.loadEnabledCategories();
 
-        sender.sendMessage(ChatColor.GREEN + "Reload succssful (took " + timer.getTimer() + "ms).");
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.reload.reload-complete"), Arrays.asList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                new MultiMessage.Placeholder("time", timer.getTimer() + "", false)
+        ));
     }
 }

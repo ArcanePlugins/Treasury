@@ -13,6 +13,7 @@
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
 import me.lokka30.microlib.maths.QuickTimer;
+import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.exception.*;
@@ -20,15 +21,11 @@ import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.debug.DebugCategory;
 import me.lokka30.treasury.plugin.misc.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 public class MigrateSubcommand implements Subcommand {
 
@@ -49,7 +46,10 @@ public class MigrateSubcommand implements Subcommand {
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.migrate")) return;
 
         if(args.length != 3) {
-            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " migrate <providerFrom> <providerTo>'.");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.invalid-usage"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("label", label, false)
+            ));
             return;
         }
 
@@ -58,7 +58,9 @@ public class MigrateSubcommand implements Subcommand {
         EconomyProvider to = null;
 
         if(serviceProviders.size() < 2) {
-            sender.sendMessage(ChatColor.RED + "You require at least 2 Economy providers to run this subcommand.");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.requires-two-providers"), Collections.singletonList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+            ));
             return;
         }
 
@@ -72,8 +74,10 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         if(args[1].equalsIgnoreCase(args[2])) {
-            sender.sendMessage(ChatColor.RED + "You must specify two different economy providers.");
-            sender.sendMessage(ChatColor.RED + "Valid service providers: " + String.join(", ", serviceProvidersNames));
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.providers-match"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("providers", Utils.formatListMessage(main, new ArrayList<>(serviceProvidersNames)), false)
+            ));
             return;
         }
 
@@ -88,14 +92,18 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         if(from == null) {
-            sender.sendMessage(ChatColor.RED + "Please specify a valid economy provider to migrate from.");
-            sender.sendMessage(ChatColor.RED + "Valid service providers: " + String.join(", ", serviceProvidersNames));
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.requires-valid-from"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("providers", Utils.formatListMessage(main, new ArrayList<>(serviceProvidersNames)), false)
+            ));
             return;
         }
 
         if(to == null) {
-            sender.sendMessage(ChatColor.RED + "Please specify a valid economy provider to migrate to.");
-            sender.sendMessage(ChatColor.RED + "Valid service providers: " + String.join(", ", serviceProvidersNames));
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.requires-valid-to"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("providers", Utils.formatListMessage(main, new ArrayList<>(serviceProvidersNames)), false)
+            ));
             return;
         }
 
@@ -103,7 +111,10 @@ public class MigrateSubcommand implements Subcommand {
             main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating from '&b" + from.getProvider().getName() + "&7' to '&b" + to.getProvider().getName() + "&7'.");
         }
 
-        sender.sendMessage(ChatColor.GRAY + "Starting migration, please wait (this may briefly lag the server)...");
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.starting-migration"), Collections.singletonList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+        ));
+
         final QuickTimer timer = new QuickTimer();
 
         int playerAccountsProcessed = 0;
@@ -119,7 +130,10 @@ public class MigrateSubcommand implements Subcommand {
                     migratedCurrencies.put(currencyId, to.getCurrency(currencyId));
                 } catch(InvalidCurrencyException ex) {
                     // this should be impossible
-                    sender.sendMessage(ChatColor.RED + "An internal error occured whilst processing currency of ID '&b" + currencyId + "&7': " + ex.getMessage());
+                    ex.printStackTrace();
+                    new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
+                            new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+                    ));
                     continue;
                 }
 
@@ -155,7 +169,10 @@ public class MigrateSubcommand implements Subcommand {
             }
         } catch(AccountAlreadyExistsException | InvalidCurrencyException | NonZeroAmountException | OversizedWithdrawalException ex) {
             // these should be impossible
-            sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+            ex.printStackTrace();
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+            ));
             return;
         }
 
@@ -180,7 +197,10 @@ public class MigrateSubcommand implements Subcommand {
                 }
             } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | NonZeroAmountException | OversizedWithdrawalException ex) {
                 // these should be impossible
-                sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+                ex.printStackTrace();
+                new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
+                        new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+                ));
                 return;
             }
         }
@@ -206,18 +226,22 @@ public class MigrateSubcommand implements Subcommand {
                 }
             } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | NonZeroAmountException | OversizedWithdrawalException ex) {
                 // these should be impossible
-                sender.sendMessage(ChatColor.RED + "An internal error occured: " + ex.getMessage());
+                ex.printStackTrace();
+                new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
+                        new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+                ));
                 return;
             }
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Migration complete!");
-        sender.sendMessage(ChatColor.GRAY + "Statistics:");
-        sender.sendMessage(ChatColor.GRAY + " - took " + timer.getTimer() + "ms");
-        sender.sendMessage(ChatColor.GRAY + " - player accounts processed: " + playerAccountsProcessed);
-        sender.sendMessage(ChatColor.GRAY + " - nonPlayerAccountsProcessed accounts processed: " + nonPlayerAccountsProcessed);
-        sender.sendMessage(ChatColor.GRAY + " - bank accounts processed: " + bankAccountsProcessed);
-        sender.sendMessage(ChatColor.GRAY + " - migrated currencies: " + String.join(", ", migratedCurrencies.keySet()));
-        sender.sendMessage(ChatColor.GRAY + " - unmigrated currencies: " + String.join(", ", nonMigratedCurrencies));
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.finished-migration"), Arrays.asList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                new MultiMessage.Placeholder("time", timer.getTimer() + "", false),
+                new MultiMessage.Placeholder("player-accounts", playerAccountsProcessed + "", false),
+                new MultiMessage.Placeholder("non-player-accounts", nonPlayerAccountsProcessed + "", false),
+                new MultiMessage.Placeholder("bank-accounts", bankAccountsProcessed + "", false),
+                new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, new ArrayList<>(migratedCurrencies.keySet())), false),
+                new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, new ArrayList<>(nonMigratedCurrencies)), false)
+        ));
     }
 }

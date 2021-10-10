@@ -12,15 +12,18 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
+import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class InfoSubcommand implements Subcommand {
 
@@ -39,42 +42,55 @@ public class InfoSubcommand implements Subcommand {
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.info")) return;
 
         if(args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " info'.");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.invalid-usage"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("label", label, false)
+            ));
             return;
         }
 
         final RegisteredServiceProvider<EconomyProvider> registeredServiceProvider = main.getServer().getServicesManager().getRegistration(EconomyProvider.class);
 
-        sender.sendMessage(ChatColor.WHITE + "" + ChatColor.UNDERLINE + "About Treasury");
-        sender.sendMessage(" ");
-        sender.sendMessage(ChatColor.GRAY + "Plugin:");
-        sender.sendMessage(ChatColor.GRAY + " - Running: " + main.getDescription().getName() + " v" + main.getDescription().getVersion());
-        sender.sendMessage(ChatColor.GRAY + " - Description: " + main.getDescription().getDescription());
-        sender.sendMessage(ChatColor.GRAY + " - Contributors: " + String.join(", ", Treasury.codeContributors));
-        sender.sendMessage(ChatColor.GRAY + " - API Version: " + Treasury.apiVersion);
-        sender.sendMessage(ChatColor.GRAY + " - Learn more at https://github.com/lokka30/Treasury/");
-        sender.sendMessage(" ");
-        sender.sendMessage(ChatColor.GRAY + "Current Provider:");
-        if(registeredServiceProvider == null) {
-            sender.sendMessage(ChatColor.RED + " - No valid Economy provider is installed!");
-        } else {
-            EconomyProvider provider = registeredServiceProvider.getProvider();
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.treasury"), Arrays.asList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                new MultiMessage.Placeholder("version", main.getDescription().getVersion(), false),
+                new MultiMessage.Placeholder("description", main.getDescription().getDescription(), false),
+                new MultiMessage.Placeholder("contributors", Utils.formatListMessage(main, Treasury.codeContributors), false),
+                new MultiMessage.Placeholder("latest-api-version", "" + Treasury.apiVersion, false),
+                new MultiMessage.Placeholder("repository", "https://github.com/lokka30/Treasury/", false)
+        ));
 
-            sender.sendMessage(ChatColor.GRAY + " - Name: " + provider.getProvider().getName());
-            sender.sendMessage(ChatColor.GRAY + " - Priority: " + registeredServiceProvider.getPriority());
-            sender.sendMessage(ChatColor.GRAY + " - Supported API Version: " + provider.getSupportedAPIVersion());
-            sender.sendMessage(ChatColor.GRAY + " - Supports non-player accounts: " + provider.hasNonPlayerAccountSupport());
-            sender.sendMessage(ChatColor.GRAY + " - Supports bank accounts: " + provider.hasBankAccountSupport());
-            sender.sendMessage(ChatColor.GRAY + " - Supports per-world balances: " + provider.hasPerWorldBalanceSupport());
-            sender.sendMessage(ChatColor.GRAY + " - Supports transaction events: " + provider.hasTransactionEventSupport());
+
+
+        if(registeredServiceProvider == null) {
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.economy-provider-unavailable"), Collections.singletonList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+            ));
+        } else {
+            final EconomyProvider provider = registeredServiceProvider.getProvider();
+
+            String primaryCurrencyName;
             try {
-                sender.sendMessage(ChatColor.GRAY + " - Primary currency ID: " + provider.getPrimaryCurrency().getCurrencyName());
+                primaryCurrencyName = provider.getPrimaryCurrency().getCurrencyName();
             } catch(InvalidCurrencyException ex) {
-                sender.sendMessage(ChatColor.RED + " - (Unable to get primary currency - currency is invalid!)");
+                primaryCurrencyName = main.messagesCfg.getConfig().getString("common.states.unknown", "&cUnknown");
             }
+
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.economy-provider-available"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("name", provider.getProvider().getName(), false),
+                    new MultiMessage.Placeholder("priority", registeredServiceProvider.getPriority().toString(), false),
+                    new MultiMessage.Placeholder("api-version", provider.getSupportedAPIVersion() + "", false),
+                    new MultiMessage.Placeholder("supports-non-player-accounts", Utils.getYesNoStateMessage(main, provider.hasNonPlayerAccountSupport()), true),
+                    new MultiMessage.Placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(main, provider.hasBankAccountSupport()), true),
+                    new MultiMessage.Placeholder("supports-per-world-balances", Utils.getYesNoStateMessage(main, provider.hasPerWorldBalanceSupport()), true),
+                    new MultiMessage.Placeholder("supports-transaction-events", Utils.getYesNoStateMessage(main, provider.hasTransactionEventSupport()), true),
+                    new MultiMessage.Placeholder("primary-currency", primaryCurrencyName, true)
+            ));
         }
-        sender.sendMessage(" ");
-        sender.sendMessage(ChatColor.GRAY + "Miscellaneous Info:");
-        sender.sendMessage(ChatColor.GRAY + " - For command help, try '/treasury help'.");
+
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.misc-info"), Collections.singletonList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+        ));
     }
 }

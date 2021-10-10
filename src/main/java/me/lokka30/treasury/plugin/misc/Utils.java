@@ -12,11 +12,15 @@
 
 package me.lokka30.treasury.plugin.misc;
 
+import me.lokka30.microlib.messaging.MessageUtils;
 import me.lokka30.microlib.messaging.MicroLogger;
+import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.plugin.Treasury;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Utils {
 
@@ -41,7 +45,10 @@ public class Utils {
         if(sender.hasPermission(permission)) {
             return true;
         } else {
-            sender.sendMessage(ChatColor.RED + "You don't have access to that (requires permission " + permission + ").");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("common.no-permission"), Arrays.asList(
+                            new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                            new MultiMessage.Placeholder("permission", permission, false)
+            ));
             return false;
         }
     }
@@ -58,6 +65,22 @@ public class Utils {
      */
     public static double ensureAtLeastZero(final double amount) {
         return Math.max(amount, 0.0d);
+    }
+
+    @NotNull
+    public static String getYesNoStateMessage(@NotNull final Treasury main, final boolean state) {
+        if(state) {
+            return main.messagesCfg.getConfig().getString("common.states.yes", "&aYes");
+        } else {
+            return main.messagesCfg.getConfig().getString("common.states.no", "&cNo");
+        }
+    }
+
+    @NotNull
+    public static String formatListMessage(@NotNull final Treasury main, @NotNull final List<String> list) {
+        final String delimiter = MessageUtils.colorizeAll(main.messagesCfg.getConfig().getString("common.list-delimiter", "&7, &b"));
+
+        return String.join(delimiter, list);
     }
 
 }

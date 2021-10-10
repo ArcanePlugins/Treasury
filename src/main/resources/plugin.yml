@@ -1,3 +1,16 @@
+### Treasury
+# Treasury is a modern code library for SpigotMC plugins.
+# GitHub Repository: <https://github.com/lokka30/Treasury/>
+#
+### About this File
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!! This is NOT a configuration file for server owners. !!!
+# !!!     Server owners are NOT to modify this file.      !!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# This file is read by your server software to determine
+# various information about this plugin, so it can be loaded
+# properly, and register its commands and permissions.
+
 # Main plugin information
 name: 'Treasury'
 version: '${project.version}'

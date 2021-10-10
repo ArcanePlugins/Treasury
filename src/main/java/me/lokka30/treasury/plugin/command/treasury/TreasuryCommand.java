@@ -12,12 +12,12 @@
 
 package me.lokka30.treasury.plugin.command.treasury;
 
+import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.InfoSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.MigrateSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.ReloadSubcommand;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -50,7 +50,10 @@ public class TreasuryCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if(args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Please specify a valid subcommand. For a list of available subcommands, run '/" + label + " help'.");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.invalid-usage-unspecified"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("label", label, false)
+            ));
             return true;
         } else {
             switch(args[0].toUpperCase(Locale.ROOT)) {
@@ -67,7 +70,11 @@ public class TreasuryCommand implements TabExecutor {
                     reloadSubcommand.run(sender, label, args);
                     return true;
                 default:
-                    sender.sendMessage(ChatColor.RED + "Invalid subcommand '" + args[0] + "', run '/" + label + " help' for a list of available subcommands.");
+                    new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.invalid-usage-specified"), Arrays.asList(
+                            new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                            new MultiMessage.Placeholder("label", label, false),
+                            new MultiMessage.Placeholder("subcommand", args[0], false)
+                    ));
                     return true;
             }
         }

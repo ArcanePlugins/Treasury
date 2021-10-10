@@ -1,2 +1,200 @@
+### Treasury
+# Treasury is a modern code library for SpigotMC plugins.
+# GitHub Repository: <https://github.com/lokka30/Treasury/>
+#
+### About this File
+# Welcome to the messages.yml file, here you may translate
+# and customise all of Treasury's messages (except for those
+# logged to the console). Standard color codes are supported
+# (e.g. &a, &b, &c) and also hex color codes (e.g.
+# &#FF0000, &#ABCDEF). All messages are configured in terms
+# of lines, so you can add multiple lines to most messages
+# if you wish.
+#
+### Applying Changes
+# Whenever you have finished making your changes to this
+# configuration file, please save it, then run
+# `/treasury reload` if your server is already running.
+
+# These messages are used across multiple other messages,
+# so they have been grouped together in the 'common' category.
+common:
+
+  # This text replaces the `%prefix%` placeholder in all applicable messages.
+  prefix: '&b&lTreasury:&7'
+
+  # This message is sent when a user does not have permission to access something within Treasury,
+  # i.e., a command like `/treasury migrate`.
+  #
+  # Placeholders: %prefix%, %permission%
+  no-permission:
+    - '%prefix% You don''t have access to that &8(&7requires permission &b%permission%&8)&7.'
+
+  # These states are used in various messages.
+  states:
+    yes: '&aYes'
+    no: '&cNo'
+    unknown: '&cUnknown'
+
+  # The delimiter used in lists of things - this separates each list term.
+  # For example, the non-colorized version of a list can look like:
+  # 'List item 1&7, &bList item 2&7, &bList item 3'
+  # Notice how the list delimiter is used to separate each term in the list.
+  list-delimiter: '&7, &b'
+
+# These messages are sent by running certain commands.
+commands:
+
+  # Messages from `/treasury`
+  treasury:
+
+    # Placeholders: %prefix%, %label%
+    invalid-usage-unspecified:
+      - '%prefix% Invalid usage - please specify a subcommand.'
+      - '%prefix% For a list of available subcommands, try ''&b/%label% help&7''.'
+
+    # Placeholders: %prefix%, %label%, %subcommand%
+    invalid-usage-specified:
+      - '%prefix% Invalid subcommand ''&b%subcommand%&7''.'
+      - '%prefix% For a list of available subcommands, try ''&b/%label% help&7''.'
+
+    subcommands:
+
+      help:
+
+        # Placeholders: %prefix%, %label%
+        invalid-usage:
+          - '%prefix% Invalid usage, try ''&b/%label% help&7''.'
+
+        # Placeholders: %prefix%
+        available-commands:
+          - '%prefix% Available commands:'
+          - ' &8&m->&b /treasury help &8- &7view a list of Treasury''s commands.'
+          - ' &8&m->&b /treasury info &8- &7view info about Treasury.'
+          - ' &8&m->&b /treasury migrate &8- &7migrate from one economy provider to another.'
+          - ' &8&m->&b /treasury reload &8- &7re-load all of Treasury''s configuration files.'
+
+      info:
+
+        # Placeholders: %prefix%, %label%
+        invalid-usage:
+          - '%prefix% Invalid usage, try ''&b/%label% info&7''.'
+
+        # Placeholders: %prefix%, %version%, %description%, %contributors%,
+        #               %latest-api-version%, %repository%
+        treasury:
+          - '&f&nAbout Treasury'
+          - '&8 &m->&7 Running &bTreasury v%version%'
+          - '&8 &m->&7 Description: &b%description%'
+          - '&8 &m->&7 Contributors: &b%contributors%'
+          - '&8 &m->&7 Latest API Version: &b%latest-api-version%'
+          - '&8 &m->&7 Learn more at: &b&n%repository%'
+          - ' '
+
+        # Placeholders: %prefix%
+        economy-provider-unavailable:
+          - '&f&nEconomy Provider'
+          - '&8 &m->&7 You don''t have an Economy Provider installed.'
+          - ' '
+
+        # Placeholders: %prefix%, %name%, %priority%, %api-version%,
+        #               %supports-non-player-accounts%, %supports-bank-accounts%,
+        #               %supports-per-world-balances%, %supports-transaction-events%,
+        #               %primary-currency%
+        economy-provider-available:
+          - '&f&nEconomy Provider'
+          - '&8 &m->&7 Name: &b%name%'
+          - '&8 &m->&7 Priority: &b%priority%'
+          - '&8 &m->&7 API Version: &b%api-version%'
+          - '&8 &m->&7 Supports non-player accounts: &b%supports-non-player-accounts%'
+          - '&8 &m->&7 Supports bank accounts: &b%supports-bank-accounts%'
+          - '&8 &m->&7 Supports per-world balances: &b%supports-per-world-balances%'
+          - '&8 &m->&7 Supports transaction events: &b%supports-transaction-events%'
+          - '&8 &m->&7 Primary currency: &b%primary-currency%'
+          - ' '
+
+        # Placeholders: %prefix%
+        misc-info:
+          - '&f&nMiscellaneous Info:'
+          - '&8 &m->&7 For a list of commands, run ''&b/treasury help&7''.'
+
+      migrate:
+
+        # Placeholders: %prefix%, %label%, %providers%
+        invalid-usage:
+          - '%prefix% Invalid usage, try ''&b/%label% migrate <providerFrom> <providerTo>&7''.'
+          - '%prefix% Valid economy providers: &b%providers%&7.'
+
+        # Placeholders: %prefix%
+        requires-two-providers:
+          - '%prefix% You can''t use this subcommand unless you have 2 economy providers running.'
+
+        # Placeholders: %prefix%, %providers%
+        providers-match:
+          - '%prefix% You must specify two different economy providers.'
+          - '%prefix% Valid economy providers: &b%providers%&7.'
+
+        # Placeholders: %prefix%, %providers%
+        requires-valid-from:
+          - '%prefix% You must specify a valid economy provider to migrate from.'
+          - '%prefix% Valid economy providers: &b%providers%&7.'
+
+        # Placeholders: %prefix%, %providers%
+        requires-valid-to:
+          - '%prefix% You must specify a valid economy provider to migrate to.'
+          - '%prefix% Valid economy providers: &b%providers%&7.'
+
+        # Placeholders: %prefix%
+        starting-migration:
+          - '%prefix% Starting migration, please wait...'
+          - '%prefix% (This may briefly freeze the server)'
+
+        # Placeholders: %prefix%
+        internal-error:
+          - '%prefix% An internal error occured whilst attempting to migrate. Please check console for more information.'
+
+        # Placeholders: %prefix%, %time%, %player-accounts%, %non-player-accounts%,
+        #               %migrated-currencies%, %non-migrated-currencies%
+        finished-migration:
+          - '%prefix% Migration complete! Statistics:'
+          - '&8 &m->&7 Took &b%time%ms&7.'
+          - '&8 &m->&7 Processed &b%player-accounts%&7 player accounts.'
+          - '&8 &m->&7 Processed &b%non-player-accounts%&7 non-player accounts.'
+          - '&8 &m->&7 Processed &b%bank-accounts%&7 bank accounts.'
+          - '&8 &m->&7 Migrated currencies: &b%migrated-currencies%&7.'
+          - '&8 &m->&7 Non-migrated currencies: &b%non-migrated-currencies%&7.'
+
+      reload:
+
+        # Placeholders: %prefix%, %label%
+        invalid-usage:
+          - '%prefix% Invalid usage, try ''&b/%label% reload&7''.'
+
+        # Placeholders: %prefix%
+        reload-start:
+          - '%prefix% Reloading Treasury...'
+
+        # Placeholders: %prefix%, %time%
+        reload-complete:
+          - '%prefix% Reload successful &8(&7took &b%time%ms&8)&7.'
+
+### Settings regarding the messages.yml file specifically.
+# DO NOT TOUCH THESE SETTINGS. These settings are analysed by
+# Treasury's file system to ensure you have an up-to-date file,
+# adjusting any of these values can cause a malfunction.
+# As values of these settings will change over time, no Default
+# values will be supplied in this file's documentation.
 file:
+
+  ### Version of messages.yml.
+  # DO NOT TOUCH THIS SETTING.
+  # Type: `Integer`
   version: 1
+
+  ### Version of the plugin that this file was generated with.
+  # DO NOT TOUCH THIS SETTING.
+  # It doesn't actually make any difference to modify this,
+  # but it is useful for Treasury developers to see in case
+  # there is an issue with your file.
+  # Type: `String`
+  generated-with: '${project.version}'

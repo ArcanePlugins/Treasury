@@ -12,12 +12,15 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
+import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class HelpSubcommand implements Subcommand {
 
@@ -36,14 +39,15 @@ public class HelpSubcommand implements Subcommand {
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.help")) return;
 
         if(args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Invalid usage, try '/" + label + " help'.");
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.help.invalid-usage"), Arrays.asList(
+                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                    new MultiMessage.Placeholder("label", label, false)
+            ));
             return;
         }
 
-        sender.sendMessage(ChatColor.GRAY + "Available commands:");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " help - view a list of Treasury's commands.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " info - view info about Treasury and the Provider.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " migrate - migrate from one Provider to another.");
-        sender.sendMessage(ChatColor.GRAY + " -> /" + label + " reload - re-load all of Treasury's configuration files.");
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.help.available-commands"), Collections.singletonList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+        ));
     }
 }
