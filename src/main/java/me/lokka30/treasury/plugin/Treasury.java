@@ -14,6 +14,7 @@ package me.lokka30.treasury.plugin;
 
 import me.lokka30.microlib.files.YamlConfigFile;
 import me.lokka30.microlib.maths.QuickTimer;
+import me.lokka30.treasury.api.economy.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.conversion.CurrencyConverter;
 import me.lokka30.treasury.plugin.command.CommandHandler;
 import me.lokka30.treasury.plugin.debug.DebugHandler;
@@ -49,7 +50,7 @@ public class Treasury extends JavaPlugin {
      * This allows Treasury to warn server owners if their Provider
      * does not support the latest Treasury API version.
      */
-    public static final short apiVersion = 1;
+    public static final EconomyAPIVersion ECONOMY_API_VERSION = EconomyAPIVersion.VERSION_1;
 
     @NotNull private final CurrencyConverter currencyConverter = new CurrencyConverter();
     @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }

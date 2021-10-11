@@ -56,7 +56,7 @@ public class InfoSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("version", main.getDescription().getVersion(), false),
                 new MultiMessage.Placeholder("description", main.getDescription().getDescription(), false),
                 new MultiMessage.Placeholder("contributors", Utils.formatListMessage(main, Treasury.codeContributors), false),
-                new MultiMessage.Placeholder("latest-api-version", "" + Treasury.apiVersion, false),
+                new MultiMessage.Placeholder("latest-api-version", Treasury.ECONOMY_API_VERSION.getNumber() + "", false),
                 new MultiMessage.Placeholder("repository", "https://github.com/lokka30/Treasury/", false)
         ));
 

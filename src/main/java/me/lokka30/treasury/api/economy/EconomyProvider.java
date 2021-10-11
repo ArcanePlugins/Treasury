@@ -48,7 +48,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      * @return which API version of Treasury the Provider is based on.
      */
-    short getSupportedAPIVersion();
+    EconomyAPIVersion getSupportedAPIVersion();
 
     /**
      * @author lokka30
