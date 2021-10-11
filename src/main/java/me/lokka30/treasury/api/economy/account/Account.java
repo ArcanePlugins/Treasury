@@ -14,14 +14,15 @@ package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.NonZeroAmountException;
+import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
 import me.lokka30.treasury.api.economy.exception.OversizedWithdrawalException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 /**
- * @author lokka30
+ * @author lokka30, Geolykt
  * @since v1.0.0
  * @see EconomyProvider
  * @see PlayerAccount
@@ -44,89 +45,89 @@ public interface Account {
     @NotNull UUID getUniqueId();
 
     /**
-     * @author lokka30
+     * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#setBalance(double, String, Currency)
+     * @see Account#setBalance(double, UUID, Currency)
      * Get the balance of the Account.
-     * @param worldName to get the balance of. Use an empty string to get the global balance.
+     * @param worldId of the world to get the balance in. Specify null to get the global balance.
      * @param currency of the balance being requested.
      * @return the balance of the account in specified world with specified currency.
      */
-    double getBalance(@NotNull String worldName, @NotNull Currency currency);
+    double getBalance(@Nullable UUID worldId, @NotNull Currency currency);
 
     /**
-     * @author lokka30
+     * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#getBalance(String, Currency)
+     * @see Account#getBalance(UUID, Currency)
      * Set the balance of the Account.
      * Specified amounts must be AT OR ABOVE zero.
      * @param amount of money the new balance will be.
-     * @param worldName to set the new balance in. Use an empty string to modify the global balance.
+     * @param worldId of the world to set the new balance in. Specify null to modify the global balance.
      * @param currency of the balance being set.
-     * @throws NonZeroAmountException if the amount is BELOW zero.
+     * @throws NegativeAmountException if the amount is BELOW zero.
      */
-    void setBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException;
+    void setBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException;
 
     /**
-     * @author lokka30
+     * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#setBalance(double, String, Currency)
+     * @see Account#setBalance(double, UUID, Currency)
      * Withdraw an amount from the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be reduced by.
-     * @param worldName to set the new balance in. Use an empty string to modify the global balance.
+     * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
-     * @throws NonZeroAmountException if the amount is AT OR BELOW zero.
+     * @throws NegativeAmountException if the amount is AT OR BELOW zero.
      * @throws OversizedWithdrawalException if the NEW BALANCE is BELOW zero.
      */
-    void withdrawBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException, OversizedWithdrawalException;
+    void withdrawBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException, OversizedWithdrawalException;
 
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#setBalance(double, String, Currency)
+     * @see Account#setBalance(double, UUID, Currency)
      * Deposit an amount into the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be increased by.
-     * @param worldName to set the new balance in. Use an empty string to modify the global balance.
+     * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
-     * @throws NonZeroAmountException if the amount is AT OR BELOW zero.
+     * @throws NegativeAmountException if the amount is AT OR BELOW zero.
      */
-    void depositBalance(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException;
+    void depositBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException;
 
     /**
-     * @author lokka30
+     * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see PlayerAccount#resetBalance(String, Currency)
-     * @see Account#setBalance(double, String, Currency)
+     * @see PlayerAccount#resetBalance(UUID, Currency)
+     * @see Account#setBalance(double, UUID, Currency)
      * Sets the Account's balance to `BigDecimal.ZERO`.
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
-     * @param worldName to set the new balance in. Use an empty string to modify the global balance.
+     * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
-     * @throws NonZeroAmountException if the balance being reset to is BELOW zero.
+     * @throws NegativeAmountException if the balance being reset to is BELOW zero.
      */
-    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException {
-        setBalance(0.0d, worldName, currency);
+    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException {
+        setBalance(0.0d, worldId, currency);
     }
 
     /**
-     * @author lokka30
+     * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#getBalance(String, Currency)
+     * @see Account#getBalance(UUID, Currency)
      * Check if the Account can afford a withdrawal of a certain amount.
      * Specified amounts must be ABOVE zero.
      * @param amount of money proposed for withdrawal.
-     * @param worldName of the balance being requested in.
+     * @param worldId of the world of the balance being requested in. Specify null to reference the global balance.
      * @param currency of the balance being requested.
      * @return whether the Account can afford the withdrawal.
-     * @throws NonZeroAmountException if the akmount is AT OR BELOW zero.
+     * @throws NegativeAmountException if the akmount is AT OR BELOW zero.
      */
-    default boolean canAfford(double amount, @NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException {
+    default boolean canAfford(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException {
 
         // amounts must be non-zero values
-        if(amount <= 0) throw new NonZeroAmountException(amount);
+        if(amount <= 0) throw new NegativeAmountException(amount);
 
-        return getBalance(worldName, currency) >= amount;
+        return getBalance(worldId, currency) >= amount;
     }
 
     /**

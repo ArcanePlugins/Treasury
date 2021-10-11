@@ -12,7 +12,7 @@
 
 package me.lokka30.treasury.api.economy.currency;
 
-import me.lokka30.treasury.api.economy.exception.NonZeroAmountException;
+import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 /**
- * @author lokka30
+ * @author lokka30, Geolykt
  * @since v1.0.0
  * One of Treasury's core features is multi-currency support.
  * This allows economy providers and plugins to use different
@@ -59,28 +59,28 @@ public interface Currency {
     int getRoundedDigits();
 
     /**
-     * @author lokka30
+     * @author lokka30, Geolykt
      * @since v1.0.0
      * Get the starting balance of the currency.
      * The player UUID is nullable, it should be specified if the starting balance
      * concerns a PlayerAccount.
      * The world name is NOT nullable, if no world name is applicable then specify
-     * an empty string, where the economy provider is expected to supply a 'global'
+     * null, where the economy provider is expected to supply a 'global'
      * balance instead.
-     * @param playerUUID a UUID of the player account concerned, otherwise, specify `null`.
-     * @param worldName a non-null world name. Use an empty string if no world name is applicable.
+     * @param playerUUID a UUID of the player account concerned. For global scenarios, specify `null`.
+     * @param worldId of the world. For global scenarios, specify `null`.
      * @return the starting balance of the currency concerning specified player's UUID and world name.
      */
-    double getStartingBalance(@Nullable UUID playerUUID, @NotNull String worldName);
+    double getStartingBalance(@Nullable UUID playerUUID, @Nullable UUID worldId);
 
     /**
      * Gets a human-readable format of the balance.
      * For example, '$1.50' or '1.50 dollars' or 'One dollar and fifty cents'.
      * @param amount to be formatted.
      * @param locale of the formatted balance being requested.
-     * @throws NonZeroAmountException if the amount is BELOW zero.
+     * @throws NegativeAmountException if the amount is BELOW zero.
      * @return the human-readable format of the specified amount and locale.
      */
     @NotNull
-    String formatBalance(double amount, @NotNull Locale locale) throws NonZeroAmountException;
+    String formatBalance(double amount, @NotNull Locale locale) throws NegativeAmountException;
 }

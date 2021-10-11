@@ -19,7 +19,6 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.exception.AccountAlreadyExistsException;
 import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
 import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
-
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +74,7 @@ public interface EconomyProvider {
      * This method should be checked to see if the Provider
      * fully supports per-world balances. If the Provider does
      * not use per-world balances then it is guaranteed safe to
-     * specify empty Strings for world names in methods such as
+     * specify null UUIDs for worldId variables in methods such as
      * 'getBalance'.
      * @return whether the Provider supports per-world balances.
      */
@@ -139,6 +138,6 @@ public interface EconomyProvider {
     }
 
     @NotNull
-    UUID getPrimaryCurrencyId() throws InvalidCurrencyException;
+    UUID getPrimaryCurrencyId();
 
 }

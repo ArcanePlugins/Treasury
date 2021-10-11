@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author lokka30
+ * @author lokka30, MrNemo64
  * @since v1.0.0
  * @see Account
  * A Bank Account is an Account which is associated with a Player
@@ -41,14 +41,14 @@ public interface BankAccount extends Account {
     @NotNull UUID getOwningPlayerId();
 
     /**
-     * @author lokka30
+     * @author lokka30, MrNemo64
      * @since v1.0.0
      * Checks if a player owns the bank.
      * @param uuid of the player to check.
      * @return whether the player with specified UUID owns the bank.
      */
     default boolean isBankOwner(@NotNull UUID uuid) {
-        return getOwningPlayerId() == uuid;
+        return getOwningPlayerId().equals(uuid);
     }
 
     /**

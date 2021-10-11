@@ -12,6 +12,7 @@
 
 package me.lokka30.treasury.api.economy.conversion;
 
+@SuppressWarnings("unused")
 public enum ConversionPriority {
 
     LOWEST(0),

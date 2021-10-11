@@ -159,15 +159,15 @@ public class MigrateSubcommand implements Subcommand {
                 }
 
                 for(String currencyId : migratedCurrencies.keySet()) {
-                    final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                    final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance(null, from.getCurrency(currencyId)));
 
-                    from.getPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
-                    to.getPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
+                    from.getPlayerAccount(uuid).withdrawBalance(balance, null, from.getCurrency(currencyId));
+                    to.getPlayerAccount(uuid).depositBalance(balance, null, to.getCurrency(currencyId));
                 }
 
                 playerAccountsProcessed++;
             }
-        } catch(AccountAlreadyExistsException | InvalidCurrencyException | NonZeroAmountException | OversizedWithdrawalException ex) {
+        } catch(AccountAlreadyExistsException | InvalidCurrencyException | NegativeAmountException | OversizedWithdrawalException ex) {
             // these should be impossible
             ex.printStackTrace();
             new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
@@ -187,15 +187,15 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final double balance = Utils.ensureAtLeastZero(from.getNonPlayerAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final double balance = Utils.ensureAtLeastZero(from.getNonPlayerAccount(uuid).getBalance(null, from.getCurrency(currencyId)));
 
-                        from.getNonPlayerAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
-                        to.getNonPlayerAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
+                        from.getNonPlayerAccount(uuid).withdrawBalance(balance, null, from.getCurrency(currencyId));
+                        to.getNonPlayerAccount(uuid).depositBalance(balance, null, to.getCurrency(currencyId));
                     }
 
                     nonPlayerAccountsProcessed++;
                 }
-            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | NonZeroAmountException | OversizedWithdrawalException ex) {
+            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | NegativeAmountException | OversizedWithdrawalException ex) {
                 // these should be impossible
                 ex.printStackTrace();
                 new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
@@ -216,15 +216,15 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance("", from.getCurrency(currencyId)));
+                        final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance(null, from.getCurrency(currencyId)));
 
-                        from.getBankAccount(uuid).withdrawBalance(balance, "", from.getCurrency(currencyId));
-                        to.getBankAccount(uuid).depositBalance(balance, "", to.getCurrency(currencyId));
+                        from.getBankAccount(uuid).withdrawBalance(balance, null, from.getCurrency(currencyId));
+                        to.getBankAccount(uuid).depositBalance(balance, null, to.getCurrency(currencyId));
                     }
 
                     bankAccountsProcessed++;
                 }
-            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | NonZeroAmountException | OversizedWithdrawalException ex) {
+            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | NegativeAmountException | OversizedWithdrawalException ex) {
                 // these should be impossible
                 ex.printStackTrace();
                 new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(

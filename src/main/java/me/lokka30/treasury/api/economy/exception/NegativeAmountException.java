@@ -15,10 +15,10 @@ package me.lokka30.treasury.api.economy.exception;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class NonZeroAmountException extends RuntimeException {
+public class NegativeAmountException extends RuntimeException {
 
     private final double amount;
-    public NonZeroAmountException(final double amount) { this.amount = amount; }
+    public NegativeAmountException(final double amount) { this.amount = amount; }
 
     public double getAmount() { return amount; }
 

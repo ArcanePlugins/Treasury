@@ -13,11 +13,14 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.NonZeroAmountException;
+import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
- * @author lokka30
+ * @author lokka30, Geolykt
  * @since v1.0.0
  * @see Account
  * A PlayerAccount is an Account owned by a Player.
@@ -33,17 +36,17 @@ public interface PlayerAccount extends Account {
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#resetBalance(String, Currency)
+     * @see Account#resetBalance(UUID, Currency)
      * Resets the player's balance. Unlike resetting balances of non-player
      * and bank accounts, resetting a player account's balance will set the
      * player's balance to the 'starting balance' of the currency (other
      * accounts set it to zero instead). This is why the overriden method exists.
-     * @param worldName world name, or an empty string
+     * @param worldId of the world, or 'null' to reset globally
      * @param currency of the balance being reset
      */
     @Override
-    default void resetBalance(@NotNull String worldName, @NotNull Currency currency) throws NonZeroAmountException {
-        setBalance(currency.getStartingBalance(null, ""), worldName, currency);
+    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException {
+        setBalance(currency.getStartingBalance(null, worldId), worldId, currency);
     }
 
 }

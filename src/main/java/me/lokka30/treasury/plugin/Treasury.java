@@ -42,7 +42,7 @@ public class Treasury extends JavaPlugin {
     /**
      * Any contributors to Treasury may add their name here! :)
      */
-    @NotNull public static final ArrayList<String> codeContributors = new ArrayList<>(Arrays.asList("lokka30", "Articdive"));
+    @NotNull public static final ArrayList<String> codeContributors = new ArrayList<>(Arrays.asList("lokka30", "Hugo5551", "Articdive", "Geolykt", "MrNemo64"));
 
     /**
      * This is Treasury's API version. (Not the same as api-version from plugin.yml!)
