@@ -48,7 +48,7 @@ public interface BankAccount extends Account {
      * @return whether the player with specified UUID owns the bank.
      */
     default boolean isBankOwner(@NotNull UUID uuid) {
-        return getOwningPlayerId().equals(uuid);
+        return getOwningPlayerId() == uuid;
     }
 
     /**
