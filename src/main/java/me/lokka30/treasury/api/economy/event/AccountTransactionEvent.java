@@ -20,22 +20,18 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class AccountTransactionEvent extends Event implements Cancellable {
+public class AccountTransactionEvent extends AccountEvent implements Cancellable {
 
     @NotNull private final Transaction transaction;
-    @NotNull private final Account account;
     private boolean isCancelled = false;
 
     public AccountTransactionEvent(@NotNull final Transaction transaction, @NotNull final Account account) {
+    	  super(account);
         this.transaction = transaction;
-        this.account = account;
     }
 
     @NotNull
     public Transaction getTransaction() { return transaction; }
-
-    @NotNull
-    public Account getAccount() { return account; }
 
     @Override
     public boolean isCancelled() {

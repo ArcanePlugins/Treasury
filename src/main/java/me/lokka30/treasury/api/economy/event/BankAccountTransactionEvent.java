@@ -24,6 +24,9 @@ public class BankAccountTransactionEvent extends AccountTransactionEvent {
         super(transaction, account);
     }
 
+    @Override
+    public @NotNull BankAccount getAccount() { return (BankAccount) super.getAccount(); }
+    
     public static HandlerList HANDLERS = new HandlerList();
 
     @NotNull

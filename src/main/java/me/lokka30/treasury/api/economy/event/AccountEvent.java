@@ -12,27 +12,29 @@
 
 package me.lokka30.treasury.api.economy.event;
 
-import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
-import me.lokka30.treasury.api.economy.transaction.Transaction;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
-public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
+import me.lokka30.treasury.api.economy.account.Account;
 
-    public NonPlayerAccountTransactionEvent(@NotNull Transaction transaction, @NotNull NonPlayerAccount account) {
-        super(transaction, account);
-    }
-    
-    @Override
-    public @NotNull NonPlayerAccount getAccount() { return (NonPlayerAccount) super.getAccount(); }
+public class AccountEvent extends Event {
 
-    public static HandlerList HANDLERS = new HandlerList();
+	@NotNull private final Account account;
+	
+	public AccountEvent(@NotNull final Account account) {
+		  this.account = account;
+	}
+	
+	@NotNull
+	public Account getAccount() { return account; }
 
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
+	public static HandlerList HANDLERS = new HandlerList();
+
+	@NotNull
+	@Override
+	public HandlerList getHandlers() {
+		  return HANDLERS;
+	}
 
 }
