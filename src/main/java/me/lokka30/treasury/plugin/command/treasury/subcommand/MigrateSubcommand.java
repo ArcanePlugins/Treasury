@@ -212,7 +212,15 @@ public class MigrateSubcommand implements Subcommand {
                     if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating bank account of UUID '&b" + uuid + "&7'.");
 
                     if(!to.hasBankAccount(uuid)) {
-                        to.createBankAccount(uuid, from.getBankAccount(uuid).getOwningPlayerId());
+                        to.createBankAccount(uuid);
+
+                        for(UUID ownerId : from.getBankAccount(uuid).getBankOwnersIds()) {
+                            to.getBankAccount(uuid).addBankOwner(ownerId);
+                        }
+
+                        for(UUID memberId : from.getBankAccount(uuid).getBankMembersIds()) {
+                            to.getBankAccount(uuid).addBankMember(memberId);
+                        }
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {

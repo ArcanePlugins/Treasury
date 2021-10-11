@@ -115,7 +115,7 @@ public interface EconomyProvider {
     @NotNull
     BankAccount getBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
-    void createBankAccount(@NotNull UUID accountId, @NotNull UUID owningPlayerId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
+    void createBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
 
     @NotNull
     List<UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;

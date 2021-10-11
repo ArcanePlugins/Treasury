@@ -10,43 +10,23 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.api.economy.event;
+package me.lokka30.treasury.api.economy.exception;
 
-import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.transaction.Transaction;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 @SuppressWarnings("unused")
-public class AccountTransactionEvent extends AccountEvent implements Cancellable {
+public class InvalidBankOwnerOperationException extends RuntimeException {
 
-    @NotNull private final Transaction transaction;
-    private boolean isCancelled = false;
-
-    public AccountTransactionEvent(@NotNull final Transaction transaction, @NotNull final Account account) {
-    	  super(account);
-        this.transaction = transaction;
-    }
+    @NotNull private final UUID memberUuid;
+    public InvalidBankOwnerOperationException(@NotNull final UUID memberUuid) { this.memberUuid = memberUuid; }
 
     @NotNull
-    public Transaction getTransaction() { return transaction; }
+    public UUID getMemberUuid() { return memberUuid; }
 
     @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean isCancelled) {
-        this.isCancelled = isCancelled;
-    }
-
-    public static HandlerList HANDLERS = new HandlerList();
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
+    public String getMessage() {
+        return "Attempted to add or remove bank owner of UUID '" + memberUuid + "' but they were already added or removed from the bank's owner list.";
     }
 }

@@ -13,9 +13,10 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.exception.InvalidBankMemberOperationException;
+import me.lokka30.treasury.api.economy.exception.InvalidBankOwnerOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -34,36 +35,24 @@ public interface BankAccount extends Account {
     /**
      * @author lokka30
      * @since v1.0.0
-     * Bank accounts are owned by players. The owner
-     * of a bankcan be changed at any point.
-     * @return the UUID of the bank's owning player.
+     * Get a list of each UUID of each member of this bank.
+     * @return the list of UUIDs.
      */
-    @NotNull UUID getOwningPlayerId();
-
-    /**
-     * @author lokka30, MrNemo64
-     * @since v1.0.0
-     * Checks if a player owns the bank.
-     * @param ownerId of the player to check.
-     * @return whether the player with specified UUID owns the bank.
-     */
-    default boolean isBankOwner(@NotNull UUID ownerId) {
-        return getOwningPlayerId().equals(ownerId);
-    }
+    @NotNull Set<UUID> getBankMembersIds();
 
     /**
      * @author lokka30
      * @since v1.0.0
-     * Get a list of each UUID of each member of this bank.
+     * Get a list of each UUID of each owner of this bank.
      * @return the list of UUIDs.
      */
-    @NotNull List<UUID> getBankMembersIds();
+    @NotNull Set<UUID> getBankOwnersIds();
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Check if the specified player is a member of the banks.
-     * @param memberId of the player to check.
+     * @param memberId is the uuid of the player to check.
      * @return whether the player is a member of the bank.
      */
     default boolean isBankMember(@NotNull UUID memberId) {
@@ -73,16 +62,43 @@ public interface BankAccount extends Account {
     /**
      * @author lokka30
      * @since v1.0.0
+     * Check if the specified player is a member of the banks.
+     * @param ownerId is the uuid of the player to check.
+     * @return whether the player is a member of the bank.
+     */
+    default boolean isBankOwner(@NotNull UUID ownerId) {
+        return getBankOwnersIds().contains(ownerId);
+    }
+
+    /**
+     * @author lokka30
+     * @since v1.0.0
      * Makes a player a member of the bank.
-     * @param memberId of the player to make a member of the bank.
+     * @param memberId is the uuid of the player to make a member of the bank.
      */
     void addBankMember(@NotNull UUID memberId) throws InvalidBankMemberOperationException;
 
     /**
      * @author lokka30
      * @since v1.0.0
+     * Makes a player a owner of the bank.
+     * @param ownerId is the uuid of the player to make a owner of the bank.
+     */
+    void addBankOwner(@NotNull UUID ownerId) throws InvalidBankOwnerOperationException;
+
+    /**
+     * @author lokka30
+     * @since v1.0.0
      * Makes a player no longer a member of the bank.
-     * @param memberId of the player to remove the member status of in the bank.
+     * @param memberId is the uuid of the player to remove the member status of in the bank.
      */
     void removeBankMember(@NotNull UUID memberId) throws InvalidBankMemberOperationException;
+
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Makes a player no longer a member of the bank.
+     * @param ownerId is the uuid of the player to remove the owner status of in the bank.
+     */
+    void removeBankOwner(@NotNull UUID ownerId) throws InvalidBankOwnerOperationException;
 }
