@@ -44,11 +44,11 @@ public interface BankAccount extends Account {
      * @author lokka30, MrNemo64
      * @since v1.0.0
      * Checks if a player owns the bank.
-     * @param uuid of the player to check.
+     * @param ownerId of the player to check.
      * @return whether the player with specified UUID owns the bank.
      */
-    default boolean isBankOwner(@NotNull UUID uuid) {
-        return getOwningPlayerId().equals(uuid);
+    default boolean isBankOwner(@NotNull UUID ownerId) {
+        return getOwningPlayerId().equals(ownerId);
     }
 
     /**
@@ -63,26 +63,26 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @since v1.0.0
      * Check if the specified player is a member of the banks.
-     * @param uuid of the player to check.
+     * @param memberId of the player to check.
      * @return whether the player is a member of the bank.
      */
-    default boolean isBankMember(@NotNull UUID uuid) {
-        return getBankMembersIds().contains(uuid);
+    default boolean isBankMember(@NotNull UUID memberId) {
+        return getBankMembersIds().contains(memberId);
     }
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Makes a player a member of the bank.
-     * @param uuid of the player to make a member of the bank.
+     * @param memberId of the player to make a member of the bank.
      */
-    void addBankMember(@NotNull UUID uuid) throws InvalidBankMemberOperationException;
+    void addBankMember(@NotNull UUID memberId) throws InvalidBankMemberOperationException;
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Makes a player no longer a member of the bank.
-     * @param uuid of the player to remove the member status of in the bank.
+     * @param memberId of the player to remove the member status of in the bank.
      */
-    void removeBankMember(@NotNull UUID uuid) throws InvalidBankMemberOperationException;
+    void removeBankMember(@NotNull UUID memberId) throws InvalidBankMemberOperationException;
 }
