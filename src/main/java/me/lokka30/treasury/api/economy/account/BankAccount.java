@@ -16,7 +16,7 @@ import me.lokka30.treasury.api.economy.exception.InvalidBankMemberOperationExcep
 import me.lokka30.treasury.api.economy.exception.InvalidBankOwnerOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -38,7 +38,7 @@ public interface BankAccount extends Account {
      * Get a list of each UUID of each member of this bank.
      * @return the list of UUIDs.
      */
-    @NotNull Set<UUID> getBankMembersIds();
+    @NotNull Collection<? extends UUID> getBankMembersIds();
 
     /**
      * @author lokka30
@@ -46,7 +46,7 @@ public interface BankAccount extends Account {
      * Get a list of each UUID of each owner of this bank.
      * @return the list of UUIDs.
      */
-    @NotNull Set<UUID> getBankOwnersIds();
+    @NotNull Collection<? extends UUID> getBankOwnersIds();
 
     /**
      * @author lokka30

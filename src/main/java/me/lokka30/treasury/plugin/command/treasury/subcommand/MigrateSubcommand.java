@@ -118,7 +118,6 @@ public class MigrateSubcommand implements Subcommand {
         final QuickTimer timer = new QuickTimer();
 
         int playerAccountsProcessed = 0;
-        int nonPlayerAccountsProcessed = 0;
         int bankAccountsProcessed = 0;
 
         HashMap<String, Currency> migratedCurrencies = new HashMap<>();
@@ -176,35 +175,6 @@ public class MigrateSubcommand implements Subcommand {
             return;
         }
 
-        /* Migrate non-player accounts */
-        if(from.hasNonPlayerAccountSupport() && to.hasNonPlayerAccountSupport()) {
-            try {
-                for(UUID uuid : from.getNonPlayerAccountIds()) {
-                    if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating non-player account of UUID '&b" + uuid + "&7'.");
-
-                    if(!to.hasNonPlayerAccount(uuid)) {
-                        to.createNonPlayerAccount(uuid);
-                    }
-
-                    for(String currencyId : migratedCurrencies.keySet()) {
-                        final double balance = Utils.ensureAtLeastZero(from.getNonPlayerAccount(uuid).getBalance(null, from.getCurrency(currencyId)));
-
-                        from.getNonPlayerAccount(uuid).withdrawBalance(balance, null, from.getCurrency(currencyId));
-                        to.getNonPlayerAccount(uuid).depositBalance(balance, null, to.getCurrency(currencyId));
-                    }
-
-                    nonPlayerAccountsProcessed++;
-                }
-            } catch(UnsupportedEconomyFeatureException | InvalidCurrencyException | AccountAlreadyExistsException | NegativeAmountException | OversizedWithdrawalException ex) {
-                // these should be impossible
-                ex.printStackTrace();
-                new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
-                        new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-                ));
-                return;
-            }
-        }
-
         /* Migrate bank accounts */
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
             try {
@@ -246,7 +216,6 @@ public class MigrateSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
                 new MultiMessage.Placeholder("time", timer.getTimer() + "", false),
                 new MultiMessage.Placeholder("player-accounts", playerAccountsProcessed + "", false),
-                new MultiMessage.Placeholder("non-player-accounts", nonPlayerAccountsProcessed + "", false),
                 new MultiMessage.Placeholder("bank-accounts", bankAccountsProcessed + "", false),
                 new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, new ArrayList<>(migratedCurrencies.keySet())), false),
                 new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, new ArrayList<>(nonMigratedCurrencies)), false)

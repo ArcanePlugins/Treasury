@@ -26,7 +26,6 @@ import java.util.UUID;
  * @since v1.0.0
  * @see EconomyProvider
  * @see PlayerAccount
- * @see NonPlayerAccount
  * @see BankAccount
  * An Account is something that holds a balance and is associated with
  * something bound by a UUID. For example, a PlayerAccount is bound to

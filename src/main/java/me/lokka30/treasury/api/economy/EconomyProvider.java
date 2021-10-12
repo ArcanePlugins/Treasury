@@ -13,7 +13,6 @@
 package me.lokka30.treasury.api.economy;
 
 import me.lokka30.treasury.api.economy.account.BankAccount;
-import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.exception.AccountAlreadyExistsException;
@@ -22,7 +21,7 @@ import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureExcept
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -49,15 +48,6 @@ public interface EconomyProvider {
      * @return which API version of Treasury the Provider is based on.
      */
     EconomyAPIVersion getSupportedAPIVersion();
-
-    /**
-     * @author lokka30
-     * @since v1.0.0
-     * This method should be asserted before any Non-Player Account
-     * methods are accessed through the Treasury API.
-     * @return whether the Provider supports non-player accounts.
-     */
-    boolean hasNonPlayerAccountSupport();
 
     /**
      * @author lokka30
@@ -90,25 +80,7 @@ public interface EconomyProvider {
     void createPlayerAccount(@NotNull UUID accountId) throws AccountAlreadyExistsException;
 
     @NotNull
-    List<UUID> getPlayerAccountIds();
-
-    /**
-     * @author lokka30
-     * @since v1.0.0
-     * @throws UnsupportedEconomyFeatureException if the Provider does not support this method, as indicated by `EconomyProvider#hasNonPlayerAccountSupport`.
-     * Check if the non-player account exists under the specified UUID.
-     * @param accountId uuid of the non-player account to check.
-     * @return whether the non-player account exists.
-     */
-    boolean hasNonPlayerAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
-
-    @NotNull
-    NonPlayerAccount getNonPlayerAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
-
-    void createNonPlayerAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
-
-    @NotNull
-    List<UUID> getNonPlayerAccountIds() throws UnsupportedEconomyFeatureException;
+    Collection<? extends UUID> getPlayerAccountIds();
 
     boolean hasBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
@@ -118,13 +90,13 @@ public interface EconomyProvider {
     void createBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
 
     @NotNull
-    List<UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;
+    Collection<? extends UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;
 
     @NotNull
-    List<UUID> getCurrencyIds();
+    Collection<? extends UUID> getCurrencyIds();
 
     @NotNull
-    List<String> getCurrencyNames();
+    Collection<? extends String> getCurrencyNames();
 
     @NotNull
     Currency getCurrency(UUID currencyId) throws InvalidCurrencyException;
