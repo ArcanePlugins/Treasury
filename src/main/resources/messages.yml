@@ -34,7 +34,6 @@ common:
   states:
     yes: '&aYes'
     no: '&cNo'
-    unknown: '&cUnknown'
 
   # The delimiter used in lists of things - this separates each list term.
   # For example, the non-colorized version of a list can look like:
@@ -80,13 +79,13 @@ commands:
         invalid-usage:
           - '%prefix% Invalid usage, try ''&b/%label% info&7''.'
 
-        # Placeholders: %prefix%, %version%, %description%, %contributors%,
+        # Placeholders: %prefix%, %version%, %description%, %credits%,
         #               %latest-api-version%, %repository%
         treasury:
           - '&f&nAbout Treasury'
           - '&8 &m->&7 Running &bTreasury v%version%'
           - '&8 &m->&7 Description: &b%description%'
-          - '&8 &m->&7 Contributors: &b%contributors%'
+          - '&8 &m->&7 Made possible by: &bSee &n%credits%'
           - '&8 &m->&7 Latest API Version: &b%latest-api-version%'
           - '&8 &m->&7 Learn more at: &b&n%repository%'
           - ' '

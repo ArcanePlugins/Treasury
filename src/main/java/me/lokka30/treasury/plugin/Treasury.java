@@ -26,8 +26,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author lokka30
@@ -38,11 +36,6 @@ import java.util.Arrays;
  */
 @SuppressWarnings("unused")
 public class Treasury extends JavaPlugin {
-
-    /**
-     * Any contributors to Treasury may add their name here! :)
-     */
-    @NotNull public static final ArrayList<String> codeContributors = new ArrayList<>(Arrays.asList("lokka30", "Hugo5551", "Articdive", "Geolykt", "MrNemo64"));
 
     /**
      * This is Treasury's API version. (Not the same as api-version from plugin.yml!)

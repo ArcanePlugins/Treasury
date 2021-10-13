@@ -14,7 +14,6 @@ package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
 import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.misc.Utils;
@@ -55,7 +54,7 @@ public class InfoSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
                 new MultiMessage.Placeholder("version", main.getDescription().getVersion(), false),
                 new MultiMessage.Placeholder("description", main.getDescription().getDescription(), false),
-                new MultiMessage.Placeholder("contributors", Utils.formatListMessage(main, Treasury.codeContributors), false),
+                new MultiMessage.Placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits", false),
                 new MultiMessage.Placeholder("latest-api-version", Treasury.ECONOMY_API_VERSION.getNumber() + "", false),
                 new MultiMessage.Placeholder("repository", "https://github.com/lokka30/Treasury/", false)
         ));
@@ -69,13 +68,6 @@ public class InfoSubcommand implements Subcommand {
         } else {
             final EconomyProvider provider = registeredServiceProvider.getProvider();
 
-            String primaryCurrencyName;
-            try {
-                primaryCurrencyName = provider.getPrimaryCurrency().getCurrencyName();
-            } catch(InvalidCurrencyException ex) {
-                primaryCurrencyName = main.messagesCfg.getConfig().getString("common.states.unknown", "&cUnknown");
-            }
-
             new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.economy-provider-available"), Arrays.asList(
                     new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
                     new MultiMessage.Placeholder("name", provider.getProvider().getName(), false),
@@ -84,7 +76,7 @@ public class InfoSubcommand implements Subcommand {
                     new MultiMessage.Placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(main, provider.hasBankAccountSupport()), true),
                     new MultiMessage.Placeholder("supports-per-world-balances", Utils.getYesNoStateMessage(main, provider.hasPerWorldBalanceSupport()), true),
                     new MultiMessage.Placeholder("supports-transaction-events", Utils.getYesNoStateMessage(main, provider.hasTransactionEventSupport()), true),
-                    new MultiMessage.Placeholder("primary-currency", primaryCurrencyName, true)
+                    new MultiMessage.Placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName(), true)
             ));
         }
 

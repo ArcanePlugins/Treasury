@@ -12,7 +12,6 @@
 
 package me.lokka30.treasury.api.economy.currency;
 
-import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,9 +77,8 @@ public interface Currency {
      * For example, '$1.50' or '1.50 dollars' or 'One dollar and fifty cents'.
      * @param amount to be formatted.
      * @param locale of the formatted balance being requested.
-     * @throws NegativeAmountException if the amount is BELOW zero.
      * @return the human-readable format of the specified amount and locale.
      */
     @NotNull
-    String formatBalance(double amount, @NotNull Locale locale) throws NegativeAmountException;
+    String formatBalance(double amount, @NotNull Locale locale);
 }

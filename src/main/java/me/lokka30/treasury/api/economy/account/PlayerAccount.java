@@ -13,7 +13,6 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +44,7 @@ public interface PlayerAccount extends Account {
      * @param currency of the balance being reset
      */
     @Override
-    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException {
+    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
         setBalance(currency.getStartingBalance(null, worldId), worldId, currency);
     }
 

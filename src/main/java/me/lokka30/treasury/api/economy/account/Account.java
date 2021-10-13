@@ -14,8 +14,6 @@ package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
-import me.lokka30.treasury.api.economy.exception.OversizedWithdrawalException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,9 +61,8 @@ public interface Account {
      * @param amount of money the new balance will be.
      * @param worldId of the world to set the new balance in. Specify null to modify the global balance.
      * @param currency of the balance being set.
-     * @throws NegativeAmountException if the amount is BELOW zero.
      */
-    void setBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException;
+    void setBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -76,10 +73,8 @@ public interface Account {
      * @param amount of money the account's current balance should be reduced by.
      * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
-     * @throws NegativeAmountException if the amount is AT OR BELOW zero.
-     * @throws OversizedWithdrawalException if the NEW BALANCE is BELOW zero.
      */
-    void withdrawBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException, OversizedWithdrawalException;
+    void withdrawBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30
@@ -90,9 +85,8 @@ public interface Account {
      * @param amount of money the account's current balance should be increased by.
      * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
-     * @throws NegativeAmountException if the amount is AT OR BELOW zero.
      */
-    void depositBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException;
+    void depositBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -103,9 +97,8 @@ public interface Account {
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
      * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
-     * @throws NegativeAmountException if the balance being reset to is BELOW zero.
      */
-    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException {
+    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
         setBalance(0.0d, worldId, currency);
     }
 
@@ -119,13 +112,8 @@ public interface Account {
      * @param worldId of the world of the balance being requested in. Specify null to reference the global balance.
      * @param currency of the balance being requested.
      * @return whether the Account can afford the withdrawal.
-     * @throws NegativeAmountException if the akmount is AT OR BELOW zero.
      */
-    default boolean canAfford(double amount, @Nullable UUID worldId, @NotNull Currency currency) throws NegativeAmountException {
-
-        // amounts must be non-zero values
-        if(amount <= 0) throw new NegativeAmountException(amount);
-
+    default boolean canAfford(double amount, @Nullable UUID worldId, @NotNull Currency currency) {
         return getBalance(worldId, currency) >= amount;
     }
 

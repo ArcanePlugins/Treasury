@@ -16,7 +16,7 @@ import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.*;
+import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.debug.DebugCategory;
@@ -39,6 +39,7 @@ public class MigrateSubcommand implements Subcommand {
     @NotNull private final Treasury main;
     public MigrateSubcommand(@NotNull final Treasury main) { this.main = main; }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         final boolean debugEnabled = main.debugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
@@ -125,16 +126,7 @@ public class MigrateSubcommand implements Subcommand {
 
         for(String currencyId : from.getCurrencyNames()) {
             if(to.getCurrencyNames().contains(currencyId)) {
-                try {
-                    migratedCurrencies.put(currencyId, to.getCurrency(currencyId));
-                } catch(InvalidCurrencyException ex) {
-                    // this should be impossible
-                    ex.printStackTrace();
-                    new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
-                            new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-                    ));
-                    continue;
-                }
+                migratedCurrencies.put(currencyId, to.getCurrency(currencyId));
 
                 if(debugEnabled) {
                     main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + currencyId + "&7' will be migrated.");
@@ -149,30 +141,21 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         /* Migrate player accounts */
-        try {
-            for(UUID uuid : from.getPlayerAccountIds()) {
-                if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating player account of UUID '&b" + uuid + "&7'.");
+        for(UUID uuid : from.getPlayerAccountIds()) {
+            if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating player account of UUID '&b" + uuid + "&7'.");
 
-                if(!to.hasPlayerAccount(uuid)) {
-                    to.createPlayerAccount(uuid);
-                }
-
-                for(String currencyId : migratedCurrencies.keySet()) {
-                    final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance(null, from.getCurrency(currencyId)));
-
-                    from.getPlayerAccount(uuid).withdrawBalance(balance, null, from.getCurrency(currencyId));
-                    to.getPlayerAccount(uuid).depositBalance(balance, null, to.getCurrency(currencyId));
-                }
-
-                playerAccountsProcessed++;
+            if(!to.hasPlayerAccount(uuid)) {
+                to.createPlayerAccount(uuid);
             }
-        } catch(AccountAlreadyExistsException | InvalidCurrencyException | NegativeAmountException | OversizedWithdrawalException ex) {
-            // these should be impossible
-            ex.printStackTrace();
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-            ));
-            return;
+
+            for(String currencyId : migratedCurrencies.keySet()) {
+                final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
+
+                from.getPlayerAccount(uuid).withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
+                to.getPlayerAccount(uuid).depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
+            }
+
+            playerAccountsProcessed++;
         }
 
         /* Migrate bank accounts */
@@ -194,15 +177,15 @@ public class MigrateSubcommand implements Subcommand {
                     }
 
                     for(String currencyId : migratedCurrencies.keySet()) {
-                        final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance(null, from.getCurrency(currencyId)));
+                        final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
 
-                        from.getBankAccount(uuid).withdrawBalance(balance, null, from.getCurrency(currencyId));
-                        to.getBankAccount(uuid).depositBalance(balance, null, to.getCurrency(currencyId));
+                        from.getBankAccount(uuid).withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
+                        to.getBankAccount(uuid).depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
                     }
 
                     bankAccountsProcessed++;
                 }
-            } catch(AccountAlreadyExistsException | UnsupportedEconomyFeatureException | InvalidCurrencyException | NegativeAmountException | OversizedWithdrawalException ex) {
+            } catch(UnsupportedEconomyFeatureException ex) {
                 // these should be impossible
                 ex.printStackTrace();
                 new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(

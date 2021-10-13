@@ -12,8 +12,6 @@
 
 package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.economy.exception.InvalidBankMemberOperationException;
-import me.lokka30.treasury.api.economy.exception.InvalidBankOwnerOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -76,7 +74,7 @@ public interface BankAccount extends Account {
      * Makes a player a member of the bank.
      * @param memberId is the uuid of the player to make a member of the bank.
      */
-    void addBankMember(@NotNull UUID memberId) throws InvalidBankMemberOperationException;
+    void addBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
@@ -84,7 +82,7 @@ public interface BankAccount extends Account {
      * Makes a player a owner of the bank.
      * @param ownerId is the uuid of the player to make a owner of the bank.
      */
-    void addBankOwner(@NotNull UUID ownerId) throws InvalidBankOwnerOperationException;
+    void addBankOwner(@NotNull UUID ownerId);
 
     /**
      * @author lokka30
@@ -92,7 +90,7 @@ public interface BankAccount extends Account {
      * Makes a player no longer a member of the bank.
      * @param memberId is the uuid of the player to remove the member status of in the bank.
      */
-    void removeBankMember(@NotNull UUID memberId) throws InvalidBankMemberOperationException;
+    void removeBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
@@ -100,5 +98,5 @@ public interface BankAccount extends Account {
      * Makes a player no longer a member of the bank.
      * @param ownerId is the uuid of the player to remove the owner status of in the bank.
      */
-    void removeBankOwner(@NotNull UUID ownerId) throws InvalidBankOwnerOperationException;
+    void removeBankOwner(@NotNull UUID ownerId);
 }

@@ -15,13 +15,13 @@ package me.lokka30.treasury.api.economy;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.AccountAlreadyExistsException;
-import me.lokka30.treasury.api.economy.exception.InvalidCurrencyException;
 import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -47,6 +47,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      * @return which API version of Treasury the Provider is based on.
      */
+    @NotNull
     EconomyAPIVersion getSupportedAPIVersion();
 
     /**
@@ -54,7 +55,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      * This method should be asserted before any Bank Account
      * methods are accessed through the Treasury API.
-     * @return whether the Provider supports bank accounts.
+     * @return whether the economy provider supports bank accounts.
      */
     boolean hasBankAccountSupport();
 
@@ -66,28 +67,38 @@ public interface EconomyProvider {
      * not use per-world balances then it is guaranteed safe to
      * specify null UUIDs for worldId variables in methods such as
      * 'getBalance'.
-     * @return whether the Provider supports per-world balances.
+     * @return whether the economy provider supports per-world balances.
      */
     boolean hasPerWorldBalanceSupport();
 
     boolean hasTransactionEventSupport();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * Some economy providers support negative / below-zero balances.
+     * This method allows economy consumers to check if
+     * the provider supports negative balances or not.
+     * @return whether the economy provider supports negative / below-zero balances.
+     */
+    boolean hasNegativeBalanceSupport();
+
     boolean hasPlayerAccount(@NotNull UUID accountId);
 
-    @NotNull
+    @Nullable
     PlayerAccount getPlayerAccount(@NotNull UUID accountId);
 
-    void createPlayerAccount(@NotNull UUID accountId) throws AccountAlreadyExistsException;
+    void createPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
     Collection<? extends UUID> getPlayerAccountIds();
 
     boolean hasBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
-    @NotNull
+    @Nullable
     BankAccount getBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
-    void createBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException, AccountAlreadyExistsException;
+    void createBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
 
     @NotNull
     Collection<? extends UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;
@@ -98,15 +109,15 @@ public interface EconomyProvider {
     @NotNull
     Collection<? extends String> getCurrencyNames();
 
-    @NotNull
-    Currency getCurrency(UUID currencyId) throws InvalidCurrencyException;
+    @Nullable
+    Currency getCurrency(UUID currencyId);
+
+    @Nullable
+    Currency getCurrency(String currencyName);
 
     @NotNull
-    Currency getCurrency(String currencyName) throws InvalidCurrencyException;
-
-    @NotNull
-    default Currency getPrimaryCurrency() throws InvalidCurrencyException {
-        return getCurrency(getPrimaryCurrencyId());
+    default Currency getPrimaryCurrency() {
+        return Objects.requireNonNull(getCurrency(getPrimaryCurrencyId()));
     }
 
     @NotNull

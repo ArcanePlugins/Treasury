@@ -13,7 +13,6 @@
 package me.lokka30.treasury.api.economy.conversion;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.NegativeAmountException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,8 +58,6 @@ public class CurrencyConverter {
     }
 
     public void registerConversion(@NotNull final Currency fromCurrency, @NotNull final Currency toCurrency, @NotNull final ConversionPriority priority, final double value) {
-        if(value <= -1) { throw new NegativeAmountException(value); }
-
         final int hashCode = getHashCodeOfCurrencies(fromCurrency, toCurrency);
         CurrencyConversion conversion = getConversion(hashCode);
 
