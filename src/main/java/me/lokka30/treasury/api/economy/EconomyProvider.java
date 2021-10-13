@@ -12,11 +12,12 @@
 
 package me.lokka30.treasury.api.economy;
 
-import me.lokka30.treasury.api.economy.account.BankAccount;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
+import me.lokka30.treasury.api.economy.response.BankAccountEconomyResponse;
+import me.lokka30.treasury.api.economy.response.BooleanEconomyResponse;
+import me.lokka30.treasury.api.economy.response.GenericEconomyResponse;
+import me.lokka30.treasury.api.economy.response.PlayerAccountEconomyResponse;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ import java.util.UUID;
  * a class which implements this interface and should then become a
  * `RegisteredServiceProvider<EconomyProvider>`.
  */
-@SuppressWarnings({"unused", "RedundantThrows"})
+@SuppressWarnings({"unused", "RedundantThrows", "UnusedReturnValue"})
 public interface EconomyProvider {
 
     /**
@@ -86,23 +87,34 @@ public interface EconomyProvider {
 
     boolean hasPlayerAccount(@NotNull UUID accountId);
 
-    @Nullable
-    PlayerAccount getPlayerAccount(@NotNull UUID accountId);
+    /*
+    Note for those interested -
+    May revert from Responses to Exceptions,
+    it seems very messy. It can likely be
+    cleaned up somewhat.
+     */
 
-    void createPlayerAccount(@NotNull UUID accountId);
+    @Nullable
+    PlayerAccountEconomyResponse getPlayerAccount(@NotNull UUID accountId);
+
+    @NotNull
+    GenericEconomyResponse createPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
     Collection<? extends UUID> getPlayerAccountIds();
 
-    boolean hasBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
-
-    @Nullable
-    BankAccount getBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
-
-    void createBankAccount(@NotNull UUID accountId) throws UnsupportedEconomyFeatureException;
+    @NotNull
+    BooleanEconomyResponse hasBankAccount(@NotNull UUID accountId);
 
     @NotNull
-    Collection<? extends UUID> getBankAccountIds() throws UnsupportedEconomyFeatureException;
+    BankAccountEconomyResponse getBankAccount(@NotNull UUID accountId);
+
+    @NotNull
+    GenericEconomyResponse createBankAccount(@NotNull UUID accountId);
+
+    // TODO: I haven't given this a Response since my thought is that providers can just return an empty list.
+    @NotNull
+    Collection<? extends UUID> getBankAccountIds();
 
     @NotNull
     Collection<? extends UUID> getCurrencyIds();

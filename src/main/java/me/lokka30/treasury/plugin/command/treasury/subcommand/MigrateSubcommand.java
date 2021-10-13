@@ -16,7 +16,6 @@ import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.exception.UnsupportedEconomyFeatureException;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.debug.DebugCategory;
@@ -149,10 +148,10 @@ public class MigrateSubcommand implements Subcommand {
             }
 
             for(String currencyId : migratedCurrencies.keySet()) {
-                final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
+                final double balance = Utils.ensureAtLeastZero(from.getPlayerAccount(uuid).get().getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
 
-                from.getPlayerAccount(uuid).withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
-                to.getPlayerAccount(uuid).depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
+                from.getPlayerAccount(uuid).get().withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
+                to.getPlayerAccount(uuid).get().depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
             }
 
             playerAccountsProcessed++;
@@ -160,38 +159,29 @@ public class MigrateSubcommand implements Subcommand {
 
         /* Migrate bank accounts */
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
-            try {
-                for(UUID uuid : from.getBankAccountIds()) {
-                    if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating bank account of UUID '&b" + uuid + "&7'.");
+            for(UUID uuid : from.getBankAccountIds()) {
+                if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating bank account of UUID '&b" + uuid + "&7'.");
 
-                    if(!to.hasBankAccount(uuid)) {
-                        to.createBankAccount(uuid);
+                if(!to.hasBankAccount(uuid).get()) {
+                    to.createBankAccount(uuid);
 
-                        for(UUID ownerId : from.getBankAccount(uuid).getBankOwnersIds()) {
-                            to.getBankAccount(uuid).addBankOwner(ownerId);
-                        }
-
-                        for(UUID memberId : from.getBankAccount(uuid).getBankMembersIds()) {
-                            to.getBankAccount(uuid).addBankMember(memberId);
-                        }
+                    for(UUID ownerId : from.getBankAccount(uuid).get().getBankOwnersIds()) {
+                        to.getBankAccount(uuid).get().addBankOwner(ownerId);
                     }
 
-                    for(String currencyId : migratedCurrencies.keySet()) {
-                        final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
-
-                        from.getBankAccount(uuid).withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
-                        to.getBankAccount(uuid).depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
+                    for(UUID memberId : from.getBankAccount(uuid).get().getBankMembersIds()) {
+                        to.getBankAccount(uuid).get().addBankMember(memberId);
                     }
-
-                    bankAccountsProcessed++;
                 }
-            } catch(UnsupportedEconomyFeatureException ex) {
-                // these should be impossible
-                ex.printStackTrace();
-                new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.internal-error"), Collections.singletonList(
-                        new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-                ));
-                return;
+
+                for(String currencyId : migratedCurrencies.keySet()) {
+                    final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).get().getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
+
+                    from.getBankAccount(uuid).get().withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
+                    to.getBankAccount(uuid).get().depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
+                }
+
+                bankAccountsProcessed++;
             }
         }
 

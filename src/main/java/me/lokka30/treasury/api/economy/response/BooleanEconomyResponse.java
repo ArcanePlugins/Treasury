@@ -12,6 +12,17 @@
 
 package me.lokka30.treasury.api.economy.response;
 
-public class Response {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+public class BooleanEconomyResponse extends GenericEconomyResponse {
+
+    private final boolean b;
+
+    public BooleanEconomyResponse(@NotNull final Type type, @Nullable final String errorMessage, final boolean b) {
+        super(type, errorMessage);
+        this.b = b;
+    }
+
+    public boolean get() { return b; }
 }
