@@ -13,6 +13,7 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,9 +44,12 @@ public interface PlayerAccount extends Account {
      * @param worldId of the world, or 'null' to reset globally
      * @param currency of the balance being reset
      */
+    @NotNull
     @Override
-    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
-        setBalance(currency.getStartingBalance(null, worldId), worldId, currency);
+    default EconomyResponse<Double> resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
+        final double newBalance = currency.getStartingBalance(null, worldId);
+        final EconomyResponse<Double> initialResponse = setBalance(newBalance, worldId, currency);
+        return new EconomyResponse<>(newBalance, initialResponse.getResult(), initialResponse.getErrorMessage());
     }
 
 }

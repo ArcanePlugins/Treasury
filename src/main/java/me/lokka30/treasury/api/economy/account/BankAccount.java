@@ -12,10 +12,12 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lokka30, MrNemo64
@@ -36,7 +38,8 @@ public interface BankAccount extends Account {
      * Get a list of each UUID of each member of this bank.
      * @return the list of UUIDs.
      */
-    @NotNull Collection<? extends UUID> getBankMembersIds();
+    @NotNull
+    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankMembersIds();
 
     /**
      * @author lokka30
@@ -44,7 +47,8 @@ public interface BankAccount extends Account {
      * Get a list of each UUID of each owner of this bank.
      * @return the list of UUIDs.
      */
-    @NotNull Collection<? extends UUID> getBankOwnersIds();
+    @NotNull
+    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankOwnersIds();
 
     /**
      * @author lokka30
@@ -53,9 +57,8 @@ public interface BankAccount extends Account {
      * @param memberId is the uuid of the player to check.
      * @return whether the player is a member of the bank.
      */
-    default boolean isBankMember(@NotNull UUID memberId) {
-        return getBankMembersIds().contains(memberId);
-    }
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> isBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
@@ -64,39 +67,46 @@ public interface BankAccount extends Account {
      * @param ownerId is the uuid of the player to check.
      * @return whether the player is a member of the bank.
      */
-    default boolean isBankOwner(@NotNull UUID ownerId) {
-        return getBankOwnersIds().contains(ownerId);
-    }
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> isBankOwner(@NotNull UUID ownerId);
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Makes a player a member of the bank.
      * @param memberId is the uuid of the player to make a member of the bank.
+     * @return whether the operation was successful.
      */
-    void addBankMember(@NotNull UUID memberId);
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> addBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Makes a player a owner of the bank.
      * @param ownerId is the uuid of the player to make a owner of the bank.
+     * @return whether the operation was successful.
      */
-    void addBankOwner(@NotNull UUID ownerId);
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> addBankOwner(@NotNull UUID ownerId);
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Makes a player no longer a member of the bank.
      * @param memberId is the uuid of the player to remove the member status of in the bank.
+     * @return whether the operation was successful.
      */
-    void removeBankMember(@NotNull UUID memberId);
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> removeBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
      * @since v1.0.0
      * Makes a player no longer a member of the bank.
      * @param ownerId is the uuid of the player to remove the owner status of in the bank.
+     * @return whether the operation was successful.
      */
-    void removeBankOwner(@NotNull UUID ownerId);
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> removeBankOwner(@NotNull UUID ownerId);
 }

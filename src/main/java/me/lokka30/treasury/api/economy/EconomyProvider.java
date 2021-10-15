@@ -12,19 +12,18 @@
 
 package me.lokka30.treasury.api.economy;
 
+import me.lokka30.treasury.api.economy.account.BankAccount;
+import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.response.BankAccountEconomyResponse;
-import me.lokka30.treasury.api.economy.response.BooleanEconomyResponse;
-import me.lokka30.treasury.api.economy.response.GenericEconomyResponse;
-import me.lokka30.treasury.api.economy.response.PlayerAccountEconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lokka30
@@ -73,6 +72,17 @@ public interface EconomyProvider {
      */
     boolean hasPerWorldBalanceSupport();
 
+    /**
+     * @author lokka30
+     * @since v1.0.0
+     * This method returns whether the economy provider calls Treasury's
+     * in-built transaction events (see {@link me.lokka30.treasury.api.economy.event.AccountTransactionEvent}).
+     * This method should be asserted before a plugin tries to listen to
+     * Treasury's events, as otherwise the economy provider installed
+     * may not have transaction event support, and thus the events will
+     * never be called.
+     * @return whether the economy provider calls Treasury's in-built transaction events.
+     */
     boolean hasTransactionEventSupport();
 
     /**
@@ -85,52 +95,47 @@ public interface EconomyProvider {
      */
     boolean hasNegativeBalanceSupport();
 
-    boolean hasPlayerAccount(@NotNull UUID accountId);
-
-    /*
-    Note for those interested -
-    May revert from Responses to Exceptions,
-    it seems very messy. It can likely be
-    cleaned up somewhat.
-     */
-
-    @Nullable
-    PlayerAccountEconomyResponse getPlayerAccount(@NotNull UUID accountId);
+    @NotNull
+    CompletableFuture<EconomyResponse<Boolean>> hasPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
-    GenericEconomyResponse createPlayerAccount(@NotNull UUID accountId);
+    CompletableFuture<Optional<EconomyResponse<PlayerAccount>>>  getPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
-    Collection<? extends UUID> getPlayerAccountIds();
+    CompletableFuture<EconomyResponse<PlayerAccount>> createPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
-    BooleanEconomyResponse hasBankAccount(@NotNull UUID accountId);
+    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getPlayerAccountIds();
 
     @NotNull
-    BankAccountEconomyResponse getBankAccount(@NotNull UUID accountId);
+    CompletableFuture<EconomyResponse<Boolean>> hasBankAccount(@NotNull UUID accountId);
 
     @NotNull
-    GenericEconomyResponse createBankAccount(@NotNull UUID accountId);
-
-    // TODO: I haven't given this a Response since my thought is that providers can just return an empty list.
-    @NotNull
-    Collection<? extends UUID> getBankAccountIds();
+    CompletableFuture<Optional<EconomyResponse<BankAccount>>> getBankAccount(@NotNull UUID accountId);
 
     @NotNull
-    Collection<? extends UUID> getCurrencyIds();
+    CompletableFuture<EconomyResponse<BankAccount>> createBankAccount(@NotNull UUID accountId);
 
     @NotNull
-    Collection<? extends String> getCurrencyNames();
+    CompletableFuture<Optional<EconomyResponse<Collection<? extends UUID>>>> getBankAccountIds();
 
-    @Nullable
-    Currency getCurrency(UUID currencyId);
+    @NotNull
+    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getCurrencyIds();
 
-    @Nullable
-    Currency getCurrency(String currencyName);
+    @NotNull
+    CompletableFuture<EconomyResponse<Collection<? extends String>>> getCurrencyNames();
+
+    @NotNull
+    Optional<Currency> getCurrency(UUID currencyId);
+
+    @NotNull
+    Optional<Currency> getCurrency(String currencyName);
 
     @NotNull
     default Currency getPrimaryCurrency() {
-        return Objects.requireNonNull(getCurrency(getPrimaryCurrencyId()));
+        final Optional<Currency> primaryCurrency = getCurrency(getPrimaryCurrencyId());
+        assert primaryCurrency.isPresent();
+        return primaryCurrency.get();
     }
 
     @NotNull

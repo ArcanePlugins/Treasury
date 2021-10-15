@@ -14,6 +14,7 @@ package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,8 @@ public interface Account {
      * @param currency of the balance being requested.
      * @return the balance of the account in specified world with specified currency.
      */
-    double getBalance(@Nullable UUID worldId, @NotNull Currency currency);
+    @NotNull
+    EconomyResponse<Double> getBalance(@Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -61,8 +63,10 @@ public interface Account {
      * @param amount of money the new balance will be.
      * @param worldId of the world to set the new balance in. Specify null to modify the global balance.
      * @param currency of the balance being set.
+     * @return the account's new balance
      */
-    void setBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
+    @NotNull
+    EconomyResponse<Double> setBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -73,8 +77,10 @@ public interface Account {
      * @param amount of money the account's current balance should be reduced by.
      * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
+     * @return the account's new balance
      */
-    void withdrawBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
+    @NotNull
+    EconomyResponse<Double> withdrawBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30
@@ -85,8 +91,10 @@ public interface Account {
      * @param amount of money the account's current balance should be increased by.
      * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
+     * @return the account's new balance
      */
-    void depositBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
+    @NotNull
+    EconomyResponse<Double> depositBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -97,9 +105,12 @@ public interface Account {
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
      * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
+     * @return the account's new balance
      */
-    default void resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
-        setBalance(0.0d, worldId, currency);
+    @NotNull
+    default EconomyResponse<Double> resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
+        final EconomyResponse<Double> initialResponse = setBalance(0.0d, worldId, currency);
+        return new EconomyResponse<>(0.0d, initialResponse.getResult(), initialResponse.getErrorMessage());
     }
 
     /**
@@ -113,8 +124,10 @@ public interface Account {
      * @param currency of the balance being requested.
      * @return whether the Account can afford the withdrawal.
      */
-    default boolean canAfford(double amount, @Nullable UUID worldId, @NotNull Currency currency) {
-        return getBalance(worldId, currency) >= amount;
+    @NotNull
+    default EconomyResponse<Boolean> canAfford(double amount, @Nullable UUID worldId, @NotNull Currency currency) {
+        final EconomyResponse<Double> initialResponse = getBalance(worldId, currency);
+        return new EconomyResponse<>(initialResponse.getValue() >= amount, initialResponse.getResult(), initialResponse.getErrorMessage());
     }
 
     /**
@@ -122,8 +135,9 @@ public interface Account {
      * @since v1.0.0
      * Deletes the Account's data.
      * Providers should consider storing backups of deleted accounts.
-     * @throws UnsupportedOperationException if the Provider does not support the deletion of this Account.
+     * @return whether the deletion was successful or not.
      */
-    void deleteAccount() throws UnsupportedOperationException;
+    @NotNull
+    EconomyResponse<Boolean> deleteAccount();
 
 }

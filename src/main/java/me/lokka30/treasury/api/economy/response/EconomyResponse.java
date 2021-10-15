@@ -12,53 +12,57 @@
 
 package me.lokka30.treasury.api.economy.response;
 
-import me.lokka30.treasury.api.economy.EconomyProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GenericEconomyResponse {
+@SuppressWarnings("unused")
+public class EconomyResponse<T> {
 
-    public enum Type {
+    public enum Result {
 
         /**
+         * @since v1.0.0
+         * Use this constant if the method ran without any issues.
          * Method ran with no issues.
          */
         SUCCESS,
 
         /**
-         * Method resulted with somewhat success,
-         * although some issues occured.
-         * An error message should be provided.
+         * @since v1.0.0
+         * Use this constant if the method can't be ran in any capacity
+         * as the economy provider does not provide support for the method.
+         * It is paramount that plugins ensure that economy providers support
+         * certain methods (e.g. bank accounts) before attempting to access them.
          */
-        WARNING,
+        FAILURE_UNSUPPORTED,
 
         /**
-         * Method resulted in a complete failure.
-         * An error message should be provided.
+         * @since v1.0.0
+         * Use this constant if the method resulted in a complete failure,
+         * AND no other constant in this enum is applicable to the issue
+         * that occured. In this case, use this constant, and please
+         * submit a pull request or issue so that a future Treasury version
+         * can accomodate for this issue.
          */
-        FAILURE,
+        FAILURE_OTHER
 
-        /**
-         * Method resulted in a complete failure
-         * as the method is not supported by the
-         * economy provider. This should have
-         * already been indicated by the various
-         * 'isSupported' methods, such as
-         * {@link EconomyProvider#hasBankAccountSupport()}.
-         */
-        UNSUPPORTED
     }
 
-    @NotNull private final Type type;
+    @NotNull private final T value;
+    @NotNull private final Result result;
     @Nullable private final String errorMessage;
 
-    public GenericEconomyResponse(@NotNull final Type type, @Nullable final String errorMessage) {
-        this.type = type;
+    public EconomyResponse(@NotNull final T value, @NotNull final Result result, @Nullable final String errorMessage) {
+        this.value = value;
+        this.result = result;
         this.errorMessage = errorMessage;
     }
 
     @NotNull
-    public final Type getType() { return type; }
+    public final T getValue() { return value; }
+
+    @NotNull
+    public final Result getResult() { return result; }
 
     @Nullable
     public final String getErrorMessage() { return errorMessage; }
