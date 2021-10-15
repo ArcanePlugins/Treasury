@@ -98,14 +98,13 @@ commands:
 
         # Placeholders: %prefix%, %name%, %priority%, %api-version%,
         #               %supports-bank-accounts%, %primary-currency%,
-        #               %supports-per-world-balances%, %supports-transaction-events%
+        #               %supports-transaction-events%
         economy-provider-available:
           - '&f&nEconomy Provider'
           - '&8 &m->&7 Name: &b%name%'
           - '&8 &m->&7 Priority: &b%priority%'
           - '&8 &m->&7 API Version: &b%api-version%'
           - '&8 &m->&7 Supports bank accounts: &b%supports-bank-accounts%'
-          - '&8 &m->&7 Supports per-world balances: &b%supports-per-world-balances%'
           - '&8 &m->&7 Supports transaction events: &b%supports-transaction-events%'
           - '&8 &m->&7 Primary currency: &b%primary-currency%'
           - ' '

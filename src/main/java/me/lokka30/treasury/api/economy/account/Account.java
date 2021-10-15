@@ -47,7 +47,7 @@ public interface Account {
      * @see Account#setBalance(double, UUID, Currency)
      * Get the balance of the Account.
      * @param currency of the balance being requested.
-     * @return the balance of the account in specified world with specified currency.
+     * @return the balance of the account with specified currency.
      */
     @NotNull
     EconomyResponse<Double> getBalance(@NotNull Currency currency);
@@ -59,7 +59,6 @@ public interface Account {
      * Set the balance of the Account.
      * Specified amounts must be AT OR ABOVE zero.
      * @param amount of money the new balance will be.
-     * @param worldId of the world to set the new balance in. Specify null to modify the global balance.
      * @param currency of the balance being set.
      * @return the account's new balance
      */

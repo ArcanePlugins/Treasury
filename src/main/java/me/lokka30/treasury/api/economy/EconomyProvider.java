@@ -63,18 +63,6 @@ public interface EconomyProvider {
     /**
      * @author lokka30
      * @since v1.0.0
-     * This method should be checked to see if the Provider
-     * fully supports per-world balances. If the Provider does
-     * not use per-world balances then it is guaranteed safe to
-     * specify null UUIDs for worldId variables in methods such as
-     * 'getBalance'.
-     * @return whether the economy provider supports per-world balances.
-     */
-    boolean hasPerWorldBalanceSupport();
-
-    /**
-     * @author lokka30
-     * @since v1.0.0
      * This method returns whether the economy provider calls Treasury's
      * in-built transaction events (see {@link me.lokka30.treasury.api.economy.event.AccountTransactionEvent}).
      * This method should be asserted before a plugin tries to listen to

@@ -74,7 +74,6 @@ public class InfoSubcommand implements Subcommand {
                     new MultiMessage.Placeholder("priority", registeredServiceProvider.getPriority().toString(), false),
                     new MultiMessage.Placeholder("api-version", provider.getSupportedAPIVersion() + "", false),
                     new MultiMessage.Placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(main, provider.hasBankAccountSupport()), true),
-                    new MultiMessage.Placeholder("supports-per-world-balances", Utils.getYesNoStateMessage(main, provider.hasPerWorldBalanceSupport()), true),
                     new MultiMessage.Placeholder("supports-transaction-events", Utils.getYesNoStateMessage(main, provider.hasTransactionEventSupport()), true),
                     new MultiMessage.Placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName(), true)
             ));

@@ -63,14 +63,10 @@ public interface Currency {
      * Get the starting balance of the currency.
      * The player UUID is nullable, it should be specified if the starting balance
      * concerns a PlayerAccount.
-     * The world name is NOT nullable, if no world name is applicable then specify
-     * null, where the economy provider is expected to supply a 'global'
-     * balance instead.
      * @param playerUUID a UUID of the player account concerned. For global scenarios, specify `null`.
-     * @param worldId of the world. For global scenarios, specify `null`.
-     * @return the starting balance of the currency concerning specified player's UUID and world name.
+     * @return the starting balance of the currency concerning specified player's UUID.
      */
-    double getStartingBalance(@Nullable UUID playerUUID, @Nullable UUID worldId);
+    double getStartingBalance(@Nullable UUID playerUUID);
 
     /**
      * Gets a human-readable format of the balance.
