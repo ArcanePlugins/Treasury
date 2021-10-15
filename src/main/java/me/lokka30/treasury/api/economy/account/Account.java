@@ -44,7 +44,7 @@ public interface Account {
     /**
      * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#setBalance(double, UUID, Currency)
+     * @see Account#setBalance(double, Currency)
      * Get the balance of the Account.
      * @param currency of the balance being requested.
      * @return the balance of the account with specified currency.
@@ -68,7 +68,7 @@ public interface Account {
     /**
      * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#setBalance(double, UUID, Currency)
+     * @see Account#setBalance(double, Currency)
      * Withdraw an amount from the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be reduced by.
@@ -81,7 +81,7 @@ public interface Account {
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#setBalance(double, UUID, Currency)
+     * @see Account#setBalance(double, Currency)
      * Deposit an amount into the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be increased by.
@@ -94,7 +94,7 @@ public interface Account {
     /**
      * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see PlayerAccount#resetBalance(UUID, Currency)
+     * @see PlayerAccount#resetBalance(Currency)
      * @see Account#setBalance(double, Currency)
      * Sets the Account's balance to `BigDecimal.ZERO`.
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.

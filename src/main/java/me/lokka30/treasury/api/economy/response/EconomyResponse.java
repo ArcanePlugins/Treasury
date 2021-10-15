@@ -15,15 +15,16 @@ package me.lokka30.treasury.api.economy.response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+// TODO Javadoc
 @SuppressWarnings("unused")
 public class EconomyResponse<T> {
 
+    // TODO Javadoc
     public enum Result {
 
         /**
          * @since v1.0.0
          * Use this constant if the method ran without any issues.
-         * Method ran with no issues.
          */
         SUCCESS,
 
@@ -34,7 +35,42 @@ public class EconomyResponse<T> {
          * It is paramount that plugins ensure that economy providers support
          * certain methods (e.g. bank accounts) before attempting to access them.
          */
-        FAILURE_UNSUPPORTED,
+        FEATURE_NOT_SUPPORTED,
+
+        /* Accounts */
+
+        // TODO Javadoc
+        ACCOUNT_NOT_FOUND,
+
+        // TODO Javadoc
+        ACCOUNT_DELETION_NOT_SUPPORTED,
+
+        /* BankAccounts */
+
+        // TODO Javadoc
+        ALREADY_MEMBER_OF_BANK_ACCOUNT,
+
+        // TODO Javadoc
+        ALREADY_OWNER_OF_BANK_ACCOUNT,
+
+        // TODO Javadoc
+        ALREADY_NOT_MEMBER_OF_BANK_ACCOUNT,
+
+        // TODO Javadoc
+        ALREADY_NOT_OWNER_OF_BANK_ACCOUNT,
+
+        /* Balances */
+
+        // TODO Javadoc
+        NEGATIVE_BALANCES_NOT_SUPPORTED,
+
+        // TODO Javadoc
+        NEGATIVE_AMOUNT_SPECIFIED,
+
+        /* Currencies */
+
+        // TODO Javadoc
+        CURRENCY_NOT_FOUND,
 
         /**
          * @since v1.0.0
@@ -44,7 +80,7 @@ public class EconomyResponse<T> {
          * submit a pull request or issue so that a future Treasury version
          * can accomodate for this issue.
          */
-        FAILURE_OTHER
+        OTHER_FAILURE
 
     }
 
@@ -58,12 +94,15 @@ public class EconomyResponse<T> {
         this.errorMessage = errorMessage;
     }
 
+    // TODO Javadoc
     @NotNull
     public final T getValue() { return value; }
 
+    // TODO Javadoc
     @NotNull
     public final Result getResult() { return result; }
 
+    // TODO Javadoc
     @Nullable
     public final String getErrorMessage() { return errorMessage; }
 
