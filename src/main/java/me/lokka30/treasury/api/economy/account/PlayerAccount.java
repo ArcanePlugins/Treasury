@@ -15,9 +15,6 @@ package me.lokka30.treasury.api.economy.account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * @author lokka30, Geolykt
@@ -36,19 +33,18 @@ public interface PlayerAccount extends Account {
     /**
      * @author lokka30
      * @since v1.0.0
-     * @see Account#resetBalance(UUID, Currency)
+     * @see Account#resetBalance(Currency)
      * Resets the player's balance. Unlike resetting balances of non-player
      * and bank accounts, resetting a player account's balance will set the
      * player's balance to the 'starting balance' of the currency (other
      * accounts set it to zero instead). This is why the overriden method exists.
-     * @param worldId of the world, or 'null' to reset globally
      * @param currency of the balance being reset
      */
     @NotNull
     @Override
-    default EconomyResponse<Double> resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
-        final double newBalance = currency.getStartingBalance(null, worldId);
-        final EconomyResponse<Double> initialResponse = setBalance(newBalance, worldId, currency);
+    default EconomyResponse<Double> resetBalance(@NotNull Currency currency) {
+        final double newBalance = currency.getStartingBalance(null);
+        final EconomyResponse<Double> initialResponse = setBalance(newBalance, currency);
         return new EconomyResponse<>(newBalance, initialResponse.getResult(), initialResponse.getErrorMessage());
     }
 

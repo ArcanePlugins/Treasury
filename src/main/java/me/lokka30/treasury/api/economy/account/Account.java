@@ -16,7 +16,6 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -47,17 +46,16 @@ public interface Account {
      * @since v1.0.0
      * @see Account#setBalance(double, UUID, Currency)
      * Get the balance of the Account.
-     * @param worldId of the world to get the balance in. Specify null to get the global balance.
      * @param currency of the balance being requested.
      * @return the balance of the account in specified world with specified currency.
      */
     @NotNull
-    EconomyResponse<Double> getBalance(@Nullable UUID worldId, @NotNull Currency currency);
+    EconomyResponse<Double> getBalance(@NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#getBalance(UUID, Currency)
+     * @see Account#getBalance(Currency)
      * Set the balance of the Account.
      * Specified amounts must be AT OR ABOVE zero.
      * @param amount of money the new balance will be.
@@ -66,7 +64,7 @@ public interface Account {
      * @return the account's new balance
      */
     @NotNull
-    EconomyResponse<Double> setBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
+    EconomyResponse<Double> setBalance(double amount, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -75,12 +73,11 @@ public interface Account {
      * Withdraw an amount from the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be reduced by.
-     * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
      * @return the account's new balance
      */
     @NotNull
-    EconomyResponse<Double> withdrawBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
+    EconomyResponse<Double> withdrawBalance(double amount, @NotNull Currency currency);
 
     /**
      * @author lokka30
@@ -89,44 +86,41 @@ public interface Account {
      * Deposit an amount into the Account's balance.
      * Specified amounts must be ABOVE zero.
      * @param amount of money the account's current balance should be increased by.
-     * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
      * @return the account's new balance
      */
     @NotNull
-    EconomyResponse<Double> depositBalance(double amount, @Nullable UUID worldId, @NotNull Currency currency);
+    EconomyResponse<Double> depositBalance(double amount, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
      * @since v1.0.0
      * @see PlayerAccount#resetBalance(UUID, Currency)
-     * @see Account#setBalance(double, UUID, Currency)
+     * @see Account#setBalance(double, Currency)
      * Sets the Account's balance to `BigDecimal.ZERO`.
      * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
-     * @param worldId of the world to set the new balance in. Specify null to get the global balance.
      * @param currency of the balance being set.
      * @return the account's new balance
      */
     @NotNull
-    default EconomyResponse<Double> resetBalance(@Nullable UUID worldId, @NotNull Currency currency) {
-        final EconomyResponse<Double> initialResponse = setBalance(0.0d, worldId, currency);
+    default EconomyResponse<Double> resetBalance(@NotNull Currency currency) {
+        final EconomyResponse<Double> initialResponse = setBalance(0.0d, currency);
         return new EconomyResponse<>(0.0d, initialResponse.getResult(), initialResponse.getErrorMessage());
     }
 
     /**
      * @author lokka30, Geolykt
      * @since v1.0.0
-     * @see Account#getBalance(UUID, Currency)
+     * @see Account#getBalance(Currency)
      * Check if the Account can afford a withdrawal of a certain amount.
      * Specified amounts must be ABOVE zero.
      * @param amount of money proposed for withdrawal.
-     * @param worldId of the world of the balance being requested in. Specify null to reference the global balance.
      * @param currency of the balance being requested.
      * @return whether the Account can afford the withdrawal.
      */
     @NotNull
-    default EconomyResponse<Boolean> canAfford(double amount, @Nullable UUID worldId, @NotNull Currency currency) {
-        final EconomyResponse<Double> initialResponse = getBalance(worldId, currency);
+    default EconomyResponse<Boolean> canAfford(double amount, @NotNull Currency currency) {
+        final EconomyResponse<Double> initialResponse = getBalance(currency);
         return new EconomyResponse<>(initialResponse.getValue() >= amount, initialResponse.getResult(), initialResponse.getErrorMessage());
     }
 

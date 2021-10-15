@@ -38,7 +38,6 @@ public class MigrateSubcommand implements Subcommand {
     @NotNull private final Treasury main;
     public MigrateSubcommand(@NotNull final Treasury main) { this.main = main; }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         final boolean debugEnabled = main.debugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
