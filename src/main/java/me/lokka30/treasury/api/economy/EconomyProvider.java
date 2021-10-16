@@ -52,16 +52,16 @@ public interface EconomyProvider {
     EconomyAPIVersion getSupportedAPIVersion();
 
     /**
-     * @author lokka30
+     * @author lokka30, NoahvdAa
      * @since v1.0.0
      * This method should be asserted before any Bank Account
      * methods are accessed through the Treasury API.
      * @return whether the economy provider supports bank accounts.
      */
-    boolean hasBankAccountSupport();
+    default boolean hasBankAccountSupport() { return false; }
 
     /**
-     * @author lokka30
+     * @author lokka30, NoahvdAa
      * @since v1.0.0
      * This method returns whether the economy provider calls Treasury's
      * in-built transaction events (see {@link me.lokka30.treasury.api.economy.event.AccountTransactionEvent}).
@@ -71,17 +71,17 @@ public interface EconomyProvider {
      * never be called.
      * @return whether the economy provider calls Treasury's in-built transaction events.
      */
-    boolean hasTransactionEventSupport();
+    default boolean hasTransactionEventSupport() { return false; }
 
     /**
-     * @author lokka30
+     * @author lokka30, NoahvdAa
      * @since v1.0.0
      * Some economy providers support negative / below-zero balances.
      * This method allows economy consumers to check if
      * the provider supports negative balances or not.
      * @return whether the economy provider supports negative / below-zero balances.
      */
-    boolean hasNegativeBalanceSupport();
+    default boolean hasNegativeBalanceSupport() { return false; }
 
     @NotNull
     CompletableFuture<EconomyResponse<Boolean>> hasPlayerAccount(@NotNull UUID accountId);
