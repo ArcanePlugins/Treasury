@@ -19,9 +19,10 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -86,8 +87,8 @@ public interface EconomyProvider {
     @NotNull
     CompletableFuture<EconomyResponse<Boolean>> hasPlayerAccount(@NotNull UUID accountId);
 
-    @NotNull
-    CompletableFuture<Optional<EconomyResponse<PlayerAccount>>>  getPlayerAccount(@NotNull UUID accountId);
+    @Nullable
+    CompletableFuture<EconomyResponse<PlayerAccount>>  getPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
     CompletableFuture<EconomyResponse<PlayerAccount>> createPlayerAccount(@NotNull UUID accountId);
@@ -98,14 +99,14 @@ public interface EconomyProvider {
     @NotNull
     CompletableFuture<EconomyResponse<Boolean>> hasBankAccount(@NotNull UUID accountId);
 
-    @NotNull
-    CompletableFuture<Optional<EconomyResponse<BankAccount>>> getBankAccount(@NotNull UUID accountId);
+    @Nullable
+    CompletableFuture<EconomyResponse<BankAccount>> getBankAccount(@NotNull UUID accountId);
 
     @NotNull
     CompletableFuture<EconomyResponse<BankAccount>> createBankAccount(@NotNull UUID accountId);
 
-    @NotNull
-    CompletableFuture<Optional<EconomyResponse<Collection<? extends UUID>>>> getBankAccountIds();
+    @Nullable
+    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankAccountIds();
 
     @NotNull
     CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getCurrencyIds();
@@ -113,17 +114,15 @@ public interface EconomyProvider {
     @NotNull
     CompletableFuture<EconomyResponse<Collection<? extends String>>> getCurrencyNames();
 
-    @NotNull
-    Optional<Currency> getCurrency(UUID currencyId);
+    @Nullable
+    Currency getCurrency(UUID currencyId);
 
-    @NotNull
-    Optional<Currency> getCurrency(String currencyName);
+    @Nullable
+    Currency getCurrency(String currencyName);
 
     @NotNull
     default Currency getPrimaryCurrency() {
-        final Optional<Currency> primaryCurrency = getCurrency(getPrimaryCurrencyId());
-        assert primaryCurrency.isPresent();
-        return primaryCurrency.get();
+        return Objects.requireNonNull(getCurrency(getPrimaryCurrencyId()));
     }
 
     @NotNull
