@@ -16,7 +16,7 @@ import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.response.EconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomyPublisher;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lokka30
@@ -85,34 +84,34 @@ public interface EconomyProvider {
     default boolean hasNegativeBalanceSupport() { return false; }
 
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> hasPlayerAccount(@NotNull UUID accountId);
-
-    @Nullable
-    CompletableFuture<EconomyResponse<PlayerAccount>>  getPlayerAccount(@NotNull UUID accountId);
+    EconomyPublisher<Boolean> hasPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
-    CompletableFuture<EconomyResponse<PlayerAccount>> createPlayerAccount(@NotNull UUID accountId);
+    EconomyPublisher<PlayerAccount>  getPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getPlayerAccountIds();
+    EconomyPublisher<PlayerAccount> createPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> hasBankAccount(@NotNull UUID accountId);
-
-    @Nullable
-    CompletableFuture<EconomyResponse<BankAccount>> getBankAccount(@NotNull UUID accountId);
+    EconomyPublisher<Collection<UUID>> getPlayerAccountIds();
 
     @NotNull
-    CompletableFuture<EconomyResponse<BankAccount>> createBankAccount(@NotNull UUID accountId);
-
-    @Nullable
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankAccountIds();
+    EconomyPublisher<Boolean> hasBankAccount(@NotNull UUID accountId);
 
     @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getCurrencyIds();
+    EconomyPublisher<BankAccount> getBankAccount(@NotNull UUID accountId);
 
     @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends String>>> getCurrencyNames();
+    EconomyPublisher<BankAccount> createBankAccount(@NotNull UUID accountId);
+
+    @NotNull
+    EconomyPublisher<Collection<UUID>> getBankAccountIds();
+
+    @NotNull
+    Collection<UUID> getCurrencyIds();
+
+    @NotNull
+    Collection<String> getCurrencyNames();
 
     @Nullable
     Currency getCurrency(UUID currencyId);

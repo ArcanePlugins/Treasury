@@ -20,7 +20,6 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Utils {
 
@@ -77,7 +76,7 @@ public class Utils {
     }
 
     @NotNull
-    public static String formatListMessage(@NotNull final Treasury main, @NotNull final List<String> list) {
+    public static String formatListMessage(@NotNull final Treasury main, @NotNull final Iterable<String> list) {
         final String delimiter = MessageUtils.colorizeAll(main.messagesCfg.getConfig().getString("common.list-delimiter", "&7, &b"));
 
         return String.join(delimiter, list);

@@ -12,12 +12,11 @@
 
 package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.economy.response.EconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomyPublisher;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lokka30, MrNemo64
@@ -39,7 +38,7 @@ public interface BankAccount extends Account {
      * @return the list of UUIDs.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankMembersIds();
+    EconomyPublisher<Collection<UUID>> getBankMembersIds();
 
     /**
      * @author lokka30
@@ -48,7 +47,7 @@ public interface BankAccount extends Account {
      * @return the list of UUIDs.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankOwnersIds();
+    EconomyPublisher<Collection<UUID>> getBankOwnersIds();
 
     /**
      * @author lokka30
@@ -58,7 +57,7 @@ public interface BankAccount extends Account {
      * @return whether the player is a member of the bank.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> isBankMember(@NotNull UUID memberId);
+    EconomyPublisher<Boolean> isBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
@@ -68,7 +67,7 @@ public interface BankAccount extends Account {
      * @return whether the player is a member of the bank.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> isBankOwner(@NotNull UUID ownerId);
+    EconomyPublisher<Boolean> isBankOwner(@NotNull UUID ownerId);
 
     /**
      * @author lokka30
@@ -78,7 +77,7 @@ public interface BankAccount extends Account {
      * @return whether the operation was successful.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> addBankMember(@NotNull UUID memberId);
+    EconomyPublisher<Boolean> addBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
@@ -88,7 +87,7 @@ public interface BankAccount extends Account {
      * @return whether the operation was successful.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> addBankOwner(@NotNull UUID ownerId);
+    EconomyPublisher<Boolean> addBankOwner(@NotNull UUID ownerId);
 
     /**
      * @author lokka30
@@ -98,7 +97,7 @@ public interface BankAccount extends Account {
      * @return whether the operation was successful.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> removeBankMember(@NotNull UUID memberId);
+    EconomyPublisher<Boolean> removeBankMember(@NotNull UUID memberId);
 
     /**
      * @author lokka30
@@ -108,5 +107,5 @@ public interface BankAccount extends Account {
      * @return whether the operation was successful.
      */
     @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> removeBankOwner(@NotNull UUID ownerId);
+    EconomyPublisher<Boolean> removeBankOwner(@NotNull UUID ownerId);
 }

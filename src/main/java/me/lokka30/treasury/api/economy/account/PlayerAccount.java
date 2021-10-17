@@ -13,7 +13,9 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomyPublisher;
+import me.lokka30.treasury.api.economy.response.EconomySubscription;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -40,12 +42,22 @@ public interface PlayerAccount extends Account {
      * accounts set it to zero instead). This is why the overriden method exists.
      * @param currency of the balance being reset
      */
-    @NotNull
     @Override
-    default EconomyResponse<Double> resetBalance(@NotNull Currency currency) {
+    default @NotNull EconomyPublisher<Double> resetBalance(@NotNull Currency currency) {
         final double newBalance = currency.getStartingBalance(null);
-        final EconomyResponse<Double> initialResponse = setBalance(newBalance, currency);
-        return new EconomyResponse<>(newBalance, initialResponse.getResult(), initialResponse.getErrorMessage());
+        return subscription -> setBalance(newBalance, currency).subscribe(
+                new EconomySubscription<Double>() {
+                    @Override
+                    public void accept(@NotNull Double value) {
+                        subscription.accept(newBalance);
+                    }
+
+                    @Override
+                    public void error(@NotNull EconomyException exception) {
+                        subscription.error(exception);
+                    }
+                }
+        );
     }
 
 }

@@ -14,9 +14,10 @@ package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomyPublisher;
+import me.lokka30.treasury.api.economy.response.EconomySubscription;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
 
 /**
@@ -29,7 +30,7 @@ import java.util.UUID;
  * something bound by a UUID. For example, a PlayerAccount is bound to
  * a Player on a server by their UUID.
  */
-@SuppressWarnings({"unused", "RedundantThrows"})
+@SuppressWarnings({"unused"})
 public interface Account {
 
     /**
@@ -50,7 +51,7 @@ public interface Account {
      * @return the balance of the account with specified currency.
      */
     @NotNull
-    EconomyResponse<Double> getBalance(@NotNull Currency currency);
+    EconomyPublisher<Double> getBalance(@NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -63,7 +64,7 @@ public interface Account {
      * @return the account's new balance
      */
     @NotNull
-    EconomyResponse<Double> setBalance(double amount, @NotNull Currency currency);
+    EconomyPublisher<Double> setBalance(double amount, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -76,7 +77,7 @@ public interface Account {
      * @return the account's new balance
      */
     @NotNull
-    EconomyResponse<Double> withdrawBalance(double amount, @NotNull Currency currency);
+    EconomyPublisher<Double> withdrawBalance(double amount, @NotNull Currency currency);
 
     /**
      * @author lokka30
@@ -89,7 +90,7 @@ public interface Account {
      * @return the account's new balance
      */
     @NotNull
-    EconomyResponse<Double> depositBalance(double amount, @NotNull Currency currency);
+    EconomyPublisher<Double> depositBalance(double amount, @NotNull Currency currency);
 
     /**
      * @author lokka30, Geolykt
@@ -102,9 +103,20 @@ public interface Account {
      * @return the account's new balance
      */
     @NotNull
-    default EconomyResponse<Double> resetBalance(@NotNull Currency currency) {
-        final EconomyResponse<Double> initialResponse = setBalance(0.0d, currency);
-        return new EconomyResponse<>(0.0d, initialResponse.getResult(), initialResponse.getErrorMessage());
+    default EconomyPublisher<Double> resetBalance(@NotNull Currency currency) {
+        return subscription -> setBalance(0.0d, currency).subscribe(
+                new EconomySubscription<Double>() {
+                    @Override
+                    public void accept(@NotNull Double value) {
+                        subscription.accept(0.0d);
+                    }
+
+                    @Override
+                    public void error(@NotNull EconomyException exception) {
+                        subscription.error(exception);
+                    }
+                }
+        );
     }
 
     /**
@@ -118,9 +130,20 @@ public interface Account {
      * @return whether the Account can afford the withdrawal.
      */
     @NotNull
-    default EconomyResponse<Boolean> canAfford(double amount, @NotNull Currency currency) {
-        final EconomyResponse<Double> initialResponse = getBalance(currency);
-        return new EconomyResponse<>(initialResponse.getValue() >= amount, initialResponse.getResult(), initialResponse.getErrorMessage());
+    default EconomyPublisher<Boolean> canAfford(double amount, @NotNull Currency currency) {
+        return subscription -> getBalance(currency).subscribe(
+                new EconomySubscription<Double>() {
+                    @Override
+                    public void accept(@NotNull Double value) {
+                        subscription.accept(value >= amount);
+                    }
+
+                    @Override
+                    public void error(@NotNull EconomyException exception) {
+                        subscription.error(exception);
+                    }
+                }
+        );
     }
 
     /**
@@ -131,6 +154,6 @@ public interface Account {
      * @return whether the deletion was successful or not.
      */
     @NotNull
-    EconomyResponse<Boolean> deleteAccount();
+    EconomyPublisher<Boolean> deleteAccount();
 
 }
