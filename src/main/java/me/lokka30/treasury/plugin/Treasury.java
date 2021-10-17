@@ -43,7 +43,7 @@ public class Treasury extends JavaPlugin {
      * This allows Treasury to warn server owners if their Provider
      * does not support the latest Treasury API version.
      */
-    public static final EconomyAPIVersion ECONOMY_API_VERSION = EconomyAPIVersion.VERSION_1;
+    @NotNull public static final EconomyAPIVersion ECONOMY_API_VERSION = EconomyAPIVersion.VERSION_1;
 
     @NotNull private final CurrencyConverter currencyConverter = new CurrencyConverter();
     @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }

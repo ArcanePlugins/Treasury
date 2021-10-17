@@ -84,18 +84,18 @@ public class EconomyResponse<T> {
 
     }
 
-    @NotNull private final T value;
+    @Nullable private final T value;
     @NotNull private final Result result;
     @Nullable private final String errorMessage;
 
-    public EconomyResponse(@NotNull final T value, @NotNull final Result result, @Nullable final String errorMessage) {
+    public EconomyResponse(@Nullable final T value, @NotNull final Result result, @Nullable final String errorMessage) {
         this.value = value;
         this.result = result;
         this.errorMessage = errorMessage;
     }
 
     // TODO Javadoc
-    @NotNull
+    @Nullable
     public final T getValue() { return value; }
 
     // TODO Javadoc

@@ -12,19 +12,10 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
-import me.lokka30.microlib.maths.QuickTimer;
-import me.lokka30.microlib.messaging.MultiMessage;
-import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
-import me.lokka30.treasury.plugin.debug.DebugCategory;
-import me.lokka30.treasury.plugin.misc.Utils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 public class MigrateSubcommand implements Subcommand {
 
@@ -40,6 +31,9 @@ public class MigrateSubcommand implements Subcommand {
 
     @Override
     public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        sender.sendMessage("Temporarily disabled");
+
+        /*
         final boolean debugEnabled = main.debugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.migrate")) return;
@@ -138,7 +132,10 @@ public class MigrateSubcommand implements Subcommand {
             }
         }
 
+         */
+
         /* Migrate player accounts */
+        /*
         for(UUID uuid : from.getPlayerAccountIds()) {
             if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating player account of UUID '&b" + uuid + "&7'.");
 
@@ -156,7 +153,10 @@ public class MigrateSubcommand implements Subcommand {
             playerAccountsProcessed++;
         }
 
+         */
+
         /* Migrate bank accounts */
+        /*
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
             for(UUID uuid : from.getBankAccountIds()) {
                 if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating bank account of UUID '&b" + uuid + "&7'.");
@@ -192,5 +192,7 @@ public class MigrateSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, new ArrayList<>(migratedCurrencies.keySet())), false),
                 new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, new ArrayList<>(nonMigratedCurrencies)), false)
         ));
+
+         */
     }
 }

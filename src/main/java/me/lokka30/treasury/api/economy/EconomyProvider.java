@@ -19,7 +19,6 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyResponse;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -87,7 +86,7 @@ public interface EconomyProvider {
     @NotNull
     CompletableFuture<EconomyResponse<Boolean>> hasPlayerAccount(@NotNull UUID accountId);
 
-    @Nullable
+    @NotNull
     CompletableFuture<EconomyResponse<PlayerAccount>>  getPlayerAccount(@NotNull UUID accountId);
 
     @NotNull
@@ -99,13 +98,13 @@ public interface EconomyProvider {
     @NotNull
     CompletableFuture<EconomyResponse<Boolean>> hasBankAccount(@NotNull UUID accountId);
 
-    @Nullable
+    @NotNull
     CompletableFuture<EconomyResponse<BankAccount>> getBankAccount(@NotNull UUID accountId);
 
     @NotNull
     CompletableFuture<EconomyResponse<BankAccount>> createBankAccount(@NotNull UUID accountId);
 
-    @Nullable
+    @NotNull
     CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankAccountIds();
 
     @NotNull
@@ -114,15 +113,15 @@ public interface EconomyProvider {
     @NotNull
     CompletableFuture<EconomyResponse<Collection<? extends String>>> getCurrencyNames();
 
-    @Nullable
-    Currency getCurrency(UUID currencyId);
+    @NotNull
+    EconomyResponse<Currency> getCurrency(UUID currencyId);
 
-    @Nullable
-    Currency getCurrency(String currencyName);
+    @NotNull
+    EconomyResponse<Currency> getCurrency(String currencyName);
 
     @NotNull
     default Currency getPrimaryCurrency() {
-        return Objects.requireNonNull(getCurrency(getPrimaryCurrencyId()));
+        return Objects.requireNonNull(getCurrency(getPrimaryCurrencyId()).getValue());
     }
 
     @NotNull
