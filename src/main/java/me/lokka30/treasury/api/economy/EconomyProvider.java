@@ -16,7 +16,7 @@ import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.response.EconomyPublisher;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,29 +83,21 @@ public interface EconomyProvider {
      */
     default boolean hasNegativeBalanceSupport() { return false; }
 
-    @NotNull
-    EconomyPublisher<Boolean> hasPlayerAccount(@NotNull UUID accountId);
+    void hasPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
 
-    @NotNull
-    EconomyPublisher<PlayerAccount>  getPlayerAccount(@NotNull UUID accountId);
+    void requestPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
-    @NotNull
-    EconomyPublisher<PlayerAccount> createPlayerAccount(@NotNull UUID accountId);
+    void createPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
-    @NotNull
-    EconomyPublisher<Collection<UUID>> getPlayerAccountIds();
+    void requestPlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
-    @NotNull
-    EconomyPublisher<Boolean> hasBankAccount(@NotNull UUID accountId);
+    void hasBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
 
-    @NotNull
-    EconomyPublisher<BankAccount> getBankAccount(@NotNull UUID accountId);
+    void requestBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
-    @NotNull
-    EconomyPublisher<BankAccount> createBankAccount(@NotNull UUID accountId);
+    void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
-    @NotNull
-    EconomyPublisher<Collection<UUID>> getBankAccountIds();
+    void requestBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     @NotNull
     Collection<UUID> getCurrencyIds();

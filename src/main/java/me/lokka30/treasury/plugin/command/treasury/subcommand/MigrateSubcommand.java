@@ -18,9 +18,8 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomyPublisher;
-import me.lokka30.treasury.api.economy.response.EconomySubscription;
+import me.lokka30.treasury.api.economy.response.EconomyFailure;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.debug.DebugCategory;
@@ -223,7 +222,7 @@ public class MigrateSubcommand implements Subcommand {
             @NotNull AtomicInteger playerAccountsProcessed,
             boolean debugEnabled) {
 
-        from.getPlayerAccountIds().subscribe(new PhasedSubscription<Collection<UUID>>(phaser) {
+        from.requestPlayerAccountIds(new PhasedSubscriber<Collection<UUID>>(phaser) {
             @Override
             public void phaseAccept(@NotNull Collection<UUID> uuids) {
                 for (UUID uuid : uuids) {
@@ -232,7 +231,7 @@ public class MigrateSubcommand implements Subcommand {
             }
 
             @Override
-            public void phaseError(@NotNull EconomyException exception) {
+            public void phaseError(@NotNull EconomyFailure exception) {
                 if (debugEnabled) {
                     main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Unable to fetch player account UUIDs for migration: " + exception.getMessage());
                 }
@@ -254,7 +253,7 @@ public class MigrateSubcommand implements Subcommand {
 
         CompletableFuture<PlayerAccount> fromAccountFuture = new CompletableFuture<>();
 
-        from.getPlayerAccount(uuid).subscribe(new PlayerSubscription<PlayerAccount>(phaser, uuid, fromAccountFuture, debugEnabled) {
+        from.requestPlayerAccount(uuid, new PlayerSubscriber<PlayerAccount>(phaser, uuid, fromAccountFuture, debugEnabled) {
             @Override
             public void phaseAccept(@NotNull PlayerAccount playerAccount) {
                 fromAccountFuture.complete(playerAccount);
@@ -263,19 +262,19 @@ public class MigrateSubcommand implements Subcommand {
 
         CompletableFuture<PlayerAccount> toAccountFuture = new CompletableFuture<>();
 
-        to.hasPlayerAccount(uuid).subscribe(new PlayerSubscription<Boolean>(phaser, uuid, toAccountFuture, debugEnabled) {
+        to.hasPlayerAccount(uuid, new PlayerSubscriber<Boolean>(phaser, uuid, toAccountFuture, debugEnabled) {
             @Override
             public void phaseAccept(@NotNull Boolean hasAccount) {
-                PlayerSubscription<PlayerAccount> subscription = new PlayerSubscription<PlayerAccount>(phaser, uuid, toAccountFuture, debugEnabled) {
+                PlayerSubscriber<PlayerAccount> subscription = new PlayerSubscriber<PlayerAccount>(phaser, uuid, toAccountFuture, debugEnabled) {
                     @Override
                     public void phaseAccept(@NotNull PlayerAccount playerAccount) {
                         toAccountFuture.complete(playerAccount);
                     }
                 };
                 if (hasAccount) {
-                    to.getPlayerAccount(uuid).subscribe(subscription);
+                    to.requestPlayerAccount(uuid, subscription);
                 } else {
-                    to.createPlayerAccount(uuid).subscribe(subscription);
+                    to.createPlayerAccount(uuid, subscription);
                 }
             }
         });
@@ -297,18 +296,18 @@ public class MigrateSubcommand implements Subcommand {
             boolean debugEnabled) {
         CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
 
-        fromAccount.getBalance(fromCurrency).subscribe(new PhasedSubscription<Double>(phaser) {
+        fromAccount.requestBalance(fromCurrency, new PhasedSubscriber<Double>(phaser) {
             @Override
             public void phaseAccept(@NotNull Double balance) {
                 balanceFuture.complete(balance);
             }
 
             @Override
-            public void phaseError(@NotNull EconomyException exception) {
+            public void phaseError(@NotNull EconomyFailure exception) {
                 if (debugEnabled) {
                     main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of UUID '&b" + fromAccount.getUniqueId() + "&7': &b" + exception.getMessage());
                 }
-                balanceFuture.completeExceptionally(exception);
+                balanceFuture.completeExceptionally(new IgnoredException());
             }
         });
 
@@ -316,39 +315,38 @@ public class MigrateSubcommand implements Subcommand {
             if (balance == 0) {
                 return;
             }
-            EconomyPublisher<Double> publisher;
-            if (balance < 0) {
-                publisher = toAccount.withdrawBalance(balance, toCurrency);
-            } else {
-                publisher = toAccount.depositBalance(balance, toCurrency);
-            }
-            publisher.subscribe(new PhasedSubscription<Double>(phaser) {
+            EconomySubscriber<Double> subscriber = new PhasedSubscriber<Double>(phaser) {
                 @Override
                 public void phaseAccept(@NotNull Double newBalance) {
                     // Don't add extra logging for success.
                 }
 
                 @Override
-                public void phaseError(@NotNull EconomyException exception) {
+                public void phaseError(@NotNull EconomyFailure exception) {
                     if (debugEnabled) {
                         main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of UUID '&b" + fromAccount.getUniqueId() + "&7': &b" + exception.getMessage());
                     }
                 }
-            });
+            };
+            if (balance < 0) {
+                toAccount.withdrawBalance(balance, toCurrency, subscriber);
+            } else {
+                toAccount.depositBalance(balance, toCurrency, subscriber);
+            }
         });
     }
 
-    private abstract static class PhasedSubscription<T> implements EconomySubscription<T> {
+    private abstract static class PhasedSubscriber<T> implements EconomySubscriber<T> {
 
         private final Phaser phaser;
 
-        private PhasedSubscription(@NotNull Phaser phaser) {
+        private PhasedSubscriber(@NotNull Phaser phaser) {
             this.phaser = phaser;
             this.phaser.register();
         }
 
         @Override
-        public final void accept(@NotNull T t) {
+        public final void succeed(@NotNull T t) {
             phaseAccept(t);
             phaser.arriveAndDeregister();
         }
@@ -356,21 +354,21 @@ public class MigrateSubcommand implements Subcommand {
         public abstract void phaseAccept(@NotNull T t);
 
         @Override
-        public final void error(@NotNull EconomyException exception) {
-            phaseError(exception);
+        public final void fail(@NotNull EconomyFailure failure) {
+            phaseError(failure);
             phaser.arriveAndDeregister();
         }
 
-        public abstract void phaseError(@NotNull EconomyException exception);
+        public abstract void phaseError(@NotNull EconomyFailure exception);
 
     }
 
-    private abstract class PlayerSubscription<T> extends PhasedSubscription<T> {
+    private abstract class PlayerSubscriber<T> extends PhasedSubscriber<T> {
         private final UUID uuid;
         private final CompletableFuture<PlayerAccount> accountFuture;
         private final boolean debugEnabled;
 
-        private PlayerSubscription(
+        private PlayerSubscriber(
                 @NotNull Phaser phaser,
                 @NotNull UUID uuid,
                 @NotNull CompletableFuture<PlayerAccount> accountFuture,
@@ -382,11 +380,22 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         @Override
-        public final void phaseError(@NotNull EconomyException exception) {
+        public final void phaseError(@NotNull EconomyFailure exception) {
             if (debugEnabled) {
                 main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of player UUID '&b" + uuid + "&7': &b" + exception.getMessage());
             }
-            accountFuture.completeExceptionally(exception);
+            accountFuture.completeExceptionally(new IgnoredException());
+        }
+    }
+
+    private static class IgnoredException extends Exception {
+        private IgnoredException() {
+            super("Ignored exception", null, true, false);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
         }
     }
 
