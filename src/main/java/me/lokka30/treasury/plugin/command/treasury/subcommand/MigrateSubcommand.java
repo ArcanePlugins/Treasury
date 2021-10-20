@@ -167,10 +167,6 @@ public class MigrateSubcommand implements Subcommand {
             return;
         }
 
-        // Initialize phaser with a single party which will be our async task awaiting migration completion.
-        Phaser playerMigration = new Phaser(1);
-        migratePlayerAccounts(playerMigration, from, to, migratedCurrencies, playerAccountsProcessed, debugEnabled);
-
         /* TODO Migrate bank accounts similarly
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
             for(UUID uuid : from.getBankAccountIds()) {
@@ -199,7 +195,13 @@ public class MigrateSubcommand implements Subcommand {
             }
         } */
 
+        EconomyProvider finalFrom = from;
+        EconomyProvider finalTo = to;
+
         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
+            // Initialize phaser with a single party which will be our async task awaiting migration completion.
+            Phaser playerMigration = new Phaser(1);
+            migratePlayerAccounts(playerMigration, finalFrom, finalTo, migratedCurrencies, playerAccountsProcessed, debugEnabled);
             // Block until player migration is complete.
             playerMigration.arriveAndAwaitAdvance();
 
