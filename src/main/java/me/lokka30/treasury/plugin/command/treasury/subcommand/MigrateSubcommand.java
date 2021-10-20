@@ -29,6 +29,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -122,51 +124,6 @@ public class MigrateSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
         ));
 
-        final QuickTimer timer = new QuickTimer();
-
-        AtomicInteger playerAccountsProcessed = new AtomicInteger();
-        AtomicInteger bankAccountsProcessed = new AtomicInteger();
-
-        Map<Currency, Currency> migratedCurrencies = new HashMap<>();
-        Collection<String> nonMigratedCurrencies = new ArrayList<>();
-        for (UUID uuid : from.getCurrencyIds()) {
-            Currency fromCurrency = from.getCurrency(uuid);
-
-            if (fromCurrency == null) {
-                // Shouldn't be possible unless from implementation is severely broken.
-                if (debugEnabled) {
-                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Unable to locate reported currency with ID '&b" + uuid + "&7'.");
-                }
-                continue;
-            }
-
-            Currency toCurrency = to.getCurrency(fromCurrency.getCurrencyName());
-
-            if (toCurrency == null) {
-                if(debugEnabled) {
-                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will not be migrated.");
-                }
-            } else {
-                migratedCurrencies.put(fromCurrency, toCurrency);
-                if(debugEnabled) {
-                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will be migrated.");
-                }
-            }
-        }
-
-        if (migratedCurrencies.isEmpty()) {
-            // Nothing to migrate. Maybe a special message?
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.finished-migration"), Arrays.asList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                    new MultiMessage.Placeholder("time", timer.getTimer() + "", false),
-                    new MultiMessage.Placeholder("player-accounts", playerAccountsProcessed.toString(), false),
-                    new MultiMessage.Placeholder("bank-accounts", bankAccountsProcessed.toString(), false),
-                    new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, migratedCurrencies.keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList())), false),
-                    new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, nonMigratedCurrencies), false)
-            )).send(sender);
-            return;
-        }
-
         /* TODO Migrate bank accounts similarly
         if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
             for(UUID uuid : from.getBankAccountIds()) {
@@ -195,25 +152,111 @@ public class MigrateSubcommand implements Subcommand {
             }
         } */
 
-        EconomyProvider finalFrom = from;
-        EconomyProvider finalTo = to;
+        final QuickTimer timer = new QuickTimer();
+        final EconomyProvider finalFrom = from;
+        final EconomyProvider finalTo = to;
 
         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
+
+            AtomicInteger playerAccountsProcessed = new AtomicInteger();
+            AtomicInteger bankAccountsProcessed = new AtomicInteger();
+
+            Map<Currency, Currency> migratedCurrencies = new ConcurrentHashMap<>();
+            Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
+
+            // Block until currencies have been populated.
+            establishCurrencies(migratedCurrencies, nonMigratedCurrencies, finalFrom, finalTo, debugEnabled);
+
+            if (migratedCurrencies.isEmpty()) {
+                // Nothing to migrate. Maybe a special message?
+                sendMigrationMessage(sender, timer, playerAccountsProcessed, bankAccountsProcessed, migratedCurrencies, nonMigratedCurrencies);
+                return;
+            }
+
             // Initialize phaser with a single party which will be our async task awaiting migration completion.
             Phaser playerMigration = new Phaser(1);
             migratePlayerAccounts(playerMigration, finalFrom, finalTo, migratedCurrencies, playerAccountsProcessed, debugEnabled);
             // Block until player migration is complete.
             playerMigration.arriveAndAwaitAdvance();
 
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.finished-migration"), Arrays.asList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                    new MultiMessage.Placeholder("time", timer.getTimer() + "", false),
-                    new MultiMessage.Placeholder("player-accounts", playerAccountsProcessed.toString(), false),
-                    new MultiMessage.Placeholder("bank-accounts", bankAccountsProcessed.toString(), false),
-                    new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, migratedCurrencies.keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList())), false),
-                    new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, nonMigratedCurrencies), false)
-            )).send(sender);
+            sendMigrationMessage(sender, timer, playerAccountsProcessed, bankAccountsProcessed, migratedCurrencies, nonMigratedCurrencies);
         });
+    }
+
+    private void sendMigrationMessage(
+            @NotNull CommandSender sender,
+            @NotNull QuickTimer timer,
+            @NotNull AtomicInteger playerAccountsProcessed,
+            @NotNull AtomicInteger bankAccountsProcessed,
+            @NotNull Map<Currency, Currency> migratedCurrencies,
+            @NotNull Collection<String> nonMigratedCurrencies) {
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.finished-migration"), Arrays.asList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                new MultiMessage.Placeholder("time", timer.getTimer() + "", false),
+                new MultiMessage.Placeholder("player-accounts", playerAccountsProcessed.toString(), false),
+                new MultiMessage.Placeholder("bank-accounts", bankAccountsProcessed.toString(), false),
+                new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, migratedCurrencies.keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList())), false),
+                new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, nonMigratedCurrencies), false)
+        )).send(sender);
+    }
+
+    private void establishCurrencies(
+            @NotNull Map<Currency, Currency> migratedCurrencies,
+            @NotNull Collection<String> nonMigratedCurrencies,
+            @NotNull EconomyProvider from,
+            @NotNull EconomyProvider to,
+            boolean debugEnabled) {
+        CompletableFuture<Collection<UUID>> fromCurrencyIdsFuture = new CompletableFuture<>();
+
+        from.requestCurrencyIds(new FutureSubscriber<>(fromCurrencyIdsFuture));
+
+        // Initialize with 2 parties - ourselves and the currency IDs request.
+        Phaser phaser = new Phaser(2);
+        fromCurrencyIdsFuture.thenAccept(fromCurrencyIds -> {
+            for (UUID fromCurrencyId : fromCurrencyIds) {
+
+                // Fetch from currency.
+                CompletableFuture<Currency> fromCurrencyFuture = new CompletableFuture<>();
+                phaser.register();
+                from.requestCurrency(fromCurrencyId, new FutureSubscriber<>(fromCurrencyFuture));
+                fromCurrencyFuture.whenComplete(((currency, throwable) -> {
+                    if (throwable != null && debugEnabled) {
+                        main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Unable to locate reported currency with ID '&b" + fromCurrencyId + "&7'.");
+                    }
+                    phaser.arriveAndDeregister();
+                }));
+
+                fromCurrencyFuture.thenAccept(fromCurrency -> {
+
+                    // Fetch to currency.
+                    CompletableFuture<Currency> toCurrencyFuture = new CompletableFuture<>();
+                    phaser.register();
+                    to.requestCurrency(fromCurrencyId, new FutureSubscriber<>(toCurrencyFuture));
+                    toCurrencyFuture.whenComplete(((toCurrency, throwable) -> {
+
+                        if (toCurrency == null) {
+                            // Currency not found.
+                            nonMigratedCurrencies.add(fromCurrency.getCurrencyName());
+                            if (debugEnabled) {
+                                main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will not be migrated.");
+                            }
+                        } else {
+                            // Currency located, map.
+                            migratedCurrencies.put(fromCurrency, toCurrency);
+                            if (debugEnabled) {
+                                main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will be migrated.");
+                            }
+                        }
+
+                        phaser.arriveAndDeregister();
+                    }));
+                });
+            }
+            phaser.arriveAndDeregister();
+        });
+
+        // Block until currency assembly is complete.
+        phaser.arriveAndAwaitAdvance();
     }
 
     private void migratePlayerAccounts(
@@ -387,6 +430,24 @@ public class MigrateSubcommand implements Subcommand {
                 main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of player UUID '&b" + uuid + "&7': &b" + exception.getMessage());
             }
             accountFuture.completeExceptionally(exception);
+        }
+    }
+
+    private static class FutureSubscriber<T> implements EconomySubscriber<T> {
+        private final CompletableFuture<T> future;
+
+        private FutureSubscriber(CompletableFuture<T> future) {
+            this.future = future;
+        }
+
+        @Override
+        public void succeed(@NotNull T t) {
+            future.complete(t);
+        }
+
+        @Override
+        public void fail(@NotNull EconomyException exception) {
+            future.completeExceptionally(exception);
         }
     }
 
