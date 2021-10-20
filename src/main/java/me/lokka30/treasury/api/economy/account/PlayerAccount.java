@@ -13,7 +13,7 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyFailure;
+import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,8 +53,8 @@ public interface PlayerAccount extends Account {
                 }
 
                 @Override
-                public void fail(@NotNull EconomyFailure failure) {
-                    subscription.fail(failure);
+                public void fail(@NotNull EconomyException exception) {
+                    subscription.fail(exception);
                 }
             }
         );

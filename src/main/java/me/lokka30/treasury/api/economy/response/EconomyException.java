@@ -4,35 +4,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A data holder for economic failures.
+ * An exception for economic problems.
+ *
+ * <p>For performance reasons, this exception does not fill in the stack trace.
  *
  * @since v1.0.0
  */
-public class EconomyFailure {
+public class EconomyException extends Exception {
 
     private final @NotNull FailureReason reason;
-    private final @NotNull String message;
-    private final @Nullable Throwable cause;
 
     /**
-     * Construct a new {@code EconomyFailure}.
+     * Construct a new {@code EconomyException}.
      *
      * @param reason the {@link FailureReason} representing the reason for failure
      * @param message a more detailed description of the problem
      * @since v1.0.0
      */
-    public EconomyFailure(@NotNull FailureReason reason, @NotNull String message) {
+    public EconomyException(@NotNull FailureReason reason, @NotNull String message) {
         this(reason, message, null);
     }
 
     /**
-     * Construct a new {@code EconomyFailure}.
+     * Construct a new {@code EconomyException}.
      *
      * @param reason the {@link FailureReason} representing the reason for failure
      * @param cause the {@link Throwable} representing or causing the problem
      * @since v1.0.0
      */
-    public EconomyFailure(@NotNull FailureReason reason, @NotNull Throwable cause) {
+    public EconomyException(@NotNull FailureReason reason, @NotNull Throwable cause) {
         this(
                 reason,
                 cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage(),
@@ -41,17 +41,16 @@ public class EconomyFailure {
     }
 
     /**
-     * Construct a new {@code EconomyFailure}.
+     * Construct a new {@code EconomyException}.
      *
      * @param reason the {@link FailureReason} representing the reason for failure
      * @param message a more detailed description of the problem
      * @param cause the {@link Throwable} representing or causing the problem
      * @since v1.0.0
      */
-    public EconomyFailure(@NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause) {
+    public EconomyException(@NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause) {
+        super(message, cause, true, false);
         this.reason = reason;
-        this.message = message;
-        this.cause = cause;
     }
 
     /**
@@ -70,20 +69,9 @@ public class EconomyFailure {
      * @return a more detailed description of the problem
      * @since v1.0.0
      */
+    @Override
     public @NotNull String getMessage() {
-        return this.message;
-    }
-
-    /**
-     * Get the {@link Throwable} that resulted in this failure.
-     *
-     * <p>May be {@code null} if the failure was not caused by an exception.
-     *
-     * @return the {@code Throwable} causing the failure
-     * @since v1.0.0
-     */
-    public @Nullable Throwable getCause() {
-        return this.cause;
+        return super.getMessage();
     }
 
 }

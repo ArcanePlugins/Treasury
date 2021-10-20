@@ -18,7 +18,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyFailure;
+import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.Subcommand;
@@ -231,7 +231,7 @@ public class MigrateSubcommand implements Subcommand {
             }
 
             @Override
-            public void phaseError(@NotNull EconomyFailure exception) {
+            public void phaseError(@NotNull EconomyException exception) {
                 if (debugEnabled) {
                     main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Unable to fetch player account UUIDs for migration: " + exception.getMessage());
                 }
@@ -303,11 +303,11 @@ public class MigrateSubcommand implements Subcommand {
             }
 
             @Override
-            public void phaseError(@NotNull EconomyFailure exception) {
+            public void phaseError(@NotNull EconomyException exception) {
                 if (debugEnabled) {
                     main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of UUID '&b" + fromAccount.getUniqueId() + "&7': &b" + exception.getMessage());
                 }
-                balanceFuture.completeExceptionally(new IgnoredException());
+                balanceFuture.completeExceptionally(exception);
             }
         });
 
@@ -322,7 +322,7 @@ public class MigrateSubcommand implements Subcommand {
                 }
 
                 @Override
-                public void phaseError(@NotNull EconomyFailure exception) {
+                public void phaseError(@NotNull EconomyException exception) {
                     if (debugEnabled) {
                         main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of UUID '&b" + fromAccount.getUniqueId() + "&7': &b" + exception.getMessage());
                     }
@@ -354,12 +354,12 @@ public class MigrateSubcommand implements Subcommand {
         public abstract void phaseAccept(@NotNull T t);
 
         @Override
-        public final void fail(@NotNull EconomyFailure failure) {
-            phaseError(failure);
+        public final void fail(@NotNull EconomyException exception) {
+            phaseError(exception);
             phaser.arriveAndDeregister();
         }
 
-        public abstract void phaseError(@NotNull EconomyFailure exception);
+        public abstract void phaseError(@NotNull EconomyException exception);
 
     }
 
@@ -380,22 +380,11 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         @Override
-        public final void phaseError(@NotNull EconomyFailure exception) {
+        public final void phaseError(@NotNull EconomyException exception) {
             if (debugEnabled) {
                 main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of player UUID '&b" + uuid + "&7': &b" + exception.getMessage());
             }
-            accountFuture.completeExceptionally(new IgnoredException());
-        }
-    }
-
-    private static class IgnoredException extends Exception {
-        private IgnoredException() {
-            super("Ignored exception", null, true, false);
-        }
-
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            return this;
+            accountFuture.completeExceptionally(exception);
         }
     }
 

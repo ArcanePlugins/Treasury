@@ -23,9 +23,9 @@ public interface EconomySubscriber<T> {
     /**
      * Respond to the subscriber with an invocation failure.
      *
-     * @param failure an {@link EconomyFailure} detailing the reason for failure
+     * @param exception an {@link EconomyException} detailing the reason for failure
      * @since v1.0.0
      */
-    void fail(@NotNull EconomyFailure failure);
+    void fail(@NotNull EconomyException exception);
 
 }
