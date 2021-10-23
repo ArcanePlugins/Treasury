@@ -12,10 +12,15 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
@@ -124,265 +129,188 @@ public class MigrateSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
         ));
 
-        /* TODO Migrate bank accounts similarly
-        if(from.hasBankAccountSupport() && to.hasBankAccountSupport()) {
-            for(UUID uuid : from.getBankAccountIds()) {
-                if(debugEnabled) main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating bank account of UUID '&b" + uuid + "&7'.");
-
-                if(!to.hasBankAccount(uuid).get()) {
-                    to.createBankAccount(uuid);
-
-                    for(UUID ownerId : from.getBankAccount(uuid).get().getBankOwnersIds()) {
-                        to.getBankAccount(uuid).get().addBankOwner(ownerId);
-                    }
-
-                    for(UUID memberId : from.getBankAccount(uuid).get().getBankMembersIds()) {
-                        to.getBankAccount(uuid).get().addBankMember(memberId);
-                    }
-                }
-
-                for(String currencyId : migratedCurrencies.keySet()) {
-                    final double balance = Utils.ensureAtLeastZero(from.getBankAccount(uuid).get().getBalance(null, Objects.requireNonNull(from.getCurrency(currencyId))));
-
-                    from.getBankAccount(uuid).get().withdrawBalance(balance, null, Objects.requireNonNull(from.getCurrency(currencyId)));
-                    to.getBankAccount(uuid).get().depositBalance(balance, null, Objects.requireNonNull(to.getCurrency(currencyId)));
-                }
-
-                bankAccountsProcessed++;
-            }
-        } */
-
-        final QuickTimer timer = new QuickTimer();
-        final EconomyProvider finalFrom = from;
-        final EconomyProvider finalTo = to;
+        MigrationData migration = new MigrationData(main, from, to, debugEnabled);
 
         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
 
-            AtomicInteger playerAccountsProcessed = new AtomicInteger();
-            AtomicInteger bankAccountsProcessed = new AtomicInteger();
-
-            Map<Currency, Currency> migratedCurrencies = new ConcurrentHashMap<>();
-            Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
-
             // Block until currencies have been populated.
-            establishCurrencies(migratedCurrencies, nonMigratedCurrencies, finalFrom, finalTo, debugEnabled);
+            establishCurrencies(migration).arriveAndAwaitAdvance();
 
-            if (migratedCurrencies.isEmpty()) {
+            if (migration.migratedCurrencies.isEmpty()) {
                 // Nothing to migrate. Maybe a special message?
-                sendMigrationMessage(sender, timer, playerAccountsProcessed, bankAccountsProcessed, migratedCurrencies, nonMigratedCurrencies);
+                sendMigrationMessage(sender, migration);
                 return;
             }
 
-            // Initialize phaser with a single party which will be our async task awaiting migration completion.
-            Phaser playerMigration = new Phaser(1);
-            migratePlayerAccounts(playerMigration, finalFrom, finalTo, migratedCurrencies, playerAccountsProcessed, debugEnabled);
-            // Block until player migration is complete.
+            // Initialize account migration.
+            Phaser playerMigration = migrateAccounts(migration, new PlayerAccountMigrator());
+            if (migration.from.hasBankAccountSupport()) {
+                if (migration.to.hasBankAccountSupport()) {
+                Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
+                bankMigration.arriveAndAwaitAdvance();
+                } else {
+                    migration.debug(() -> "'&b" + migration.to.getProvider().getName() + "&7' does not offer bank support, cannot transfer accounts.");
+                }
+            }
+
+            // Block until migration is complete.
             playerMigration.arriveAndAwaitAdvance();
 
-            sendMigrationMessage(sender, timer, playerAccountsProcessed, bankAccountsProcessed, migratedCurrencies, nonMigratedCurrencies);
+            sendMigrationMessage(sender, migration);
         });
     }
 
-    private void sendMigrationMessage(
-            @NotNull CommandSender sender,
-            @NotNull QuickTimer timer,
-            @NotNull AtomicInteger playerAccountsProcessed,
-            @NotNull AtomicInteger bankAccountsProcessed,
-            @NotNull Map<Currency, Currency> migratedCurrencies,
-            @NotNull Collection<String> nonMigratedCurrencies) {
+    private void sendMigrationMessage(@NotNull CommandSender sender, @NotNull MigrationData migration) {
         new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.finished-migration"), Arrays.asList(
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                new MultiMessage.Placeholder("time", timer.getTimer() + "", false),
-                new MultiMessage.Placeholder("player-accounts", playerAccountsProcessed.toString(), false),
-                new MultiMessage.Placeholder("bank-accounts", bankAccountsProcessed.toString(), false),
-                new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, migratedCurrencies.keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList())), false),
-                new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, nonMigratedCurrencies), false)
+                new MultiMessage.Placeholder("time", migration.timer.getTimer() + "", false),
+                new MultiMessage.Placeholder("player-accounts", migration.playerAccountsProcessed.toString(), false),
+                new MultiMessage.Placeholder("bank-accounts", migration.bankAccountsProcessed.toString(), false),
+                new MultiMessage.Placeholder("migrated-currencies", Utils.formatListMessage(main, migration.migratedCurrencies.keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList())), false),
+                new MultiMessage.Placeholder("non-migrated-currencies", Utils.formatListMessage(main, migration.nonMigratedCurrencies), false)
         )).send(sender);
     }
 
-    private void establishCurrencies(
-            @NotNull Map<Currency, Currency> migratedCurrencies,
-            @NotNull Collection<String> nonMigratedCurrencies,
-            @NotNull EconomyProvider from,
-            @NotNull EconomyProvider to,
-            boolean debugEnabled) {
+    private Phaser establishCurrencies(@NotNull MigrationData migration) {
         CompletableFuture<Collection<UUID>> fromCurrencyIdsFuture = new CompletableFuture<>();
 
-        from.requestCurrencyIds(new FutureSubscriber<>(fromCurrencyIdsFuture));
+        // Initialize phaser with a single party: currency mapping completion.
+        Phaser phaser = new Phaser(1);
 
-        // Initialize with 2 parties - ourselves and the currency IDs request.
-        Phaser phaser = new Phaser(2);
+        migration.from.requestCurrencyIds(new PhasedFutureSubscriber<>(phaser, fromCurrencyIdsFuture));
+
         fromCurrencyIdsFuture.thenAccept(fromCurrencyIds -> {
             for (UUID fromCurrencyId : fromCurrencyIds) {
 
                 // Fetch from currency.
                 CompletableFuture<Currency> fromCurrencyFuture = new CompletableFuture<>();
-                phaser.register();
-                from.requestCurrency(fromCurrencyId, new FutureSubscriber<>(fromCurrencyFuture));
+                migration.from.requestCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, fromCurrencyFuture));
                 fromCurrencyFuture.whenComplete(((currency, throwable) -> {
-                    if (throwable != null && debugEnabled) {
-                        main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Unable to locate reported currency with ID '&b" + fromCurrencyId + "&7'.");
+                    if (throwable != null) {
+                        migration.debug(() -> "Unable to locate reported currency with ID '&b" + fromCurrencyId + "&7'.");
                     }
-                    phaser.arriveAndDeregister();
                 }));
 
                 fromCurrencyFuture.thenAccept(fromCurrency -> {
 
                     // Fetch to currency.
                     CompletableFuture<Currency> toCurrencyFuture = new CompletableFuture<>();
-                    phaser.register();
-                    to.requestCurrency(fromCurrencyId, new FutureSubscriber<>(toCurrencyFuture));
+                    migration.to.requestCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, toCurrencyFuture));
                     toCurrencyFuture.whenComplete(((toCurrency, throwable) -> {
-
                         if (toCurrency == null) {
                             // Currency not found.
-                            nonMigratedCurrencies.add(fromCurrency.getCurrencyName());
-                            if (debugEnabled) {
-                                main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will not be migrated.");
-                            }
+                            migration.nonMigratedCurrencies.add(fromCurrency.getCurrencyName());
+                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will not be migrated.");
                         } else {
                             // Currency located, map.
-                            migratedCurrencies.put(fromCurrency, toCurrency);
-                            if (debugEnabled) {
-                                main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will be migrated.");
-                            }
+                            migration.migratedCurrencies.put(fromCurrency, toCurrency);
+                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will be migrated.");
                         }
-
-                        phaser.arriveAndDeregister();
                     }));
                 });
             }
             phaser.arriveAndDeregister();
         });
 
-        // Block until currency assembly is complete.
-        phaser.arriveAndAwaitAdvance();
+        return phaser;
     }
 
-    private void migratePlayerAccounts(
-            @NotNull Phaser phaser,
-            @NotNull EconomyProvider from,
-            @NotNull EconomyProvider to,
-            @NotNull Map<Currency, Currency> migrated,
-            @NotNull AtomicInteger playerAccountsProcessed,
-            boolean debugEnabled) {
+    private <T extends Account> Phaser migrateAccounts(@NotNull MigrationData migration, @NotNull AccountMigrator<T> migrator) {
+        // Initialize phaser with a single party: migration completion.
+        Phaser phaser = new Phaser(1);
 
-        from.requestPlayerAccountIds(new PhasedSubscriber<Collection<UUID>>(phaser) {
+        migration.from.requestPlayerAccountIds(new PhasedSubscriber<Collection<UUID>>(phaser) {
             @Override
             public void phaseAccept(@NotNull Collection<UUID> uuids) {
                 for (UUID uuid : uuids) {
-                    migratePlayerAccount(phaser, uuid, from, to, migrated, playerAccountsProcessed, debugEnabled);
+                    migrateAccount(phaser, uuid, migration, migrator);
                 }
             }
 
             @Override
-            public void phaseError(@NotNull EconomyException exception) {
-                if (debugEnabled) {
-                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Unable to fetch player account UUIDs for migration: " + exception.getMessage());
-                }
+            public void phaseFail(@NotNull EconomyException exception) {
+                migration.debug(() -> migrator.getBulkFailLog(exception));
             }
         });
+
+        return phaser;
     }
 
-    private void migratePlayerAccount(
+    private <T extends Account> void migrateAccount(
             @NotNull Phaser phaser,
             @NotNull UUID uuid,
-            @NotNull EconomyProvider from,
-            @NotNull EconomyProvider to,
-            @NotNull Map<Currency, Currency> migrated,
-            @NotNull AtomicInteger playerAccountsProcessed,
-            boolean debugEnabled) {
-        if (debugEnabled) {
-            main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating player account of UUID '&b" + uuid + "&7'.");
-        }
+            @NotNull MigrationData migration,
+            @NotNull AccountMigrator<T> migrator) {
+        migration.debug(() -> migrator.getInitLog(uuid));
 
-        CompletableFuture<PlayerAccount> fromAccountFuture = new CompletableFuture<>();
-
-        from.requestPlayerAccount(uuid, new PlayerSubscriber<PlayerAccount>(phaser, uuid, fromAccountFuture, debugEnabled) {
-            @Override
-            public void phaseAccept(@NotNull PlayerAccount playerAccount) {
-                fromAccountFuture.complete(playerAccount);
+        // Set up logging for failure.
+        // Because from and to accounts are requested in parallel, guard against duplicate failure logging.
+        AtomicBoolean failed = new AtomicBoolean();
+        BiConsumer<T, Throwable> failureConsumer = (account, throwable) -> {
+            if (throwable != null && failed.compareAndSet(false, true)) {
+                migration.debug(() -> migrator.getErrorLog(uuid, throwable));
             }
-        });
+        };
 
-        CompletableFuture<PlayerAccount> toAccountFuture = new CompletableFuture<>();
+        CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
+        migrator.requestAccount().accept(migration.from, uuid, new PhasedFutureSubscriber<>(phaser, fromAccountFuture));
+        fromAccountFuture.whenComplete(failureConsumer);
 
-        to.hasPlayerAccount(uuid, new PlayerSubscriber<Boolean>(phaser, uuid, toAccountFuture, debugEnabled) {
+        CompletableFuture<T> toAccountFuture = new CompletableFuture<>();
+        migrator.checkAccountExistence().accept(migration.to, uuid, new PhasedSubscriber<Boolean>(phaser) {
             @Override
             public void phaseAccept(@NotNull Boolean hasAccount) {
-                PlayerSubscriber<PlayerAccount> subscription = new PlayerSubscriber<PlayerAccount>(phaser, uuid, toAccountFuture, debugEnabled) {
-                    @Override
-                    public void phaseAccept(@NotNull PlayerAccount playerAccount) {
-                        toAccountFuture.complete(playerAccount);
-                    }
-                };
+                PhasedFutureSubscriber<T> subscription = new PhasedFutureSubscriber<>(phaser, toAccountFuture);
                 if (hasAccount) {
-                    to.requestPlayerAccount(uuid, subscription);
+                    migrator.requestAccount().accept(migration.to, uuid, subscription);
                 } else {
-                    to.createPlayerAccount(uuid, subscription);
+                    migrator.createAccount().accept(migration.to, uuid, subscription);
                 }
             }
+
+            @Override
+            public void phaseFail(@NotNull EconomyException exception) {
+                toAccountFuture.completeExceptionally(exception);
+            }
         });
+        toAccountFuture.whenComplete(failureConsumer);
 
         fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccount, toAccount) -> {
-            for (Map.Entry<Currency, Currency> currencyEntry : migrated.entrySet()) {
-                safeTransferAll(phaser, fromAccount, toAccount, currencyEntry.getKey(), currencyEntry.getValue(), debugEnabled);
-            }
-            playerAccountsProcessed.incrementAndGet();
+            migrator.migrate(phaser, fromAccount, toAccount, migration);
+            migrator.getSuccessfulMigrations(migration).incrementAndGet();
         });
     }
 
-    private void safeTransferAll(
-            @NotNull Phaser phaser,
-            @NotNull Account fromAccount,
-            @NotNull Account toAccount,
-            @NotNull Currency fromCurrency,
-            @NotNull Currency toCurrency,
-            boolean debugEnabled) {
-        CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
+    private static class MigrationData {
+        private final @NotNull Treasury treasury;
+        private final @NotNull EconomyProvider from;
+        private final @NotNull EconomyProvider to;
+        private final boolean debugEnabled;
+        private final QuickTimer timer = new QuickTimer();
+        private final @NotNull Map<Currency, Currency> migratedCurrencies = new ConcurrentHashMap<>();
+        private final @NotNull Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
+        private final @NotNull AtomicInteger playerAccountsProcessed = new AtomicInteger();
+        private final @NotNull AtomicInteger bankAccountsProcessed = new AtomicInteger();
 
-        fromAccount.requestBalance(fromCurrency, new PhasedSubscriber<Double>(phaser) {
-            @Override
-            public void phaseAccept(@NotNull Double balance) {
-                balanceFuture.complete(balance);
-            }
+        private MigrationData(
+                @NotNull Treasury treasury,
+                @NotNull EconomyProvider from,
+                @NotNull EconomyProvider to,
+                boolean debugEnabled) {
+            this.treasury = treasury;
+            this.from = from;
+            this.to = to;
+            this.debugEnabled = debugEnabled;
+        }
 
-            @Override
-            public void phaseError(@NotNull EconomyException exception) {
-                if (debugEnabled) {
-                    main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of UUID '&b" + fromAccount.getUniqueId() + "&7': &b" + exception.getMessage());
-                }
-                balanceFuture.completeExceptionally(exception);
+        private void debug(Supplier<String> supplier) {
+            if (debugEnabled) {
+                treasury.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, supplier.get());
             }
-        });
-
-        balanceFuture.thenAccept(balance -> {
-            if (balance == 0) {
-                return;
-            }
-            EconomySubscriber<Double> subscriber = new PhasedSubscriber<Double>(phaser) {
-                @Override
-                public void phaseAccept(@NotNull Double newBalance) {
-                    // Don't add extra logging for success.
-                }
-
-                @Override
-                public void phaseError(@NotNull EconomyException exception) {
-                    if (debugEnabled) {
-                        main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of UUID '&b" + fromAccount.getUniqueId() + "&7': &b" + exception.getMessage());
-                    }
-                }
-            };
-            if (balance < 0) {
-                toAccount.withdrawBalance(balance, toCurrency, subscriber);
-            } else {
-                toAccount.depositBalance(balance, toCurrency, subscriber);
-            }
-        });
+        }
     }
 
     private abstract static class PhasedSubscriber<T> implements EconomySubscriber<T> {
-
         private final Phaser phaser;
 
         private PhasedSubscriber(@NotNull Phaser phaser) {
@@ -400,54 +328,203 @@ public class MigrateSubcommand implements Subcommand {
 
         @Override
         public final void fail(@NotNull EconomyException exception) {
-            phaseError(exception);
+            phaseFail(exception);
             phaser.arriveAndDeregister();
         }
 
-        public abstract void phaseError(@NotNull EconomyException exception);
+        public abstract void phaseFail(@NotNull EconomyException exception);
 
     }
 
-    private abstract class PlayerSubscriber<T> extends PhasedSubscriber<T> {
-        private final UUID uuid;
-        private final CompletableFuture<PlayerAccount> accountFuture;
-        private final boolean debugEnabled;
+    private static class PhasedFutureSubscriber<T> extends PhasedSubscriber<T> {
+        private final @NotNull CompletableFuture<T> future;
 
-        private PlayerSubscriber(
-                @NotNull Phaser phaser,
-                @NotNull UUID uuid,
-                @NotNull CompletableFuture<PlayerAccount> accountFuture,
-                boolean debugEnabled) {
+        private PhasedFutureSubscriber(@NotNull Phaser phaser, @NotNull CompletableFuture<T> future) {
             super(phaser);
-            this.uuid = uuid;
-            this.accountFuture = accountFuture;
-            this.debugEnabled = debugEnabled;
-        }
-
-        @Override
-        public final void phaseError(@NotNull EconomyException exception) {
-            if (debugEnabled) {
-                main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Error migrating account of player UUID '&b" + uuid + "&7': &b" + exception.getMessage());
-            }
-            accountFuture.completeExceptionally(exception);
-        }
-    }
-
-    private static class FutureSubscriber<T> implements EconomySubscriber<T> {
-        private final CompletableFuture<T> future;
-
-        private FutureSubscriber(CompletableFuture<T> future) {
             this.future = future;
         }
 
         @Override
-        public void succeed(@NotNull T t) {
+        public void phaseAccept(@NotNull T t) {
             future.complete(t);
         }
 
         @Override
-        public void fail(@NotNull EconomyException exception) {
+        public void phaseFail(@NotNull EconomyException exception) {
             future.completeExceptionally(exception);
+        }
+    }
+
+    private interface TriConsumer<T, U, V> {
+        void accept(T t, U u, V v);
+    }
+
+    private interface AccountMigrator<T extends Account> {
+
+        @NotNull String getBulkFailLog(@NotNull Throwable throwable);
+
+        @NotNull String getInitLog(@NotNull UUID uuid);
+
+        @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable);
+
+        @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<T>> requestAccount();
+
+        @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<Boolean>> checkAccountExistence();
+
+        @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<T>> createAccount();
+
+        default void migrate(
+                @NotNull Phaser phaser,
+                @NotNull T fromAccount,
+                @NotNull T toAccount,
+                @NotNull MigrationData migration) {
+            for (Map.Entry<Currency, Currency> fromToCurrency : migration.migratedCurrencies.entrySet()) {
+                Currency fromCurrency = fromToCurrency.getKey();
+                Currency toCurrency = fromToCurrency.getValue();
+                CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
+
+                fromAccount.requestBalance(fromCurrency, new PhasedSubscriber<Double>(phaser) {
+                    @Override
+                    public void phaseAccept(@NotNull Double balance) {
+                        balanceFuture.complete(balance);
+                    }
+
+                    @Override
+                    public void phaseFail(@NotNull EconomyException exception) {
+                        migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
+                        balanceFuture.completeExceptionally(exception);
+                    }
+                });
+
+                balanceFuture.thenAccept(balance -> {
+                    if (balance == 0) {
+                        return;
+                    }
+                    EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser,
+                            exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception)));
+                    if (balance < 0) {
+                        toAccount.withdrawBalance(balance, toCurrency, subscriber);
+                    } else {
+                        toAccount.depositBalance(balance, toCurrency, subscriber);
+                    }
+                });
+            }
+        }
+
+        @NotNull AtomicInteger getSuccessfulMigrations(MigrationData migration);
+
+    }
+
+    private static class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
+        @Override
+        public @NotNull String getBulkFailLog(@NotNull Throwable throwable) {
+            return "Unable to fetch player account UUIDs for migration: " + throwable.getMessage();
+        }
+
+        @Override
+        public @NotNull String getInitLog(@NotNull UUID uuid) {
+            return "Migrating player account of UUID '&b" + uuid + "&7'.";
+        }
+
+        @Override
+        public @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable) {
+            return "Error migrating account of player UUID '&b" + uuid + "&7': &b" + throwable.getMessage();
+        }
+
+        @Override
+        public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<PlayerAccount>> requestAccount() {
+            return EconomyProvider::requestPlayerAccount;
+        }
+
+        @Override
+        public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<Boolean>> checkAccountExistence() {
+            return EconomyProvider::hasPlayerAccount;
+        }
+
+        @Override
+        public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<PlayerAccount>> createAccount() {
+            return EconomyProvider::createPlayerAccount;
+        }
+
+        @Override
+        public @NotNull AtomicInteger getSuccessfulMigrations(MigrationData migration) {
+            return migration.playerAccountsProcessed;
+        }
+    }
+
+    private static class BankAccountMigrator implements AccountMigrator<BankAccount> {
+
+        @Override
+        public @NotNull String getBulkFailLog(@NotNull Throwable throwable) {
+            return "Unable to fetch bank account UUIDs for migration: " + throwable.getMessage();
+        }
+
+        @Override
+        public @NotNull String getInitLog(@NotNull UUID uuid) {
+            return "Migrating bank account of UUID '&b" + uuid + "&7'.";
+        }
+
+        @Override
+        public @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable) {
+            return "Error migrating bank account UUID '&b" + uuid + "&7': &b" + throwable.getMessage();
+        }
+
+        @Override
+        public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<BankAccount>> requestAccount() {
+            return EconomyProvider::requestBankAccount;
+        }
+
+        @Override
+        public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<Boolean>> checkAccountExistence() {
+            return EconomyProvider::hasBankAccount;
+        }
+
+        @Override
+        public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<BankAccount>> createAccount() {
+            return EconomyProvider::createBankAccount;
+        }
+
+        @Override
+        public void migrate(
+                @NotNull Phaser phaser,
+                @NotNull BankAccount fromAccount,
+                @NotNull BankAccount toAccount,
+                @NotNull MigrationData migration) {
+            AccountMigrator.super.migrate(phaser, fromAccount, toAccount, migration);
+
+            CompletableFuture<Collection<UUID>> memberUuidsFuture = new CompletableFuture<>();
+            fromAccount.requestBankMembersIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
+            memberUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankMember(uuid,
+                    new FailureConsumer<>(phaser, exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))))));
+
+            CompletableFuture<Collection<UUID>> ownerUuidsFuture = new CompletableFuture<>();
+            fromAccount.requestBankOwnersIds(new PhasedFutureSubscriber<>(phaser, ownerUuidsFuture));
+            ownerUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankOwner(uuid,
+                    new FailureConsumer<>(phaser, exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))))));
+        }
+
+        @Override
+        public @NotNull AtomicInteger getSuccessfulMigrations(MigrationData migration) {
+            return migration.bankAccountsProcessed;
+        }
+    }
+
+    private static final class FailureConsumer<T> extends PhasedSubscriber<T> {
+        private final Consumer<EconomyException> consumer;
+
+        private FailureConsumer(@NotNull Phaser phaser, @NotNull Consumer<EconomyException> consumer) {
+            super(phaser);
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void phaseAccept(@NotNull T t) {
+            // Do nothing.
+        }
+
+        @Override
+        public void phaseFail(@NotNull EconomyException exception) {
+            consumer.accept(exception);
         }
     }
 
