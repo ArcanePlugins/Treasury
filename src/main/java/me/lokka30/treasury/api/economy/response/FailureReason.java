@@ -17,6 +17,13 @@ public enum FailureReason {
      */
     FEATURE_NOT_SUPPORTED,
 
+    /**
+     * A constant representing failure due to request cancellation.
+     *
+     * @since v1.0.0
+     */
+    REQUEST_CANCELLED,
+
     /* Accounts */
 
     // TODO Javadoc
