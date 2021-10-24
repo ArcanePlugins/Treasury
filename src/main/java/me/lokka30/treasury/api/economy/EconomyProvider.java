@@ -12,13 +12,10 @@
 
 package me.lokka30.treasury.api.economy;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -109,27 +106,11 @@ public interface EconomyProvider {
     void requestCurrency(String currencyName, @NotNull EconomySubscriber<Currency> subscription);
 
     @NotNull
-    default Currency getPrimaryCurrency() {
-        CompletableFuture<Currency> currencyFuture = new CompletableFuture<>();
-        requestCurrency(getPrimaryCurrencyId(), new EconomySubscriber<Currency>() {
-            @Override
-            public void succeed(@NotNull Currency value) {
-                currencyFuture.complete(value);
-            }
-
-            @Override
-            public void fail(@NotNull EconomyException exception) {
-                currencyFuture.completeExceptionally(exception);
-            }
-        });
-        try {
-            return currencyFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new IllegalStateException("Unable to obtain primary currency", e);
-        }
-    }
+    Currency getPrimaryCurrency();
 
     @NotNull
-    UUID getPrimaryCurrencyId();
+    default UUID getPrimaryCurrencyId() {
+        return getPrimaryCurrency().getCurrencyId();
+    }
 
 }
