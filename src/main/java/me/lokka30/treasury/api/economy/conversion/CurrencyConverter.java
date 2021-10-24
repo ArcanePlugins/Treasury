@@ -20,23 +20,17 @@ import java.util.HashSet;
 import java.util.Objects;
 
 /**
- * @author lokka30, Articdive
+ * @author lokka30, Articdive, MrNemo64
  * @since v1.0.0
  * TODO Describe this class.
- * Thank you to Articdive for helping me design this class.
+ * Thank you to Articdive for helping me design this class. <a href="https://github.com/Articdive">Articdive</a>
  * @see CurrencyConversion
  * @see ConversionPriority
  */
 @SuppressWarnings("unused")
 public class CurrencyConverter {
 
-    /*
-     Thank you to Articdive for assisting me
-    in designing the Currency Converter class.
-         <https://github.com/Articdive>
-     */
-
-    @NotNull public HashSet<CurrencyConversion> conversions = new HashSet<>();
+    @NotNull private final HashSet<CurrencyConversion> conversions = new HashSet<>();
 
     @Nullable
     private CurrencyConversion getConversion(int hashCode) {
