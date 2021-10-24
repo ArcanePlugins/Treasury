@@ -23,6 +23,7 @@ import me.lokka30.treasury.plugin.debug.DebugCategory;
 import me.lokka30.treasury.plugin.misc.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -125,6 +126,10 @@ public class MigrateSubcommand implements Subcommand {
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
         ));
 
+        // Override economies with dummy economy that doesn't support any operations.
+        MigrationEconomy dummyEconomy = new MigrationEconomy(main);
+        main.getServer().getServicesManager().register(EconomyProvider.class, dummyEconomy, main, ServicePriority.Highest);
+
         MigrationData migration = new MigrationData(main, from, to, debugEnabled);
 
         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
@@ -151,6 +156,9 @@ public class MigrateSubcommand implements Subcommand {
 
             // Block until migration is complete.
             playerMigration.arriveAndAwaitAdvance();
+
+            // Unregister economy override.
+            main.getServer().getServicesManager().unregister(dummyEconomy);
 
             sendMigrationMessage(sender, migration);
         });
