@@ -24,90 +24,193 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
+ * {@link Plugin Plugins} providing and managing economy data create a class
+ * which implements this interface to be registered via the
+ * {@link org.bukkit.plugin.ServicesManager ServicesManager} as a
+ * {@link org.bukkit.plugin.RegisteredServiceProvider RegisteredServiceProvider&lt;EconomyProvider&gt;}.
+ *
  * @author lokka30
  * @since v1.0.0
- * Economy Providers (plugins facilitating the economy data) create
- * a class which implements this interface and should then become a
- * `RegisteredServiceProvider<EconomyProvider>`.
  */
-@SuppressWarnings({"unused", "RedundantThrows", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface EconomyProvider {
 
     /**
+     * Get the "Economy Provider" - the {@link Plugin} facilitating the economy.
+     *
      * @author lokka30
+     * @return the {@code Plugin} facilitating the economy
      * @since v1.0.0
-     * @return the Plugin facilitating the economy - the 'Economy Provider'.
      */
     @NotNull
     Plugin getProvider();
 
     /**
+     * Get the version of the Treasury's API the {@code EconomyProvider} is based on.
+     *
      * @author lokka30
+     * @return the API version
      * @since v1.0.0
-     * @return which API version of Treasury the Provider is based on.
      */
     @NotNull
     EconomyAPIVersion getSupportedAPIVersion();
 
     /**
+     * Check whether the economy provides {@link BankAccount} implementations.
+     *
+     * <p>This should be checked before using bank-related methods.
+     *
      * @author lokka30, NoahvdAa
+     * @return whether the economy supports bank accounts
      * @since v1.0.0
-     * This method should be asserted before any Bank Account
-     * methods are accessed through the Treasury API.
-     * @return whether the economy provider supports bank accounts.
      */
     default boolean hasBankAccountSupport() { return false; }
 
     /**
+     * Check whether the {@code EconomyProvider} calls Treasury's in-built
+     * transaction events.
+     *
+     * <p>This should be checked before relying on Treasury's events as
+     * the {@code EconomyProvider} may not have transaction event support,
+     * and thus the events will never be called.
+     *
      * @author lokka30, NoahvdAa
+     * @return whether the economy calls Treasury's transaction events
+     * @see me.lokka30.treasury.api.economy.event
+     * @see me.lokka30.treasury.api.economy.event.AccountTransactionEvent
      * @since v1.0.0
-     * This method returns whether the economy provider calls Treasury's
-     * in-built transaction events (see {@link me.lokka30.treasury.api.economy.event.AccountTransactionEvent}).
-     * This method should be asserted before a plugin tries to listen to
-     * Treasury's events, as otherwise the economy provider installed
-     * may not have transaction event support, and thus the events will
-     * never be called.
-     * @return whether the economy provider calls Treasury's in-built transaction events.
      */
     default boolean hasTransactionEventSupport() { return false; }
 
     /**
+     * Check whether the {@code EconomyProvider} supports negative
+     * or below-zero balances.
+     *
      * @author lokka30, NoahvdAa
+     * @return whether the economy supports negative balances
      * @since v1.0.0
-     * Some economy providers support negative / below-zero balances.
-     * This method allows economy consumers to check if
-     * the provider supports negative balances or not.
-     * @return whether the economy provider supports negative / below-zero balances.
      */
     default boolean hasNegativeBalanceSupport() { return false; }
 
+    /**
+     * Request whether a user has an associated {@link PlayerAccount}.
+     *
+     * @param accountId the {@link UUID} of the account owner
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void hasPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
 
+    /**
+     * Request an existing {@link PlayerAccount} for a user.
+     *
+     * @param accountId the {@link UUID} of the account owner
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void requestPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
+    /**
+     * Request the creation of a {@link PlayerAccount} for a user.
+     *
+     * @param accountId the {@link UUID} of the account owner
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void createPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
+    /**
+     * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void requestPlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
+    /**
+     * Request whether a {@link UUID} has an associated {@link BankAccount}.
+     *
+     * @param accountId the {@code UUID} of the account
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void hasBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
 
+    /**
+     * Request an existing {@link BankAccount} for a {@link UUID}.
+     *
+     * @param accountId the {@code UUID} of the account
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void requestBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
+    /**
+     * Request the creation of a {@link BankAccount} for a {@link UUID}.
+     *
+     * @param accountId the {@code UUID} of the account
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
+    /**
+     * Request all {@link UUID UUIDs} with associated {@link BankAccount BankAccounts}.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void requestBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
+    /**
+     * Request all {@link UUID UUIDs} for valid {@link Currency Currencies}.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void requestCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
+    /**
+     * Request all names for valid {@link Currency Currencies}.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
     void requestCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription);
 
-    void requestCurrency(UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
+    /**
+     * Request a {@link Currency} by {@link UUID}.
+     *
+     * @param currencyId the {@code UUID} identifying the {@code Currency}
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
+    void requestCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
 
-    void requestCurrency(String currencyName, @NotNull EconomySubscriber<Currency> subscription);
+    /**
+     * Request a {@link Currency} by name.
+     *
+     * @param currencyName the name of the {@code Currency}
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @since v1.0.0
+     */
+    void requestCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
 
+    /**
+     * Get the primary currency of the economy.
+     *
+     * @return the primary currency
+     * @since v1.0.0
+     */
     @NotNull
     Currency getPrimaryCurrency();
 
+    /**
+     * Get the {@link UUID} of the primary currency of the economy.
+     *
+     * @return the {@code UUID} identifying the primary currency
+     * @since v1.0.0
+     */
     @NotNull
     default UUID getPrimaryCurrencyId() {
         return getPrimaryCurrency().getCurrencyId();
