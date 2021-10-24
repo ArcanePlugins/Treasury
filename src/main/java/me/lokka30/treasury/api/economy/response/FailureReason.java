@@ -26,37 +26,94 @@ public enum FailureReason {
 
     /* Accounts */
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to the inability to locate an
+     * {@link me.lokka30.treasury.api.economy.account.Account Account}.
+     *
+     * @since v1.0.0
+     */
     ACCOUNT_NOT_FOUND,
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to
+     * {@link me.lokka30.treasury.api.economy.account.Account Account}
+     * deletion being unsupported.
+     *
+     * @since v1.0.0
+     */
     ACCOUNT_DELETION_NOT_SUPPORTED,
+
+    /**
+     * A constant representing failure due to an
+     * {@link me.lokka30.treasury.api.economy.account.Account Account}
+     * already existing.
+     *
+     * @since v1.0.0
+     */
+    ACCOUNT_ALREADY_EXISTS,
 
     /* BankAccounts */
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to a user already being a member of a
+     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     *
+     * @since v1.0.0
+     */
     ALREADY_MEMBER_OF_BANK_ACCOUNT,
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to a user already being an owner of a
+     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     *
+     * @since v1.0.0
+     */
     ALREADY_OWNER_OF_BANK_ACCOUNT,
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to a user already not being a member of a
+     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     *
+     * @since v1.0.0
+     */
     ALREADY_NOT_MEMBER_OF_BANK_ACCOUNT,
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to a user already not being an owner of a
+     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     *
+     * @since v1.0.0
+     */
     ALREADY_NOT_OWNER_OF_BANK_ACCOUNT,
 
     /* Balances */
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to an overdraft when
+     * negative balances are not supported.
+     *
+     * @since v1.0.0
+     */
     NEGATIVE_BALANCES_NOT_SUPPORTED,
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to a negative amount being
+     * provided to a method that only accepts positive numbers.
+     *
+     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(double, me.lokka30.treasury.api.economy.currency.Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(double, me.lokka30.treasury.api.economy.currency.Currency, EconomySubscriber)
+     * @since v1.0.0
+     */
     NEGATIVE_AMOUNT_SPECIFIED,
 
     /* Currencies */
 
-    // TODO Javadoc
+    /**
+     * A constant representing failure due to the inability to locate an
+     * {@link me.lokka30.treasury.api.economy.currency.Currency Currency}.
+     *
+     * @since v1.0.0
+     */
     CURRENCY_NOT_FOUND,
 
     /**
