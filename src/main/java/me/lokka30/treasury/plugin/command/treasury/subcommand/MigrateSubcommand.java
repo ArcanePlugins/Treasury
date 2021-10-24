@@ -12,10 +12,6 @@
 
 package me.lokka30.treasury.plugin.command.treasury.subcommand;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -33,13 +29,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.*;
 
 public class MigrateSubcommand implements Subcommand {
 
@@ -146,8 +152,8 @@ public class MigrateSubcommand implements Subcommand {
             Phaser playerMigration = migrateAccounts(migration, new PlayerAccountMigrator());
             if (migration.from.hasBankAccountSupport()) {
                 if (migration.to.hasBankAccountSupport()) {
-                Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
-                bankMigration.arriveAndAwaitAdvance();
+                    Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
+                    bankMigration.arriveAndAwaitAdvance();
                 } else {
                     migration.debug(() -> "'&b" + migration.to.getProvider().getName() + "&7' does not offer bank support, cannot transfer accounts.");
                 }
