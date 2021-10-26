@@ -22,8 +22,10 @@ import me.lokka30.treasury.plugin.command.Subcommand;
 import me.lokka30.treasury.plugin.debug.DebugCategory;
 import me.lokka30.treasury.plugin.misc.Utils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.ServicesManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -65,8 +67,8 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         Collection<RegisteredServiceProvider<EconomyProvider>> serviceProviders = main.getServer().getServicesManager().getRegistrations(EconomyProvider.class);
-        EconomyProvider from = null;
-        EconomyProvider to = null;
+        RegisteredServiceProvider<EconomyProvider> from = null;
+        RegisteredServiceProvider<EconomyProvider> to = null;
 
         if(serviceProviders.size() < 2) {
             new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.requires-two-providers"), Collections.singletonList(
@@ -96,9 +98,9 @@ public class MigrateSubcommand implements Subcommand {
             final String serviceProviderPluginName = serviceProvider.getPlugin().getName();
 
             if(args[1].equalsIgnoreCase(serviceProviderPluginName)) {
-                from = serviceProvider.getProvider();
+                from = serviceProvider;
             } else if(args[2].equalsIgnoreCase(serviceProviderPluginName)) {
-                to = serviceProvider.getProvider();
+                to = serviceProvider;
             }
         }
 
@@ -119,7 +121,7 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         if(debugEnabled) {
-            main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating from '&b" + from.getProvider().getName() + "&7' to '&b" + to.getProvider().getName() + "&7'.");
+            main.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating from '&b" + from.getPlugin().getName() + "&7' to '&b" + to.getPlugin().getName() + "&7'.");
         }
 
         new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.migrate.starting-migration"), Collections.singletonList(
@@ -130,7 +132,11 @@ public class MigrateSubcommand implements Subcommand {
         MigrationEconomy dummyEconomy = new MigrationEconomy(main);
         main.getServer().getServicesManager().register(EconomyProvider.class, dummyEconomy, main, ServicePriority.Highest);
 
-        MigrationData migration = new MigrationData(main, from, to, debugEnabled);
+        // Re-register economies to ensure target economy will override migrated economy.
+        reregister(from, ServicePriority.Low);
+        reregister(to, ServicePriority.High);
+
+        MigrationData migration = new MigrationData(main, from.getProvider(), to.getProvider(), debugEnabled);
 
         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
 
@@ -162,6 +168,19 @@ public class MigrateSubcommand implements Subcommand {
 
             sendMigrationMessage(sender, migration);
         });
+    }
+
+    private void reregister(RegisteredServiceProvider<EconomyProvider> serviceProvider, ServicePriority priority) {
+        if (serviceProvider.getPriority() == priority) {
+            return;
+        }
+
+        Plugin plugin = serviceProvider.getPlugin();
+        ServicesManager servicesManager = plugin.getServer().getServicesManager();
+        EconomyProvider provider = serviceProvider.getProvider();
+
+        servicesManager.unregister(provider);
+        servicesManager.register(EconomyProvider.class, provider, plugin, priority);
     }
 
     private void sendMigrationMessage(@NotNull CommandSender sender, @NotNull MigrationData migration) {
