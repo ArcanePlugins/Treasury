@@ -1,4 +1,4 @@
-package me.lokka30.treasury.plugin.command.treasury.subcommand.migration;
+package me.lokka30.treasury.plugin.command.treasury.subcommand.migrate;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
@@ -24,11 +24,11 @@ import java.util.UUID;
  */
 class MigrationEconomy implements EconomyProvider {
 
-    private final Plugin plugin;
-    private final Currency currency;
-    private final EconomyException migrationException;
+    private final @NotNull Plugin plugin;
+    private final @NotNull Currency currency;
+    private final @NotNull EconomyException migrationException;
 
-    MigrationEconomy(Plugin plugin) {
+    MigrationEconomy(@NotNull Plugin plugin) {
         this.plugin = plugin;
         this.currency = new Currency() {
             private final UUID uuid = UUID.randomUUID();

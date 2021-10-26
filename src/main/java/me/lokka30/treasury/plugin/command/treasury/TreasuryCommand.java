@@ -16,7 +16,7 @@ import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.plugin.Treasury;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.InfoSubcommand;
-import me.lokka30.treasury.plugin.command.treasury.subcommand.migration.MigrateSubcommand;
+import me.lokka30.treasury.plugin.command.treasury.subcommand.migrate.MigrateSubcommand;
 import me.lokka30.treasury.plugin.command.treasury.subcommand.ReloadSubcommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

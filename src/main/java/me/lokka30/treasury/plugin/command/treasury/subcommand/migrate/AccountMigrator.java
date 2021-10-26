@@ -1,4 +1,4 @@
-package me.lokka30.treasury.plugin.command.treasury.subcommand.migration;
+package me.lokka30.treasury.plugin.command.treasury.subcommand.migrate;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
@@ -37,7 +37,7 @@ interface AccountMigrator<T extends Account> {
             Currency toCurrency = fromToCurrency.getValue();
             CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
 
-            fromAccount.requestBalance(fromCurrency, new PhasedSubscriber<Double>(phaser) {
+            fromAccount.setBalance(0.0D, fromCurrency, new PhasedSubscriber<Double>(phaser) {
                 @Override
                 public void phaseAccept(@NotNull Double balance) {
                     balanceFuture.complete(balance);
@@ -54,8 +54,17 @@ interface AccountMigrator<T extends Account> {
                 if (balance == 0) {
                     return;
                 }
-                EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser,
-                        exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception)));
+                EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser, exception -> {
+                    migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
+                    fromAccount.setBalance(balance, fromCurrency, new FailureConsumer<>(phaser, exception1 -> {
+                        migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception1));
+                        migration.debug(() -> String.format(
+                                "Failed to recover from an issue transferring %s %s from %s, currency will be deleted!",
+                                balance,
+                                fromCurrency.getCurrencyName(),
+                                fromAccount.getUniqueId()));
+                    }));
+                });
                 if (balance < 0) {
                     toAccount.withdrawBalance(balance, toCurrency, subscriber);
                 } else {

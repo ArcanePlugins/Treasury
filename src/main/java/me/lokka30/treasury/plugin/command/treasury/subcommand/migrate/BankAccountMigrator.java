@@ -1,4 +1,4 @@
-package me.lokka30.treasury.plugin.command.treasury.subcommand.migration;
+package me.lokka30.treasury.plugin.command.treasury.subcommand.migrate;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
