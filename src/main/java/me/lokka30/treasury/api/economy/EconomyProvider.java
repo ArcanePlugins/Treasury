@@ -46,7 +46,9 @@ public interface EconomyProvider {
     Plugin getProvider();
 
     /**
-     * Get the version of the Treasury's API the {@code EconomyProvider} is based on.
+     * Get the version of the Treasury API the {@code EconomyProvider} is based on.
+     *
+     * <p>Please note that the Treasury API version is not the same as the Spigot API version!
      *
      * @author lokka30
      * @return the API version
@@ -197,7 +199,7 @@ public interface EconomyProvider {
     void requestCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
 
     /**
-     * Get the primary currency of the economy.
+     * Get the primary or main {@link Currency} of the economy.
      *
      * @return the primary currency
      * @since v1.0.0
@@ -206,7 +208,7 @@ public interface EconomyProvider {
     Currency getPrimaryCurrency();
 
     /**
-     * Get the {@link UUID} of the primary currency of the economy.
+     * Get the {@link UUID} of the primary or main {@link Currency} of the economy.
      *
      * @return the {@code UUID} identifying the primary currency
      * @since v1.0.0
