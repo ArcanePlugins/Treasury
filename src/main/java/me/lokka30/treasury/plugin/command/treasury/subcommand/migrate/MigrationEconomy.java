@@ -58,7 +58,7 @@ class MigrationEconomy implements EconomyProvider {
                 return String.valueOf(amount);
             }
         };
-        this.migrationException = new EconomyException(FailureReason.FEATURE_NOT_SUPPORTED, "Economy unavailable while migration in process.");
+        this.migrationException = new EconomyException(FailureReason.MIGRATION, "Economy unavailable during migration process.");
     }
 
     @Override

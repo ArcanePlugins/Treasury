@@ -18,6 +18,14 @@ public enum FailureReason {
     FEATURE_NOT_SUPPORTED,
 
     /**
+     * A constant represeting failure due to economies being in the middle
+     * of migrating.
+     *
+     * @since v1.0.0
+     */
+    MIGRATION,
+
+    /**
      * A constant representing failure due to request cancellation.
      *
      * @since v1.0.0
