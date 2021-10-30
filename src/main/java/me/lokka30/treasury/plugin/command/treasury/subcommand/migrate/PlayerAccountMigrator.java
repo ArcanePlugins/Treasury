@@ -5,8 +5,10 @@ import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 
@@ -23,6 +25,11 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
     @Override
     public @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable) {
         return "Error migrating account of player UUID '&b" + uuid + "&7': &b" + throwable.getMessage();
+    }
+
+    @Override
+    public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<UUID>>> requestAccountIds() {
+        return EconomyProvider::requestPlayerAccountIds;
     }
 
     @Override

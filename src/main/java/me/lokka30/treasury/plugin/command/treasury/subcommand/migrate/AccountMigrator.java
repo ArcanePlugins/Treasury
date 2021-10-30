@@ -7,11 +7,13 @@ import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 interface AccountMigrator<T extends Account> {
 
@@ -20,6 +22,8 @@ interface AccountMigrator<T extends Account> {
     @NotNull String getInitLog(@NotNull UUID uuid);
 
     @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable);
+
+    @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<UUID>>> requestAccountIds();
 
     @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<T>> requestAccount();
 

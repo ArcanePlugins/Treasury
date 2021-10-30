@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 class BankAccountMigrator implements AccountMigrator<BankAccount> {
 
@@ -26,6 +27,11 @@ class BankAccountMigrator implements AccountMigrator<BankAccount> {
     @Override
     public @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable) {
         return "Error migrating bank account UUID '&b" + uuid + "&7': &b" + throwable.getMessage();
+    }
+
+    @Override
+    public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<UUID>>> requestAccountIds() {
+        return EconomyProvider::requestBankAccountIds;
     }
 
     @Override

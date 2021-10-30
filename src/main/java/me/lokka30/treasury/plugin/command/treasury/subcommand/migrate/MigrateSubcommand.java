@@ -242,7 +242,7 @@ public class MigrateSubcommand implements Subcommand {
         // Initialize phaser with a single party: migration completion.
         Phaser phaser = new Phaser(1);
 
-        migration.from().requestPlayerAccountIds(new PhasedSubscriber<Collection<UUID>>(phaser) {
+        migrator.requestAccountIds().accept(migration.from(), new PhasedSubscriber<Collection<UUID>>(phaser) {
             @Override
             public void phaseAccept(@NotNull Collection<UUID> uuids) {
                 for (UUID uuid : uuids) {
