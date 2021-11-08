@@ -77,7 +77,7 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void requestPlayerAccount(
+    public void retrievePlayerAccount(
             @NotNull UUID accountId,
             @NotNull EconomySubscriber<PlayerAccount> subscription) {
         subscription.fail(migrationException);
@@ -91,7 +91,7 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void requestPlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+    public void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
         subscription.fail(migrationException);
     }
 
@@ -101,7 +101,7 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void requestBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription) {
+    public void retrieveBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription) {
         subscription.fail(migrationException);
     }
 
@@ -111,27 +111,27 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void requestBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+    public void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void requestCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+    public void retrieveCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void requestCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription) {
+    public void retrieveCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void requestCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription) {
+    public void retrieveCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void requestCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription) {
+    public void retrieveCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription) {
         subscription.fail(migrationException);
     }
 

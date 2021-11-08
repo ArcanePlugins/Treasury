@@ -39,7 +39,7 @@ public interface BankAccount extends Account {
      * @param subscription the {@link EconomySubscriber} accepting the members
      * @since v1.0.0
      */
-    void requestBankMembersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveBankMembersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
      * Request a listing of all owners of the bank.
@@ -48,7 +48,7 @@ public interface BankAccount extends Account {
      * @param subscription the {@link EconomySubscriber} accepting the owners
      * @since v1.0.0
      */
-    void requestBankOwnersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveBankOwnersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
      * Check if the specified user is a member of the bank.

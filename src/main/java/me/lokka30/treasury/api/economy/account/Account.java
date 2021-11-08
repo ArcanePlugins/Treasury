@@ -52,7 +52,7 @@ public interface Account {
      * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
      */
-    void requestBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
+    void retrieveBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
     /**
      * Set the balance of the {@code Account}.
@@ -63,7 +63,7 @@ public interface Account {
      * @param amount the amount the new balance will be
      * @param currency the {@link Currency} of the balance being set
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#requestBalance(Currency, EconomySubscriber)
+     * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since v1.0.0
      */
     void setBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
@@ -132,11 +132,11 @@ public interface Account {
      * @param amount the amount the balance must meet or exceed
      * @param currency the {@link Currency} of the balance being queried
      * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
-     * @see Account#requestBalance(Currency, EconomySubscriber)
+     * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since v1.0.0
      */
     default void canAfford(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription) {
-        requestBalance(currency, new EconomySubscriber<Double>() {
+        retrieveBalance(currency, new EconomySubscriber<Double>() {
                 @Override
                 public void succeed(@NotNull Double value) {
                     subscription.succeed(value >= amount);

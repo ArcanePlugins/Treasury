@@ -200,14 +200,14 @@ public class MigrateSubcommand implements Subcommand {
         // Initialize phaser with a single party: currency mapping completion.
         Phaser phaser = new Phaser(1);
 
-        migration.from().requestCurrencyIds(new PhasedFutureSubscriber<>(phaser, fromCurrencyIdsFuture));
+        migration.from().retrieveCurrencyIds(new PhasedFutureSubscriber<>(phaser, fromCurrencyIdsFuture));
 
         fromCurrencyIdsFuture.thenAccept(fromCurrencyIds -> {
             for (UUID fromCurrencyId : fromCurrencyIds) {
 
                 // Fetch from currency.
                 CompletableFuture<Currency> fromCurrencyFuture = new CompletableFuture<>();
-                migration.from().requestCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, fromCurrencyFuture));
+                migration.from().retrieveCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, fromCurrencyFuture));
                 fromCurrencyFuture.whenComplete(((currency, throwable) -> {
                     if (throwable != null) {
                         migration.debug(() -> "Unable to locate reported currency with ID '&b" + fromCurrencyId + "&7'.");
@@ -218,7 +218,7 @@ public class MigrateSubcommand implements Subcommand {
 
                     // Fetch to currency.
                     CompletableFuture<Currency> toCurrencyFuture = new CompletableFuture<>();
-                    migration.to().requestCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, toCurrencyFuture));
+                    migration.to().retrieveCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, toCurrencyFuture));
                     toCurrencyFuture.whenComplete(((toCurrency, throwable) -> {
                         if (toCurrency == null) {
                             // Currency not found.

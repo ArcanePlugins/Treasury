@@ -110,7 +110,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
+    void retrievePlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
     /**
      * Request the creation of a {@link PlayerAccount} for a user.
@@ -127,7 +127,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestPlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
      * Request whether a {@link UUID} has an associated {@link BankAccount}.
@@ -145,7 +145,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
+    void retrieveBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
     /**
      * Request the creation of a {@link BankAccount} for a {@link UUID}.
@@ -162,7 +162,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
      * Request all {@link UUID UUIDs} for valid {@link Currency Currencies}.
@@ -170,7 +170,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
      * Request all names for valid {@link Currency Currencies}.
@@ -178,7 +178,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription);
+    void retrieveCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
      * Request a {@link Currency} by {@link UUID}.
@@ -187,7 +187,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
+    void retrieveCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
 
     /**
      * Request a {@link Currency} by name.
@@ -196,7 +196,7 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @since v1.0.0
      */
-    void requestCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
+    void retrieveCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
 
     /**
      * Get the primary or main {@link Currency} of the economy.

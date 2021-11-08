@@ -31,12 +31,12 @@ class BankAccountMigrator implements AccountMigrator<BankAccount> {
 
     @Override
     public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<UUID>>> requestAccountIds() {
-        return EconomyProvider::requestBankAccountIds;
+        return EconomyProvider::retrieveBankAccountIds;
     }
 
     @Override
     public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<BankAccount>> requestAccount() {
-        return EconomyProvider::requestBankAccount;
+        return EconomyProvider::retrieveBankAccount;
     }
 
     @Override
@@ -58,12 +58,12 @@ class BankAccountMigrator implements AccountMigrator<BankAccount> {
         AccountMigrator.super.migrate(phaser, fromAccount, toAccount, migration);
 
         CompletableFuture<Collection<UUID>> memberUuidsFuture = new CompletableFuture<>();
-        fromAccount.requestBankMembersIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
+        fromAccount.retrieveBankMembersIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
         memberUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankMember(uuid,
                 new FailureConsumer<>(phaser, exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))))));
 
         CompletableFuture<Collection<UUID>> ownerUuidsFuture = new CompletableFuture<>();
-        fromAccount.requestBankOwnersIds(new PhasedFutureSubscriber<>(phaser, ownerUuidsFuture));
+        fromAccount.retrieveBankOwnersIds(new PhasedFutureSubscriber<>(phaser, ownerUuidsFuture));
         ownerUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankOwner(uuid,
                 new FailureConsumer<>(phaser, exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))))));
     }

@@ -29,12 +29,12 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 
     @Override
     public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<UUID>>> requestAccountIds() {
-        return EconomyProvider::requestPlayerAccountIds;
+        return EconomyProvider::retrievePlayerAccountIds;
     }
 
     @Override
     public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<PlayerAccount>> requestAccount() {
-        return EconomyProvider::requestPlayerAccount;
+        return EconomyProvider::retrievePlayerAccount;
     }
 
     @Override
