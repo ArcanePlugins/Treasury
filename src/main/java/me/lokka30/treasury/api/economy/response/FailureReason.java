@@ -117,7 +117,7 @@ public enum FailureReason {
     /* Currencies */
 
     /**
-     * A constant representing failure due to the inability to locate an
+     * A constant representing failure due to the inability to locate a
      * {@link me.lokka30.treasury.api.economy.currency.Currency Currency}.
      *
      * @since v1.0.0
