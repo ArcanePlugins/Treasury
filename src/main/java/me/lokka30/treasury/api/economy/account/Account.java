@@ -14,123 +14,151 @@ package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
 
 /**
- * @author lokka30, Geolykt
- * @since v1.0.0
- * @see EconomyProvider
- * @see PlayerAccount
- * @see BankAccount
  * An Account is something that holds a balance and is associated with
  * something bound by a UUID. For example, a PlayerAccount is bound to
  * a Player on a server by their UUID.
+ *
+ * @author lokka30, Geolykt
+ * @see EconomyProvider
+ * @see PlayerAccount
+ * @see BankAccount
+ * @since v1.0.0
  */
-@SuppressWarnings({"unused", "RedundantThrows"})
+@SuppressWarnings({"unused"})
 public interface Account {
 
     /**
+     * Get the {@link UUID} of the {@code Account}.
+     *
      * @author lokka30
-     * @since v1.0.0
-     * @see UUID
-     * Get the UUID of the Account.
      * @return uuid of the Account.
+     * @see UUID
+     * @since v1.0.0
      */
     @NotNull UUID getUniqueId();
 
     /**
+     * Request the balance of the {@code Account}.
+     *
      * @author lokka30, Geolykt
+     * @param currency the {@link Currency} of the balance being requested
+     * @param subscription the {@link EconomySubscriber} accepting the amount
+     * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
-     * @see Account#setBalance(double, Currency)
-     * Get the balance of the Account.
-     * @param currency of the balance being requested.
-     * @return the balance of the account with specified currency.
      */
-    @NotNull
-    EconomyResponse<Double> getBalance(@NotNull Currency currency);
+    void retrieveBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
     /**
+     * Set the balance of the {@code Account}.
+     *
+     * <p>Specified amounts must be AT OR ABOVE zero.
+     *
      * @author lokka30, Geolykt
+     * @param amount the amount the new balance will be
+     * @param currency the {@link Currency} of the balance being set
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since v1.0.0
-     * @see Account#getBalance(Currency)
-     * Set the balance of the Account.
-     * Specified amounts must be AT OR ABOVE zero.
-     * @param amount of money the new balance will be.
-     * @param currency of the balance being set.
-     * @return the account's new balance
      */
-    @NotNull
-    EconomyResponse<Double> setBalance(double amount, @NotNull Currency currency);
+    void setBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
     /**
+     * Withdraw an amount from the {@code Account} balance.
+     *
+     * <p>Specified amounts must be ABOVE zero.
+     *
      * @author lokka30, Geolykt
+     * @param amount the amount the balance will be reduced by
+     * @param currency the {@link Currency} of the balance being modified
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
-     * @see Account#setBalance(double, Currency)
-     * Withdraw an amount from the Account's balance.
-     * Specified amounts must be ABOVE zero.
-     * @param amount of money the account's current balance should be reduced by.
-     * @param currency of the balance being set.
-     * @return the account's new balance
      */
-    @NotNull
-    EconomyResponse<Double> withdrawBalance(double amount, @NotNull Currency currency);
+    void withdrawBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
     /**
+     * Deposit an amount into the {@code Account} balance.
+     *
+     * <p>Specified amounts must be ABOVE zero.
+     *
      * @author lokka30
+     * @param amount the amount the balance will be increased by
+     * @param currency the {@link Currency} of the balance being modified
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
-     * @see Account#setBalance(double, Currency)
-     * Deposit an amount into the Account's balance.
-     * Specified amounts must be ABOVE zero.
-     * @param amount of money the account's current balance should be increased by.
-     * @param currency of the balance being set.
-     * @return the account's new balance
      */
-    @NotNull
-    EconomyResponse<Double> depositBalance(double amount, @NotNull Currency currency);
+    void depositBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
     /**
+     * Reset the {@code Account} balance to its starting amount.
+     *
+     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
+     *
      * @author lokka30, Geolykt
+     * @param currency the {@link Currency} of the balance being reset
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @see PlayerAccount#resetBalance(Currency, EconomySubscriber)
+     * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
-     * @see PlayerAccount#resetBalance(Currency)
-     * @see Account#setBalance(double, Currency)
-     * Sets the Account's balance to `BigDecimal.ZERO`.
-     * PlayerAccounts, by default, do not reset to `BigDecimal.ZERO` as they are overriden.
-     * @param currency of the balance being set.
-     * @return the account's new balance
      */
-    @NotNull
-    default EconomyResponse<Double> resetBalance(@NotNull Currency currency) {
-        final EconomyResponse<Double> initialResponse = setBalance(0.0d, currency);
-        return new EconomyResponse<>(0.0d, initialResponse.getResult(), initialResponse.getErrorMessage());
+    default void resetBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription) {
+        setBalance(0.0d, currency, new EconomySubscriber<Double>() {
+                @Override
+                public void succeed(@NotNull Double value) {
+                    subscription.succeed(0.0d);
+                }
+
+                @Override
+                public void fail(@NotNull EconomyException exception) {
+                    subscription.fail(exception);
+                }
+            }
+        );
     }
 
     /**
+     * Check if the {@code Account} can afford a withdrawal of a certain amount.
+     *
+     * <p>Specified amounts must be ABOVE zero.
+     *
      * @author lokka30, Geolykt
+     * @param amount the amount the balance must meet or exceed
+     * @param currency the {@link Currency} of the balance being queried
+     * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
+     * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since v1.0.0
-     * @see Account#getBalance(Currency)
-     * Check if the Account can afford a withdrawal of a certain amount.
-     * Specified amounts must be ABOVE zero.
-     * @param amount of money proposed for withdrawal.
-     * @param currency of the balance being requested.
-     * @return whether the Account can afford the withdrawal.
      */
-    @NotNull
-    default EconomyResponse<Boolean> canAfford(double amount, @NotNull Currency currency) {
-        final EconomyResponse<Double> initialResponse = getBalance(currency);
-        return new EconomyResponse<>(initialResponse.getValue() >= amount, initialResponse.getResult(), initialResponse.getErrorMessage());
+    default void canAfford(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription) {
+        retrieveBalance(currency, new EconomySubscriber<Double>() {
+                @Override
+                public void succeed(@NotNull Double value) {
+                    subscription.succeed(value >= amount);
+                }
+
+                @Override
+                public void fail(@NotNull EconomyException exception) {
+                    subscription.fail(exception);
+                }
+            }
+        );
     }
 
     /**
+     * Delete data stored for the {@code Account}.
+     *
+     * <p>Providers should consider storing backups of deleted accounts.
+     *
      * @author lokka30
+     * @param subscription the {@link EconomySubscriber} accepting whether deletion occurred successfully
      * @since v1.0.0
-     * Deletes the Account's data.
-     * Providers should consider storing backups of deleted accounts.
-     * @return whether the deletion was successful or not.
      */
-    @NotNull
-    EconomyResponse<Boolean> deleteAccount();
+    void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
 
 }

@@ -12,101 +12,101 @@
 
 package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.economy.response.EconomyResponse;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
- * @author lokka30, MrNemo64
- * @since v1.0.0
- * @see Account
  * A Bank Account is an Account which is associated with a Player
  * although separate from a PlayerAccount. It is used to store a
  * balance shared by multiple Bank Members, such as a 'town balance'
  * or 'faction balance'. The linked Player can be changed at any
  * time (Owning Player).
+ *
+ * @author lokka30, MrNemo64
+ * @see Account
+ * @since v1.0.0
  */
-@SuppressWarnings({"unused", "RedundantThrows"})
+@SuppressWarnings({"unused"})
 public interface BankAccount extends Account {
 
     /**
+     * Request a listing of all members of the bank.
+     *
      * @author lokka30
+     * @param subscription the {@link EconomySubscriber} accepting the members
      * @since v1.0.0
-     * Get a list of each UUID of each member of this bank.
-     * @return the list of UUIDs.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankMembersIds();
+    void retrieveBankMembersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
+     * Request a listing of all owners of the bank.
+     *
      * @author lokka30
+     * @param subscription the {@link EconomySubscriber} accepting the owners
      * @since v1.0.0
-     * Get a list of each UUID of each owner of this bank.
-     * @return the list of UUIDs.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Collection<? extends UUID>>> getBankOwnersIds();
+    void retrieveBankOwnersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
+     * Check if the specified user is a member of the bank.
+     *
      * @author lokka30
+     * @param memberId the {@link UUID} of the potential member
+     * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
      * @since v1.0.0
-     * Check if the specified player is a member of the banks.
-     * @param memberId is the uuid of the player to check.
-     * @return whether the player is a member of the bank.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> isBankMember(@NotNull UUID memberId);
+    void isBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * Check if the specified user is an owner of the bank.
+     *
      * @author lokka30
+     * @param ownerId the {@link UUID} of the potential owner
+     * @param subscription the {@link EconomySubscriber} accepting whether the user is an owner
      * @since v1.0.0
-     * Check if the specified player is a member of the banks.
-     * @param ownerId is the uuid of the player to check.
-     * @return whether the player is a member of the bank.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> isBankOwner(@NotNull UUID ownerId);
+    void isBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * Make a user a member of the bank.
+     *
      * @author lokka30
+     * @param memberId the {@link UUID} of the new member
+     * @param subscription the {@link EconomySubscriber} accepting whether the member was added
      * @since v1.0.0
-     * Makes a player a member of the bank.
-     * @param memberId is the uuid of the player to make a member of the bank.
-     * @return whether the operation was successful.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> addBankMember(@NotNull UUID memberId);
+    void addBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * Make a user an owner of the bank.
+     *
      * @author lokka30
+     * @param ownerId the {@link UUID} of the potential new owner
+     * @param subscription the {@link EconomySubscriber} accepting whether the owner was added
      * @since v1.0.0
-     * Makes a player a owner of the bank.
-     * @param ownerId is the uuid of the player to make a owner of the bank.
-     * @return whether the operation was successful.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> addBankOwner(@NotNull UUID ownerId);
+    void addBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * Remove a member of the bank.
+     *
      * @author lokka30
+     * @param memberId the {@link UUID} of the member removed
+     * @param subscription the {@link EconomySubscriber} accepting whether the member was removed
      * @since v1.0.0
-     * Makes a player no longer a member of the bank.
-     * @param memberId is the uuid of the player to remove the member status of in the bank.
-     * @return whether the operation was successful.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> removeBankMember(@NotNull UUID memberId);
+    void removeBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * Remove an owner of the bank.
+     *
      * @author lokka30
+     * @param ownerId the {@link UUID} of the owner removed
+     * @param subscription the {@link EconomySubscriber} accepting whether the owner was removed
      * @since v1.0.0
-     * Makes a player no longer a member of the bank.
-     * @param ownerId is the uuid of the player to remove the owner status of in the bank.
-     * @return whether the operation was successful.
      */
-    @NotNull
-    CompletableFuture<EconomyResponse<Boolean>> removeBankOwner(@NotNull UUID ownerId);
+    void removeBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
 }
