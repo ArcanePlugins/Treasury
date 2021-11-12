@@ -17,95 +17,45 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.lokka30</groupId>
-    <artifactId>Treasury</artifactId>
-    <version>1.0.0</version>
+    <artifactId>treasury-parent</artifactId>
+    <version>dev-SNAPSHOT</version>
+    <modules>
+        <module>api</module>
+        <module>api-bukkit</module>
+        <module>core</module>
+        <module>bukkit</module>
+    </modules>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>Treasury</name>
-    <description>A modern code library for SpigotMC plugins.</description>
+    <name>Treasury-Parent</name>
+    <description>A modern economy provider for different Minecraft platforms. Parent POM</description>
+
+    <inceptionYear>2021</inceptionYear>
+    <url>https://github.com/lokka30/Treasury</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
+        <jetbrains.annotations.version>22.0.0</jetbrains.annotations.version>
     </properties>
 
-    <build>
-        <defaultGoal>clean package</defaultGoal>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>me.lokka30.elementaleconomy.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>me.lokka30.microlib</pattern>
-                            <shadedPattern>me.lokka30.elementaleconomy.microlib</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-    </build>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
-        </repository>
-    </repositories>
+    <scm>
+        <connection>scm:git:https://github.com/lokka30/Treasury.git</connection>
+        <developerConnection>scm:git:git@github.com:lokka30/Treasury.git</developerConnection>
+        <url>https://github.com/lokka30/Treasury</url>
+    </scm>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.lokka30</groupId>
-            <artifactId>MicroLib</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>22.0.0</version>
-        </dependency>
-    </dependencies>
+    <!-- TODO: Add deployment profiles -->
+
 </project>
