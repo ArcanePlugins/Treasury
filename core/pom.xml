@@ -21,6 +21,14 @@
             <artifactId>treasury-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- guava version is the version minecraft uses -->
+        <!-- TODO: Shall we use a more recent version of it? probably no -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

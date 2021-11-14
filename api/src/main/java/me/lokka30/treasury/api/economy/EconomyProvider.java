@@ -32,17 +32,7 @@ import java.util.UUID;
  * @since v1.0.0
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public interface EconomyProvider<T> {
-
-    /**
-     * Get the "Economy Provider" - the "Plugin" facilitating the economy.
-     *
-     * @author lokka30
-     * @return the {@code Plugin} facilitating the economy
-     * @since v1.0.0
-     */
-    @NotNull
-    T getProvider();
+public interface EconomyProvider {
 
     /**
      * Get the version of the Treasury API the {@code EconomyProvider} is based on.

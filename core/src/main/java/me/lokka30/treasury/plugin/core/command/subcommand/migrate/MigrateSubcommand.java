@@ -10,22 +10,14 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.migrate;
+package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.bukkit.command.Subcommand;
-import me.lokka30.treasury.plugin.bukkit.debug.DebugCategory;
-import me.lokka30.treasury.plugin.bukkit.misc.Utils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.ServicesManager;
+import me.lokka30.treasury.plugin.core.command.CommandSource;
+import me.lokka30.treasury.plugin.core.command.Subcommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,7 +45,7 @@ public class MigrateSubcommand implements Subcommand {
     public MigrateSubcommand(@NotNull final Treasury main) { this.main = main; }
 
     @Override
-    public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         final boolean debugEnabled = main.debugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.migrate")) return;
@@ -129,7 +121,7 @@ public class MigrateSubcommand implements Subcommand {
         ));
 
         // Override economies with dummy economy that doesn't support any operations.
-        MigrationEconomy dummyEconomy = new MigrationEconomy(main);
+        MigrationEconomy dummyEconomy = new MigrationEconomy();
         main.getServer().getServicesManager().register(EconomyProvider.class, dummyEconomy, main, ServicePriority.Highest);
 
         // Re-register economies to ensure target economy will override migrated economy.

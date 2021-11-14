@@ -1,4 +1,4 @@
-package me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.migrate;
+package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import org.jetbrains.annotations.NotNull;

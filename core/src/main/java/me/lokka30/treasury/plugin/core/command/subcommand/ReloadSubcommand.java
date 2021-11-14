@@ -10,44 +10,51 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand;
+package me.lokka30.treasury.plugin.core.command.subcommand;
 
-import me.lokka30.microlib.messaging.MultiMessage;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.bukkit.command.Subcommand;
-import me.lokka30.treasury.plugin.bukkit.misc.Utils;
-import org.bukkit.command.CommandSender;
+import me.lokka30.treasury.plugin.core.command.CommandSource;
+import me.lokka30.treasury.plugin.core.command.Subcommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-public class HelpSubcommand implements Subcommand {
+public class ReloadSubcommand implements Subcommand {
 
     /*
     inf: View the plugin's available commands.
-    cmd: /treasury help
-    arg:         |    0
-    len:         0    1
+    cmd: /treasury reload
+    arg:         |      0
+    len:         0      1
      */
 
     @NotNull private final Treasury main;
-    public HelpSubcommand(@NotNull final Treasury main) { this.main = main; }
+    public ReloadSubcommand(@NotNull final Treasury main) { this.main = main; }
 
     @Override
-    public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.help")) return;
+    public boolean execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.reload")) return;
 
         if(args.length != 1) {
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.help.invalid-usage"), Arrays.asList(
+            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.reload.invalid-usage"), Arrays.asList(
                     new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
                     new MultiMessage.Placeholder("label", label, false)
             ));
             return;
         }
 
-        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.help.available-commands"), Collections.singletonList(
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.reload.reload-start"), Collections.singletonList(
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
+        ));
+
+        final QuickTimer timer = new QuickTimer();
+
+        main.fileHandler.loadFiles();
+        main.debugHandler.loadEnabledCategories();
+
+        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.reload.reload-complete"), Arrays.asList(
+                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
+                new MultiMessage.Placeholder("time", timer.getTimer() + "", false)
         ));
     }
 }

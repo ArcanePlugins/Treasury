@@ -1,4 +1,4 @@
-package me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.migrate;
+package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
@@ -8,8 +8,6 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,14 +20,12 @@ import java.util.UUID;
  *
  * @since v1.0.0
  */
-class MigrationEconomy implements EconomyProvider<Plugin> {
+class MigrationEconomy implements EconomyProvider {
 
-    private final @NotNull Plugin plugin;
     private final @NotNull Currency currency;
     private final @NotNull EconomyException migrationException;
 
-    MigrationEconomy(@NotNull Plugin plugin) {
-        this.plugin = plugin;
+    MigrationEconomy() {
         this.currency = new Currency() {
             private final UUID uuid = UUID.randomUUID();
 
@@ -59,11 +55,6 @@ class MigrationEconomy implements EconomyProvider<Plugin> {
             }
         };
         this.migrationException = new EconomyException(FailureReason.MIGRATION, "Economy unavailable during migration process.");
-    }
-
-    @Override
-    public @NotNull Plugin getProvider() {
-        return plugin;
     }
 
     @Override

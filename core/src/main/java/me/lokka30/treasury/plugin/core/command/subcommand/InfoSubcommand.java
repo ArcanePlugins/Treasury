@@ -10,13 +10,15 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand;
+package me.lokka30.treasury.plugin.core.command.subcommand;
 
 import me.lokka30.microlib.messaging.MultiMessage;
-import me.lokka30.treasury.api.economy.BukkitEconomyProvider;
+import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.Treasury;
 import me.lokka30.treasury.plugin.bukkit.command.Subcommand;
 import me.lokka30.treasury.plugin.bukkit.misc.Utils;
+import me.lokka30.treasury.plugin.core.command.CommandSource;
+import me.lokka30.treasury.plugin.core.command.Subcommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,7 @@ public class InfoSubcommand implements Subcommand {
     public InfoSubcommand(@NotNull final Treasury main) { this.main = main; }
 
     @Override
-    public void run(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.info")) return;
 
         if(args.length != 1) {
@@ -48,7 +50,7 @@ public class InfoSubcommand implements Subcommand {
             return;
         }
 
-        final RegisteredServiceProvider<BukkitEconomyProvider> registeredServiceProvider = main.getServer().getServicesManager().getRegistration(BukkitEconomyProvider.class);
+        final RegisteredServiceProvider<EconomyProvider> registeredServiceProvider = main.getServer().getServicesManager().getRegistration(EconomyProvider.class);
 
         new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.treasury"), Arrays.asList(
                 new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
@@ -66,11 +68,11 @@ public class InfoSubcommand implements Subcommand {
                     new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
             ));
         } else {
-            final BukkitEconomyProvider provider = registeredServiceProvider.getProvider();
+            final EconomyProvider provider = registeredServiceProvider.getProvider();
 
             new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.economy-provider-available"), Arrays.asList(
                     new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                    new MultiMessage.Placeholder("name", provider.getProvider().getName(), false),
+                    new MultiMessage.Placeholder("name", registeredServiceProvider.getPlugin().getName(), false),
                     new MultiMessage.Placeholder("priority", registeredServiceProvider.getPriority().toString(), false),
                     new MultiMessage.Placeholder("api-version", provider.getSupportedAPIVersion() + "", false),
                     new MultiMessage.Placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(main, provider.hasBankAccountSupport()), true),

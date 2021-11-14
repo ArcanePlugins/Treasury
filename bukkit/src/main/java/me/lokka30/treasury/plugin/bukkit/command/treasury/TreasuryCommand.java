@@ -14,10 +14,10 @@ package me.lokka30.treasury.plugin.bukkit.command.treasury;
 
 import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.HelpSubcommand;
-import me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.InfoSubcommand;
-import me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.ReloadSubcommand;
-import me.lokka30.treasury.plugin.bukkit.command.treasury.subcommand.migrate.MigrateSubcommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.HelpSubcommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.InfoSubcommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.ReloadSubcommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.migrate.MigrateSubcommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
