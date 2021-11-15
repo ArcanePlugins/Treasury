@@ -24,6 +24,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class Utils {
 
+    /**
+     * Checks if the player has permission for the command.
+     * If the player does not have permission then a notification
+     * will be sent to them regarding their lack of permission.
+     *
+     * @param source     who ran a command and is being checked for the permission.
+     * @param permission to check.
+     * @return whether the sender has the specified permission.
+     * @author lokka30
+     * @since v1.0.0
+     */
     public static boolean checkPermissionForCommand(@NotNull CommandSource source, @NotNull String permission) {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(permission, "permission");
