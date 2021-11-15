@@ -22,11 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.UUID;
 
-// TODO: This javadoc is weirdo. How should we rephrase it?
 /**
  * Implementors providing and managing economy data create a class
  * which implements this interface to be registered in
- * the specific platform.
+ * the specific platform they're implementing it for.
  *
  * @author lokka30
  * @since v1.0.0
