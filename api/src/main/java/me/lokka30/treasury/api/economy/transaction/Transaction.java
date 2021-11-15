@@ -12,7 +12,7 @@
 
 package me.lokka30.treasury.api.economy.transaction;
 
-import me.lokka30.treasury.api.economy.misc.APIUtils;
+import me.lokka30.treasury.api.economy.misc.AmountUtils;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -23,8 +23,8 @@ public class Transaction {
     @NotNull private final TransactionType transactionType;
 
     public Transaction(final double newBalance, final double transactionAmount, @NotNull final TransactionType transactionType) {
-        this.newBalance = APIUtils.ensureAtLeastZero(newBalance);
-        this.transactionAmount = APIUtils.ensureAtLeastZero(newBalance);
+        this.newBalance = AmountUtils.ensureAtLeastZero(newBalance);
+        this.transactionAmount = AmountUtils.ensureAtLeastZero(newBalance);
         this.transactionType = transactionType;
     }
 

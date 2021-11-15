@@ -74,4 +74,8 @@ public class Utils {
         return String.join(delimiter, list);
     }
 
+    private Utils() {
+        throw new IllegalArgumentException("Initialization of utility-type class.");
+    }
+
 }
