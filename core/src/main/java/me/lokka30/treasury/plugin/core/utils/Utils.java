@@ -12,6 +12,7 @@
 
 package me.lokka30.treasury.plugin.core.utils;
 
+import com.google.gson.Gson;
 import java.util.Objects;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -24,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class Utils {
 
+    public static final Gson GSON = new Gson();
+
     /**
      * Checks if the player has permission for the command.
      * If the player does not have permission then a notification
@@ -35,6 +38,7 @@ public class Utils {
      * @author lokka30
      * @since v1.0.0
      */
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
     public static boolean checkPermissionForCommand(@NotNull CommandSource source, @NotNull String permission) {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(permission, "permission");
