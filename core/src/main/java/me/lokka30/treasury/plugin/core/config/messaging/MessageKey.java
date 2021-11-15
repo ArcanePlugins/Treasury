@@ -236,40 +236,6 @@ public enum MessageKey {
     )
     ;
 
-    private static final Map<String, MessageKey> BY_CONFIG_KEY = new HashMap<>();
-    private static final Multimap<ConfigVersion, MessageKey> BY_CONFIG_VERSION = HashMultimap.create();
-
-    static {
-        for (MessageKey messageKey : MessageKey.values()) {
-            BY_CONFIG_KEY.put(messageKey.asConfigKey(), messageKey);
-            BY_CONFIG_VERSION.put(messageKey.getVersionAddedIn(), messageKey);
-        }
-    }
-
-    /**
-     * Returns all the message keys, assigned to the specified {@link ConfigVersion} {@code configVersion}
-     *
-     * @param configVersion the config version you want the message keys for
-     * @return message keys, or null
-     */
-    @Nullable
-    public static Collection<MessageKey> getAllWithConfigVersion(@NotNull ConfigVersion configVersion) {
-        Objects.requireNonNull(configVersion, "configVersion");
-        return BY_CONFIG_VERSION.get(configVersion);
-    }
-
-    /**
-     * Returns the message key, which corresponds to the specified config key.
-     *
-     * @param configKey the config key you want the message key for
-     * @return message key or null
-     */
-    @Nullable
-    public static MessageKey fromConfigKey(@NotNull String configKey) {
-        Objects.requireNonNull(configKey, "configKey");
-        return BY_CONFIG_KEY.get(configKey);
-    }
-
     private final String configKey;
     private final Messages.MessageHolder defaultMessage;
     private final ConfigVersion versionAddedIn;
