@@ -10,20 +10,23 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.bukkit.debug;
+package me.lokka30.treasury.plugin.core.debug;
 
-/**
- * @author lokka30
- * @since v1.0.0
- * Contains constants that describe different 'categories' of debug messages
- * that can be sent to the server's console, when enabled in `settings.yml`.
- */
-public enum DebugCategory {
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.config.settings.SettingKey;
+import org.jetbrains.annotations.NotNull;
 
-    /**
-     * @since v1.0.0
-     * Various information about the process in the Migrate subcommand.
-     */
-    MIGRATE_SUBCOMMAND
+public class DebugHandler {
 
+    public static boolean isCategoryEnabled(@NotNull final DebugCategory debugCategory) {
+        return TreasuryPlugin.getInstance()
+                .configAdapter()
+                .getSettings()
+                .getSetting(SettingKey.DEBUG_CATEGORY_LIST)
+                .contains(debugCategory);
+    }
+
+    public static void log(@NotNull final DebugCategory debugCategory, @NotNull final String msg) {
+        TreasuryPlugin.getInstance().logger().info("&8[&3DEBUG &8| &3" + debugCategory + "&8]: &7" + msg);
+    }
 }

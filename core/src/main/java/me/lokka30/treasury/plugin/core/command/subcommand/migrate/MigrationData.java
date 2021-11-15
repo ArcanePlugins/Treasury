@@ -1,10 +1,11 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.bukkit.debug.DebugCategory;
+import me.lokka30.treasury.plugin.core.ProviderEconomy;
+import me.lokka30.treasury.plugin.core.debug.DebugCategory;
+import me.lokka30.treasury.plugin.core.debug.DebugHandler;
+import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -19,9 +20,8 @@ import java.util.function.Supplier;
  */
 class MigrationData {
 
-    private final @NotNull Treasury treasury;
-    private final @NotNull EconomyProvider from;
-    private final @NotNull EconomyProvider to;
+    private final @NotNull ProviderEconomy from;
+    private final @NotNull ProviderEconomy to;
     private final boolean debugEnabled;
     private final @NotNull QuickTimer timer = new QuickTimer();
     private final @NotNull Map<Currency, Currency> migratedCurrencies = new ConcurrentHashMap<>();
@@ -30,11 +30,9 @@ class MigrationData {
     private final @NotNull AtomicInteger bankAccountsProcessed = new AtomicInteger();
 
     MigrationData(
-            @NotNull Treasury treasury,
-            @NotNull EconomyProvider from,
-            @NotNull EconomyProvider to,
+            @NotNull ProviderEconomy from,
+            @NotNull ProviderEconomy to,
             boolean debugEnabled) {
-        this.treasury = treasury;
         this.from = from;
         this.to = to;
         this.debugEnabled = debugEnabled;
@@ -42,15 +40,15 @@ class MigrationData {
 
     void debug(Supplier<String> supplier) {
         if (debugEnabled) {
-            treasury.debugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, supplier.get());
+            DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, supplier.get());
         }
     }
 
-    @NotNull EconomyProvider from() {
+    @NotNull ProviderEconomy from() {
         return from;
     }
 
-    @NotNull EconomyProvider to() {
+    @NotNull ProviderEconomy to() {
         return to;
     }
 

@@ -12,19 +12,18 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand;
 
-import me.lokka30.microlib.messaging.MultiMessage;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.bukkit.command.Subcommand;
-import me.lokka30.treasury.plugin.bukkit.misc.Utils;
+import me.lokka30.treasury.plugin.core.ProviderEconomy;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import me.lokka30.treasury.plugin.core.config.messaging.Message;
+import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
+import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
+import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
 public class InfoSubcommand implements Subcommand {
 
@@ -35,54 +34,50 @@ public class InfoSubcommand implements Subcommand {
     len:         0    1
      */
 
-    @NotNull private final Treasury main;
-    public InfoSubcommand(@NotNull final Treasury main) { this.main = main; }
-
     @Override
-    public boolean execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
-        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.info")) return;
-
-        if(args.length != 1) {
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.invalid-usage"), Arrays.asList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                    new MultiMessage.Placeholder("label", label, false)
-            ));
+    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.info")) {
             return;
         }
 
-        final RegisteredServiceProvider<EconomyProvider> registeredServiceProvider = main.getServer().getServicesManager().getRegistration(EconomyProvider.class);
-
-        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.treasury"), Arrays.asList(
-                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                new MultiMessage.Placeholder("version", main.getDescription().getVersion(), false),
-                new MultiMessage.Placeholder("description", main.getDescription().getDescription(), false),
-                new MultiMessage.Placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits", false),
-                new MultiMessage.Placeholder("latest-api-version", Treasury.ECONOMY_API_VERSION.getNumber() + "", false),
-                new MultiMessage.Placeholder("repository", "https://github.com/lokka30/Treasury/", false)
-        ));
-
-
-
-        if(registeredServiceProvider == null) {
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.economy-provider-unavailable"), Collections.singletonList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-            ));
-        } else {
-            final EconomyProvider provider = registeredServiceProvider.getProvider();
-
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.economy-provider-available"), Arrays.asList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                    new MultiMessage.Placeholder("name", registeredServiceProvider.getPlugin().getName(), false),
-                    new MultiMessage.Placeholder("priority", registeredServiceProvider.getPriority().toString(), false),
-                    new MultiMessage.Placeholder("api-version", provider.getSupportedAPIVersion() + "", false),
-                    new MultiMessage.Placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(main, provider.hasBankAccountSupport()), true),
-                    new MultiMessage.Placeholder("supports-transaction-events", Utils.getYesNoStateMessage(main, provider.hasTransactionEventSupport()), true),
-                    new MultiMessage.Placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName(), true)
-            ));
+        if (args.length != 0) {
+            sender.sendMessage(
+                    Message.of(MessageKey.INFO_INVALID_USAGE, MessagePlaceholder.placeholder("label", label))
+            );
+            return;
         }
 
-        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.info.misc-info"), Collections.singletonList(
-                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-        ));
+        TreasuryPlugin main = TreasuryPlugin.getInstance();
+
+        sender.sendMessage(
+                Message.of(
+                        MessageKey.INFO_TREASURY,
+                        placeholder("version", main.getVersion()),
+                        placeholder("description", main.getDescription()),
+                        placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
+                        placeholder("latest-api-version", main.getEconomyAPIVersion()),
+                        placeholder("repository", "https://github.com/lokka30/Treasury/")
+                )
+        );
+
+        ProviderEconomy providerProvider = main.economyProviderProvider();
+        EconomyProvider provider = main.economyProviderProvider().provide();
+        if (provider == null) {
+            sender.sendMessage(Message.of(MessageKey.INFO_ECONOMY_PROVIDER_UNAVAILABLE));
+        } else {
+            sender.sendMessage(
+                    Message.of(
+                            MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
+                            placeholder("name", providerProvider.registrar().getName()),
+                            placeholder("priority", providerProvider.getPriority()),
+                            placeholder("api-version", provider.getSupportedAPIVersion()),
+                            placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
+                            placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
+                            placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName())
+                    )
+            );
+        }
+
+        sender.sendMessage(Message.of(MessageKey.INFO_MISC_INFO));
     }
 }

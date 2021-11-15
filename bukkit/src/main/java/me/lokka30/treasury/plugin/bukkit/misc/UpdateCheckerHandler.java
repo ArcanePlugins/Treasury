@@ -15,6 +15,7 @@ package me.lokka30.treasury.plugin.bukkit.misc;
 import me.lokka30.microlib.exceptions.OutdatedServerVersionException;
 import me.lokka30.microlib.other.UpdateChecker;
 import me.lokka30.treasury.plugin.bukkit.Treasury;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
 public class UpdateCheckerHandler {

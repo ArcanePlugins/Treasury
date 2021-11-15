@@ -1,6 +1,10 @@
 package me.lokka30.treasury.plugin.core.config.messaging;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,16 +45,56 @@ public final class Message {
     @NotNull
     public String handlePlaceholders(@NotNull String message) {
         Objects.requireNonNull(message, "message");
-        // todo: special handling for the %prefix% placeholder
         if (placeholders == null) {
-            return message;
+            return message.replaceAll(
+                    "%prefix%",
+                    TreasuryPlugin.getInstance().colorHandler().colorize(
+                            TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
+                    )
+            );
         }
+        boolean prefixHandled = false;
         for (MessagePlaceholder placeholder : placeholders) {
+            String toReplace = String.valueOf(placeholder.getToReplace());
+            if (!toReplace.startsWith("%")) {
+                toReplace = "%" + toReplace;
+            }
+            if (!toReplace.endsWith("%")) {
+                toReplace = toReplace + "%";
+            }
+            message = message.replaceAll(toReplace, String.valueOf(placeholder.getReplacement()));
+            if (toReplace.equalsIgnoreCase("%prefix%")) {
+                prefixHandled = true;
+            }
+        }
+        if (!prefixHandled) {
             message = message.replaceAll(
-                    String.valueOf(placeholder.getToReplace()),
-                    String.valueOf(placeholder.getReplacement())
+                    "%prefix%",
+                    TreasuryPlugin.getInstance().colorHandler().colorize(
+                            TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
+                    )
             );
         }
         return message;
+    }
+
+    /**
+     * Replaces the placeholders onto the given messages, if any specified.
+     *
+     * @param message the messages to handle placeholders
+     * @return messages with replaced placeholders
+     * @author MrIvanPlays
+     * @since v1.0.0
+     */
+    @NotNull
+    public List<String> handlePlaceholders(@NotNull List<String> message) {
+        Objects.requireNonNull(message, "message");
+        if (message.isEmpty()) {
+            return message;
+        }
+        if (message.size() == 1) {
+            return Collections.singletonList(handlePlaceholders(message.get(0)));
+        }
+        return message.stream().map(this::handlePlaceholders).collect(Collectors.toList());
     }
 }

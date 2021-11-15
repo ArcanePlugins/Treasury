@@ -17,10 +17,10 @@ import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.api.economy.currency.conversion.CurrencyConverter;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.command.CommandHandler;
-import me.lokka30.treasury.plugin.bukkit.debug.DebugHandler;
+import me.lokka30.treasury.plugin.core.debug.DebugHandler;
 import me.lokka30.treasury.plugin.bukkit.file.FileHandler;
 import me.lokka30.treasury.plugin.bukkit.misc.UpdateCheckerHandler;
-import me.lokka30.treasury.plugin.bukkit.misc.Utils;
+import net.md_5.bungee.api.ChatColor;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,6 @@ public class Treasury extends JavaPlugin {
     @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }
 
     @NotNull public final FileHandler fileHandler = new FileHandler(this);
-    @NotNull public final DebugHandler debugHandler = new DebugHandler(this);
     @NotNull public final CommandHandler commandHandler = new CommandHandler(this);
     @NotNull public final UpdateCheckerHandler updateCheckerHandler = new UpdateCheckerHandler(this);
 
@@ -67,13 +66,12 @@ public class Treasury extends JavaPlugin {
         final QuickTimer startupTimer = new QuickTimer();
 
         fileHandler.loadFiles();
-        debugHandler.loadEnabledCategories();
         commandHandler.registerCommands();
 
         updateCheckerHandler.checkForUpdates();
         new Metrics(this, 12927);
 
-        Utils.logger.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
+        logColor("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
     }
 
     /**
@@ -88,6 +86,10 @@ public class Treasury extends JavaPlugin {
 
         // Add onDisable code here if required.
 
-        Utils.logger.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+        logColor("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+    }
+
+    private void logColor(String message) {
+        getLogger().info(ChatColor.translateAlternateColorCodes('&', message));
     }
 }

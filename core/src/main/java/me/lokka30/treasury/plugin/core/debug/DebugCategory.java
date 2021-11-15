@@ -10,48 +10,20 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.bukkit.file;
+package me.lokka30.treasury.plugin.core.debug;
 
-import me.lokka30.microlib.files.YamlConfigFile;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.core.utils.Utils;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-
-public class FileHandler {
-
-    @NotNull private final Treasury main;
-
-    public FileHandler(@NotNull final Treasury main) {
-        this.main = main;
-    }
+/**
+ * @author lokka30
+ * @since v1.0.0
+ * Contains constants that describe different 'categories' of debug messages
+ * that can be sent to the server's console, when enabled in `settings.yml`.
+ */
+public enum DebugCategory {
 
     /**
-     * @author lokka30
      * @since v1.0.0
-     * (Re)loads all config files.
+     * Various information about the process in the Migrate subcommand.
      */
-    public void loadFiles() {
-        Utils.logger.info("Loading config files...");
+    MIGRATE_SUBCOMMAND
 
-        loadFile(main.settingsCfg);
-        loadFile(main.messagesCfg);
-    }
-
-    /**
-     * @author lokka30
-     * @since v1.0.0
-     * (Re)load a particular config file.
-     * Notify the user if an IOException occured.
-     * @param cfg to be loaded
-     */
-    public void loadFile(@NotNull final YamlConfigFile cfg) {
-        try {
-            Utils.logger.info("Loading file '&b" + cfg.getName() + "&7'...");
-            cfg.load();
-        } catch(IOException ex) {
-            Utils.logger.error("Unable to load &b" + cfg.getName() + "&7: " + ex.getMessage());
-        }
-    }
 }

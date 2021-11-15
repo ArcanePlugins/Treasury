@@ -1,5 +1,7 @@
 package me.lokka30.treasury.plugin.core;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A class, giving information about whom registered an {@link me.lokka30.treasury.api.economy.EconomyProvider}
  *
@@ -13,5 +15,6 @@ public interface RegistrarInfo {
      *
      * @return name
      */
+    @NotNull
     String getName();
 }

@@ -12,17 +12,13 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand;
 
-import me.lokka30.microlib.messaging.MultiMessage;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
-import me.lokka30.treasury.plugin.bukkit.command.Subcommand;
-import me.lokka30.treasury.plugin.bukkit.misc.Utils;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
-import org.bukkit.command.CommandSender;
+import me.lokka30.treasury.plugin.core.config.messaging.Message;
+import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
+import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 public class HelpSubcommand implements Subcommand {
 
@@ -33,23 +29,19 @@ public class HelpSubcommand implements Subcommand {
     len:         0    1
      */
 
-    @NotNull private final Treasury main;
-    public HelpSubcommand(@NotNull final Treasury main) { this.main = main; }
-
     @Override
-    public boolean execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
-        if(!Utils.checkPermissionForCommand(main, sender, "treasury.command.treasury.help")) return;
-
-        if(args.length != 1) {
-            new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.help.invalid-usage"), Arrays.asList(
-                    new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true),
-                    new MultiMessage.Placeholder("label", label, false)
-            ));
+    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.help")) {
             return;
         }
 
-        new MultiMessage(main.messagesCfg.getConfig().getStringList("commands.treasury.subcommands.help.available-commands"), Collections.singletonList(
-                new MultiMessage.Placeholder("prefix", main.messagesCfg.getConfig().getString("common.prefix"), true)
-        ));
+        if (args.length != 0) {
+            sender.sendMessage(
+                    Message.of(MessageKey.HELP_INVALID_USAGE, MessagePlaceholder.placeholder("label", label))
+            );
+            return;
+        }
+
+        sender.sendMessage(Message.of(MessageKey.HELP_AVAILABLE_COMMANDS));
     }
 }

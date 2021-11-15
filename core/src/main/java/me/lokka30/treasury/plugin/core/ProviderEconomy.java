@@ -1,6 +1,7 @@
 package me.lokka30.treasury.plugin.core;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class, implemented by Treasury's plugin implementations on different platforms,
@@ -16,6 +17,7 @@ public interface ProviderEconomy {
      *
      * @return provider
      */
+    @Nullable
     EconomyProvider provide();
 
     /**
@@ -23,5 +25,14 @@ public interface ProviderEconomy {
      *
      * @return registrar info
      */
+    @Nullable
     RegistrarInfo registrar();
+
+    /**
+     * Returns the priority the provider has been registered on
+     *
+     * @return priority
+     */
+    @Nullable
+    String getPriority();
 }

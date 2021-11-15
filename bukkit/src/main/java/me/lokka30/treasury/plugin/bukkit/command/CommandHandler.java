@@ -14,7 +14,7 @@ package me.lokka30.treasury.plugin.bukkit.command;
 
 import me.lokka30.treasury.plugin.bukkit.Treasury;
 import me.lokka30.treasury.plugin.bukkit.command.treasury.TreasuryCommand;
-import me.lokka30.treasury.plugin.bukkit.misc.Utils;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;

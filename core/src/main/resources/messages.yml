@@ -147,7 +147,7 @@ commands:
 
         # Placeholders: %prefix%
         internal-error:
-          - '%prefix% An internal error occured whilst attempting to migrate. Please check console for more information.'
+          - '%prefix% An internal error occurred whilst attempting to migrate. Please check console for more information.'
 
         # Placeholders: %prefix%, %time%, %player-accounts%,
         #               %migrated-currencies%, %non-migrated-currencies%
