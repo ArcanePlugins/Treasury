@@ -1,15 +1,9 @@
 package me.lokka30.treasury.plugin.core.config.messaging;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import me.lokka30.treasury.plugin.core.config.ConfigVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a key of a message.
@@ -233,8 +227,7 @@ public enum MessageKey {
             "commands.treasury.subcommands.reload.reload-complete",
             new Messages.MessageHolder("%prefix% Reload successful &8(&7took &b%time%ms&8)&7."),
             ConfigVersion.V1
-    )
-    ;
+    );
 
     private final String configKey;
     private final Messages.MessageHolder defaultMessage;
