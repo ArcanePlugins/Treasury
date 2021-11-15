@@ -12,18 +12,17 @@
 
 package me.lokka30.treasury.plugin.bukkit;
 
-import me.lokka30.microlib.files.YamlConfigFile;
-import me.lokka30.microlib.maths.QuickTimer;
 import me.lokka30.treasury.api.economy.currency.conversion.CurrencyConverter;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.plugin.bukkit.command.CommandHandler;
-import me.lokka30.treasury.plugin.bukkit.file.FileHandler;
+import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
+import me.lokka30.treasury.plugin.bukkit.fork.paper.PaperEnhancements;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.utils.QuickTimer;
+import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import net.md_5.bungee.api.ChatColor;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
 
 /**
  * @author lokka30
@@ -46,13 +45,6 @@ public class Treasury extends JavaPlugin {
     @NotNull private final CurrencyConverter currencyConverter = new CurrencyConverter();
     @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }
 
-    @NotNull public final FileHandler fileHandler = new FileHandler(this);
-    @NotNull public final CommandHandler commandHandler = new CommandHandler(this);
-    @NotNull public final UpdateCheckerHandler updateCheckerHandler = new UpdateCheckerHandler(this);
-
-    @NotNull public final YamlConfigFile settingsCfg = new YamlConfigFile(this, new File(getDataFolder(), "settings.yml"));
-    @NotNull public final YamlConfigFile messagesCfg = new YamlConfigFile(this, new File(getDataFolder(), "messages.yml"));
-
     /**
      * @author lokka30
      * @since v1.0.0
@@ -63,10 +55,15 @@ public class Treasury extends JavaPlugin {
     public void onEnable() {
         final QuickTimer startupTimer = new QuickTimer();
 
-        fileHandler.loadFiles();
-        commandHandler.registerCommands();
+        BukkitTreasuryPlugin treasuryPlugin = new BukkitTreasuryPlugin(this);
+        TreasuryPlugin.setInstance(treasuryPlugin);
+        TreasuryCommand.register(this);
 
-        updateCheckerHandler.checkForUpdates();
+        if (treasuryPlugin.getFork().isPaper()) {
+            PaperEnhancements.enhance(this);
+        }
+
+        UpdateChecker.checkForUpdates();
         new Metrics(this, 12927);
 
         logColor("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");

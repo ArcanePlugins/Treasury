@@ -13,8 +13,10 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +38,7 @@ import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 import me.lokka30.treasury.plugin.core.debug.DebugHandler;
 import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
@@ -169,22 +172,21 @@ public class MigrateSubcommand implements Subcommand {
         });
     }
 
-    // todo: platform implementation detail, will leave it here until we get to implement the core
-    //       onto a platform
-    /*
-    private void reregister(RegisteredServiceProvider<EconomyProvider> serviceProvider, ServicePriority priority) {
-        if (serviceProvider.getPriority() == priority) {
-            return;
+    @Override
+    @Nullable
+    public List<String> complete(@NotNull CommandSource source, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+            return Collections.emptyList();
         }
-
-        Plugin plugin = serviceProvider.getPlugin();
-        ServicesManager servicesManager = plugin.getServer().getServicesManager();
-        EconomyProvider provider = serviceProvider.getProvider();
-
-        servicesManager.unregister(provider);
-        servicesManager.register(EconomyProvider.class, provider, plugin, priority);
+        if ((args.length == 1 || args.length == 2) && source.hasPermission("treasury.command.treasury.migrate")) {
+            String lastArg = args[args.length - 1].toLowerCase(Locale.ROOT);
+            return TreasuryPlugin.getInstance().pluginsList()
+                    .stream()
+                    .filter(name -> lastArg.startsWith(name.toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
-     */
 
     private void sendMigrationMessage(@NotNull CommandSource sender, @NotNull MigrationData migration) {
         sender.sendMessage(

@@ -55,8 +55,8 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -87,9 +87,19 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!--
+        Note: just because the dependency is paper doesn't mean we always use paper specific methods
+        or that Treasury is a paper-only plugin
+        -->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-mojangapi</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -102,13 +112,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.lokka30</groupId>
-            <artifactId>MicroLib</artifactId>
-            <version>3.1.0</version>
+            <version>${bstats.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

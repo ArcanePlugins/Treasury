@@ -89,11 +89,12 @@ public final class TreasuryBaseCommand {
      * Runs completions for the base /treasury command.
      *
      * @param sender who asked for tab completions
+     * @param label command label
      * @param args command arguments
      * @return list with completions, can be null
      */
     @Nullable
-    public List<String> complete(@NotNull CommandSource sender, @NotNull String[] args) {
+    public List<String> complete(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             return Collections.emptyList();
         } else if (args.length == 1) {
@@ -103,7 +104,7 @@ public final class TreasuryBaseCommand {
             if (subcommand == null) {
                 return Collections.emptyList();
             }
-            return subcommand.complete(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
+            return subcommand.complete(sender, label, Arrays.copyOfRange(args, 1, args.length));
         }
     }
 }

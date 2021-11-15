@@ -61,34 +61,30 @@ public abstract class Messages {
 
     private Map<MessageKey, MessageHolder> messages;
 
-    public Messages(@NotNull Map<String, Object> messages) {
-        Objects.requireNonNull(messages, "messages");
+    public Messages(@NotNull MessagesConfigAccessor configAccessor) {
+        Objects.requireNonNull(configAccessor, "configAccessor");
         this.messages = new HashMap<>();
         EnumSet<MessageKey> allKeys = EnumSet.allOf(MessageKey.class);
-        for (Map.Entry<String, Object> entry : messages.entrySet()) {
-            MessageKey current = MessageKey.fromConfigKey(entry.getKey());
-            if (current == null) {
-                TreasuryPlugin.getInstance().logger().warn("Invalid message key '" + entry.getKey() + "' found");
+        for (MessageKey key : MessageKey.values()) {
+            Object value = configAccessor.getMessage(key.asConfigKey());
+            if (value == null) {
+                TreasuryPlugin.getInstance().logger().warn("Invalid message at " + key.asConfigKey() + " , using default value");
+                this.messages.put(key, key.getDefaultMessage());
                 continue;
             }
-            allKeys.remove(current);
-            if (entry.getValue() instanceof String) {
-                this.messages.put(current, new MessageHolder(String.valueOf(entry.getValue())));
-            } else if (entry.getValue() instanceof Iterable) {
+            allKeys.remove(key);
+            if (value instanceof String) {
+                this.messages.put(key, new MessageHolder(String.valueOf(value)));
+            } else if (value instanceof Iterable) {
                 List<String> values = new ArrayList<>();
-                for (Object val : (Iterable) entry.getValue()) {
+                for (Object val : (Iterable) value) {
                     values.add(String.valueOf(val));
                 }
-                this.messages.put(current, new MessageHolder(values));
+                this.messages.put(key, new MessageHolder(values));
             }
-            TreasuryPlugin.getInstance().logger().warn("Invalid message at " + current.asConfigKey() + " , using default value");
-            this.messages.put(current, current.getDefaultMessage());
         }
         if (allKeys.size() > 0) {
             this.generateMissingEntries(allKeys);
-            for (MessageKey left : allKeys) {
-                this.messages.put(left, left.getDefaultMessage());
-            }
         }
     }
 

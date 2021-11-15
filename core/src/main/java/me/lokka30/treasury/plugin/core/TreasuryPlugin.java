@@ -9,6 +9,7 @@ import me.lokka30.treasury.plugin.core.config.messaging.ColorHandler;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Treasury core implementations must implement this class and set its instance in order for the core
@@ -57,7 +58,7 @@ public abstract class TreasuryPlugin {
      *
      * @return description
      */
-    @NotNull
+    @Nullable
     public abstract String getDescription();
 
     /**
@@ -89,7 +90,7 @@ public abstract class TreasuryPlugin {
      * Should re register the specified {@link ProviderEconomy} at the priority defined by the {@code lowPriority}
      * param.
      *
-     * @param provider the provider to re register
+     * @param provider    the provider to re register
      * @param lowPriority should register on low priority
      */
     public abstract void reregisterProvider(@NotNull ProviderEconomy provider, boolean lowPriority);
@@ -145,4 +146,12 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract EconomyAPIVersion getEconomyAPIVersion();
+
+    /**
+     * Returns the plugins' names as a list with {@link String strings}.
+     *
+     * @return plugins' names
+     */
+    @NotNull
+    public abstract List<String> pluginsList();
 }
