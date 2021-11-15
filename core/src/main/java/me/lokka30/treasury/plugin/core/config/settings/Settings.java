@@ -7,8 +7,21 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents a settings object.
+ *
+ * @author MrIvanPlays
+ * @since v1.0.0
+ */
 public interface Settings {
 
+    /**
+     * Returns the specified setting value, which may be null.
+     *
+     * @param settingKey setting key
+     * @param <T> value type
+     * @return value, or null
+     */
     @NotNull
     default <T> T getSetting(@NotNull SettingKey<T> settingKey) {
         Objects.requireNonNull(settingKey, "settingKey");
@@ -41,8 +54,20 @@ public interface Settings {
         return settingKey.getDefault();
     }
 
+    /**
+     * Treasury core calls this method whenever it stumbles upon a non generated setting key, in order to generate it.
+     *
+     * @param key key to generate
+     * @param <T> value type
+     */
     <T> void generateMissingOption(@NotNull SettingKey<T> key);
 
+    /**
+     * Returns the raw setting bound to the key specified.
+     *
+     * @param key
+     * @return
+     */
     @Nullable
     Object getSetting(@NotNull String key);
 

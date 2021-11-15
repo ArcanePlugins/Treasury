@@ -9,6 +9,12 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.settings.SettingKey;
 
 // TODO: This requires a Spigot Resource ID which can't be obtained before the resource is released.
+/**
+ * Represents an update checker for spigot.
+ *
+ * @author MrIvanPlays
+ * @since v1.0.0
+ */
 public final class UpdateChecker {
 
     private static final int RESOURCE_ID = 12345;
@@ -17,6 +23,9 @@ public final class UpdateChecker {
             "https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=%s", RESOURCE_ID
     );
 
+    /**
+     * Runs an update check.
+     */
     public static void checkForUpdates() {
         //noinspection ConstantConditions
         if (true) return;

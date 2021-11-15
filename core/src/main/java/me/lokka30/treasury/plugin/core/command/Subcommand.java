@@ -21,6 +21,13 @@ public interface Subcommand {
      */
     void execute(@NotNull CommandSource source, @NotNull String label, @NotNull String[] args);
 
+    /**
+     * @param source who asked for tab completion
+     * @param label subcommand label
+     * @param args subcommand args
+     * @return list of completions, can be null
+     * @since v1.0.0
+     */
     @Nullable
     default List<String> complete(@NotNull CommandSource source, @NotNull String label, @NotNull String[] args) {
         return Collections.emptyList();

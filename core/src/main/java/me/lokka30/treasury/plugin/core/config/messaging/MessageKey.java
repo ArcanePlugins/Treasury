@@ -11,6 +11,12 @@ import me.lokka30.treasury.plugin.core.config.ConfigVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents a key of a message.
+ *
+ * @author MrIvanPlays
+ * @since v1.0.0
+ */
 public enum MessageKey {
     // Common
     PREFIX(
@@ -240,12 +246,24 @@ public enum MessageKey {
         }
     }
 
+    /**
+     * Returns all the message keys, assigned to the specified {@link ConfigVersion} {@code configVersion}
+     *
+     * @param configVersion the config version you want the message keys for
+     * @return message keys, or null
+     */
     @Nullable
     public static Collection<MessageKey> getAllWithConfigVersion(@NotNull ConfigVersion configVersion) {
         Objects.requireNonNull(configVersion, "configVersion");
         return BY_CONFIG_VERSION.get(configVersion);
     }
 
+    /**
+     * Returns the message key, which corresponds to the specified config key.
+     *
+     * @param configKey the config key you want the message key for
+     * @return message key or null
+     */
     @Nullable
     public static MessageKey fromConfigKey(@NotNull String configKey) {
         Objects.requireNonNull(configKey, "configKey");
@@ -262,16 +280,31 @@ public enum MessageKey {
         this.versionAddedIn = Objects.requireNonNull(versionAddedIn, "versionAddedIn");
     }
 
+    /**
+     * Returns the config key of this message key.
+     *
+     * @return config key
+     */
     @NotNull
     public String asConfigKey() {
         return configKey;
     }
 
+    /**
+     * Returns the default message of this message key
+     *
+     * @return default message
+     */
     @NotNull
     public Messages.MessageHolder getDefaultMessage() {
         return defaultMessage;
     }
 
+    /**
+     * Returns the {@link ConfigVersion} this message key was added in.
+     *
+     * @return config version
+     */
     @NotNull
     public ConfigVersion getVersionAddedIn() {
         return versionAddedIn;

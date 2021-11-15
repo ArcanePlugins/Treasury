@@ -13,16 +13,18 @@
 package me.lokka30.treasury.plugin.core.debug;
 
 /**
- * @author lokka30
- * @since v1.0.0
  * Contains constants that describe different 'categories' of debug messages
  * that can be sent to the server's console, when enabled in `settings.yml`.
+ *
+ * @author lokka30
+ * @since v1.0.0
  */
 public enum DebugCategory {
 
     /**
-     * @since v1.0.0
      * Various information about the process in the Migrate subcommand.
+     *
+     * @since v1.0.0
      */
     MIGRATE_SUBCOMMAND
 

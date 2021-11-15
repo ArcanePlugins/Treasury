@@ -12,7 +12,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ConfigAdapter {
 
+    /**
+     * Returns a {@link Messages} object, which contains all the messages.
+     *
+     * @return messages
+     */
     @NotNull Messages getMessages();
 
+    /**
+     * Returns a {@link Settings} object, which contains all the settings.
+     *
+     * @return settings
+     */
     @NotNull Settings getSettings();
 }

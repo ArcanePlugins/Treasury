@@ -16,6 +16,12 @@ import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A class, containing the logic of the treasury command.
+ *
+ * @author MrIvanPlays
+ * @since v1.0.0
+ */
 public final class TreasuryBaseCommand {
 
     private Map<String, Subcommand> subcommands;
@@ -28,7 +34,13 @@ public final class TreasuryBaseCommand {
         registerSubcommand("migrate", new MigrateSubcommand());
     }
 
-    public void registerSubcommand(@NotNull String name, @NotNull Subcommand subcommand) {
+    /**
+     * Registers a new subcommand to handle.
+     *
+     * @param name subcommand name
+     * @param subcommand subcommand
+     */
+    private void registerSubcommand(@NotNull String name, @NotNull Subcommand subcommand) {
         Objects.requireNonNull(name, "name");
         Objects.requireNonNull(subcommand, "subcommand");
         if (subcommands.containsKey(name)) {
@@ -38,6 +50,13 @@ public final class TreasuryBaseCommand {
         }
     }
 
+    /**
+     * Executes the base /treasury command.
+     *
+     * @param sender who ran the command
+     * @param label command label
+     * @param args command args
+     */
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             sender.sendMessage(
@@ -66,6 +85,13 @@ public final class TreasuryBaseCommand {
     @NotNull
     private final List<String> subcommandCompletion = Arrays.asList("help", "info", "migrate", "reload");
 
+    /**
+     * Runs completions for the base /treasury command.
+     *
+     * @param sender who asked for tab completions
+     * @param args command arguments
+     * @return list with completions, can be null
+     */
     @Nullable
     public List<String> complete(@NotNull CommandSource sender, @NotNull String[] args) {
         if (args.length == 0) {

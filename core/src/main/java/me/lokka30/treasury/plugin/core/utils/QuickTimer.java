@@ -1,28 +1,39 @@
 package me.lokka30.treasury.plugin.core.utils;
 
 /**
- * A timer to time how much an action runs.
+ * This is a small class useful for timing simple things such as the time required to start-up a plugin or run a command.
+ * <p>
+ * Mark the starting point of the timer with `QuickTimer timer = new QuickTimer()`, then get the time (in milliseconds)
+ * since it started using `QuickTimer#getTimer()`.
  *
  * @author lokka30
+ * @see System#currentTimeMillis()
+ * @since v1.0.0
  */
-// copied from microlib
+@SuppressWarnings("unused")
 public class QuickTimer {
 
     private long startTime;
 
     public QuickTimer() {
-        this.start();
+        start();
     }
 
     public QuickTimer(long startTime) {
         this.startTime = startTime;
     }
 
+    /**
+     * Re/start the timer.
+     */
     public void start() {
-        this.startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
     }
 
+    /**
+     * @return time (millis) since start time
+     */
     public long getTimer() {
-        return System.currentTimeMillis() - this.startTime;
+        return System.currentTimeMillis() - startTime;
     }
 }
