@@ -11,9 +11,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface MessagesConfigAccessor {
 
-    static MessagesConfigAccessor empty() {
-        return (key) -> null;
-    }
+    MessagesConfigAccessor EMPTY = new MessagesConfigAccessor() {
+        @Override
+        public @Nullable Object getMessage(@NotNull String key) {
+            return null;
+        }
+
+        @Override
+        public boolean justGenerated() {
+            return true;
+        }
+    };
 
     /**
      * Returns the value message bound to the specified key.
@@ -23,4 +31,14 @@ public interface MessagesConfigAccessor {
      */
     @Nullable
     Object getMessage(@NotNull String key);
+
+    /**
+     * Returns whether the messages have been just generated so the plugin doesn't complain
+     * to admins that the value is missing
+     *
+     * @return just generated or not
+     */
+    default boolean justGenerated() {
+        return false;
+    }
 }

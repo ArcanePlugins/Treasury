@@ -30,7 +30,7 @@ public class MessagesImpl extends Messages {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                return MessagesConfigAccessor.empty();
+                return MessagesConfigAccessor.EMPTY;
             }
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             return (MessagesConfigAccessor) config::get;

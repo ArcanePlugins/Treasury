@@ -68,7 +68,9 @@ public abstract class Messages {
         for (MessageKey key : MessageKey.values()) {
             Object value = configAccessor.getMessage(key.asConfigKey());
             if (value == null) {
-                TreasuryPlugin.getInstance().logger().warn("Invalid message at " + key.asConfigKey() + " , using default value");
+                if (!configAccessor.justGenerated()) {
+                    TreasuryPlugin.getInstance().logger().warn("Invalid message at " + key.asConfigKey() + " , using default value");
+                }
                 this.messages.put(key, key.getDefaultMessage());
                 continue;
             }
