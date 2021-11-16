@@ -85,7 +85,7 @@ public abstract class Messages {
                 this.messages.put(key, new MessageHolder(values));
             }
         }
-        if (allKeys.size() > 0) {
+        if (allKeys.size() > 0 && !configAccessor.justGenerated()) {
             this.generateMissingEntries(allKeys);
         }
     }
