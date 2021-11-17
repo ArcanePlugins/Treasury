@@ -27,11 +27,7 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>me.lokka30.elementaleconomy.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>me.lokka30.microlib</pattern>
-                            <shadedPattern>me.lokka30.elementaleconomy.microlib</shadedPattern>
+                            <shadedPattern>me.lokka30.treasury.plugin.bukkit.shade.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

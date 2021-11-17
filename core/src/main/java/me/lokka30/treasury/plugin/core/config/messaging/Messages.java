@@ -60,9 +60,17 @@ public abstract class Messages {
     }
 
     private Map<MessageKey, MessageHolder> messages;
+    private final MessagesConfigAccessor configAccessor;
 
     public Messages(@NotNull MessagesConfigAccessor configAccessor) {
         Objects.requireNonNull(configAccessor, "configAccessor");
+        this.configAccessor = configAccessor;
+    }
+
+    /**
+     * Loads the messages
+     */
+    public void load() {
         this.messages = new HashMap<>();
         EnumSet<MessageKey> allKeys = EnumSet.allOf(MessageKey.class);
         for (MessageKey key : MessageKey.values()) {

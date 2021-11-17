@@ -66,9 +66,13 @@ public abstract class TreasuryPlugin {
      *
      * @return highest priority provider of economy provider
      */
-    @NotNull
+    @Nullable
     public ProviderEconomy economyProviderProvider() {
-        return allProviders().get(0);
+        List<ProviderEconomy> allProviders = allProviders();
+        if (allProviders.isEmpty()) {
+            return null;
+        }
+        return allProviders.get(0);
     }
 
     /**

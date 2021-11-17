@@ -77,11 +77,13 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         for (RegisteredServiceProvider<EconomyProvider> rsp : providers) {
             ret.add(new ProviderEconomyImpl(rsp.getPriority(), new RegistrarInfoImpl(rsp.getPlugin()), rsp.getProvider()));
         }
-        ret.sort(((Comparator<ProviderEconomy>) (o1, o2) -> {
-            ServicePriority priority1 = ServicePriority.valueOf(capitalizeFirstLetter(o1.getPriority()));
-            ServicePriority priority2 = ServicePriority.valueOf(capitalizeFirstLetter(o2.getPriority()));
-            return priority1.compareTo(priority2);
-        }).reversed());
+        if (!ret.isEmpty()) {
+            ret.sort(((Comparator<ProviderEconomy>) (o1, o2) -> {
+                ServicePriority priority1 = ServicePriority.valueOf(capitalizeFirstLetter(o1.getPriority()));
+                ServicePriority priority2 = ServicePriority.valueOf(capitalizeFirstLetter(o2.getPriority()));
+                return priority1.compareTo(priority2);
+            }).reversed());
+        }
         return ret;
     }
 
@@ -136,6 +138,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
     @Override
     public void reload() {
         messages = new MessagesImpl(plugin);
+        messages.load();
         this.loadSettings(false);
     }
 
@@ -146,6 +149,9 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
             settingsFile.delete();
         }
         if (!settingsFile.exists()) {
+            if (!settingsFile.getParentFile().exists()) {
+                settingsFile.getParentFile().mkdirs();
+            }
             try (InputStream in = getClass().getClassLoader().getResourceAsStream("settings.yml")) {
                 Files.copy(in, settingsFile.getAbsoluteFile().toPath());
             } catch (IOException e) {

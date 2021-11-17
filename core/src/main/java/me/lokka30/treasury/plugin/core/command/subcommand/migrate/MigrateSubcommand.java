@@ -57,14 +57,26 @@ public class MigrateSubcommand implements Subcommand {
 
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.migrate")) return;
 
+        List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
+
         if (args.length != 2) {
             sender.sendMessage(
-                    Message.of(MessageKey.MIGRATE_INVALID_USAGE, placeholder("label", label))
+                    Message.of(
+                            MessageKey.MIGRATE_INVALID_USAGE,
+                            placeholder("label", label),
+                            placeholder(
+                                    "providers",
+                                    serviceProviders.isEmpty()
+                                            ? "No providers found "
+                                            : Utils.formatListMessage(
+                                                    serviceProviders.stream().map(provider -> provider.registrar().getName()).collect(Collectors.toList())
+                                            )
+                            )
+                    )
             );
             return;
         }
 
-        List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
         ProviderEconomy from = null;
         ProviderEconomy to = null;
 

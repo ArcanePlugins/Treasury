@@ -25,6 +25,9 @@ public class MessagesImpl extends Messages {
         return () -> {
             File file = new File(plugin.getDataFolder(), "messages.yml");
             if (!file.exists()) {
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
                 try (InputStream in = plugin.getClass().getClassLoader().getResourceAsStream("messages.yml")) {
                     Files.copy(in, file.getAbsoluteFile().toPath());
                 } catch (IOException e) {
@@ -33,6 +36,7 @@ public class MessagesImpl extends Messages {
                 return MessagesConfigAccessor.EMPTY;
             }
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            // todo: for some reason common.states.yes and common.states.no don't want to load properly
             return (MessagesConfigAccessor) config::get;
         };
     }
@@ -45,7 +49,6 @@ public class MessagesImpl extends Messages {
             file.delete();
         }
         try (InputStream in = plugin.getClass().getClassLoader().getResourceAsStream("messages.yml")) {
-            file.createNewFile();
             Files.copy(in, file.getAbsoluteFile().toPath());
         } catch (IOException e) {
             throw new RuntimeException(e);

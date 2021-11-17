@@ -1,6 +1,7 @@
 package me.lokka30.treasury.plugin.core;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,7 +18,7 @@ public interface ProviderEconomy {
      *
      * @return provider
      */
-    @Nullable
+    @NotNull
     EconomyProvider provide();
 
     /**
@@ -25,7 +26,7 @@ public interface ProviderEconomy {
      *
      * @return registrar info
      */
-    @Nullable
+    @NotNull
     RegistrarInfo registrar();
 
     /**
@@ -33,6 +34,6 @@ public interface ProviderEconomy {
      *
      * @return priority
      */
-    @Nullable
+    @NotNull
     String getPriority();
 }

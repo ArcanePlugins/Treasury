@@ -10,7 +10,9 @@ public class PaperEnhancements {
         int[] version = Arrays.stream(
                 pckg.substring(pckg.lastIndexOf('.') + 1)
                         .replace("v", "")
-                        .replace("_", ".").split("\\.")
+                        .replace("_", ".")
+                        .replace("R", "")
+                        .split("\\.")
         ).mapToInt(Integer::parseInt).toArray();
 
         if (version[1] >= 15) {

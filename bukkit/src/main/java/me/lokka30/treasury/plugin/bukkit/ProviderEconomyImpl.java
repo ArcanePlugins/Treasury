@@ -1,11 +1,12 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.util.Locale;
+import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.RegistrarInfo;
 import org.bukkit.plugin.ServicePriority;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class ProviderEconomyImpl implements ProviderEconomy {
 
@@ -13,24 +14,28 @@ public class ProviderEconomyImpl implements ProviderEconomy {
     private final RegistrarInfo registrar;
     private final EconomyProvider economyProvider;
 
-    public ProviderEconomyImpl(ServicePriority priority, RegistrarInfo registrar, EconomyProvider economyProvider) {
-        this.priority = priority;
-        this.registrar = registrar;
-        this.economyProvider = economyProvider;
+    public ProviderEconomyImpl(
+            @NotNull ServicePriority priority,
+            @NotNull RegistrarInfo registrar,
+            @NotNull EconomyProvider economyProvider
+    ) {
+        this.priority = Objects.requireNonNull(priority, "priority");
+        this.registrar = Objects.requireNonNull(registrar, "registrar");
+        this.economyProvider = Objects.requireNonNull(economyProvider, "economyProvider");
     }
 
     @Override
-    public @Nullable EconomyProvider provide() {
+    public @NotNull EconomyProvider provide() {
         return economyProvider;
     }
 
     @Override
-    public @Nullable RegistrarInfo registrar() {
+    public @NotNull RegistrarInfo registrar() {
         return registrar;
     }
 
     @Override
-    public @Nullable String getPriority() {
+    public @NotNull String getPriority() {
         return priority.name().toLowerCase(Locale.ROOT);
     }
 }

@@ -61,10 +61,10 @@ public class InfoSubcommand implements Subcommand {
         );
 
         ProviderEconomy providerProvider = main.economyProviderProvider();
-        EconomyProvider provider = main.economyProviderProvider().provide();
-        if (provider == null) {
+        if (providerProvider == null) {
             sender.sendMessage(Message.of(MessageKey.INFO_ECONOMY_PROVIDER_UNAVAILABLE));
         } else {
+            EconomyProvider provider = providerProvider.provide();
             sender.sendMessage(
                     Message.of(
                             MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
