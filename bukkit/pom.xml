@@ -13,7 +13,12 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <name>Treasury-Bukkit</name>
-    <description>Bukkit implementation of the treasury plugin</description>
+    <description>A modern code library for plugins.</description>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
 
     <build>
         <defaultGoal>clean package</defaultGoal>

@@ -29,7 +29,7 @@
     <packaging>pom</packaging>
 
     <name>Treasury-Parent</name>
-    <description>A modern economy provider for different Minecraft platforms. Parent POM</description>
+    <description>A modern code library for different Minecraft platforms. Parent POM</description>
 
     <inceptionYear>2021</inceptionYear>
     <url>https://github.com/lokka30/Treasury</url>

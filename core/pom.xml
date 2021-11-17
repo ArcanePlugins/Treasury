@@ -15,6 +15,11 @@
     <name>Treasury-Core</name>
     <description>Abstracted implementation of the Treasury Plugin.</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
+
     <build>
         <resources>
             <resource>
