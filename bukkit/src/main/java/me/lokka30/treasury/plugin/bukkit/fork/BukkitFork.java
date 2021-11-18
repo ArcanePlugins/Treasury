@@ -7,44 +7,29 @@ package me.lokka30.treasury.plugin.bukkit.fork;
  * @author MrIvanPlays
  * @since v1.0.0
  */
-public interface BukkitFork {
+public final class BukkitFork {
 
-    static BukkitFork get() {
-        return new BukkitFork() {
+    private static boolean paper = false;
+    private static boolean ranPaperCheck = false;
+    private static boolean spigot = false;
+    private static boolean ranSpigotCheck = false;
 
-            private boolean paper = false;
-            private boolean ranPaperCheck = false;
-            private boolean spigot = false;
-            private boolean ranSpigotCheck = false;
-
-            @Override
-            public boolean isPaper() {
-                if (!ranPaperCheck) {
-                    try {
-                        Class.forName("com.destroystokyo.paper.PaperConfig");
-                        paper = true;
-                    } catch (ClassNotFoundException e) {
-                        paper = false;
-                    }
-                    ranPaperCheck = true;
-                }
-                return paper;
+    /**
+     * Returns whether we're running spigot.
+     *
+     * @return spigot?
+     */
+    public static boolean isSpigot() {
+        if (!ranSpigotCheck) {
+            try {
+                Class.forName("net.md_5.bungee.api.chat.ChatColor");
+                spigot = true;
+            } catch (ClassNotFoundException e) {
+                spigot = false;
             }
-
-            @Override
-            public boolean isSpigot() {
-                if (!ranSpigotCheck) {
-                    try {
-                        Class.forName("net.md_5.bungee.api.chat.ChatColor");
-                        spigot = true;
-                    } catch (ClassNotFoundException e) {
-                        spigot = false;
-                    }
-                    ranSpigotCheck = true;
-                }
-                return spigot;
-            }
-        };
+            ranSpigotCheck = true;
+        }
+        return spigot;
     }
 
     /**
@@ -52,13 +37,21 @@ public interface BukkitFork {
      *
      * @return paper?
      */
-    boolean isPaper();
+    public static boolean isPaper() {
+        if (!ranPaperCheck) {
+            try {
+                Class.forName("com.destroystokyo.paper.PaperConfig");
+                paper = true;
+            } catch (ClassNotFoundException e) {
+                paper = false;
+            }
+            ranPaperCheck = true;
+        }
+        return paper;
+    }
 
-    // it is ridiculous if someone's using bukkit nowadays, but let's be on the safe side.
-    /**
-     * Returns whether we're running spigot.
-     *
-     * @return spigot?
-     */
-    boolean isSpigot();
+    private BukkitFork() {
+        throw new IllegalArgumentException("Initialization of utility-type class");
+    }
+
 }

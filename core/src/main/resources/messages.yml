@@ -123,7 +123,7 @@ commands:
 
         # Placeholders: %prefix%
         requires-two-providers:
-          - '%prefix% You can''t use this subcommand unless you have 2 economy providers running.'
+          - '%prefix% You can''t use this subcommand unless you have 2 economy providers set up.'
 
         # Placeholders: %prefix%, %providers%
         providers-match:

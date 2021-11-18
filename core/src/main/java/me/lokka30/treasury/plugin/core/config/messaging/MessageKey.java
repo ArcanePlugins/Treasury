@@ -148,7 +148,7 @@ public enum MessageKey {
     MIGRATE_REQUIRES_TWO_PROVIDERS(
             "commands.treasury.subcommands.migrate.requires-two-providers",
             new Messages.MessageHolder(
-                    "%prefix% You can''t use this subcommand unless you have 2 economy providers running."
+                    "%prefix% You can''t use this subcommand unless you have 2 economy providers set up."
             ),
             ConfigVersion.V1
     ),

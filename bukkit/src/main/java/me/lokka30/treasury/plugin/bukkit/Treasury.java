@@ -15,11 +15,11 @@ package me.lokka30.treasury.plugin.bukkit;
 import me.lokka30.treasury.api.economy.currency.conversion.CurrencyConverter;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
+import me.lokka30.treasury.plugin.bukkit.fork.BukkitFork;
 import me.lokka30.treasury.plugin.bukkit.fork.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
-import net.md_5.bungee.api.ChatColor;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +45,8 @@ public class Treasury extends JavaPlugin {
     @NotNull private final CurrencyConverter currencyConverter = new CurrencyConverter();
     @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }
 
+    private BukkitTreasuryPlugin treasuryPlugin;
+
     /**
      * @author lokka30
      * @since v1.0.0
@@ -55,20 +57,20 @@ public class Treasury extends JavaPlugin {
     public void onEnable() {
         final QuickTimer startupTimer = new QuickTimer();
 
-        BukkitTreasuryPlugin treasuryPlugin = new BukkitTreasuryPlugin(this);
+        treasuryPlugin = new BukkitTreasuryPlugin(this);
         TreasuryPlugin.setInstance(treasuryPlugin);
         treasuryPlugin.getMessages().load();
         treasuryPlugin.loadSettings(false);
         TreasuryCommand.register(this);
 
-        if (treasuryPlugin.getFork().isPaper()) {
+        if (BukkitFork.isPaper()) {
             PaperEnhancements.enhance(this);
         }
 
         UpdateChecker.checkForUpdates();
         new Metrics(this, 12927);
 
-        logColor("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
+        treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
     }
 
     /**
@@ -83,10 +85,6 @@ public class Treasury extends JavaPlugin {
 
         // Add onDisable code here if required.
 
-        logColor("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
-    }
-
-    private void logColor(String message) {
-        getLogger().info(ChatColor.translateAlternateColorCodes('&', message));
+        treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }
 }

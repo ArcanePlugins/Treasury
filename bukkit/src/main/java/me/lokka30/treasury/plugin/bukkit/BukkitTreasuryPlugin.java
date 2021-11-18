@@ -39,7 +39,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         implements Logger, Scheduler, ConfigAdapter, Settings {
 
     private final Treasury plugin;
-    private final BukkitFork fork;
     private MessagesImpl messages;
 
     private YamlConfiguration settings;
@@ -47,13 +46,8 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
     private List<String> cachedPluginList = null;
 
     public BukkitTreasuryPlugin(@NotNull Treasury plugin) {
-        this.fork = BukkitFork.get();
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.messages = new MessagesImpl(plugin);
-    }
-
-    public BukkitFork getFork() {
-        return fork;
     }
 
     @Override
@@ -180,7 +174,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
     }
 
     public String colorize(@NotNull String message) {
-        return fork.isSpigot()
+        return BukkitFork.isSpigot()
                 ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', message)
                 : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
     }
