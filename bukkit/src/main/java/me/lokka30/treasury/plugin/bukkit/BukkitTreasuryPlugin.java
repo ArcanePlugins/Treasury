@@ -19,7 +19,6 @@ import me.lokka30.treasury.plugin.bukkit.fork.BukkitFork;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
-import me.lokka30.treasury.plugin.core.config.messaging.ColorHandler;
 import me.lokka30.treasury.plugin.core.config.messaging.Messages;
 import me.lokka30.treasury.plugin.core.config.settings.SettingKey;
 import me.lokka30.treasury.plugin.core.config.settings.Settings;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 // stop spanking me for doing this, but the heavy stuff have been abstracted away so there's literally no logic
 // for the platform implementation to be split in different classes. SO STFU
 public class BukkitTreasuryPlugin extends TreasuryPlugin
-        implements Logger, Scheduler, ConfigAdapter, ColorHandler, Settings {
+        implements Logger, Scheduler, ConfigAdapter, Settings {
 
     private final Treasury plugin;
     private final BukkitFork fork;
@@ -129,11 +128,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
     }
 
     @Override
-    public @NotNull ColorHandler colorHandler() {
-        return this;
-    }
-
-    @Override
     public void reload() {
         messages = new MessagesImpl(plugin);
         messages.load();
@@ -185,8 +179,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         return this;
     }
 
-    @Override
-    public @NotNull String colorize(@NotNull String message) {
+    public String colorize(@NotNull String message) {
         return fork.isSpigot()
                 ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', message)
                 : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);

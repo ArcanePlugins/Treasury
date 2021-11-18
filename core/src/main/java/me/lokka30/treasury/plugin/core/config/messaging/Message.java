@@ -48,9 +48,7 @@ public final class Message {
         if (placeholders == null) {
             return message.replaceAll(
                     "%prefix%",
-                    TreasuryPlugin.getInstance().colorHandler().colorize(
-                            TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
-                    )
+                    TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
             );
         }
         boolean prefixHandled = false;
@@ -70,9 +68,7 @@ public final class Message {
         if (!prefixHandled) {
             message = message.replaceAll(
                     "%prefix%",
-                    TreasuryPlugin.getInstance().colorHandler().colorize(
-                            TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
-                    )
+                    TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
             );
         }
         return message;

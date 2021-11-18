@@ -5,7 +5,6 @@ import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
-import me.lokka30.treasury.plugin.core.config.messaging.ColorHandler;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.NotNull;
@@ -129,14 +128,6 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract ConfigAdapter configAdapter();
-
-    /**
-     * Returns handling of colors.
-     *
-     * @return color handling
-     */
-    @NotNull
-    public abstract ColorHandler colorHandler();
 
     /**
      * Should reload the plugin

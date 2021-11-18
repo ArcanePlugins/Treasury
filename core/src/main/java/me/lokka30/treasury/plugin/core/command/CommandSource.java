@@ -2,7 +2,6 @@ package me.lokka30.treasury.plugin.core.command;
 
 import java.util.List;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.config.messaging.ColorHandler;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,13 +29,12 @@ public interface CommandSource {
         List<String> toSend = message.handlePlaceholders(
                 TreasuryPlugin.getInstance().configAdapter().getMessages().getMessage(message.getKey())
         );
-        ColorHandler colorHandler = TreasuryPlugin.getInstance().colorHandler();
         if (toSend.size() == 1) {
-            sendMessage(colorHandler.colorize(toSend.get(0)));
+            sendMessage(toSend.get(0));
             return;
         }
         for (String msg : toSend) {
-            sendMessage(colorHandler.colorize(msg));
+            sendMessage(msg);
         }
     }
 
