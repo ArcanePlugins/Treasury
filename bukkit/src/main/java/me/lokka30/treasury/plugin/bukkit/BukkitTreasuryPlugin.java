@@ -51,8 +51,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         this.fork = BukkitFork.get();
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.messages = new MessagesImpl(plugin);
-
-        this.loadSettings(false);
     }
 
     public BukkitFork getFork() {
@@ -142,7 +140,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         this.loadSettings(false);
     }
 
-    private void loadSettings(boolean regenerate) {
+    public void loadSettings(boolean regenerate) {
         File settingsFile = new File(plugin.getDataFolder(), "settings.yml");
         if (regenerate && settingsFile.exists()) {
             // todo: this is not the correct way of dumping new options. find another way!!!!

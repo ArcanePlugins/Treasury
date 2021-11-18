@@ -58,6 +58,7 @@ public class Treasury extends JavaPlugin {
         BukkitTreasuryPlugin treasuryPlugin = new BukkitTreasuryPlugin(this);
         TreasuryPlugin.setInstance(treasuryPlugin);
         treasuryPlugin.getMessages().load();
+        treasuryPlugin.loadSettings(false);
         TreasuryCommand.register(this);
 
         if (treasuryPlugin.getFork().isPaper()) {

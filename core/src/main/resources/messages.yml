@@ -32,8 +32,8 @@ common:
 
   # These states are used in various messages.
   states:
-    yes: '&aYes'
-    no: '&cNo'
+    does: '&aYes'
+    does-not: '&cNo'
 
   # The delimiter used in lists of things - this separates each list term.
   # For example, the non-colorized version of a list can look like:

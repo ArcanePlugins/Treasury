@@ -36,7 +36,6 @@ public class MessagesImpl extends Messages {
                 return MessagesConfigAccessor.EMPTY;
             }
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-            // todo: for some reason common.states.yes and common.states.no don't want to load properly
             return (MessagesConfigAccessor) config::get;
         };
     }

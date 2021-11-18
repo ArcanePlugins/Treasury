@@ -24,12 +24,12 @@ public enum MessageKey {
             ConfigVersion.V1
     ),
     STATE_YES(
-            "common.states.yes",
+            "common.states.does",
             new Messages.MessageHolder("&aYes"),
             ConfigVersion.V1
     ),
     STATE_NO(
-            "common.states.no",
+            "common.states.does-not",
             new Messages.MessageHolder("&cNo"),
             ConfigVersion.V1
     ),
