@@ -45,7 +45,7 @@ public class PaperAsyncTabEnhancement implements Listener {
         return Arrays.stream(
                 Bukkit.getPluginManager().getPlugins()
         ).map(Plugin::getName)
-                .filter(name -> lastArg.startsWith(name.toLowerCase(Locale.ROOT)))
+                .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                 .collect(Collectors.toList());
     }
 }

@@ -194,7 +194,7 @@ public class MigrateSubcommand implements Subcommand {
             String lastArg = args[args.length - 1].toLowerCase(Locale.ROOT);
             return TreasuryPlugin.getInstance().pluginsList()
                     .stream()
-                    .filter(name -> lastArg.startsWith(name.toLowerCase(Locale.ROOT)))
+                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

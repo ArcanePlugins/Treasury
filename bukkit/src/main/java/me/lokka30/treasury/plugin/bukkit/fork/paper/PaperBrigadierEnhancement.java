@@ -75,7 +75,7 @@ public class PaperBrigadierEnhancement implements Listener {
             String lastArg = builder.getRemainingLowerCase();
 
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                if (lastArg.startsWith(plugin.getName().toLowerCase(Locale.ROOT))) {
+                if (plugin.getName().toLowerCase(Locale.ROOT).startsWith(lastArg)) {
                     builder.suggest(plugin.getName());
                 }
             }
