@@ -1,4 +1,4 @@
-package me.lokka30.treasury.plugin.bukkit.fork.paper;
+package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
 import java.util.Arrays;
 import me.lokka30.treasury.plugin.bukkit.Treasury;

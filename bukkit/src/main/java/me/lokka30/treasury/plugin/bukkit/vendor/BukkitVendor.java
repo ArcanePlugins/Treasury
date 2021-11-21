@@ -1,13 +1,13 @@
-package me.lokka30.treasury.plugin.bukkit.fork;
+package me.lokka30.treasury.plugin.bukkit.vendor;
 
 /**
- * Represents a handler for determining on what fork we're running. This is in order
+ * Represents a handler for determining on what server vendor we're running. This is in order
  * to optimise some stuff which can be optimised.
  *
  * @author MrIvanPlays
  * @since v1.0.0
  */
-public final class BukkitFork {
+public final class BukkitVendor {
 
     private static boolean paper = false;
     private static boolean ranPaperCheck = false;
@@ -50,7 +50,7 @@ public final class BukkitFork {
         return paper;
     }
 
-    private BukkitFork() {
+    private BukkitVendor() {
         throw new IllegalArgumentException("Initialization of utility-type class");
     }
 

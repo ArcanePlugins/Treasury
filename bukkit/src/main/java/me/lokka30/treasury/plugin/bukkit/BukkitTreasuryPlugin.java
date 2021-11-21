@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.plugin.bukkit.fork.BukkitFork;
+import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
@@ -174,7 +174,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
     }
 
     public String colorize(@NotNull String message) {
-        return BukkitFork.isSpigot()
+        return BukkitVendor.isSpigot()
                 ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', message)
                 : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
     }

@@ -15,8 +15,8 @@ package me.lokka30.treasury.plugin.bukkit;
 import me.lokka30.treasury.api.economy.currency.conversion.CurrencyConverter;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
-import me.lokka30.treasury.plugin.bukkit.fork.BukkitFork;
-import me.lokka30.treasury.plugin.bukkit.fork.paper.PaperEnhancements;
+import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
+import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
@@ -63,7 +63,7 @@ public class Treasury extends JavaPlugin {
         treasuryPlugin.loadSettings(false);
         TreasuryCommand.register(this);
 
-        if (BukkitFork.isPaper()) {
+        if (BukkitVendor.isPaper()) {
             PaperEnhancements.enhance(this);
         }
 
