@@ -49,15 +49,13 @@ public class InfoSubcommand implements Subcommand {
 
         TreasuryPlugin main = TreasuryPlugin.getInstance();
 
-        sender.sendMessage(
-                Message.of(
-                        MessageKey.INFO_TREASURY,
-                        placeholder("version", main.getVersion()),
-                        placeholder("description", main.getDescription()),
-                        placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
-                        placeholder("latest-api-version", main.getEconomyAPIVersion()),
-                        placeholder("repository", "https://github.com/lokka30/Treasury/")
-                )
+        sender.sendMessage(Message.of(
+                MessageKey.INFO_TREASURY,
+                placeholder("version", main.getVersion()),
+                placeholder("description", main.getDescription()),
+                placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
+                placeholder("latest-api-version", main.getEconomyAPIVersion()),
+                placeholder("repository", "https://github.com/lokka30/Treasury/"))
         );
 
         ProviderEconomy providerProvider = main.economyProviderProvider();
@@ -65,16 +63,14 @@ public class InfoSubcommand implements Subcommand {
             sender.sendMessage(Message.of(MessageKey.INFO_ECONOMY_PROVIDER_UNAVAILABLE));
         } else {
             EconomyProvider provider = providerProvider.provide();
-            sender.sendMessage(
-                    Message.of(
-                            MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
-                            placeholder("name", providerProvider.registrar().getName()),
-                            placeholder("priority", providerProvider.getPriority()),
-                            placeholder("api-version", provider.getSupportedAPIVersion()),
-                            placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
-                            placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
-                            placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName())
-                    )
+            sender.sendMessage(Message.of(
+                    MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
+                    placeholder("name", providerProvider.registrar().getName()),
+                    placeholder("priority", providerProvider.getPriority()),
+                    placeholder("api-version", provider.getSupportedAPIVersion()),
+                    placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
+                    placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
+                    placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName()))
             );
         }
 

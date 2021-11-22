@@ -60,19 +60,18 @@ public class MigrateSubcommand implements Subcommand {
         List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
 
         if (args.length != 2) {
-            sender.sendMessage(
-                    Message.of(
-                            MessageKey.MIGRATE_INVALID_USAGE,
-                            placeholder("label", label),
-                            placeholder(
-                                    "providers",
-                                    serviceProviders.isEmpty()
-                                            ? "No providers found "
-                                            : Utils.formatListMessage(
-                                                    serviceProviders.stream().map(provider -> provider.registrar().getName()).collect(Collectors.toList())
-                                            )
-                            )
-                    )
+            sender.sendMessage(Message.of(
+                    MessageKey.MIGRATE_INVALID_USAGE,
+                    placeholder("label", label),
+                    placeholder(
+                            "providers",
+                            serviceProviders.isEmpty()
+                                    ? "No providers found "
+                                    : Utils.formatListMessage(
+                                            serviceProviders.stream()
+                                                    .map(provider -> provider.registrar().getName())
+                                                    .collect(Collectors.toList()))
+                    ))
             );
             return;
         }
@@ -95,11 +94,9 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         if (args[0].equalsIgnoreCase(args[1])) {
-            sender.sendMessage(
-                    Message.of(
-                            MessageKey.MIGRATE_PROVIDERS_MATCH,
-                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
-                    )
+            sender.sendMessage(Message.of(
+                    MessageKey.MIGRATE_PROVIDERS_MATCH,
+                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames)))
             );
             return;
         }
@@ -115,21 +112,17 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         if (from == null) {
-            sender.sendMessage(
-                    Message.of(
-                            MessageKey.MIGRATE_REQUIRES_VALID_FROM,
-                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
-                    )
+            sender.sendMessage(Message.of(
+                    MessageKey.MIGRATE_REQUIRES_VALID_FROM,
+                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames)))
             );
             return;
         }
 
         if (to == null) {
-            sender.sendMessage(
-                    Message.of(
-                            MessageKey.MIGRATE_REQUIRES_VALID_TO,
-                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
-                    )
+            sender.sendMessage(Message.of(
+                    MessageKey.MIGRATE_REQUIRES_VALID_TO,
+                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames)))
             );
             return;
         }
@@ -201,15 +194,13 @@ public class MigrateSubcommand implements Subcommand {
     }
 
     private void sendMigrationMessage(@NotNull CommandSource sender, @NotNull MigrationData migration) {
-        sender.sendMessage(
-                Message.of(
-                        MessageKey.MIGRATE_FINISHED_MIGRATION,
-                        placeholder("time", migration.timer().getTimer()),
-                        placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                        placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
-                        placeholder("migrated-currencies", Utils.formatListMessage(migration.migratedCurrencies().keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList()))),
-                        placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
-                )
+        sender.sendMessage(Message.of(
+                MessageKey.MIGRATE_FINISHED_MIGRATION,
+                placeholder("time", migration.timer().getTimer()),
+                placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
+                placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
+                placeholder("migrated-currencies", Utils.formatListMessage(migration.migratedCurrencies().keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList()))),
+                placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies())))
         );
     }
 

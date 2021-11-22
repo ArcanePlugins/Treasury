@@ -66,12 +66,10 @@ public final class TreasuryBaseCommand {
         }
         Subcommand subcommand = subcommands.get(args[0]);
         if (subcommand == null) {
-            sender.sendMessage(
-                    Message.of(
-                            MessageKey.INVALID_USAGE_SPECIFIED,
-                            MessagePlaceholder.placeholder("label", label),
-                            MessagePlaceholder.placeholder("subcommand", args[0])
-                    )
+            sender.sendMessage(Message.of(
+                    MessageKey.INVALID_USAGE_SPECIFIED,
+                    MessagePlaceholder.placeholder("label", label),
+                    MessagePlaceholder.placeholder("subcommand", args[0]))
             );
             return;
         }

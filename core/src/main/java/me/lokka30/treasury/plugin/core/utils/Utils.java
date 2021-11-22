@@ -44,11 +44,9 @@ public class Utils {
         if (source.hasPermission(permission)) {
             return true;
         } else {
-            source.sendMessage(
-                    Message.of(
-                            MessageKey.NO_PERMISSION,
-                            MessagePlaceholder.placeholder("%permission%", permission)
-                    )
+            source.sendMessage(Message.of(
+                    MessageKey.NO_PERMISSION,
+                    MessagePlaceholder.placeholder("%permission%", permission))
             );
             return false;
         }
