@@ -18,7 +18,7 @@
 
     <groupId>me.lokka30</groupId>
     <artifactId>treasury-parent</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>api</module>
         <module>api-bukkit</module>
@@ -46,6 +46,7 @@
         <gson.version>2.8.0</gson.version>
         <guava.version>21.0</guava.version>
         <bstats.version>2.2.1</bstats.version>
+        <annotationconfig.version>2.1.0-SNAPSHOT</annotationconfig.version>
     </properties>
 
     <licenses>

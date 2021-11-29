@@ -20,7 +20,6 @@ import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.config.messaging.Messages;
-import me.lokka30.treasury.plugin.core.config.settings.SettingKey;
 import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
@@ -36,18 +35,21 @@ import org.jetbrains.annotations.Nullable;
 // stop spanking me for doing this, but the heavy stuff have been abstracted away so there's literally no logic
 // for the platform implementation to be split in different classes. SO STFU
 public class BukkitTreasuryPlugin extends TreasuryPlugin
-        implements Logger, Scheduler, ConfigAdapter, Settings {
+        implements Logger, Scheduler, ConfigAdapter {
 
     private final Treasury plugin;
-    private MessagesImpl messages;
+    private Messages messages;
+    private Settings settings;
 
-    private YamlConfiguration settings;
+    private final File messagesFile;
+    private final File settingsFile;
 
     private List<String> cachedPluginList = null;
 
     public BukkitTreasuryPlugin(@NotNull Treasury plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
-        this.messages = new MessagesImpl(plugin);
+        messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+        settingsFile = new File(plugin.getDataFolder(), "settings.yml");
     }
 
     @Override
@@ -123,28 +125,16 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     @Override
     public void reload() {
-        messages = new MessagesImpl(plugin);
-        messages.load();
-        this.loadSettings(false);
+        loadMessages();
+        loadSettings();
     }
 
-    public void loadSettings(boolean regenerate) {
-        File settingsFile = new File(plugin.getDataFolder(), "settings.yml");
-        if (regenerate && settingsFile.exists()) {
-            // todo: this is not the correct way of dumping new options. find another way!!!!
-            settingsFile.delete();
-        }
-        if (!settingsFile.exists()) {
-            if (!settingsFile.getParentFile().exists()) {
-                settingsFile.getParentFile().mkdirs();
-            }
-            try (InputStream in = getClass().getClassLoader().getResourceAsStream("settings.yml")) {
-                Files.copy(in, settingsFile.getAbsoluteFile().toPath());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        settings = YamlConfiguration.loadConfiguration(settingsFile);
+    public void loadMessages() {
+        messages = Messages.load(messagesFile);
+    }
+
+    public void loadSettings() {
+        settings = Settings.load(settingsFile);
     }
 
     @Override
@@ -170,51 +160,13 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     @Override
     public @NotNull Settings getSettings() {
-        return this;
+        return settings;
     }
 
     public String colorize(@NotNull String message) {
         return BukkitVendor.isSpigot()
                 ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', message)
                 : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
-    }
-
-    @Override
-    public <T> @NotNull T getSetting(@NotNull SettingKey<T> settingKey) {
-        Objects.requireNonNull(settingKey, "settingKey");
-        if (settingKey.getSpecialMapper() != null) {
-            return settingKey.getSpecialMapper().apply(this);
-        }
-        Object value = getSetting(settingKey.getKey());
-        if (value == null) {
-            this.loadSettings(true);
-            return settingKey.getDefault();
-        }
-        Class<T> type = settingKey.getType();
-        if (type.isAssignableFrom(value.getClass())) {
-            return settingKey.getType().cast(value);
-        }
-        if (type.isEnum()) {
-            String valString = String.valueOf(value).toUpperCase(Locale.ROOT);
-            for (T eConst : type.getEnumConstants()) {
-                String name = eConst.toString();
-                if (valString.equalsIgnoreCase(name)) {
-                    return eConst;
-                }
-            }
-            error("Invalid enum constant " + value + " for config option " + settingKey.getKey());
-        }
-        return settingKey.getDefault();
-    }
-
-    @Override
-    public @Nullable Object getSetting(@NotNull String key) {
-        return settings.get(key);
-    }
-
-    @Override
-    public @Nullable List<String> getStringList(@NotNull String key) {
-        return settings.getStringList(key);
     }
 
     @Override

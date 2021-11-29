@@ -57,10 +57,13 @@ public class Treasury extends JavaPlugin {
     public void onEnable() {
         final QuickTimer startupTimer = new QuickTimer();
 
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
+        }
         treasuryPlugin = new BukkitTreasuryPlugin(this);
         TreasuryPlugin.setInstance(treasuryPlugin);
-        treasuryPlugin.getMessages().load();
-        treasuryPlugin.loadSettings(false);
+        treasuryPlugin.loadMessages();
+        treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
 
         if (BukkitVendor.isPaper()) {

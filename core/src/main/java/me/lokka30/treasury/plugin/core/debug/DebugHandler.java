@@ -13,7 +13,6 @@
 package me.lokka30.treasury.plugin.core.debug;
 
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.config.settings.SettingKey;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,7 +33,7 @@ public class DebugHandler {
         return TreasuryPlugin.getInstance()
                 .configAdapter()
                 .getSettings()
-                .getSetting(SettingKey.DEBUG_CATEGORY_LIST)
+                .getDebugCategories()
                 .contains(debugCategory);
     }
 

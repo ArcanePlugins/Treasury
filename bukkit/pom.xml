@@ -5,12 +5,11 @@
     <parent>
         <artifactId>treasury-parent</artifactId>
         <groupId>me.lokka30</groupId>
-        <version>dev-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>treasury-bukkit</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
 
     <name>Treasury-Bukkit</name>
     <description>A modern code library for plugins.</description>
@@ -33,6 +32,10 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.bukkit.shade.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.mrivanplays.annotationconfig</pattern>
+                            <shadedPattern>me.lokka30.treasury.plugin.shade.annotationconfig</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -87,6 +90,12 @@
             <artifactId>treasury-core</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--
         Note: just because the dependency is paper doesn't mean we always use paper specific methods

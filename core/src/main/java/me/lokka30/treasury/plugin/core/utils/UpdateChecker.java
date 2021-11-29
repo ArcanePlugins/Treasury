@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.config.settings.SettingKey;
 
 // TODO: This requires a Spigot Resource ID which can't be obtained before the resource is released.
 /**
@@ -30,7 +29,7 @@ public final class UpdateChecker {
         //noinspection ConstantConditions
         if (true) return;
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
-        if (!plugin.configAdapter().getSettings().getSetting(SettingKey.CHECK_UPDATES)) {
+        if (!plugin.configAdapter().getSettings().checkForUpdates()) {
             return;
         }
         plugin.scheduler().runAsync(() -> {
