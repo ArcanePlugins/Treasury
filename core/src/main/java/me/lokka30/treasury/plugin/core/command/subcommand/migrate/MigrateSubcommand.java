@@ -185,7 +185,7 @@ public class MigrateSubcommand implements Subcommand {
         }
         if ((args.length == 1 || args.length == 2) && source.hasPermission("treasury.command.treasury.migrate")) {
             String lastArg = args[args.length - 1].toLowerCase(Locale.ROOT);
-            return TreasuryPlugin.getInstance().pluginsList()
+            return TreasuryPlugin.getInstance().pluginsListRegisteringProvider()
                     .stream()
                     .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                     .collect(Collectors.toList());

@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.plugin.core.command.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.InfoSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.ReloadSubcommand;
@@ -81,7 +83,7 @@ public final class TreasuryBaseCommand {
     }
 
     @NotNull
-    private final List<String> subcommandCompletion = Arrays.asList("help", "info", "migrate", "reload");
+    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("help", "info", "migrate", "reload");
 
     /**
      * Runs completions for the base /treasury command.
@@ -96,7 +98,9 @@ public final class TreasuryBaseCommand {
         if (args.length == 0) {
             return Collections.emptyList();
         } else if (args.length == 1) {
-            return subcommandCompletion;
+            return SUBCOMMAND_COMPLETIONS.stream()
+                    .filter(c -> c.startsWith(args[0].toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList());
         } else {
             Subcommand subcommand = subcommands.get(args[0]);
             if (subcommand == null) {

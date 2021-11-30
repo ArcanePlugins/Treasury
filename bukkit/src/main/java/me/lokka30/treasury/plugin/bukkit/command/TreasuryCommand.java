@@ -1,7 +1,7 @@
 package me.lokka30.treasury.plugin.bukkit.command;
 
 import java.util.List;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
+import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class TreasuryCommand implements TabExecutor {
 
-    public static void register(Treasury plugin) {
+    public static void register(TreasuryBukkit plugin) {
         PluginCommand cmd = plugin.getCommand("treasury");
         CommandSources sources = new CommandSources();
         plugin.getServer().getPluginManager().registerEvents(sources, plugin);

@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 @Comment("GitHub Repository: <https://github.com/lokka30/Treasury/>")
 @Comment(" ")
 @Comment("## About this File")
-@Comment("Welcome to the messages.yl file, here you may translate")
+@Comment("Welcome to the messages.yml file, here you may translate")
 @Comment("and customise all of Treasury's messages (except for those")
 @Comment("logged to the console). Standard color codes are supported")
 @Comment("(e.g &a, &b, &c) and also hex color codes (e.g.")

@@ -1,11 +1,11 @@
 package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
 import java.util.Arrays;
-import me.lokka30.treasury.plugin.bukkit.Treasury;
+import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 
 public class PaperEnhancements {
 
-    public static void enhance(Treasury plugin) {
+    public static void enhance(TreasuryBukkit plugin) {
         String pckg = plugin.getServer().getClass().getPackage().getName();
         int[] version = Arrays.stream(
                 pckg.substring(pckg.lastIndexOf('.') + 1)

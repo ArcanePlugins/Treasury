@@ -1,9 +1,6 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +21,6 @@ import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
@@ -37,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class BukkitTreasuryPlugin extends TreasuryPlugin
         implements Logger, Scheduler, ConfigAdapter {
 
-    private final Treasury plugin;
+    private final TreasuryBukkit plugin;
     private Messages messages;
     private Settings settings;
 
@@ -46,7 +42,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     private List<String> cachedPluginList = null;
 
-    public BukkitTreasuryPlugin(@NotNull Treasury plugin) {
+    public BukkitTreasuryPlugin(@NotNull TreasuryBukkit plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         settingsFile = new File(plugin.getDataFolder(), "settings.yml");
@@ -139,17 +135,33 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     @Override
     public @NotNull EconomyAPIVersion getEconomyAPIVersion() {
-        return Treasury.ECONOMY_API_VERSION;
+        return TreasuryBukkit.ECONOMY_API_VERSION;
     }
 
     @Override
-    public @NotNull List<String> pluginsList() {
+    public @NotNull List<String> pluginsListRegisteringProvider() {
         if (cachedPluginList != null) {
             return cachedPluginList;
         }
         cachedPluginList = Arrays.stream(
                 Bukkit.getPluginManager().getPlugins()
-        ).map(Plugin::getName).collect(Collectors.toList());
+        ).filter(pl -> {
+            List<RegisteredServiceProvider<?>> registrations = Bukkit.getServicesManager().getRegistrations(pl);
+            if (registrations.isEmpty()) {
+                return false;
+            }
+            if (registrations.size() == 1) {
+                return registrations.get(0).getProvider().getClass().isAssignableFrom(EconomyProvider.class);
+            }
+            boolean hasRegistration = false;
+            for (RegisteredServiceProvider<?> provider : registrations) {
+                if (provider.getProvider().getClass().isAssignableFrom(EconomyProvider.class)) {
+                    hasRegistration = true;
+                    break;
+                }
+            }
+            return hasRegistration;
+        }).map(Plugin::getName).collect(Collectors.toList());
         return cachedPluginList;
     }
 

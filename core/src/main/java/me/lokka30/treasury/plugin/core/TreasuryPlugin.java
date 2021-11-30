@@ -143,10 +143,12 @@ public abstract class TreasuryPlugin {
     public abstract EconomyAPIVersion getEconomyAPIVersion();
 
     /**
-     * Returns the plugins' names as a list with {@link String strings}.
+     * Returns the plugins' names, which are registering an economy provider,
+     * as a list with {@link String strings}, as this is being used in
+     * {@link me.lokka30.treasury.plugin.core.command.subcommand.migrate.MigrateSubcommand}.
      *
      * @return plugins' names
      */
     @NotNull
-    public abstract List<String> pluginsList();
+    public abstract List<String> pluginsListRegisteringProvider();
 }

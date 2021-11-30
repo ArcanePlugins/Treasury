@@ -1,15 +1,14 @@
 package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import org.bukkit.Bukkit;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
 public class PaperAsyncTabEnhancement implements Listener {
 
@@ -36,15 +35,20 @@ public class PaperAsyncTabEnhancement implements Listener {
             }
             if (parts.length > 2) {
                 event.setCompletions(Collections.emptyList());
-                event.setHandled(true);
+            } else {
+                event.setCompletions(
+                        TreasuryBaseCommand.SUBCOMMAND_COMPLETIONS.stream()
+                                .filter(s -> s.startsWith(subcommand.toLowerCase(Locale.ROOT)))
+                                .collect(Collectors.toList())
+                );
             }
+            event.setHandled(true);
         }
     }
 
     private List<String> getCompletions(String lastArg) {
-        return Arrays.stream(
-                Bukkit.getPluginManager().getPlugins()
-        ).map(Plugin::getName)
+        return TreasuryPlugin.getInstance().pluginsListRegisteringProvider()
+                .stream()
                 .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                 .collect(Collectors.toList());
     }

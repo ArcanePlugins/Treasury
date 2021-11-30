@@ -9,10 +9,9 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import java.util.Locale;
-import org.bukkit.Bukkit;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
 public class PaperBrigadierEnhancement implements Listener {
 
@@ -74,9 +73,9 @@ public class PaperBrigadierEnhancement implements Listener {
         return (context, builder) -> {
             String lastArg = builder.getRemainingLowerCase();
 
-            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                if (plugin.getName().toLowerCase(Locale.ROOT).startsWith(lastArg)) {
-                    builder.suggest(plugin.getName());
+            for (String pluginRegistering : TreasuryPlugin.getInstance().pluginsListRegisteringProvider()) {
+                if (pluginRegistering.toLowerCase(Locale.ROOT).startsWith(lastArg)) {
+                    builder.suggest(pluginRegistering);
                 }
             }
 

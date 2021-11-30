@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * the plugin.
  */
 @SuppressWarnings("unused")
-public class Treasury extends JavaPlugin {
+public class TreasuryBukkit extends JavaPlugin {
 
     /**
      * This is Treasury's API version. (Not the same as api-version from plugin.yml!)
