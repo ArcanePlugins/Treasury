@@ -17,103 +17,169 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.lokka30</groupId>
-    <artifactId>Treasury</artifactId>
-    <version>1.0.0</version>
+    <artifactId>treasury-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <modules>
+        <module>api</module>
+        <module>api-bukkit</module>
+        <module>core</module>
+        <module>bukkit</module>
+    </modules>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>Treasury</name>
-    <description>A modern code library for SpigotMC plugins.</description>
+    <name>Treasury-Parent</name>
+    <description>A modern code library for different Minecraft platforms. Parent POM</description>
+
+    <inceptionYear>2021</inceptionYear>
+    <url>https://github.com/lokka30/Treasury</url>
 
     <properties>
-        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Versions of the dependencies Treasury uses -->
+        <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
+        <jetbrains.annotations.version>22.0.0</jetbrains.annotations.version>
+        <junit.version>4.13.1</junit.version>
+        <gson.version>2.8.0</gson.version>
+        <guava.version>21.0</guava.version>
+        <bstats.version>2.2.1</bstats.version>
+        <annotationconfig.version>2.1.0-SNAPSHOT</annotationconfig.version>
     </properties>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/lokka30/Treasury.git</connection>
+        <developerConnection>scm:git:git@github.com:lokka30/Treasury.git</developerConnection>
+        <url>https://github.com/lokka30/Treasury</url>
+    </scm>
+
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <reuseForks>false</reuseForks>
+                    <forkCount>1</forkCount>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>me.lokka30.elementaleconomy.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>me.lokka30.microlib</pattern>
-                            <shadedPattern>me.lokka30.elementaleconomy.microlib</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.1.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.1.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
-        </repository>
-    </repositories>
+    <profiles>
+        <profile>
+            <id>deployToCodeMC</id>
+            <!-- TODO -->
+        </profile>
+        <profile>
+            <id>deployToMrIvanPlays</id>
+            <distributionManagement>
+                <repository>
+                    <id>od-releases</id>
+                    <url>https://repo.mrivanplays.com/repository/od-releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>od-snapshots</id>
+                    <url>https://repo.mrivanplays.com/repository/od-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <defaultGoal>clean package</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.7.0</version>
+                        <configuration>
+                            <showDeprecation>false</showDeprecation>
+                            <showWarnings>false</showWarnings>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.19.1</version>
+                        <configuration>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.junit.platform</groupId>
+                                <artifactId>junit-platform-surefire-provider</artifactId>
+                                <version>1.1.0</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.junit.jupiter</groupId>
+                                <artifactId>junit-jupiter-engine</artifactId>
+                                <version>5.1.0</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <quiet>true</quiet>
+                            <detectOfflineLinks>false</detectOfflineLinks>
+                            <notimestamp>true</notimestamp>
+                            <linksource>true</linksource>
+                            <nohelp>true</nohelp>
+                            <doclint>none</doclint>
+                            <source>8</source>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.lokka30</groupId>
-            <artifactId>MicroLib</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>22.0.0</version>
-        </dependency>
-    </dependencies>
 </project>
