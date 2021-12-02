@@ -9,6 +9,12 @@ import me.lokka30.treasury.api.economy.transaction.Transaction;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an event, called when a {@link PlayerAccount} does a {@link Transaction}
+ *
+ * @author lokka30
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ */
 @SuppressWarnings("unused")
 public class PlayerAccountTransactionEvent extends AccountTransactionEvent {
 
@@ -16,6 +22,9 @@ public class PlayerAccountTransactionEvent extends AccountTransactionEvent {
         super(transaction, account);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @NotNull PlayerAccount getAccount() { return (PlayerAccount) super.getAccount(); }
     

@@ -10,6 +10,12 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an event, called when an account does a {@link Transaction}
+ *
+ * @author lokka30, MrNemo64
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ */
 @SuppressWarnings("unused")
 public class AccountTransactionEvent extends AccountEvent implements Cancellable {
 
@@ -21,6 +27,11 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
         this.transaction = transaction;
     }
 
+    /**
+     * Returns the transaction the {@link #getAccount()} is doing.
+     *
+     * @return transaction
+     */
     @NotNull
     public Transaction getTransaction() { return transaction; }
 

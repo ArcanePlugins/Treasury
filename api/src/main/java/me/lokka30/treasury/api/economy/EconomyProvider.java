@@ -20,7 +20,7 @@ import java.util.UUID;
  * the specific platform they're implementing it for.
  *
  * @author lokka30
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface EconomyProvider {
@@ -35,7 +35,7 @@ public interface EconomyProvider {
      *
      * @author lokka30, MrIvanPlays
      * @return the API version
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     EconomyAPIVersion getSupportedAPIVersion();
@@ -47,13 +47,13 @@ public interface EconomyProvider {
      *
      * @author lokka30, NoahvdAa
      * @return whether the economy supports bank accounts
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default boolean hasBankAccountSupport() { return false; }
 
     /**
      * Check whether the {@code EconomyProvider} calls Treasury's in-built
-     * transaction events.
+     * transaction events for the specific platform this api is implemented
      *
      * <p>This should be checked before relying on Treasury's events as
      * the {@code EconomyProvider} may not have transaction event support,
@@ -61,9 +61,7 @@ public interface EconomyProvider {
      *
      * @author lokka30, NoahvdAa
      * @return whether the economy calls Treasury's transaction events
-     * @see me.lokka30.treasury.api.economy.event
-     * @see me.lokka30.treasury.api.economy.event.AccountTransactionEvent
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default boolean hasTransactionEventSupport() { return false; }
 
@@ -73,7 +71,7 @@ public interface EconomyProvider {
      *
      * @author lokka30, NoahvdAa
      * @return whether the economy supports negative balances
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default boolean hasNegativeBalanceSupport() { return false; }
 
@@ -82,7 +80,7 @@ public interface EconomyProvider {
      *
      * @param accountId the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void hasPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -91,7 +89,7 @@ public interface EconomyProvider {
      *
      * @param accountId the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrievePlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
@@ -100,7 +98,7 @@ public interface EconomyProvider {
      *
      * @param accountId the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void createPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
 
@@ -108,7 +106,7 @@ public interface EconomyProvider {
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
@@ -117,7 +115,7 @@ public interface EconomyProvider {
      *
      * @param accountId the {@code UUID} of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void hasBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -126,7 +124,7 @@ public interface EconomyProvider {
      *
      * @param accountId the {@code UUID} of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
@@ -135,7 +133,7 @@ public interface EconomyProvider {
      *
      * @param accountId the {@code UUID} of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
@@ -143,7 +141,7 @@ public interface EconomyProvider {
      * Request all {@link UUID UUIDs} with associated {@link BankAccount BankAccounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
@@ -151,7 +149,7 @@ public interface EconomyProvider {
      * Request all {@link UUID UUIDs} for valid {@link Currency Currencies}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
@@ -159,7 +157,7 @@ public interface EconomyProvider {
      * Request all names for valid {@link Currency Currencies}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription);
 
@@ -168,7 +166,7 @@ public interface EconomyProvider {
      *
      * @param currencyId the {@code UUID} identifying the {@code Currency}
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
 
@@ -177,7 +175,7 @@ public interface EconomyProvider {
      *
      * @param currencyName the name of the {@code Currency}
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
 
@@ -185,7 +183,7 @@ public interface EconomyProvider {
      * Get the primary or main {@link Currency} of the economy.
      *
      * @return the primary currency
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     Currency getPrimaryCurrency();
@@ -194,7 +192,7 @@ public interface EconomyProvider {
      * Get the {@link UUID} of the primary or main {@link Currency} of the economy.
      *
      * @return the {@code UUID} identifying the primary currency
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     default UUID getPrimaryCurrencyId() {

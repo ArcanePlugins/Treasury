@@ -21,7 +21,7 @@ import java.util.UUID;
  * @see EconomyProvider
  * @see PlayerAccount
  * @see BankAccount
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 @SuppressWarnings({"unused"})
 public interface Account {
@@ -32,7 +32,7 @@ public interface Account {
      * @author lokka30
      * @return uuid of the Account.
      * @see UUID
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull UUID getUniqueId();
 
@@ -43,7 +43,7 @@ public interface Account {
      * @param currency the {@link Currency} of the balance being requested
      * @param subscription the {@link EconomySubscriber} accepting the amount
      * @see Account#setBalance(double, Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
@@ -57,7 +57,7 @@ public interface Account {
      * @param currency the {@link Currency} of the balance being set
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void setBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
@@ -71,7 +71,7 @@ public interface Account {
      * @param currency the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @see Account#setBalance(double, Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void withdrawBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
@@ -85,7 +85,7 @@ public interface Account {
      * @param currency the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @see Account#setBalance(double, Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void depositBalance(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription);
 
@@ -99,7 +99,7 @@ public interface Account {
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @see PlayerAccount#resetBalance(Currency, EconomySubscriber)
      * @see Account#setBalance(double, Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void resetBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription) {
         setBalance(0.0d, currency, new EconomySubscriber<Double>() {
@@ -126,7 +126,7 @@ public interface Account {
      * @param currency the {@link Currency} of the balance being queried
      * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void canAfford(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription) {
         retrieveBalance(currency, new EconomySubscriber<Double>() {
@@ -150,7 +150,7 @@ public interface Account {
      *
      * @author lokka30
      * @param subscription the {@link EconomySubscriber} accepting whether deletion occurred successfully
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
 

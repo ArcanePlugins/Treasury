@@ -19,7 +19,7 @@ import java.util.UUID;
  *
  * @author lokka30, MrNemo64
  * @see Account
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 @SuppressWarnings({"unused"})
 public interface BankAccount extends Account {
@@ -29,7 +29,7 @@ public interface BankAccount extends Account {
      *
      * @author lokka30
      * @param subscription the {@link EconomySubscriber} accepting the members
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBankMembersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
@@ -38,7 +38,7 @@ public interface BankAccount extends Account {
      *
      * @author lokka30
      * @param subscription the {@link EconomySubscriber} accepting the owners
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBankOwnersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
@@ -48,7 +48,7 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @param memberId the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void isBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -58,7 +58,7 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @param ownerId the {@link UUID} of the potential owner
      * @param subscription the {@link EconomySubscriber} accepting whether the user is an owner
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void isBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -68,7 +68,7 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @param memberId the {@link UUID} of the new member
      * @param subscription the {@link EconomySubscriber} accepting whether the member was added
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void addBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -78,7 +78,7 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @param ownerId the {@link UUID} of the potential new owner
      * @param subscription the {@link EconomySubscriber} accepting whether the owner was added
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void addBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -88,7 +88,7 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @param memberId the {@link UUID} of the member removed
      * @param subscription the {@link EconomySubscriber} accepting whether the member was removed
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void removeBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -98,7 +98,7 @@ public interface BankAccount extends Account {
      * @author lokka30
      * @param ownerId the {@link UUID} of the owner removed
      * @param subscription the {@link EconomySubscriber} accepting whether the owner was removed
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void removeBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
 }
