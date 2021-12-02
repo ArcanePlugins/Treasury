@@ -10,45 +10,28 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.core.config.messaging;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.beans.ConstructorProperties;
-import java.util.Objects;
+package me.lokka30.treasury.plugin.core.scheduling;
 
 /**
- * Represents a message placeholder
+ * Represents a scheduler wrapper.
  *
+ * @author MrIvanPlays
  * @since v1.0.0
  */
-public final class MessagePlaceholder {
+@SuppressWarnings("unused")
+public interface Scheduler {
 
     /**
-     * Creates a new {@link MessagePlaceholder}
+     * Runs the specified task synchronously (on the main thread of the platform implemented)
      *
-     * @param a to replace
-     * @param b replacement
-     * @return message placeholder instance
+     * @param task the task you want to run
      */
-    public static MessagePlaceholder placeholder(@NotNull Object a, @NotNull Object b) {
-        return new MessagePlaceholder(a, b);
-    }
+    void runSync(Runnable task);
 
-    private final Object a;
-    private final Object b;
-
-    @ConstructorProperties({"a", "b"})
-    private MessagePlaceholder(@NotNull Object a, @NotNull Object b) {
-        this.a = Objects.requireNonNull(a, "null toReplace");
-        this.b = Objects.requireNonNull(b, "null replacement");
-    }
-
-    public Object getToReplace() {
-        return a;
-    }
-
-    public Object getReplacement() {
-        return b;
-    }
+    /**
+     * Runs the specified task asynchronously.
+     *
+     * @param task the task you want to run
+     */
+    void runAsync(Runnable task);
 }

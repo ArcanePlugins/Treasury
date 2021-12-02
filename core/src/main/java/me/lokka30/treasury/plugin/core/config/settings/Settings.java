@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2021 lokka30.
+ *
+ * This code is part of Treasury, an Economy API for Minecraft servers. Please see <https://github.com/lokka30/Treasury> for more information on this resource.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package me.lokka30.treasury.plugin.core.config.settings;
 
 import com.google.common.reflect.TypeToken;
@@ -7,15 +19,16 @@ import com.mrivanplays.annotationconfig.core.annotations.Key;
 import com.mrivanplays.annotationconfig.core.annotations.comment.Comment;
 import com.mrivanplays.annotationconfig.core.serialization.SerializerRegistry;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.debug.DebugCategory;
+import me.lokka30.treasury.plugin.core.debug.DebugCategoryMode;
+
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.debug.DebugCategory;
-import me.lokka30.treasury.plugin.core.debug.DebugCategoryMode;
 
 /**
  * Represents the settings file of treasury.
@@ -40,6 +53,7 @@ import me.lokka30.treasury.plugin.core.debug.DebugCategoryMode;
 @SuppressWarnings("FieldMayBeFinal")
 public class Settings {
 
+    @SuppressWarnings("UnstableApiUsage")
     public static Settings load(File file) {
         Type debugCategoryList = new TypeToken<List<DebugCategory>>() {}.getType();
         if (!SerializerRegistry.INSTANCE.hasSerializer(debugCategoryList)) {
@@ -52,7 +66,7 @@ public class Settings {
 
     @Key("update-checker")
     @ConfigObject
-    private UpdateCheckerSettings updateChecker = new UpdateCheckerSettings();
+    private final UpdateCheckerSettings updateChecker = new UpdateCheckerSettings();
 
     @Comment("## Settings regarding the update checker.")
     @Comment("It is recommended you leave this enabled.")
@@ -65,7 +79,7 @@ public class Settings {
         @Comment("## Should the update checker be enabled?")
         @Comment("This setting allows you to enable/disable the update checker.")
         @Comment("Type: Boolean | Default: `true`")
-        private boolean enabled = true;
+        private final boolean enabled = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -73,7 +87,7 @@ public class Settings {
     }
 
     @ConfigObject
-    private DebugSettings debug = new DebugSettings();
+    private final DebugSettings debug = new DebugSettings();
 
     @Comment("## Settings regarding the debug logger.")
     @Comment("The debug logger is a system in Treasury only accessible")
@@ -87,7 +101,7 @@ public class Settings {
 
         @ConfigObject
         @Key("enabled-categories")
-        private EnabledCategories enabledCategories = new EnabledCategories();
+        private final EnabledCategories enabledCategories = new EnabledCategories();
 
         @Comment("## What debug-categories should be sent to the console?")
         @Comment("This setting allows you to tune what categories of debug messages")
@@ -101,13 +115,13 @@ public class Settings {
             @Comment("`BLACKLIST` - only the non-specified categories in the list")
             @Comment("              will be enabled.")
             @Comment("Type: `String` (DebugCategoryMode constants) | Default: `WHITELIST`")
-            private DebugCategoryMode mode = DebugCategoryMode.WHITELIST;
+            private final DebugCategoryMode mode = DebugCategoryMode.WHITELIST;
 
             @Comment("## Contents of the debug logger categories list.")
             @Comment("Add entries to the whitelist/blacklist here.")
             @Comment("Use debug categories from the `DebugCategory` enum, available at GitHub.")
             @Comment("Type: `List<String>` (DebugCategory constants) | Default: `[]` (empty)")
-            private List<DebugCategory> list = Collections.emptyList();
+            private final List<DebugCategory> list = Collections.emptyList();
 
             public DebugCategoryMode getMode() {
                 return mode;
