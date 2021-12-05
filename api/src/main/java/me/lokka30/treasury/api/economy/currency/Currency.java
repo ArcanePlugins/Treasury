@@ -27,7 +27,7 @@ import java.util.UUID;
  * plugin can award players 'Tokens', but a job plugin
  * can award players 'Dollars'. Facilitates great customisability.
  */
-@SuppressWarnings({"unused", "SameReturnValue"})
+@SuppressWarnings("unused")
 public interface Currency {
 
     /**

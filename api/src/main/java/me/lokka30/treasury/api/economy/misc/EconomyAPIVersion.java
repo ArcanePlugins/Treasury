@@ -15,11 +15,11 @@ package me.lokka30.treasury.api.economy.misc;
 @SuppressWarnings("unused")
 public enum EconomyAPIVersion {
 
-    V1_0(1);
+    VERSION_1(1);
 
-    private final int index;
-    EconomyAPIVersion(final int index) { this.index = index; }
+    private final int number;
+    EconomyAPIVersion(final int number) { this.number = number; }
 
-    public int getIndex() { return index; }
+    public int getNumber() { return number; }
 
 }

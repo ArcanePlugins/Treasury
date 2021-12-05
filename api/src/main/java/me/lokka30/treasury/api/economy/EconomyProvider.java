@@ -30,7 +30,7 @@ import java.util.UUID;
  * @author lokka30
  * @since v1.0.0
  */
-@SuppressWarnings({"unused", "UnusedReturnValue", "SameReturnValue"})
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface EconomyProvider {
 
     /**
@@ -67,6 +67,7 @@ public interface EconomyProvider {
      * @author lokka30, NoahvdAa
      * @return whether the economy calls Treasury's transaction events
      * @see me.lokka30.treasury.api.economy.event
+     * @see me.lokka30.treasury.api.economy.event.AccountTransactionEvent
      * @since v1.0.0
      */
     default boolean hasTransactionEventSupport() { return false; }

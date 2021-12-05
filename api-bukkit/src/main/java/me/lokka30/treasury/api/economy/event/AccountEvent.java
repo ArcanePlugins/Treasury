@@ -12,10 +12,11 @@
 
 package me.lokka30.treasury.api.economy.event;
 
-import me.lokka30.treasury.api.economy.account.Account;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import me.lokka30.treasury.api.economy.account.Account;
 
 public class AccountEvent extends Event {
 
@@ -28,7 +29,7 @@ public class AccountEvent extends Event {
 	@NotNull
 	public Account getAccount() { return account; }
 
-	public static final HandlerList HANDLERS = new HandlerList();
+	public static HandlerList HANDLERS = new HandlerList();
 
 	@NotNull
 	@Override

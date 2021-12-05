@@ -42,7 +42,7 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
         this.isCancelled = isCancelled;
     }
 
-    public static final HandlerList HANDLERS = new HandlerList();
+    public static HandlerList HANDLERS = new HandlerList();
 
     @NotNull
     @Override

@@ -10,7 +10,7 @@
  * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package me.lokka30.treasury.plugin.core.command.subcommand.info;
+package me.lokka30.treasury.plugin.core.command.subcommand;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
-@SuppressWarnings("unused")
 public class InfoSubcommand implements Subcommand {
 
     /*
@@ -53,7 +52,7 @@ public class InfoSubcommand implements Subcommand {
         sender.sendMessage(Message.of(
                 MessageKey.INFO_TREASURY,
                 placeholder("version", main.getVersion()),
-                placeholder("description", main.getDescription() == null ? "A modern code library for different Minecraft platforms." : main.getDescription()),
+                placeholder("description", main.getDescription()),
                 placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
                 placeholder("latest-api-version", main.getEconomyAPIVersion()),
                 placeholder("repository", "https://github.com/lokka30/Treasury/"))
