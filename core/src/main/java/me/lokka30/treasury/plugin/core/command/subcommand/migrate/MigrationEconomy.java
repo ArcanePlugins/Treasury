@@ -27,34 +27,13 @@ class MigrationEconomy implements EconomyProvider {
     private final @NotNull EconomyException migrationException;
 
     MigrationEconomy() {
-        this.currency = new Currency() {
-            private final UUID uuid = UUID.randomUUID();
-
-            @Override
-            public @NotNull UUID getCurrencyId() {
-                return uuid;
-            }
-
-            @Override
-            public @NotNull String getCurrencyName() {
-                return "MigrationMoney";
-            }
-
-            @Override
-            public int getRoundedDigits() {
-                return 0;
-            }
-
-            @Override
-            public double getStartingBalance(@Nullable UUID playerUUID) {
-                return 0;
-            }
-
-            @Override
-            public @NotNull String formatBalance(double amount, @NotNull Locale locale) {
-                return String.valueOf(amount);
-            }
-        };
+        this.currency = Currency.of(
+                null,
+                0,
+                1,
+                (amt, $) -> String.valueOf(amt),
+                "MigrationMoney"
+        );
         this.migrationException = new EconomyException(FailureReason.MIGRATION, "Economy unavailable during migration process.");
     }
 

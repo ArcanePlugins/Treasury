@@ -70,7 +70,7 @@ public class InfoSubcommand implements Subcommand {
                     placeholder("api-version", provider.getSupportedAPIVersion()),
                     placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
                     placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
-                    placeholder("primary-currency", provider.getPrimaryCurrency().getCurrencyName()))
+                    placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName()))
             );
         }
 

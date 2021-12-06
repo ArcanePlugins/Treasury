@@ -199,7 +199,7 @@ public class MigrateSubcommand implements Subcommand {
                 placeholder("time", migration.timer().getTimer()),
                 placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
                 placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
-                placeholder("migrated-currencies", Utils.formatListMessage(migration.migratedCurrencies().keySet().stream().map(Currency::getCurrencyName).collect(Collectors.toList()))),
+                placeholder("migrated-currencies", Utils.formatListMessage(migration.migratedCurrencies().keySet().stream().map(Currency::getPrimaryCurrencyName).collect(Collectors.toList()))),
                 placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies())))
         );
     }
@@ -232,12 +232,12 @@ public class MigrateSubcommand implements Subcommand {
                     toCurrencyFuture.whenComplete(((toCurrency, throwable) -> {
                         if (toCurrency == null) {
                             // Currency not found.
-                            migration.nonMigratedCurrencies().add(fromCurrency.getCurrencyName());
-                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will not be migrated.");
+                            migration.nonMigratedCurrencies().add(fromCurrency.getPrimaryCurrencyName());
+                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getPrimaryCurrencyName() + "&7' will not be migrated.");
                         } else {
                             // Currency located, map.
                             migration.migratedCurrencies().put(fromCurrency, toCurrency);
-                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getCurrencyName() + "&7' will be migrated.");
+                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getPrimaryCurrencyName() + "&7' will be migrated.");
                         }
                     }));
                 });
