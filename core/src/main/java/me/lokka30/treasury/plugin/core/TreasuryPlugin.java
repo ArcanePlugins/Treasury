@@ -3,10 +3,10 @@ package me.lokka30.treasury.plugin.core;
 import java.util.List;
 import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
+import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +50,7 @@ public abstract class TreasuryPlugin {
      * @return version
      */
     @NotNull
-    public abstract String getVersion();
+    public abstract PluginVersion getVersion();
 
     /**
      * Returns the description of the treasury plugin.
@@ -133,14 +133,6 @@ public abstract class TreasuryPlugin {
      * Should reload the plugin
      */
     public abstract void reload();
-
-    /**
-     * Returns the treasury api version
-     *
-     * @return treasury api version
-     */
-    @NotNull
-    public abstract EconomyAPIVersion getEconomyAPIVersion();
 
     /**
      * Returns the plugins' names, which are registering an economy provider,

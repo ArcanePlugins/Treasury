@@ -20,6 +20,7 @@ import me.lokka30.treasury.plugin.core.config.messaging.Messages;
 import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
+import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -34,6 +35,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         implements Logger, Scheduler, ConfigAdapter {
 
     private final TreasuryBukkit plugin;
+    private final PluginVersion pluginVersion;
     private Messages messages;
     private Settings settings;
 
@@ -44,13 +46,14 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     public BukkitTreasuryPlugin(@NotNull TreasuryBukkit plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
+        this.pluginVersion = new PluginVersion(plugin.getDescription().getVersion(), this);
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         settingsFile = new File(plugin.getDataFolder(), "settings.yml");
     }
 
     @Override
-    public @NotNull String getVersion() {
-        return plugin.getDescription().getVersion();
+    public @NotNull PluginVersion getVersion() {
+        return pluginVersion;
     }
 
     @Override
@@ -131,11 +134,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     public void loadSettings() {
         settings = Settings.load(settingsFile);
-    }
-
-    @Override
-    public @NotNull EconomyAPIVersion getEconomyAPIVersion() {
-        return TreasuryBukkit.ECONOMY_API_VERSION;
     }
 
     @Override
