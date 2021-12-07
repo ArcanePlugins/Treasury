@@ -8,12 +8,9 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -39,7 +36,7 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     public @NotNull EconomyAPIVersion getSupportedAPIVersion() {
-        return TreasuryPlugin.getInstance().getEconomyAPIVersion();
+        return EconomyAPIVersion.getCurrentAPIVersion();
     }
 
     @Override

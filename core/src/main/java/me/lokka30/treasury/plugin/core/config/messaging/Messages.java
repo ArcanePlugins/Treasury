@@ -138,7 +138,7 @@ public class Messages {
                     "&8 &m->&7 Running &bTreasury v%version%",
                     "&8 &m->&7 Description: &b%description%",
                     "&8 &m->&7 Made possible by: &bSee &n%credits%",
-                    "&8 &m->&7 Latest API Version: &b%latest-api-version%",
+                    "&8 &m->&7 Current API Version: &b%current-api-version%",
                     "&8 &m->&7 Learn more at: &b&n%repository%",
                     " "
             );

@@ -143,6 +143,7 @@ public class Settings {
                 break;
             case BLACKLIST:
                 enabledCategories.addAll(Arrays.asList(DebugCategory.values()));
+                enabledCategories.removeAll(specified);
                 break;
             default:
                 TreasuryPlugin.getInstance().logger().error(
