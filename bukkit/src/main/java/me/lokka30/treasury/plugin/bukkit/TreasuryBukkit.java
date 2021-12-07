@@ -12,7 +12,6 @@
 
 package me.lokka30.treasury.plugin.bukkit;
 
-import me.lokka30.treasury.api.economy.currency.conversion.CurrencyConverter;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
@@ -41,9 +40,6 @@ public class TreasuryBukkit extends JavaPlugin {
      * does not support the latest Treasury API version.
      */
     @NotNull public static final EconomyAPIVersion ECONOMY_API_VERSION = EconomyAPIVersion.VERSION_1;
-
-    @NotNull private final CurrencyConverter currencyConverter = new CurrencyConverter();
-    @NotNull public CurrencyConverter getCurrencyConverter() { return currencyConverter; }
 
     private BukkitTreasuryPlugin treasuryPlugin;
 

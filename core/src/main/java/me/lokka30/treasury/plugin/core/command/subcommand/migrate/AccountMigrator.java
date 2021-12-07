@@ -65,7 +65,7 @@ interface AccountMigrator<T extends Account> {
                         migration.debug(() -> String.format(
                                 "Failed to recover from an issue transferring %s %s from %s, currency will be deleted!",
                                 balance,
-                                fromCurrency.getCurrencyName(),
+                                fromCurrency.getPrimaryCurrencyName(),
                                 fromAccount.getUniqueId()));
                     }));
                 });
