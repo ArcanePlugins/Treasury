@@ -3,7 +3,7 @@
 # 💼 Welcome to Treasury!
 
 ## 🔗 Quick Links
-* <del>[Download Treasury on SpigotMC.org]()</del> (currently unavailable)
+* [Download Treasury on SpigotMC.org]() (currently unavailable)
 * [Contact Treasury's Team](https://github.com/lokka30/Treasury/wiki/Contact-Treasury's-Support-Team)
 * [View Treasury's Wiki](https://github.com/lokka30/Treasury/wiki)
 * [View Treasury's Issue Tracker to see what's coming in the future](https://github.com/lokka30/Treasury/issues)
