@@ -31,36 +31,42 @@ public enum BankAccountPermission {
      * @since v1.0.0
      */
     CONSULT,
+
     /**
      * Allows a player to withdraw from the {@link BankAccount}.
      * @see Account#withdrawBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
      */
     WITHDRAW,
+
     /**
      * Allows a player to deposit on the {@link BankAccount}.
      * @see Account#depositBalance(double, Currency, EconomySubscriber)
      * @since v1.0.0
      */
     DEPOSIT,
+
     /**
      * Allows a player to add members to the {@link BankAccount}.
      * @see BankAccount#addBankMember(UUID, EconomySubscriber)
      * @since v1.0.0
      */
     ADD_MEMBERS,
+
     /**
      * Allows a player to remove members from the {@link BankAccount}.
      * @see BankAccount#removeBankMember(UUID, EconomySubscriber)
      * @since v1.0.0
      */
     REMOVE_MEMBERS,
+
     /**
      * Allows a player to add owners to the {@link BankAccount}.
      * @see BankAccount#addBankOwner(UUID, EconomySubscriber)
      * @since v1.0.0
      */
     ADD_OWNERS,
+
     /**
      * Allows a player to remove owners from the {@link BankAccount}.
      * @see BankAccount#removeBankOwner(UUID, EconomySubscriber)
