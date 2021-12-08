@@ -2,10 +2,6 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
 import com.destroystokyo.paper.brigadier.BukkitBrigadierCommand;
@@ -16,10 +12,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import java.util.Locale;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.Locale;
 
 public class PaperBrigadierEnhancement implements Listener {
 

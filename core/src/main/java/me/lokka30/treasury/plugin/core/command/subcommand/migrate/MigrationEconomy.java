@@ -2,10 +2,6 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -18,10 +14,8 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Locale;
 import java.util.UUID;
 
 /**

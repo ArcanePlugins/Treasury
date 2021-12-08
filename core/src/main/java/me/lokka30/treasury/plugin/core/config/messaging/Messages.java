@@ -2,10 +2,6 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.config.messaging;
 
 import com.mrivanplays.annotationconfig.core.annotations.ConfigObject;
@@ -14,6 +10,9 @@ import com.mrivanplays.annotationconfig.core.annotations.Key;
 import com.mrivanplays.annotationconfig.core.annotations.comment.Comment;
 import com.mrivanplays.annotationconfig.core.utils.AnnotationUtils;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -22,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * All Treasury plugin messages.

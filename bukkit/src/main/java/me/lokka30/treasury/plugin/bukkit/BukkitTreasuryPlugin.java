@@ -2,22 +2,8 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.bukkit;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
@@ -35,9 +21,17 @@ import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// yeye I know single responsibility principle
-// stop spanking me for doing this, but the heavy stuff have been abstracted away so there's literally no logic
-// for the platform implementation to be split in different classes. SO STFU
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
 public class BukkitTreasuryPlugin extends TreasuryPlugin
         implements Logger, Scheduler, ConfigAdapter {
 

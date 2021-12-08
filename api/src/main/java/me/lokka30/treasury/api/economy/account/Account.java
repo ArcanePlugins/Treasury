@@ -2,10 +2,6 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -13,6 +9,7 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 /**

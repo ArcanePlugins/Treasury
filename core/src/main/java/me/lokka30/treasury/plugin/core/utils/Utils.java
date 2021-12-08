@@ -2,14 +2,9 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.Gson;
-import java.util.Objects;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
@@ -17,6 +12,8 @@ import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import me.lokka30.treasury.plugin.core.config.messaging.Messages;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class Utils {
 

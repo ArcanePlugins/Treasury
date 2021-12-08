@@ -13,7 +13,7 @@ local.properties
 .project
 
 ### IntelliJ ###
-/.idea/
+.idea/
 *.iml
 *.ipr
 out/

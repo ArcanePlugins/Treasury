@@ -2,21 +2,18 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class PaperAsyncTabEnhancement implements Listener {
 
