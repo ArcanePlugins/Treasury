@@ -2,13 +2,8 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.bukkit.command;
 
-import java.util.List;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
 import org.bukkit.command.Command;
@@ -17,6 +12,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class TreasuryCommand implements TabExecutor {
 

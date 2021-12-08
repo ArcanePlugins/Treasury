@@ -2,13 +2,11 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.JsonObject;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;

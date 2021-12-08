@@ -2,14 +2,8 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core;
 
-import java.util.List;
-import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
@@ -17,6 +11,9 @@ import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Treasury core implementations must implement this class and set its instance in order for the core
