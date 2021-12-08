@@ -28,9 +28,12 @@ public interface EconomyProvider {
     /**
      * Get the version of the Treasury API the {@code EconomyProvider} is based on.
      *
-     * <p>Please note that the Treasury API version is not the same as the Spigot API version!
+     * <p>Warning: The Treasury API version is completely different to any other platform version,
+     * such as the 'api-version' value in the Bukkit implementation's plugin.yml file.
+     * <p>Warning: Do not use {@link EconomyAPIVersion#getCurrentAPIVersion()}, this is for internal Treasury use only.
+     * <b>You must only use the constants provided.</b>
      *
-     * @author lokka30
+     * @author lokka30, MrIvanPlays
      * @return the API version
      * @since v1.0.0
      */

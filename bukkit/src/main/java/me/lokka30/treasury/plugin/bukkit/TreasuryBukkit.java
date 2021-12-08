@@ -4,7 +4,6 @@
 
 package me.lokka30.treasury.plugin.bukkit;
 
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
@@ -13,7 +12,6 @@ import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author lokka30
@@ -24,14 +22,6 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("unused")
 public class TreasuryBukkit extends JavaPlugin {
-
-    /**
-     * This is Treasury's API version. (Not the same as api-version from plugin.yml!)
-     * Any major changes to the API should make this number increase.
-     * This allows Treasury to warn server owners if their Provider
-     * does not support the latest Treasury API version.
-     */
-    @NotNull public static final EconomyAPIVersion ECONOMY_API_VERSION = EconomyAPIVersion.VERSION_1;
 
     private BukkitTreasuryPlugin treasuryPlugin;
 

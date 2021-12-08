@@ -7,6 +7,7 @@ package me.lokka30.treasury.plugin.core.command.subcommand;
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -46,7 +47,7 @@ public class InfoSubcommand implements Subcommand {
                 placeholder("version", main.getVersion()),
                 placeholder("description", main.getDescription()),
                 placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
-                placeholder("latest-api-version", main.getEconomyAPIVersion()),
+                placeholder("current-api-version", EconomyAPIVersion.getCurrentAPIVersion()),
                 placeholder("repository", "https://github.com/lokka30/Treasury/"))
         );
 
