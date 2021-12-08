@@ -107,54 +107,9 @@ public interface BankAccount extends Account {
      * @param permission the permission to check
      * @param subscription the {@link EconomySubscriber} accepting whether the player has the permission
      * @author MrNemo64
-     * @see #canConsultBalance(UUID, EconomySubscriber) 
-     * @see #canWithdraw(UUID, EconomySubscriber) 
-     * @see #canDeposit(UUID, EconomySubscriber)
      * @see BankAccountPermission
      * @since v1.0.0
      */
     void hasPermission(@NotNull UUID player, @NotNull BankAccountPermission permission, @NotNull EconomySubscriber<Boolean> subscription);
-
-    /**
-     * Checks whether the given player can consult the balance of this bank account,
-     * in other words, if they have the {@link BankAccountPermission#CONSULT} permission.
-     * @param player the {@link UUID} of the player to check if they can consult the balance
-     * @param subscription the {@link EconomySubscriber} accepting whether the player can consult the balance
-     * @author MrNemo64
-     * @see #hasPermission(UUID, BankAccountPermission, EconomySubscriber)
-     * @see BankAccountPermission#CONSULT
-     * @since v1.0.0
-     */
-    default void canConsultBalance(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
-        hasPermission(player, BankAccountPermission.CONSULT, subscription);
-    }
-
-    /**
-     * Checks whether the given player can withdraw from this bank account,
-     * in other words, if they have the {@link BankAccountPermission#WITHDRAW} permission.
-     * @param player the {@link UUID} of the player to check if they can withdraw
-     * @param subscription the {@link EconomySubscriber} accepting whether the player can withdraw
-     * @author MrNemo64
-     * @see #hasPermission(UUID, BankAccountPermission, EconomySubscriber)
-     * @see BankAccountPermission#WITHDRAW
-     * @since v1.0.0
-     */
-    default void canWithdraw(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
-        hasPermission(player, BankAccountPermission.WITHDRAW, subscription);
-    }
-
-    /**
-     * Checks whether the given player can deposit on this bank account,
-     * in other words, if they have the {@link BankAccountPermission#DEPOSIT} permission.
-     * @param player the {@link UUID} of the player to check if they can deposit
-     * @param subscription the {@link EconomySubscriber} accepting whether the player can deposit
-     * @author MrNemo64
-     * @see #hasPermission(UUID, BankAccountPermission, EconomySubscriber)
-     * @see BankAccountPermission#DEPOSIT
-     * @since v1.0.0
-     */
-    default void canDeposit(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
-        hasPermission(player, BankAccountPermission.DEPOSIT, subscription);
-    }
 
 }
