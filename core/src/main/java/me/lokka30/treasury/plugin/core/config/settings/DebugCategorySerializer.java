@@ -2,20 +2,17 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.config.settings;
 
 import com.mrivanplays.annotationconfig.core.serialization.DataObject;
 import com.mrivanplays.annotationconfig.core.serialization.FieldTypeSerializer;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.debug.DebugCategory;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 
 /**
  * A serializer of debug categories

@@ -2,20 +2,8 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.command;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import me.lokka30.treasury.plugin.core.command.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.InfoSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.ReloadSubcommand;
@@ -25,6 +13,15 @@ import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A class, containing the logic of the treasury command.

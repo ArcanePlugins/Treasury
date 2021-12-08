@@ -2,24 +2,10 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
+import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
+
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -36,7 +22,18 @@ import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Phaser;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class MigrateSubcommand implements Subcommand {
 
