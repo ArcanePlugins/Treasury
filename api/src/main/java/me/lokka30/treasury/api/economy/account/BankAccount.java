@@ -21,14 +21,13 @@ import java.util.UUID;
  * @see Account
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-@SuppressWarnings({"unused"})
 public interface BankAccount extends Account {
 
     /**
      * Request a listing of all members of the bank.
      *
-     * @author lokka30
      * @param subscription the {@link EconomySubscriber} accepting the members
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBankMembersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
@@ -36,8 +35,8 @@ public interface BankAccount extends Account {
     /**
      * Request a listing of all owners of the bank.
      *
-     * @author lokka30
      * @param subscription the {@link EconomySubscriber} accepting the owners
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveBankOwnersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
@@ -45,9 +44,9 @@ public interface BankAccount extends Account {
     /**
      * Check if the specified user is a member of the bank.
      *
-     * @author lokka30
      * @param memberId the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void isBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
@@ -55,9 +54,9 @@ public interface BankAccount extends Account {
     /**
      * Check if the specified user is an owner of the bank.
      *
-     * @author lokka30
      * @param ownerId the {@link UUID} of the potential owner
      * @param subscription the {@link EconomySubscriber} accepting whether the user is an owner
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void isBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
@@ -65,9 +64,9 @@ public interface BankAccount extends Account {
     /**
      * Make a user a member of the bank.
      *
-     * @author lokka30
      * @param memberId the {@link UUID} of the new member
      * @param subscription the {@link EconomySubscriber} accepting whether the member was added
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void addBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
@@ -75,9 +74,9 @@ public interface BankAccount extends Account {
     /**
      * Make a user an owner of the bank.
      *
-     * @author lokka30
      * @param ownerId the {@link UUID} of the potential new owner
      * @param subscription the {@link EconomySubscriber} accepting whether the owner was added
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void addBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
@@ -85,9 +84,9 @@ public interface BankAccount extends Account {
     /**
      * Remove a member of the bank.
      *
-     * @author lokka30
      * @param memberId the {@link UUID} of the member removed
      * @param subscription the {@link EconomySubscriber} accepting whether the member was removed
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void removeBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
@@ -95,10 +94,23 @@ public interface BankAccount extends Account {
     /**
      * Remove an owner of the bank.
      *
-     * @author lokka30
      * @param ownerId the {@link UUID} of the owner removed
      * @param subscription the {@link EconomySubscriber} accepting whether the owner was removed
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void removeBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
+
+    /**
+     * Checks whether given player has the given permission on this bank account.
+     *
+     * @param player the {@link UUID} of the player to check if they have the permission
+     * @param permission the permission to check
+     * @param subscription the {@link EconomySubscriber} accepting whether the player has the permission
+     * @author MrNemo64
+     * @see BankAccountPermission
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void hasPermission(@NotNull UUID player, @NotNull BankAccountPermission permission, @NotNull EconomySubscriber<Boolean> subscription);
+
 }

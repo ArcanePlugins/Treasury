@@ -5,7 +5,6 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;

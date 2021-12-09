@@ -23,7 +23,6 @@ import java.util.UUID;
  * @see BankAccount
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-@SuppressWarnings({"unused"})
 public interface Account {
 
     /**

@@ -45,7 +45,6 @@ import java.util.Objects;
 @Comment("Whenever you have finished making your changes to this")
 @Comment("configuration file, please save it, then run")
 @Comment("`/treasury reload` if your server is already running.")
-@SuppressWarnings({"unused", "FieldMayBeFinal"})
 public class Messages {
 
     @ConfigObject
@@ -297,7 +296,7 @@ public class Messages {
     public List<String> getMessage(@NotNull MessageKey key) {
         Objects.requireNonNull(key, "key");
         if (messagesMap.isEmpty()) {
-            throw new IllegalArgumentException("initMessagesMap not called!");
+            throw new IllegalArgumentException("initMessagesMap was not called.");
         }
         return messagesMap.get(key).getMessage();
     }
@@ -312,7 +311,7 @@ public class Messages {
     public String getSingleMessage(@NotNull MessageKey key) {
         Objects.requireNonNull(key, "key");
         if (messagesMap.isEmpty()) {
-            throw new IllegalArgumentException("initMessagesMap not called!");
+            throw new IllegalArgumentException("initMessagesMap was not called.");
         }
         return messagesMap.get(key).getMessage().get(0);
     }
@@ -334,7 +333,7 @@ public class Messages {
                         if (key == null) {
                             TreasuryPlugin.getInstance().logger().error(
                                     "The key '" + entry.getKey() + "' has not been registered "
-                                            + "into MessageKey! Tell a developer right now!!!"
+                                            + "into MessageKey - please inform a Treasury developer ASAP."
                             );
                             continue;
                         }
@@ -350,7 +349,7 @@ public class Messages {
             if (key == null) {
                 TreasuryPlugin.getInstance().logger().error(
                         "The key '" + configKey + "' has not been registered "
-                        + "into MessageKey! Tell a developer right now!!!"
+                        + "into MessageKey - please inform a Treasury developer ASAP."
                 );
                 continue;
             }

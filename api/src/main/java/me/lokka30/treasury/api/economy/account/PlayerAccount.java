@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
  * @see Account
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-@SuppressWarnings("unused")
 public interface PlayerAccount extends Account {
 
     /**

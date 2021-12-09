@@ -5,11 +5,8 @@
 package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.Gson;
-<<<<<<< HEAD
 import java.util.Objects;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-=======
->>>>>>> 39816ae (fix double copyright notice)
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
@@ -35,7 +32,6 @@ public class Utils {
      * @author lokka30
      * @since v1.0.0
      */
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
     public static boolean checkPermissionForCommand(@NotNull CommandSource source, @NotNull String permission) {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(permission, "permission");

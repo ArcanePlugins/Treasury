@@ -14,7 +14,6 @@ package me.lokka30.treasury.plugin.core.utils;
  * @see System#currentTimeMillis()
  * @since v1.0.0
  */
-@SuppressWarnings("unused")
 public class QuickTimer {
 
     private long startTime;

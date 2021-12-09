@@ -20,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * It contains direct and indirect links to everything accessed within
  * the plugin.
  */
-@SuppressWarnings("unused")
 public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
