@@ -7,7 +7,8 @@ package me.lokka30.treasury.api.economy.misc;
 /**
  * Represents a utility class for handling double values, or economy amounts.
  *
- * @since v1.0.0
+ * @author MrIvanPlays
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public final class AmountUtils {
 
@@ -20,7 +21,7 @@ public final class AmountUtils {
      * @param amount to check for.
      * @return the unmodified or modified amount.
      * @author lokka30
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public static double ensureAtLeastZero(final double amount) {
         return Math.max(amount, 0.0d);

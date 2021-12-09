@@ -21,7 +21,7 @@ import java.util.function.Function;
  * can award players 'Dollars'. Facilitates great customisability.
  *
  * @author lokka30, Geolykt, MrIvanPlays
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public class Currency {
 
@@ -35,6 +35,8 @@ public class Currency {
      * @param balanceFormatter      a function, giving a human-readable format of a balance.
      * @param names                 acceptable names of the currency. primary name shall be the first specified.
      * @return new currency instance
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public static Currency of(
@@ -66,6 +68,8 @@ public class Currency {
      * @param balanceFormatter      a function, giving a human-readable format of a balance.
      * @param names                 acceptable names of the currency. primary name shall be the first specified.
      * @return new currency instance
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public static Currency of(
@@ -122,7 +126,7 @@ public class Currency {
      *
      * @return the UUID of the currency
      * @author lokka30, MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public UUID getCurrencyId() {
@@ -134,7 +138,7 @@ public class Currency {
      *
      * @return char identifier. could be null
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @Nullable
     public Character getCurrencyCharacter() {
@@ -146,7 +150,7 @@ public class Currency {
      *
      * @return the name of the currency
      * @author lokka30, MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public String getPrimaryCurrencyName() {
@@ -158,7 +162,7 @@ public class Currency {
      *
      * @return acceptable currency names
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public String @NotNull [] getCurrencyNames() {
@@ -171,7 +175,7 @@ public class Currency {
      *
      * @return how many rounded digits the provider uses, or `-1` for none
      * @author lokka30, MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public int getRoundedDigits() {
         return roundedDigits;
@@ -182,7 +186,7 @@ public class Currency {
      *
      * @return conversion coefficient
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public double getConversionCoefficient() {
         return conversionCoefficient;
@@ -193,7 +197,7 @@ public class Currency {
      *
      * @param conversionCoefficient new conversion coefficient
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     protected void setConversionCoefficient(double conversionCoefficient) {
         this.conversionCoefficient = conversionCoefficient;
@@ -207,7 +211,7 @@ public class Currency {
      * @param playerUUID a UUID of the player account created. For global scenarios, specify `null`.
      * @return the starting balance of the currency concerning specified player's UUID.
      * @author lokka30, Geolykt, MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public double getStartingBalance(@Nullable UUID playerUUID) {
         return startingBalance.apply(playerUUID);
@@ -221,7 +225,7 @@ public class Currency {
      * @param locale of the formatted balance being requested.
      * @return the human-readable format of the specified amount and locale.
      * @author lokka30, MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public String formatBalance(double amount, @NotNull Locale locale) {
