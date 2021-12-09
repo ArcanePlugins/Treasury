@@ -18,7 +18,7 @@ import java.util.OptionalDouble;
  * currency registered with a character '$' and the names specified.
  *
  * @author MrIvanPlays
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public final class CurrencyParseResult {
 
@@ -26,21 +26,21 @@ public final class CurrencyParseResult {
      * Represents a stated result of a {@link CurrencyParseResult}
      *
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public enum State {
 
         /**
          * State indicates successful parse.
          *
-         * @since v1.0.0
+         * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
          */
         SUCCESS,
 
         /**
          * State indicates unknown currency was inputted.
          *
-         * @since v1.0.0
+         * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
          */
         UNKNOWN_CURRENCY,
 
@@ -48,7 +48,7 @@ public final class CurrencyParseResult {
          * State indicates invalid value was inputted. An invalid value may be a value which does not
          * consist of numbers.
          *
-         * @since v1.0.0
+         * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
          */
         INVALID_VALUE
     }
@@ -60,7 +60,7 @@ public final class CurrencyParseResult {
      * @param currencyOptional the currency optional
      * @return successful parse result
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public static CurrencyParseResult success(double value, Optional<Currency> currencyOptional) {
@@ -73,7 +73,7 @@ public final class CurrencyParseResult {
      * @param state the state/reason why parsing failed
      * @return state only parse result
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public static CurrencyParseResult failure(@NotNull State state) {
@@ -95,7 +95,7 @@ public final class CurrencyParseResult {
      *
      * @return state
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public State getState() {
@@ -107,7 +107,7 @@ public final class CurrencyParseResult {
      *
      * @return value parsed, or empty optional
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public OptionalDouble getValue() {
         return value;
@@ -118,7 +118,7 @@ public final class CurrencyParseResult {
      *
      * @return parsed currency, or empty optional
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public Optional<Currency> getCurrency() {
         return currency;

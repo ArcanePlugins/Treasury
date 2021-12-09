@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Represents a manager of {@link Currency currencies}.
  *
  * @author MrIvanPlays
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public enum CurrencyManager {
     INSTANCE;
@@ -31,7 +31,7 @@ public enum CurrencyManager {
      * @param currency the currency you want to register
      * @throws IllegalArgumentException if the currency is already registered in at least one of the 3 types of identification.
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public void registerCurrency(@NotNull Currency currency) {
         Objects.requireNonNull(currency, "currency");
@@ -97,7 +97,7 @@ public enum CurrencyManager {
      *
      * @param currency the currency you want unregistered
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public void unregisterCurrency(@NotNull Currency currency) {
         Objects.requireNonNull(currency, "currency");
@@ -138,7 +138,7 @@ public enum CurrencyManager {
      *
      * @param currencyId the id of the currency you want unregistered
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public void unregisterCurrency(@NotNull UUID currencyId) {
         getCurrency(currencyId).ifPresent(this::unregisterCurrency);
@@ -172,7 +172,7 @@ public enum CurrencyManager {
      * @param currencyId currency id you want to check if busy
      * @return boolean value
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public boolean hasCurrency(@NotNull UUID currencyId) {
         Objects.requireNonNull(currencyId, "currencyId");
@@ -185,7 +185,7 @@ public enum CurrencyManager {
      * @param currencyName currency name to check if busy
      * @return boolean value
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public boolean hasCurrency(@NotNull String currencyName) {
         Objects.requireNonNull(currencyName, "currencyName");
@@ -198,7 +198,7 @@ public enum CurrencyManager {
      * @param currencyCharacter currency character to check if busy
      * @return boolean value
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public boolean hasCurrency(@NotNull Character currencyCharacter) {
         Objects.requireNonNull(currencyCharacter, "currencyCharacter");
@@ -211,7 +211,7 @@ public enum CurrencyManager {
      * @param currencyId currency id you want the currency of
      * @return currency if present, empty optional otherwise
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public Optional<Currency> getCurrency(@NotNull UUID currencyId) {
         Objects.requireNonNull(currencyId, "currencyId");
@@ -224,7 +224,7 @@ public enum CurrencyManager {
      * @param currencyName the name of the currency needed
      * @return currency if present, empty optional otherwise
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public Optional<Currency> getCurrency(@NotNull String currencyName) {
         if (!hasCurrency(currencyName)) {
@@ -250,7 +250,7 @@ public enum CurrencyManager {
      * @param currencyCharacter the character of the currency needed
      * @return currency if present, empty optional otherwise
      * @author MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public Optional<Currency> getCurrency(@NotNull Character currencyCharacter) {
         if (!hasCurrency(currencyCharacter)) {
@@ -269,7 +269,7 @@ public enum CurrencyManager {
      * @return converted value
      * @throws IllegalArgumentException if one or both of the currencies are not registered
      * @author MrIvanPlays, MrNemo64
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public double convertCurrency(@NotNull Currency from, @NotNull Currency to, double value) {
         Objects.requireNonNull(from, "from");
@@ -296,7 +296,7 @@ public enum CurrencyManager {
      * @return converted value
      * @throws IllegalArgumentException if one or both of the currencies are not registered
      * @author MrNemo64, MrIvanPlays
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public double convertCurrency(@NotNull UUID fromId, @NotNull UUID toId, double value) {
         if (value == 0) {
@@ -318,7 +318,7 @@ public enum CurrencyManager {
      * @param input the string to parse.
      * @return parse result
      * @author MrIvanPlays, MrNemo64
-     * @since v1.0.0
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
     public CurrencyParseResult parseCurrencyAndValue(@NotNull String input) {

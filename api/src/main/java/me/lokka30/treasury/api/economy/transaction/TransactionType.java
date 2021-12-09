@@ -5,22 +5,25 @@
 package me.lokka30.treasury.api.economy.transaction;
 
 /**
+ * Denotes which type of transaction occured in a {@link Transaction}.
+ *
  * @author lokka30
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  * @see Transaction
- * Denotes which type of transaction occured in a Transsaction.
  */
 public enum TransactionType {
 
     /**
-     * @since v1.0.0
      * The Account's new balance is greater than their previous balance.
+     *
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     DEPOSIT,
 
     /**
-     * @since v1.0.0
      * The Account's new balance is less than their previous balance.
+     *
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     WITHDRAWAL
 

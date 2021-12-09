@@ -9,6 +9,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an event, holding a {@link Account} of some type.
+ *
+ * @author MrNemo64
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ */
 public class AccountEvent extends Event {
 
 	@NotNull private final Account account;
@@ -16,7 +22,13 @@ public class AccountEvent extends Event {
 	public AccountEvent(@NotNull final Account account) {
 		  this.account = account;
 	}
-	
+
+	/**
+	 * Returns the {@link Account} for this account event.
+	 *
+	 * @return account
+	 * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+	 */
 	@NotNull
 	public Account getAccount() { return account; }
 

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author lokka30, Geolykt
  * @see Account
- * @since v1.0.0
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface PlayerAccount extends Account {
 
@@ -29,10 +29,10 @@ public interface PlayerAccount extends Account {
      * player's balance to the 'starting balance' of the currency (other
      * accounts set it to zero instead). This is why the overriden method exists.
      *
-     * @author lokka30
-     * @since v1.0.0
-     * @see Account#resetBalance(Currency, EconomySubscriber)
      * @param currency of the balance being reset
+     * @see Account#resetBalance(Currency, EconomySubscriber)
+     * @author lokka30
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @Override
     default void resetBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription) {
