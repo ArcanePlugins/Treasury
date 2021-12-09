@@ -10,7 +10,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
 public class AccountTransactionEvent extends AccountEvent implements Cancellable {
 
     @NotNull private final Transaction transaction;

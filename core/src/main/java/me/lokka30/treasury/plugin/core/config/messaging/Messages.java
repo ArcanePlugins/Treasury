@@ -45,7 +45,6 @@ import java.util.Objects;
 @Comment("Whenever you have finished making your changes to this")
 @Comment("configuration file, please save it, then run")
 @Comment("`/treasury reload` if your server is already running.")
-@SuppressWarnings({"unused", "FieldMayBeFinal"})
 public class Messages {
 
     @ConfigObject

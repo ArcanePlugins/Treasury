@@ -7,7 +7,6 @@ package me.lokka30.treasury.api.economy.transaction;
 import me.lokka30.treasury.api.economy.misc.AmountUtils;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
 public class Transaction {
 
     private final double newBalance;

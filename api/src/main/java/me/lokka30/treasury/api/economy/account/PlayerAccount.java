@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
  * @see Account
  * @since v1.0.0
  */
-@SuppressWarnings("unused")
 public interface PlayerAccount extends Account {
 
     /**

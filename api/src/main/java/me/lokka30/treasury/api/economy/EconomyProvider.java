@@ -22,7 +22,6 @@ import java.util.UUID;
  * @author lokka30
  * @since v1.0.0
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface EconomyProvider {
 
     /**

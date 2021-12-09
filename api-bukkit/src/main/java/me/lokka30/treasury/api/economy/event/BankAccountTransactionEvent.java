@@ -9,7 +9,6 @@ import me.lokka30.treasury.api.economy.transaction.Transaction;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
 public class BankAccountTransactionEvent extends AccountTransactionEvent {
 
     public BankAccountTransactionEvent(@NotNull Transaction transaction, @NotNull BankAccount account) {

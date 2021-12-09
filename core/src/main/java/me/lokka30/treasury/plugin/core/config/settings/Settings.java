@@ -42,7 +42,6 @@ import java.util.List;
 @Comment("Whenever you have finished making your changes to this")
 @Comment("configuration file, please save it, then run")
 @Comment("`/treasury reload` if your server is already running.")
-@SuppressWarnings("FieldMayBeFinal")
 public class Settings {
 
     public static Settings load(File file) {
