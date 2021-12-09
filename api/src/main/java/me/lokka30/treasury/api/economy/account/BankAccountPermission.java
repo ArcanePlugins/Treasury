@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.economy.account;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
 /**
  * Enum that holds the permissions of a {@link BankAccount}.
@@ -28,7 +29,7 @@ public enum BankAccountPermission {
     /**
      * Allows a player to withdraw from the {@link BankAccount}.
      *
-     * @see Account#withdrawBalance(double, Currency, EconomySubscriber)
+     * @see Account#withdrawBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     WITHDRAW,
@@ -36,7 +37,7 @@ public enum BankAccountPermission {
     /**
      * Allows a player to deposit on the {@link BankAccount}.
      *
-     * @see Account#depositBalance(double, Currency, EconomySubscriber)
+     * @see Account#depositBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     DEPOSIT,

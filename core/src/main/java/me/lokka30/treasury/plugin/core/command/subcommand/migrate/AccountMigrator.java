@@ -19,6 +19,7 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.currency.CurrencyManager;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
 interface AccountMigrator<T extends Account> {
@@ -38,6 +39,7 @@ interface AccountMigrator<T extends Account> {
     @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<T>> createAccount();
 
     default void migrate(
+            @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Phaser phaser,
             @NotNull T fromAccount,
             @NotNull T toAccount,
@@ -72,7 +74,7 @@ interface AccountMigrator<T extends Account> {
             for (Currency currency : currencies) {
                 CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
 
-                fromAccount.setBalance(0.0D, currency, new PhasedSubscriber<Double>(phaser) {
+                fromAccount.setBalance(0.0D, initiator, currency, new PhasedSubscriber<Double>(phaser) {
                     @Override
                     public void phaseAccept(@NotNull final Double balance) {
                         balanceFuture.complete(balance);
@@ -92,7 +94,7 @@ interface AccountMigrator<T extends Account> {
 
                     EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser, exception -> {
                         migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
-                        fromAccount.setBalance(balance, currency, new FailureConsumer<>(phaser, exception1 -> {
+                        fromAccount.setBalance(balance, initiator, currency, new FailureConsumer<>(phaser, exception1 -> {
                             migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception1));
                             migration.debug(() -> String.format(
                                     "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
@@ -107,9 +109,9 @@ interface AccountMigrator<T extends Account> {
                     });
 
                     if (balance < 0) {
-                        toAccount.withdrawBalance(balance, currency, subscriber);
+                        toAccount.withdrawBalance(balance, initiator, currency, subscriber);
                     } else {
-                        toAccount.depositBalance(balance, currency, subscriber);
+                        toAccount.depositBalance(balance, initiator, currency, subscriber);
                     }
                 });
             }

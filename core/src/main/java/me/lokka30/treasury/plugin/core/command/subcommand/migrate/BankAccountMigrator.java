@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
 class BankAccountMigrator implements AccountMigrator<BankAccount> {
@@ -54,29 +55,26 @@ class BankAccountMigrator implements AccountMigrator<BankAccount> {
 
     @Override
     public void migrate(
+            @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Phaser phaser,
             @NotNull BankAccount fromAccount,
             @NotNull BankAccount toAccount,
             @NotNull MigrationData migration
     ) {
-        AccountMigrator.super.migrate(phaser, fromAccount, toAccount, migration);
+        AccountMigrator.super.migrate(initiator, phaser, fromAccount, toAccount, migration);
 
         CompletableFuture<Collection<UUID>> memberUuidsFuture = new CompletableFuture<>();
         fromAccount.retrieveBankMembersIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
-        memberUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankMember(
-                uuid,
-                new FailureConsumer<>(
-                        phaser,
+        memberUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankMember(uuid,
+                new FailureConsumer<>(phaser,
                         exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))
                 )
         )));
 
         CompletableFuture<Collection<UUID>> ownerUuidsFuture = new CompletableFuture<>();
         fromAccount.retrieveBankOwnersIds(new PhasedFutureSubscriber<>(phaser, ownerUuidsFuture));
-        ownerUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankOwner(
-                uuid,
-                new FailureConsumer<>(
-                        phaser,
+        ownerUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankOwner(uuid,
+                new FailureConsumer<>(phaser,
                         exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))
                 )
         )));
