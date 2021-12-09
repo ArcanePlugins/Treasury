@@ -20,7 +20,6 @@ import java.util.UUID;
  * @see Account
  * @since v1.0.0
  */
-@SuppressWarnings({ "unused" })
 public interface BankAccount extends Account {
 
     /**
