@@ -16,7 +16,6 @@
     <artifactId>treasury-core</artifactId>
 
     <name>Treasury-Core</name>
-    <description>Abstracted implementation of the Treasury Plugin.</description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

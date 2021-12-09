@@ -4,11 +4,10 @@
 
 package me.lokka30.treasury.plugin.core.command;
 
+import java.util.List;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Represents an executor of a command
@@ -63,4 +62,5 @@ public interface CommandSource {
      * @since v1.0.0
      */
     boolean hasPermission(@NotNull String node);
+
 }

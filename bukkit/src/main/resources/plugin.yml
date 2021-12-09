@@ -14,7 +14,7 @@
 # Main plugin information
 name: 'Treasury'
 version: '${project.version}'
-description: '${project.description}'
+description: "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server."
 authors: ['lokka30']
 
 # Dependencies

@@ -4,19 +4,18 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.plugin.core.ProviderEconomy;
-import me.lokka30.treasury.plugin.core.debug.DebugCategory;
-import me.lokka30.treasury.plugin.core.debug.DebugHandler;
-import me.lokka30.treasury.plugin.core.utils.QuickTimer;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.plugin.core.ProviderEconomy;
+import me.lokka30.treasury.plugin.core.debug.DebugCategory;
+import me.lokka30.treasury.plugin.core.debug.DebugHandler;
+import me.lokka30.treasury.plugin.core.utils.QuickTimer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@code Record}-style data container for economy migration.
@@ -35,7 +34,8 @@ class MigrationData {
     MigrationData(
             @NotNull ProviderEconomy from,
             @NotNull ProviderEconomy to,
-            boolean debugEnabled) {
+            boolean debugEnabled
+    ) {
         this.from = from;
         this.to = to;
         this.debugEnabled = debugEnabled;

@@ -16,7 +16,6 @@
     <artifactId>treasury-api-bukkit</artifactId>
 
     <name>Treasury-API-Bukkit</name>
-    <description>Additions to Treasury's API for Bukkit</description>
 
     <repositories>
         <repository>

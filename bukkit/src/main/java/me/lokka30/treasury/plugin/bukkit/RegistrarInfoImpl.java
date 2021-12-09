@@ -20,4 +20,5 @@ public class RegistrarInfoImpl implements RegistrarInfo {
     public @NotNull String getName() {
         return plugin.getName();
     }
+
 }

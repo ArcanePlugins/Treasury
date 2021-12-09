@@ -5,15 +5,14 @@
 package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 public class PaperAsyncTabEnhancement implements Listener {
 
@@ -57,4 +56,5 @@ public class PaperAsyncTabEnhancement implements Listener {
                 .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                 .collect(Collectors.toList());
     }
+
 }

@@ -30,4 +30,5 @@ public final class AmountUtils {
     private AmountUtils() {
         throw new IllegalArgumentException("Initialization of utility-type class");
     }
+
 }

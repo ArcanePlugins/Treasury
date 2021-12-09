@@ -36,4 +36,5 @@ public class HelpSubcommand implements Subcommand {
 
         sender.sendMessage(Message.of(MessageKey.HELP_AVAILABLE_COMMANDS));
     }
+
 }

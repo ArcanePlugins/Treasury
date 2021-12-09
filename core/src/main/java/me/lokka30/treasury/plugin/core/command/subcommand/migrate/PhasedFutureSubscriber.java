@@ -4,13 +4,13 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Phaser;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
-
 class PhasedFutureSubscriber<T> extends PhasedSubscriber<T> {
+
     private final @NotNull CompletableFuture<T> future;
 
     PhasedFutureSubscriber(@NotNull Phaser phaser, @NotNull CompletableFuture<T> future) {

@@ -4,15 +4,14 @@
 
 package me.lokka30.treasury.api.economy;
 
+import java.util.Collection;
+import java.util.UUID;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.UUID;
 
 /**
  * Implementors providing and managing economy data create a class
@@ -32,8 +31,8 @@ public interface EconomyProvider {
      * <p>Warning: Do not use {@link EconomyAPIVersion#getCurrentAPIVersion()}, this is for internal Treasury use only.
      * <b>You must only use the constants provided.</b>
      *
-     * @author lokka30, MrIvanPlays
      * @return the API version
+     * @author lokka30, MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
@@ -44,11 +43,13 @@ public interface EconomyProvider {
      *
      * <p>This should be checked before using bank-related methods.
      *
-     * @author lokka30, NoahvdAa
      * @return whether the economy supports bank accounts
+     * @author lokka30, NoahvdAa
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default boolean hasBankAccountSupport() { return false; }
+    default boolean hasBankAccountSupport() {
+        return false;
+    }
 
     /**
      * Check whether the {@code EconomyProvider} calls Treasury's in-built
@@ -58,26 +59,30 @@ public interface EconomyProvider {
      * the {@code EconomyProvider} may not have transaction event support,
      * and thus the events will never be called.
      *
-     * @author lokka30, NoahvdAa
      * @return whether the economy calls Treasury's transaction events
+     * @author lokka30, NoahvdAa
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default boolean hasTransactionEventSupport() { return false; }
+    default boolean hasTransactionEventSupport() {
+        return false;
+    }
 
     /**
      * Check whether the {@code EconomyProvider} supports negative
      * or below-zero balances.
      *
-     * @author lokka30, NoahvdAa
      * @return whether the economy supports negative balances
+     * @author lokka30, NoahvdAa
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default boolean hasNegativeBalanceSupport() { return false; }
+    default boolean hasNegativeBalanceSupport() {
+        return false;
+    }
 
     /**
      * Request whether a user has an associated {@link PlayerAccount}.
      *
-     * @param accountId the {@link UUID} of the account owner
+     * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unkown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -87,7 +92,7 @@ public interface EconomyProvider {
     /**
      * Request an existing {@link PlayerAccount} for a user.
      *
-     * @param accountId the {@link UUID} of the account owner
+     * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unknown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -97,7 +102,7 @@ public interface EconomyProvider {
     /**
      * Request the creation of a {@link PlayerAccount} for a user.
      *
-     * @param accountId the {@link UUID} of the account owner
+     * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unknown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -116,7 +121,7 @@ public interface EconomyProvider {
     /**
      * Request whether a {@link UUID} has an associated {@link BankAccount}.
      *
-     * @param accountId the {@code UUID} of the account
+     * @param accountId    the {@code UUID} of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unknown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -126,7 +131,7 @@ public interface EconomyProvider {
     /**
      * Request an existing {@link BankAccount} for a {@link UUID}.
      *
-     * @param accountId the {@code UUID} of the account
+     * @param accountId    the {@code UUID} of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unknown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -136,7 +141,7 @@ public interface EconomyProvider {
     /**
      * Request the creation of a {@link BankAccount} for a {@link UUID}.
      *
-     * @param accountId the {@code UUID} of the account
+     * @param accountId    the {@code UUID} of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unknown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -173,7 +178,7 @@ public interface EconomyProvider {
     /**
      * Request a {@link Currency} by {@link UUID}.
      *
-     * @param currencyId the {@code UUID} identifying the {@code Currency}
+     * @param currencyId   the {@code UUID} identifying the {@code Currency}
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author unknown
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}

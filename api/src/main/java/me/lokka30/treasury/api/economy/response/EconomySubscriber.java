@@ -4,10 +4,9 @@
 
 package me.lokka30.treasury.api.economy.response;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An interface accepting responses from an economic provider.
@@ -69,7 +68,7 @@ public interface EconomySubscriber<T> {
      * forget exception handling.
      *
      * @param subscriberConsumer a {@link Consumer} accepting an {@code EconomySubscriber}
-     * @param <T> the type of value expected by the {@code EconomySubscriber}
+     * @param <T>                the type of value expected by the {@code EconomySubscriber}
      * @return a future awaiting subscriber completion
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}

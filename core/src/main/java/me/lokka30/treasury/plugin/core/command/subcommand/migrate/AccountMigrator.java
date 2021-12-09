@@ -4,13 +4,6 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +11,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import org.jetbrains.annotations.NotNull;
 
 interface AccountMigrator<T extends Account> {
 
@@ -39,7 +38,8 @@ interface AccountMigrator<T extends Account> {
             @NotNull Phaser phaser,
             @NotNull T fromAccount,
             @NotNull T toAccount,
-            @NotNull MigrationData migration) {
+            @NotNull MigrationData migration
+    ) {
         for (Map.Entry<Currency, Currency> fromToCurrency : migration.migratedCurrencies().entrySet()) {
             Currency fromCurrency = fromToCurrency.getKey();
             Currency toCurrency = fromToCurrency.getValue();
@@ -70,7 +70,8 @@ interface AccountMigrator<T extends Account> {
                                 "Failed to recover from an issue transferring %s %s from %s, currency will be deleted!",
                                 balance,
                                 fromCurrency.getPrimaryCurrencyName(),
-                                fromAccount.getUniqueId()));
+                                fromAccount.getUniqueId()
+                        ));
                     }));
                 });
                 if (balance < 0) {

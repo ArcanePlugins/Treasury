@@ -4,6 +4,8 @@
 
 package me.lokka30.treasury.plugin.core;
 
+import java.util.List;
+import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
@@ -11,9 +13,6 @@ import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Treasury core implementations must implement this class and set its instance in order for the core
@@ -23,6 +22,12 @@ import java.util.Objects;
  * @since v1.0.0
  */
 public abstract class TreasuryPlugin {
+
+    /**
+     * Description of the plugin.
+     */
+    public static final String DESCRIPTION = "Treasury is a modern, multi-platform library facilitating the interaction between" +
+            " 'provider' plugins on your server.";
 
     private static TreasuryPlugin instance;
 
@@ -56,14 +61,6 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract PluginVersion getVersion();
-
-    /**
-     * Returns the description of the treasury plugin.
-     *
-     * @return description
-     */
-    @Nullable
-    public abstract String getDescription();
 
     /**
      * Returns the first {@link ProviderEconomy}
@@ -148,4 +145,5 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract List<String> pluginsListRegisteringProvider();
+
 }

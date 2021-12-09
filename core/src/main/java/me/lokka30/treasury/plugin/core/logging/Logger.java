@@ -40,4 +40,5 @@ public interface Logger {
      * @param t       the exception to append to the message.
      */
     void error(String message, Throwable t);
+
 }

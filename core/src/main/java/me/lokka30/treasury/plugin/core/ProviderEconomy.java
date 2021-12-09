@@ -39,4 +39,5 @@ public interface ProviderEconomy {
      */
     @NotNull
     String getPriority();
+
 }

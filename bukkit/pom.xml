@@ -16,7 +16,6 @@
     <artifactId>treasury-bukkit</artifactId>
 
     <name>Treasury-Bukkit</name>
-    <description>A modern code library for plugins.</description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -86,6 +85,11 @@
                 <exclusion>
                     <groupId>org.jetbrains</groupId>
                     <artifactId>annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- Stop maven from crying as we already have the API in the core module -->
+                    <groupId>me.lokka30</groupId>
+                    <artifactId>treasury-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

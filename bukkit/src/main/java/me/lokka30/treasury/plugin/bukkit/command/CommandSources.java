@@ -4,6 +4,9 @@
 
 package me.lokka30.treasury.plugin.bukkit.command;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -12,10 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class CommandSources implements Listener {
 

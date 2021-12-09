@@ -27,4 +27,5 @@ public class BukkitCommandSource implements CommandSource {
     public boolean hasPermission(@NotNull String node) {
         return sender.hasPermission(node);
     }
+
 }

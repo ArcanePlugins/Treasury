@@ -30,24 +30,24 @@ public interface PlayerAccount extends Account {
      * accounts set it to zero instead). This is why the overriden method exists.
      *
      * @param currency of the balance being reset
-     * @see Account#resetBalance(Currency, EconomySubscriber)
      * @author lokka30
+     * @see Account#resetBalance(Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @Override
     default void resetBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription) {
         final double newBalance = currency.getStartingBalance(null);
         setBalance(newBalance, currency, new EconomySubscriber<Double>() {
-                @Override
-                public void succeed(@NotNull Double value) {
-                    subscription.succeed(newBalance);
-                }
+                    @Override
+                    public void succeed(@NotNull Double value) {
+                        subscription.succeed(newBalance);
+                    }
 
-                @Override
-                public void fail(@NotNull EconomyException exception) {
-                    subscription.fail(exception);
+                    @Override
+                    public void fail(@NotNull EconomyException exception) {
+                        subscription.fail(exception);
+                    }
                 }
-            }
         );
     }
 

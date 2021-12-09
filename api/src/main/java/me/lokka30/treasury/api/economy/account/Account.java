@@ -4,13 +4,12 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * An Account is something that holds a balance and is associated with
@@ -28,8 +27,8 @@ public interface Account {
     /**
      * Get the {@link UUID} of the {@code Account}.
      *
-     * @author lokka30
      * @return uuid of the Account.
+     * @author lokka30
      * @see UUID
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -38,9 +37,9 @@ public interface Account {
     /**
      * Request the balance of the {@code Account}.
      *
-     * @author lokka30, Geolykt
-     * @param currency the {@link Currency} of the balance being requested
+     * @param currency     the {@link Currency} of the balance being requested
      * @param subscription the {@link EconomySubscriber} accepting the amount
+     * @author lokka30, Geolykt
      * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -51,10 +50,10 @@ public interface Account {
      *
      * <p>Specified amounts must be AT OR ABOVE zero.
      *
-     * @author lokka30, Geolykt
-     * @param amount the amount the new balance will be
-     * @param currency the {@link Currency} of the balance being set
+     * @param amount       the amount the new balance will be
+     * @param currency     the {@link Currency} of the balance being set
      * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, Geolykt
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -65,10 +64,10 @@ public interface Account {
      *
      * <p>Specified amounts must be ABOVE zero.
      *
-     * @author lokka30, Geolykt
-     * @param amount the amount the balance will be reduced by
-     * @param currency the {@link Currency} of the balance being modified
+     * @param amount       the amount the balance will be reduced by
+     * @param currency     the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, Geolykt
      * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -79,10 +78,10 @@ public interface Account {
      *
      * <p>Specified amounts must be ABOVE zero.
      *
-     * @author lokka30
-     * @param amount the amount the balance will be increased by
-     * @param currency the {@link Currency} of the balance being modified
+     * @param amount       the amount the balance will be increased by
+     * @param currency     the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30
      * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -93,25 +92,25 @@ public interface Account {
      *
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
      *
-     * @author lokka30, Geolykt
-     * @param currency the {@link Currency} of the balance being reset
+     * @param currency     the {@link Currency} of the balance being reset
      * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, Geolykt
      * @see PlayerAccount#resetBalance(Currency, EconomySubscriber)
      * @see Account#setBalance(double, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void resetBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription) {
         setBalance(0.0d, currency, new EconomySubscriber<Double>() {
-                @Override
-                public void succeed(@NotNull Double value) {
-                    subscription.succeed(0.0d);
-                }
+                    @Override
+                    public void succeed(@NotNull Double value) {
+                        subscription.succeed(0.0d);
+                    }
 
-                @Override
-                public void fail(@NotNull EconomyException exception) {
-                    subscription.fail(exception);
+                    @Override
+                    public void fail(@NotNull EconomyException exception) {
+                        subscription.fail(exception);
+                    }
                 }
-            }
         );
     }
 
@@ -120,25 +119,25 @@ public interface Account {
      *
      * <p>Specified amounts must be ABOVE zero.
      *
-     * @author lokka30, Geolykt
-     * @param amount the amount the balance must meet or exceed
-     * @param currency the {@link Currency} of the balance being queried
+     * @param amount       the amount the balance must meet or exceed
+     * @param currency     the {@link Currency} of the balance being queried
      * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
+     * @author lokka30, Geolykt
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void canAfford(double amount, @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription) {
         retrieveBalance(currency, new EconomySubscriber<Double>() {
-                @Override
-                public void succeed(@NotNull Double value) {
-                    subscription.succeed(value >= amount);
-                }
+                    @Override
+                    public void succeed(@NotNull Double value) {
+                        subscription.succeed(value >= amount);
+                    }
 
-                @Override
-                public void fail(@NotNull EconomyException exception) {
-                    subscription.fail(exception);
+                    @Override
+                    public void fail(@NotNull EconomyException exception) {
+                        subscription.fail(exception);
+                    }
                 }
-            }
         );
     }
 
@@ -147,8 +146,8 @@ public interface Account {
      *
      * <p>Providers should consider storing backups of deleted accounts.
      *
-     * @author lokka30
      * @param subscription the {@link EconomySubscriber} accepting whether deletion occurred successfully
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);

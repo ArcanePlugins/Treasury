@@ -17,27 +17,30 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AccountEvent extends Event {
 
-	@NotNull private final Account account;
-	
-	public AccountEvent(@NotNull final Account account) {
-		  this.account = account;
-	}
+    @NotNull
+    private final Account account;
 
-	/**
-	 * Returns the {@link Account} for this account event.
-	 *
-	 * @return account
-	 * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-	 */
-	@NotNull
-	public Account getAccount() { return account; }
+    public AccountEvent(@NotNull final Account account) {
+        this.account = account;
+    }
 
-	public static HandlerList HANDLERS = new HandlerList();
+    /**
+     * Returns the {@link Account} for this account event.
+     *
+     * @return account
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    @NotNull
+    public Account getAccount() {
+        return account;
+    }
 
-	@NotNull
-	@Override
-	public HandlerList getHandlers() {
-		  return HANDLERS;
-	}
+    public static HandlerList HANDLERS = new HandlerList();
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 
 }

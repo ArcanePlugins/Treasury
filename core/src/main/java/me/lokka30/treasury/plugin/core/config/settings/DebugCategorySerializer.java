@@ -6,13 +6,12 @@ package me.lokka30.treasury.plugin.core.config.settings;
 
 import com.mrivanplays.annotationconfig.core.serialization.DataObject;
 import com.mrivanplays.annotationconfig.core.serialization.FieldTypeSerializer;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.debug.DebugCategory;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 
 /**
  * A serializer of debug categories
@@ -24,7 +23,8 @@ public class DebugCategorySerializer implements FieldTypeSerializer<List<DebugCa
 
     public static final DebugCategorySerializer INSTANCE = new DebugCategorySerializer();
 
-    private DebugCategorySerializer() {}
+    private DebugCategorySerializer() {
+    }
 
     @Override
     public List<DebugCategory> deserialize(DataObject data, Field field) {
@@ -54,4 +54,5 @@ public class DebugCategorySerializer implements FieldTypeSerializer<List<DebugCa
         }
         return new DataObject(values);
     }
+
 }
