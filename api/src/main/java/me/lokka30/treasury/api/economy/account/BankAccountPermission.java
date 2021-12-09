@@ -64,5 +64,5 @@ public enum BankAccountPermission {
      * @see BankAccount#removeBankOwner(UUID, EconomySubscriber)
      * @since v1.0.0
      */
-    REMOVE_OWNERS;
+    REMOVE_OWNERS
 }
