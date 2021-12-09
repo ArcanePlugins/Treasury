@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.economy.account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,26 +30,31 @@ public interface PlayerAccount extends Account {
      * player's balance to the 'starting balance' of the currency (other
      * accounts set it to zero instead). This is why the overriden method exists.
      *
-     * @param currency of the balance being reset
-     * @author lokka30
-     * @see Account#resetBalance(Currency, EconomySubscriber)
+     * @param initiator    the one who initiated this transaction
+     * @param currency     of the balance being reset
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, MrIvanPlays
+     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @Override
-    default void resetBalance(@NotNull Currency currency, @NotNull EconomySubscriber<Double> subscription) {
+    default void resetBalance(
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomySubscriber<Double> subscription
+    ) {
         final double newBalance = currency.getStartingBalance(null);
-        setBalance(newBalance, currency, new EconomySubscriber<Double>() {
-                    @Override
-                    public void succeed(@NotNull Double value) {
-                        subscription.succeed(newBalance);
-                    }
+        setBalance(newBalance, initiator, currency, new EconomySubscriber<Double>() {
+            @Override
+            public void succeed(@NotNull Double value) {
+                subscription.succeed(newBalance);
+            }
 
-                    @Override
-                    public void fail(@NotNull EconomyException exception) {
-                        subscription.fail(exception);
-                    }
-                }
-        );
+            @Override
+            public void fail(@NotNull EconomyException exception) {
+                subscription.fail(exception);
+            }
+        });
     }
 
 }

@@ -5,6 +5,8 @@
 package me.lokka30.treasury.plugin.core.command;
 
 import java.util.List;
+import java.util.UUID;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import org.jetbrains.annotations.NotNull;
@@ -62,5 +64,13 @@ public interface CommandSource {
      * @since v1.0.0
      */
     boolean hasPermission(@NotNull String node);
+
+    /**
+     * Returns this {@code CommandSource} as a {@link EconomyTransactionInitiator}
+     *
+     * @return transaction initiator
+     */
+    @NotNull
+    EconomyTransactionInitiator<?> getAsTransactionInitiator();
 
 }

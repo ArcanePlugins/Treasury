@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -53,20 +53,14 @@ public class MigrateSubcommand implements Subcommand {
         List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
 
         if (args.length != 2) {
-            sender.sendMessage(Message.of(
-                            MessageKey.MIGRATE_INVALID_USAGE,
-                            placeholder("label", label),
-                            placeholder(
-                                    "providers",
-                                    serviceProviders.isEmpty()
-                                            ? "No providers found "
-                                            : Utils.formatListMessage(
-                                                    serviceProviders.stream()
-                                                            .map(provider -> provider.registrar().getName())
-                                                            .collect(Collectors.toList()))
-                            )
-                    )
-            );
+            sender.sendMessage(Message.of(MessageKey.MIGRATE_INVALID_USAGE, placeholder("label", label), placeholder("providers",
+                    serviceProviders.isEmpty()
+                            ? "No providers found "
+                            : Utils.formatListMessage(serviceProviders
+                                    .stream()
+                                    .map(provider -> provider.registrar().getName())
+                                    .collect(Collectors.toList()))
+            )));
             return;
         }
 
@@ -83,19 +77,16 @@ public class MigrateSubcommand implements Subcommand {
         for (ProviderEconomy serviceProvider : serviceProviders) {
             serviceProvidersNames.add(serviceProvider.registrar().getName());
             if (debugEnabled) {
-                DebugHandler.log(
-                        DebugCategory.MIGRATE_SUBCOMMAND,
+                DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
                         "Found service provider: " + serviceProvider.registrar().getName()
                 );
             }
         }
 
         if (args[0].equalsIgnoreCase(args[1])) {
-            sender.sendMessage(Message.of(
-                            MessageKey.MIGRATE_PROVIDERS_MATCH,
-                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
-                    )
-            );
+            sender.sendMessage(Message.of(MessageKey.MIGRATE_PROVIDERS_MATCH,
+                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
+            ));
             return;
         }
 
@@ -110,26 +101,21 @@ public class MigrateSubcommand implements Subcommand {
         }
 
         if (from == null) {
-            sender.sendMessage(Message.of(
-                            MessageKey.MIGRATE_REQUIRES_VALID_FROM,
-                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
-                    )
-            );
+            sender.sendMessage(Message.of(MessageKey.MIGRATE_REQUIRES_VALID_FROM,
+                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
+            ));
             return;
         }
 
         if (to == null) {
-            sender.sendMessage(Message.of(
-                            MessageKey.MIGRATE_REQUIRES_VALID_TO,
-                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
-                    )
-            );
+            sender.sendMessage(Message.of(MessageKey.MIGRATE_REQUIRES_VALID_TO,
+                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
+            ));
             return;
         }
 
         if (debugEnabled) {
-            DebugHandler.log(
-                    DebugCategory.MIGRATE_SUBCOMMAND,
+            DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
                     "Migrating from '&b" + from.registrar().getName() + "&7' to '&b" + to.registrar().getName() + "&7'."
             );
         }
@@ -149,8 +135,8 @@ public class MigrateSubcommand implements Subcommand {
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
 
             // Initialize account migration.
-            Phaser playerMigration = migrateAccounts(migration, new PlayerAccountMigrator());
-            Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
+            Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new PlayerAccountMigrator());
+            Phaser bankMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new BankAccountMigrator());
             bankMigration.arriveAndAwaitAdvance();
 
             // Block until migration is complete.
@@ -171,26 +157,27 @@ public class MigrateSubcommand implements Subcommand {
         }
         if ((args.length == 1 || args.length == 2) && source.hasPermission("treasury.command.treasury.migrate")) {
             String lastArg = args[args.length - 1].toLowerCase(Locale.ROOT);
-            return TreasuryPlugin.getInstance().pluginsListRegisteringProvider()
-                    .stream()
-                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
-                    .collect(Collectors.toList());
+            return TreasuryPlugin.getInstance().pluginsListRegisteringProvider().stream().filter(name -> name
+                    .toLowerCase(Locale.ROOT)
+                    .startsWith(lastArg)).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
 
     private void sendMigrationMessage(@NotNull CommandSource sender, @NotNull MigrationData migration) {
-        sender.sendMessage(Message.of(
-                        MessageKey.MIGRATE_FINISHED_MIGRATION,
-                        placeholder("time", migration.timer().getTimer()),
-                        placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                        placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
-                        placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
-                )
-        );
+        sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
+                placeholder("time", migration.timer().getTimer()),
+                placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
+                placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
+                placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
+        ));
     }
 
-    private <T extends Account> Phaser migrateAccounts(@NotNull MigrationData migration, @NotNull AccountMigrator<T> migrator) {
+    private <T extends Account> Phaser migrateAccounts(
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull MigrationData migration,
+            @NotNull AccountMigrator<T> migrator
+    ) {
         // Initialize phaser with a single party: migration completion.
         Phaser phaser = new Phaser(1);
 
@@ -198,7 +185,7 @@ public class MigrateSubcommand implements Subcommand {
             @Override
             public void phaseAccept(@NotNull Collection<UUID> uuids) {
                 for (UUID uuid : uuids) {
-                    migrateAccount(phaser, uuid, migration, migrator);
+                    migrateAccount(initiator, phaser, uuid, migration, migrator);
                 }
             }
 
@@ -212,6 +199,7 @@ public class MigrateSubcommand implements Subcommand {
     }
 
     private <T extends Account> void migrateAccount(
+            @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Phaser phaser,
             @NotNull UUID uuid,
             @NotNull MigrationData migration,
@@ -229,8 +217,7 @@ public class MigrateSubcommand implements Subcommand {
         };
 
         CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
-        migrator.requestAccount().accept(
-                migration.from().provide(),
+        migrator.requestAccount().accept(migration.from().provide(),
                 uuid,
                 new PhasedFutureSubscriber<>(phaser, fromAccountFuture)
         );
@@ -256,7 +243,7 @@ public class MigrateSubcommand implements Subcommand {
         toAccountFuture.whenComplete(failureConsumer);
 
         fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccount, toAccount) -> {
-            migrator.migrate(phaser, fromAccount, toAccount, migration);
+            migrator.migrate(initiator, phaser, fromAccount, toAccount, migration);
             migrator.getSuccessfulMigrations(migration).incrementAndGet();
         });
     }
