@@ -4,14 +4,13 @@
 
 package me.lokka30.treasury.api.economy.currency;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * One of Treasury's core features is multi-currency support.
@@ -44,7 +43,7 @@ public class Currency {
             int roundedDigits,
             double conversionCoefficient,
             @NotNull BiFunction<Double, Locale, String> balanceFormatter,
-            @NotNull String @NotNull... names
+            @NotNull String @NotNull ... names
     ) {
         return new Currency(
                 null,
@@ -79,7 +78,7 @@ public class Currency {
             double conversionCoefficient,
             @Nullable Function<UUID, Double> startingBalance,
             @NotNull BiFunction<Double, Locale, String> balanceFormatter,
-            @NotNull String @NotNull... names
+            @NotNull String @NotNull ... names
     ) {
         Objects.requireNonNull(currencyId, "currencyId");
         return new Currency(
@@ -101,13 +100,14 @@ public class Currency {
     private final Function<UUID, Double> startingBalance;
     private final BiFunction<Double, Locale, String> balanceFormatter;
 
-    private Currency(@Nullable UUID currencyId,
-                     @Nullable Character currencyChar,
-                     int roundedDigits,
-                     double conversionCoefficient,
-                     @Nullable Function<UUID, Double> startingBalance,
-                     @NotNull BiFunction<Double, Locale, String> balanceFormatter,
-                     @NotNull String @NotNull... names
+    private Currency(
+            @Nullable UUID currencyId,
+            @Nullable Character currencyChar,
+            int roundedDigits,
+            double conversionCoefficient,
+            @Nullable Function<UUID, Double> startingBalance,
+            @NotNull BiFunction<Double, Locale, String> balanceFormatter,
+            @NotNull String @NotNull ... names
     ) {
         if (names.length < 1) {
             throw new IllegalArgumentException("Empty array specified for currency name.");
@@ -232,4 +232,5 @@ public class Currency {
         Objects.requireNonNull(locale, "locale");
         return balanceFormatter.apply(amount, locale);
     }
+
 }

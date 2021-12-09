@@ -39,4 +39,5 @@ public class QuickTimer {
     public long getTimer() {
         return System.currentTimeMillis() - startTime;
     }
+
 }

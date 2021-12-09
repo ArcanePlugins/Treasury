@@ -4,8 +4,6 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand;
 
-import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
-
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
@@ -17,6 +15,8 @@ import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
+
+import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
 public class InfoSubcommand implements Subcommand {
 
@@ -43,12 +43,13 @@ public class InfoSubcommand implements Subcommand {
         TreasuryPlugin main = TreasuryPlugin.getInstance();
 
         sender.sendMessage(Message.of(
-                MessageKey.INFO_TREASURY,
-                placeholder("version", main.getVersion()),
-                placeholder("description", main.getDescription()),
-                placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
-                placeholder("current-api-version", EconomyAPIVersion.getCurrentAPIVersion()),
-                placeholder("repository", "https://github.com/lokka30/Treasury/"))
+                        MessageKey.INFO_TREASURY,
+                        placeholder("version", main.getVersion()),
+                        placeholder("description", TreasuryPlugin.DESCRIPTION),
+                        placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
+                        placeholder("current-api-version", EconomyAPIVersion.getCurrentAPIVersion()),
+                        placeholder("repository", "https://github.com/lokka30/Treasury/")
+                )
         );
 
         ProviderEconomy providerProvider = main.economyProviderProvider();
@@ -57,16 +58,18 @@ public class InfoSubcommand implements Subcommand {
         } else {
             EconomyProvider provider = providerProvider.provide();
             sender.sendMessage(Message.of(
-                    MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
-                    placeholder("name", providerProvider.registrar().getName()),
-                    placeholder("priority", providerProvider.getPriority()),
-                    placeholder("api-version", provider.getSupportedAPIVersion()),
-                    placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
-                    placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
-                    placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName()))
+                            MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
+                            placeholder("name", providerProvider.registrar().getName()),
+                            placeholder("priority", providerProvider.getPriority()),
+                            placeholder("api-version", provider.getSupportedAPIVersion()),
+                            placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
+                            placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
+                            placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName())
+                    )
             );
         }
 
         sender.sendMessage(Message.of(MessageKey.INFO_MISC_INFO));
     }
+
 }

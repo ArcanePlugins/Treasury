@@ -4,6 +4,8 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
+import java.util.Collection;
+import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -13,9 +15,6 @@ import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.UUID;
 
 /**
  * A dummy {@link EconomyProvider} used to prevent transactions with
@@ -51,14 +50,16 @@ class MigrationEconomy implements EconomyProvider {
     @Override
     public void retrievePlayerAccount(
             @NotNull UUID accountId,
-            @NotNull EconomySubscriber<PlayerAccount> subscription) {
+            @NotNull EconomySubscriber<PlayerAccount> subscription
+    ) {
         subscription.fail(migrationException);
     }
 
     @Override
     public void createPlayerAccount(
             @NotNull UUID accountId,
-            @NotNull EconomySubscriber<PlayerAccount> subscription) {
+            @NotNull EconomySubscriber<PlayerAccount> subscription
+    ) {
         subscription.fail(migrationException);
     }
 

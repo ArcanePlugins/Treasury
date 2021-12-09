@@ -25,4 +25,5 @@ public interface Scheduler {
      * @param task the task you want to run
      */
     void runAsync(Runnable task);
+
 }

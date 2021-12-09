@@ -18,11 +18,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AccountTransactionEvent extends AccountEvent implements Cancellable {
 
-    @NotNull private final Transaction transaction;
+    @NotNull
+    private final Transaction transaction;
     private boolean isCancelled = false;
 
     public AccountTransactionEvent(@NotNull final Transaction transaction, @NotNull final Account account) {
-    	  super(account);
+        super(account);
         this.transaction = transaction;
     }
 
@@ -32,7 +33,9 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
      * @return transaction
      */
     @NotNull
-    public Transaction getTransaction() { return transaction; }
+    public Transaction getTransaction() {
+        return transaction;
+    }
 
     @Override
     public boolean isCancelled() {
@@ -51,4 +54,5 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+
 }

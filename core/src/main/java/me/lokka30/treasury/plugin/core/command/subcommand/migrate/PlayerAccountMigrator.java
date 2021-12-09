@@ -4,15 +4,14 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.account.PlayerAccount;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import org.jetbrains.annotations.NotNull;
 
 class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 

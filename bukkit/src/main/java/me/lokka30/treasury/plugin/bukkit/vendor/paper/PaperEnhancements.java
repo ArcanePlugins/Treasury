@@ -4,9 +4,8 @@
 
 package me.lokka30.treasury.plugin.bukkit.vendor.paper;
 
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-
 import java.util.Arrays;
+import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 
 public class PaperEnhancements {
 
@@ -31,4 +30,5 @@ public class PaperEnhancements {
             }
         }
     }
+
 }

@@ -4,10 +4,9 @@
 
 package me.lokka30.treasury.plugin.core.config.messaging;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.beans.ConstructorProperties;
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a message placeholder
@@ -43,4 +42,5 @@ public final class MessagePlaceholder {
     public Object getReplacement() {
         return b;
     }
+
 }

@@ -4,11 +4,10 @@
 
 package me.lokka30.treasury.api.economy.account;
 
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.UUID;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A Bank Account is an Account which is associated with a Player
@@ -44,7 +43,7 @@ public interface BankAccount extends Account {
     /**
      * Check if the specified user is a member of the bank.
      *
-     * @param memberId the {@link UUID} of the potential member
+     * @param memberId     the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -54,7 +53,7 @@ public interface BankAccount extends Account {
     /**
      * Check if the specified user is an owner of the bank.
      *
-     * @param ownerId the {@link UUID} of the potential owner
+     * @param ownerId      the {@link UUID} of the potential owner
      * @param subscription the {@link EconomySubscriber} accepting whether the user is an owner
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -64,7 +63,7 @@ public interface BankAccount extends Account {
     /**
      * Make a user a member of the bank.
      *
-     * @param memberId the {@link UUID} of the new member
+     * @param memberId     the {@link UUID} of the new member
      * @param subscription the {@link EconomySubscriber} accepting whether the member was added
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -74,7 +73,7 @@ public interface BankAccount extends Account {
     /**
      * Make a user an owner of the bank.
      *
-     * @param ownerId the {@link UUID} of the potential new owner
+     * @param ownerId      the {@link UUID} of the potential new owner
      * @param subscription the {@link EconomySubscriber} accepting whether the owner was added
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -84,7 +83,7 @@ public interface BankAccount extends Account {
     /**
      * Remove a member of the bank.
      *
-     * @param memberId the {@link UUID} of the member removed
+     * @param memberId     the {@link UUID} of the member removed
      * @param subscription the {@link EconomySubscriber} accepting whether the member was removed
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -94,7 +93,7 @@ public interface BankAccount extends Account {
     /**
      * Remove an owner of the bank.
      *
-     * @param ownerId the {@link UUID} of the owner removed
+     * @param ownerId      the {@link UUID} of the owner removed
      * @param subscription the {@link EconomySubscriber} accepting whether the owner was removed
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -104,13 +103,17 @@ public interface BankAccount extends Account {
     /**
      * Checks whether given player has the given permission on this bank account.
      *
-     * @param player the {@link UUID} of the player to check if they have the permission
-     * @param permission the permission to check
+     * @param player       the {@link UUID} of the player to check if they have the permission
+     * @param permission   the permission to check
      * @param subscription the {@link EconomySubscriber} accepting whether the player has the permission
      * @author MrNemo64
      * @see BankAccountPermission
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void hasPermission(@NotNull UUID player, @NotNull BankAccountPermission permission, @NotNull EconomySubscriber<Boolean> subscription);
+    void hasPermission(
+            @NotNull UUID player,
+            @NotNull BankAccountPermission permission,
+            @NotNull EconomySubscriber<Boolean> subscription
+    );
 
 }

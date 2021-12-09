@@ -67,4 +67,5 @@ public class CurrencyTests {
         Currency currency = CurrencyManager.INSTANCE.parseCurrencyAndValue(input).getCurrency().orElse(null);
         return currency == null ? null : currency.getCurrencyCharacter();
     }
+
 }

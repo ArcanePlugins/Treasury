@@ -18,14 +18,15 @@ public class Transaction {
 
     private final double newBalance;
     private final double transactionAmount;
-    @NotNull private final TransactionType transactionType;
+    @NotNull
+    private final TransactionType transactionType;
 
     /**
      * Creates a new transaction object.
      *
-     * @param newBalance the new balance to set
+     * @param newBalance        the new balance to set
      * @param transactionAmount the amount which to deposit/withdraw
-     * @param transactionType the transaction type
+     * @param transactionType   the transaction type
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public Transaction(final double newBalance, final double transactionAmount, @NotNull final TransactionType transactionType) {
@@ -40,7 +41,9 @@ public class Transaction {
      * @return new balance
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public double getNewBalance() { return newBalance; }
+    public double getNewBalance() {
+        return newBalance;
+    }
 
     /**
      * Get the previous balance.
@@ -49,7 +52,7 @@ public class Transaction {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public double getPreviousBalance() {
-        switch(transactionType) {
+        switch (transactionType) {
             case DEPOSIT:
                 return newBalance - transactionAmount;
             case WITHDRAWAL:

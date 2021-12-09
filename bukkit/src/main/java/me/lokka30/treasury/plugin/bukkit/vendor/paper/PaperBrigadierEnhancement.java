@@ -12,11 +12,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import java.util.Locale;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.Locale;
 
 public class PaperBrigadierEnhancement implements Listener {
 
@@ -58,13 +57,19 @@ public class PaperBrigadierEnhancement implements Listener {
                                         .hasPermission("treasury.command.treasury.migrate"))
                                 .executes(command)
                                 .then(
-                                        RequiredArgumentBuilder.<BukkitBrigadierCommandSource, String>argument("plugin1", StringArgumentType.word())
+                                        RequiredArgumentBuilder.<BukkitBrigadierCommandSource, String>argument(
+                                                        "plugin1",
+                                                        StringArgumentType.word()
+                                                )
                                                 .requires(source -> source.getBukkitSender()
                                                         .hasPermission("treasury.command.treasury.migrate"))
                                                 .suggests(plugins())
                                                 .executes(command)
                                                 .then(
-                                                        RequiredArgumentBuilder.<BukkitBrigadierCommandSource, String>argument("plugin2", StringArgumentType.word())
+                                                        RequiredArgumentBuilder.<BukkitBrigadierCommandSource, String>argument(
+                                                                        "plugin2",
+                                                                        StringArgumentType.word()
+                                                                )
                                                                 .requires(source -> source.getBukkitSender()
                                                                         .hasPermission("treasury.command.treasury.migrate"))
                                                                 .suggests(plugins())
@@ -87,4 +92,5 @@ public class PaperBrigadierEnhancement implements Listener {
             return builder.buildFuture();
         };
     }
+
 }

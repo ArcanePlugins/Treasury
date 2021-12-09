@@ -4,6 +4,14 @@
 
 package me.lokka30.treasury.plugin.core.command;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.plugin.core.command.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.InfoSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.ReloadSubcommand;
@@ -13,15 +21,6 @@ import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * A class, containing the logic of the treasury command.
@@ -44,7 +43,7 @@ public final class TreasuryBaseCommand {
     /**
      * Registers a new subcommand to handle.
      *
-     * @param name subcommand name
+     * @param name       subcommand name
      * @param subcommand subcommand
      */
     private void registerSubcommand(@NotNull String name, @NotNull Subcommand subcommand) {
@@ -61,8 +60,8 @@ public final class TreasuryBaseCommand {
      * Executes the base /treasury command.
      *
      * @param sender who ran the command
-     * @param label command label
-     * @param args command args
+     * @param label  command label
+     * @param args   command args
      */
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
@@ -74,9 +73,10 @@ public final class TreasuryBaseCommand {
         Subcommand subcommand = subcommands.get(args[0]);
         if (subcommand == null) {
             sender.sendMessage(Message.of(
-                    MessageKey.INVALID_USAGE_SPECIFIED,
-                    MessagePlaceholder.placeholder("label", label),
-                    MessagePlaceholder.placeholder("subcommand", args[0]))
+                            MessageKey.INVALID_USAGE_SPECIFIED,
+                            MessagePlaceholder.placeholder("label", label),
+                            MessagePlaceholder.placeholder("subcommand", args[0])
+                    )
             );
             return;
         }
@@ -94,8 +94,8 @@ public final class TreasuryBaseCommand {
      * Runs completions for the base /treasury command.
      *
      * @param sender who asked for tab completions
-     * @param label command label
-     * @param args command arguments
+     * @param label  command label
+     * @param args   command arguments
      * @return list with completions, can be null
      */
     @Nullable
@@ -114,4 +114,5 @@ public final class TreasuryBaseCommand {
             return subcommand.complete(sender, label, Arrays.copyOfRange(args, 1, args.length));
         }
     }
+
 }

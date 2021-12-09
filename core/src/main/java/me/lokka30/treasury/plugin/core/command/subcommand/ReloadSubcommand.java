@@ -46,4 +46,5 @@ public class ReloadSubcommand implements Subcommand {
                 Message.of(MessageKey.RELOAD_COMPLETE, MessagePlaceholder.placeholder("time", timer.getTimer()))
         );
     }
+
 }

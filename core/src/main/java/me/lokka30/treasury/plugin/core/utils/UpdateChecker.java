@@ -5,17 +5,17 @@
 package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-
 // TODO: This requires a Spigot Resource ID which can't be obtained before the resource is released.
+
 /**
  * Represents an update checker for spigot.
  *
@@ -35,7 +35,9 @@ public final class UpdateChecker {
      */
     public static void checkForUpdates() {
         //noinspection ConstantConditions
-        if (true) return;
+        if (true) {
+            return;
+        }
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
         if (!plugin.configAdapter().getSettings().checkForUpdates()) {
             return;
@@ -78,7 +80,8 @@ public final class UpdateChecker {
                                 "is utilising an older version of the Treasury Economy API"
                 );
                 plugin.logger().error("than what your current version of Treasury provides. You should inform the author(s)");
-                plugin.logger().error("of that plugin that they should update their resource to use the newer Treasury Economy API");
+                plugin.logger().error(
+                        "of that plugin that they should update their resource to use the newer Treasury Economy API");
                 plugin.logger().error(" ");
                 if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
                     plugin.logger().warn("Before updating Treasury, ensure that your Economy Provider utilizes");
@@ -86,7 +89,8 @@ public final class UpdateChecker {
                     plugin.logger().warn(" ");
                 }
                 plugin.logger().error("You must resolve this issue as soon as possible. Leaving this issue unresolved can");
-                plugin.logger().error("cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
+                plugin.logger().error(
+                        "cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
             } else if (apiComparisonResult == PluginVersion.ComparisonResult.NEWER) {
                 // this means that "providerVersion" is newer than the latest version
                 plugin.logger().error(
@@ -98,24 +102,34 @@ public final class UpdateChecker {
                 if (comparisonResult == PluginVersion.ComparisonResult.EQUAL) {
                     if (!currentVersion.isDevelopmentVersion()) {
                         plugin.logger().warn("Since you seem to be running the latest version of Treasury, please check if your");
-                        plugin.logger().warn("Economy Provider expects you to run a development build of Treasury instead of a release build.");
+                        plugin.logger().warn(
+                                "Economy Provider expects you to run a development build of Treasury instead of a release build.");
                     } else {
-                        plugin.logger().warn("Check if there are any newer development builds available which have a newer Economy API version.");
+                        plugin.logger().warn(
+                                "Check if there are any newer development builds available which have a newer Economy API version.");
                     }
                 } else if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
-                    plugin.logger().warn("As mentioned up, a Treasury plugin update is available for download - this may resolve");
+                    plugin
+                            .logger()
+                            .warn("As mentioned up, a Treasury plugin update is available for download - this may resolve");
                     plugin.logger().warn("the mismatching API versions.");
                 } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
-                    plugin.logger().warn("Check if there are any newer development builds available which have a newer Economy API version.");
+                    plugin.logger().warn(
+                            "Check if there are any newer development builds available which have a newer Economy API version.");
                 }
                 plugin.logger().error(" ");
                 plugin.logger().error("You must resolve this issue as soon as possible. Leaving this issue unresolved can");
-                plugin.logger().error("cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
+                plugin.logger().error(
+                        "cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
             }
         }
     }
 
-    private static void handlePluginVersioning(TreasuryPlugin plugin, PluginVersion.ComparisonResult comparisonResult, PluginVersion latestVersionRead) {
+    private static void handlePluginVersioning(
+            TreasuryPlugin plugin,
+            PluginVersion.ComparisonResult comparisonResult,
+            PluginVersion latestVersionRead
+    ) {
         PluginVersion currentVersion = plugin.getVersion();
         if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
             // this statement means that the "latestVersionRead" is newer than the version we're running.
@@ -144,4 +158,5 @@ public final class UpdateChecker {
             }
         }
     }
+
 }

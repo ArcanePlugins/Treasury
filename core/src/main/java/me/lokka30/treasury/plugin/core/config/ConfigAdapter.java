@@ -29,4 +29,5 @@ public interface ConfigAdapter {
      * @return settings
      */
     @NotNull Settings getSettings();
+
 }

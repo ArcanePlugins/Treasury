@@ -4,8 +4,18 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
-import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Phaser;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -22,18 +32,7 @@ import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
+import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
 public class MigrateSubcommand implements Subcommand {
 
@@ -48,23 +47,26 @@ public class MigrateSubcommand implements Subcommand {
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
-        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.migrate")) return;
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.migrate")) {
+            return;
+        }
 
         List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
 
         if (args.length != 2) {
             sender.sendMessage(Message.of(
-                    MessageKey.MIGRATE_INVALID_USAGE,
-                    placeholder("label", label),
-                    placeholder(
-                            "providers",
-                            serviceProviders.isEmpty()
-                                    ? "No providers found "
-                                    : Utils.formatListMessage(
-                                            serviceProviders.stream()
-                                                    .map(provider -> provider.registrar().getName())
-                                                    .collect(Collectors.toList()))
-                    ))
+                            MessageKey.MIGRATE_INVALID_USAGE,
+                            placeholder("label", label),
+                            placeholder(
+                                    "providers",
+                                    serviceProviders.isEmpty()
+                                            ? "No providers found "
+                                            : Utils.formatListMessage(
+                                                    serviceProviders.stream()
+                                                            .map(provider -> provider.registrar().getName())
+                                                            .collect(Collectors.toList()))
+                            )
+                    )
             );
             return;
         }
@@ -82,14 +84,18 @@ public class MigrateSubcommand implements Subcommand {
         for (ProviderEconomy serviceProvider : serviceProviders) {
             serviceProvidersNames.add(serviceProvider.registrar().getName());
             if (debugEnabled) {
-                DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Found service provider: " + serviceProvider.registrar().getName());
+                DebugHandler.log(
+                        DebugCategory.MIGRATE_SUBCOMMAND,
+                        "Found service provider: " + serviceProvider.registrar().getName()
+                );
             }
         }
 
         if (args[0].equalsIgnoreCase(args[1])) {
             sender.sendMessage(Message.of(
-                    MessageKey.MIGRATE_PROVIDERS_MATCH,
-                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames)))
+                            MessageKey.MIGRATE_PROVIDERS_MATCH,
+                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
+                    )
             );
             return;
         }
@@ -106,22 +112,27 @@ public class MigrateSubcommand implements Subcommand {
 
         if (from == null) {
             sender.sendMessage(Message.of(
-                    MessageKey.MIGRATE_REQUIRES_VALID_FROM,
-                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames)))
+                            MessageKey.MIGRATE_REQUIRES_VALID_FROM,
+                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
+                    )
             );
             return;
         }
 
         if (to == null) {
             sender.sendMessage(Message.of(
-                    MessageKey.MIGRATE_REQUIRES_VALID_TO,
-                    placeholder("providers", Utils.formatListMessage(serviceProvidersNames)))
+                            MessageKey.MIGRATE_REQUIRES_VALID_TO,
+                            placeholder("providers", Utils.formatListMessage(serviceProvidersNames))
+                    )
             );
             return;
         }
 
         if (debugEnabled) {
-            DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND, "Migrating from '&b" + from.registrar().getName() + "&7' to '&b" + to.registrar().getName() + "&7'.");
+            DebugHandler.log(
+                    DebugCategory.MIGRATE_SUBCOMMAND,
+                    "Migrating from '&b" + from.registrar().getName() + "&7' to '&b" + to.registrar().getName() + "&7'."
+            );
         }
 
         sender.sendMessage(Message.of(MessageKey.MIGRATE_STARTING_MIGRATION));
@@ -156,7 +167,10 @@ public class MigrateSubcommand implements Subcommand {
                     Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
                     bankMigration.arriveAndAwaitAdvance();
                 } else {
-                    migration.debug(() -> "'&b" + migration.to().registrar().getName() + "&7' does not offer bank support, cannot transfer accounts.");
+                    migration.debug(() -> "'&b" + migration
+                            .to()
+                            .registrar()
+                            .getName() + "&7' does not offer bank support, cannot transfer accounts.");
                 }
             }
 
@@ -188,12 +202,21 @@ public class MigrateSubcommand implements Subcommand {
 
     private void sendMigrationMessage(@NotNull CommandSource sender, @NotNull MigrationData migration) {
         sender.sendMessage(Message.of(
-                MessageKey.MIGRATE_FINISHED_MIGRATION,
-                placeholder("time", migration.timer().getTimer()),
-                placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
-                placeholder("migrated-currencies", Utils.formatListMessage(migration.migratedCurrencies().keySet().stream().map(Currency::getPrimaryCurrencyName).collect(Collectors.toList()))),
-                placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies())))
+                        MessageKey.MIGRATE_FINISHED_MIGRATION,
+                        placeholder("time", migration.timer().getTimer()),
+                        placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
+                        placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
+                        placeholder(
+                                "migrated-currencies",
+                                Utils.formatListMessage(migration
+                                        .migratedCurrencies()
+                                        .keySet()
+                                        .stream()
+                                        .map(Currency::getPrimaryCurrencyName)
+                                        .collect(Collectors.toList()))
+                        ),
+                        placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
+                )
         );
     }
 
@@ -210,7 +233,10 @@ public class MigrateSubcommand implements Subcommand {
 
                 // Fetch from currency.
                 CompletableFuture<Currency> fromCurrencyFuture = new CompletableFuture<>();
-                migration.from().provide().retrieveCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, fromCurrencyFuture));
+                migration.from().provide().retrieveCurrency(
+                        fromCurrencyId,
+                        new PhasedFutureSubscriber<>(phaser, fromCurrencyFuture)
+                );
                 fromCurrencyFuture.whenComplete(((currency, throwable) -> {
                     if (throwable != null) {
                         migration.debug(() -> "Unable to locate reported currency with ID '&b" + fromCurrencyId + "&7'.");
@@ -221,7 +247,10 @@ public class MigrateSubcommand implements Subcommand {
 
                     // Fetch to currency.
                     CompletableFuture<Currency> toCurrencyFuture = new CompletableFuture<>();
-                    migration.to().provide().retrieveCurrency(fromCurrencyId, new PhasedFutureSubscriber<>(phaser, toCurrencyFuture));
+                    migration.to().provide().retrieveCurrency(
+                            fromCurrencyId,
+                            new PhasedFutureSubscriber<>(phaser, toCurrencyFuture)
+                    );
                     toCurrencyFuture.whenComplete(((toCurrency, throwable) -> {
                         if (toCurrency == null) {
                             // Currency not found.
@@ -266,7 +295,8 @@ public class MigrateSubcommand implements Subcommand {
             @NotNull Phaser phaser,
             @NotNull UUID uuid,
             @NotNull MigrationData migration,
-            @NotNull AccountMigrator<T> migrator) {
+            @NotNull AccountMigrator<T> migrator
+    ) {
         migration.debug(() -> migrator.getInitLog(uuid));
 
         // Set up logging for failure.
@@ -279,7 +309,11 @@ public class MigrateSubcommand implements Subcommand {
         };
 
         CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
-        migrator.requestAccount().accept(migration.from().provide(), uuid, new PhasedFutureSubscriber<>(phaser, fromAccountFuture));
+        migrator.requestAccount().accept(
+                migration.from().provide(),
+                uuid,
+                new PhasedFutureSubscriber<>(phaser, fromAccountFuture)
+        );
         fromAccountFuture.whenComplete(failureConsumer);
 
         CompletableFuture<T> toAccountFuture = new CompletableFuture<>();

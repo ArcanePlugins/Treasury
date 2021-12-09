@@ -11,8 +11,7 @@ package me.lokka30.treasury.api.economy.misc;
  * @since v1.0
  */
 public enum EconomyAPIVersion {
-    v1_0(new short[] {1, 0})
-    ;
+    v1_0(new short[]{1, 0});
 
     /**
      * Returns the current economy api version.

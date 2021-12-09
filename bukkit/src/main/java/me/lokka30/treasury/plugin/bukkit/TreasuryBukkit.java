@@ -14,21 +14,23 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * @author lokka30
- * @since v1.0.0
  * This is the plugin's main class, loaded by Bukkit's plugin manager.
  * It contains direct and indirect links to everything accessed within
  * the plugin.
+ *
+ * @author lokka30
+ * @since v1.0.0
  */
 public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
 
     /**
-     * @author lokka30
-     * @since v1.0.0
      * Run the start-up procedure for the plugin.
      * This is called by Bukkit's plugin manager.
+     *
+     * @author lokka30
+     * @since v1.0.0
      */
     @Override
     public void onEnable() {
@@ -54,10 +56,11 @@ public class TreasuryBukkit extends JavaPlugin {
     }
 
     /**
-     * @author lokka30
-     * @since v1.0.0
      * Run the shut-down procedure for the plugin.
      * This is called by Bukkit's plugin manager.
+     *
+     * @author lokka30
+     * @since v1.0.0
      */
     @Override
     public void onDisable() {
@@ -67,4 +70,5 @@ public class TreasuryBukkit extends JavaPlugin {
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }
+
 }

@@ -21,7 +21,8 @@
     <packaging>pom</packaging>
 
     <name>Treasury-Parent</name>
-    <description>A modern code library for different Minecraft platforms. Parent POM</description>
+    <description>A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server.
+    </description>
 
     <inceptionYear>2021</inceptionYear>
     <url>https://github.com/lokka30/Treasury</url>

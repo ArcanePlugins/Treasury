@@ -10,9 +10,6 @@ import com.mrivanplays.annotationconfig.core.annotations.Key;
 import com.mrivanplays.annotationconfig.core.annotations.comment.Comment;
 import com.mrivanplays.annotationconfig.core.utils.AnnotationUtils;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -21,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * All Treasury plugin messages.
@@ -76,6 +75,7 @@ public class Messages {
 
             @Key("does-not")
             private String doesNot = "&cNo";
+
         }
 
         @Comment("The delimiter used in lists of things - this separates each list term.")
@@ -84,6 +84,7 @@ public class Messages {
         @Comment("Notice how the list delimiter is used to separate each term in the list.")
         @Key("list-delimiter")
         private String listDelimiter = "&7, &b";
+
     }
 
     @ConfigObject
@@ -255,6 +256,7 @@ public class Messages {
             );
 
         }
+
     }
 
     // now for accessing them all easily
@@ -274,6 +276,7 @@ public class Messages {
         public List<String> getMessage() {
             return message;
         }
+
     }
 
     public static Messages load(File file) {
@@ -349,7 +352,7 @@ public class Messages {
             if (key == null) {
                 TreasuryPlugin.getInstance().logger().error(
                         "The key '" + configKey + "' has not been registered "
-                        + "into MessageKey - please inform a Treasury developer ASAP."
+                                + "into MessageKey - please inform a Treasury developer ASAP."
                 );
                 continue;
             }

@@ -38,4 +38,5 @@ public class DebugHandler {
     public static void log(@NotNull final DebugCategory debugCategory, @NotNull final String msg) {
         TreasuryPlugin.getInstance().logger().info("&8[&3DEBUG &8| &3" + debugCategory + "&8]: &7" + msg);
     }
+
 }

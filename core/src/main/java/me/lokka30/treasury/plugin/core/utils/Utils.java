@@ -5,6 +5,7 @@
 package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.Gson;
+import java.util.Objects;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -13,8 +14,6 @@ import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import me.lokka30.treasury.plugin.core.config.messaging.Messages;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class Utils {
 
@@ -38,8 +37,9 @@ public class Utils {
             return true;
         } else {
             source.sendMessage(Message.of(
-                    MessageKey.NO_PERMISSION,
-                    MessagePlaceholder.placeholder("%permission%", permission))
+                            MessageKey.NO_PERMISSION,
+                            MessagePlaceholder.placeholder("%permission%", permission)
+                    )
             );
             return false;
         }

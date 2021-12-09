@@ -25,8 +25,10 @@ public class BankAccountTransactionEvent extends AccountTransactionEvent {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull BankAccount getAccount() { return (BankAccount) super.getAccount(); }
-    
+    public @NotNull BankAccount getAccount() {
+        return (BankAccount) super.getAccount();
+    }
+
     public static HandlerList HANDLERS = new HandlerList();
 
     @NotNull

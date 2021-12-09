@@ -21,4 +21,5 @@ public interface RegistrarInfo {
      */
     @NotNull
     String getName();
+
 }

@@ -4,11 +4,10 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
+import java.util.concurrent.Phaser;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.Phaser;
 
 abstract class PhasedSubscriber<T> implements EconomySubscriber<T> {
     private final @NotNull Phaser phaser;

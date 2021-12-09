@@ -4,13 +4,13 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
+import java.util.concurrent.Phaser;
+import java.util.function.Consumer;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.Phaser;
-import java.util.function.Consumer;
-
 final class FailureConsumer<T> extends PhasedSubscriber<T> {
+
     private final @NotNull Consumer<EconomyException> consumer;
 
     FailureConsumer(@NotNull Phaser phaser, @NotNull Consumer<EconomyException> consumer) {

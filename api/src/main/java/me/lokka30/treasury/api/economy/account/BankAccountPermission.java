@@ -4,10 +4,9 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-
-import java.util.UUID;
 
 /**
  * Enum that holds the permissions of a {@link BankAccount}.

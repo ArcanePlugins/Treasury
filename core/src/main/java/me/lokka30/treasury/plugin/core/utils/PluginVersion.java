@@ -148,4 +148,5 @@ public final class PluginVersion {
     public String toString() {
         return stringVersion;
     }
+
 }
