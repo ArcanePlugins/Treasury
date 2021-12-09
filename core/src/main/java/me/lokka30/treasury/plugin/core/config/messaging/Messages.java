@@ -143,7 +143,7 @@ public class Messages {
                     "&8 &m->&7 Running &bTreasury v%version%",
                     "&8 &m->&7 Description: &b%description%",
                     "&8 &m->&7 Made possible by: &bSee &n%credits%",
-                    "&8 &m->&7 Current API Version: &b%current-api-version%",
+                    "&8 &m->&7 API Version: &b%current-api-version%",
                     "&8 &m->&7 Learn more at: &b&n%repository%",
                     " "
             );
@@ -165,7 +165,7 @@ public class Messages {
                     "&8 &m->&7 Name: &b%name%",
                     "&8 &m->&7 Priority: &b%priority%",
                     "&8 &m->&7 API Version: &b%api-version%",
-                    "&8 &m->&7 Supports bank accounts: &b%supports-bank-accounts%",
+                    "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
                     "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
                     "&8 &m->&7 Primary currency: &b%primary-currency%",
                     " "

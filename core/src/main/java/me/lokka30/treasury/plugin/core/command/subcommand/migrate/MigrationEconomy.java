@@ -5,12 +5,16 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
+import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
@@ -40,6 +44,12 @@ class MigrationEconomy implements EconomyProvider {
     @Override
     public @NotNull EconomyAPIVersion getSupportedAPIVersion() {
         return EconomyAPIVersion.getCurrentAPIVersion();
+    }
+
+    @Override
+    @NotNull
+    public Set<OptionalEconomyApiFeature> getSupportedOptionalEconomyApiFeatures() {
+        return new HashSet<>(Collections.singletonList(OptionalEconomyApiFeature.NEGATIVE_BALANCES));
     }
 
     @Override

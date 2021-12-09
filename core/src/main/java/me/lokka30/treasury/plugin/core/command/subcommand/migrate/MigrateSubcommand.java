@@ -16,7 +16,6 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
@@ -160,19 +159,8 @@ public class MigrateSubcommand implements Subcommand {
 
             // Initialize account migration.
             Phaser playerMigration = migrateAccounts(migration, new PlayerAccountMigrator());
-            EconomyProvider fromProvider = migration.from().provide();
-            EconomyProvider toProvider = migration.to().provide();
-            if (fromProvider.hasBankAccountSupport()) {
-                if (toProvider.hasBankAccountSupport()) {
-                    Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
-                    bankMigration.arriveAndAwaitAdvance();
-                } else {
-                    migration.debug(() -> "'&b" + migration
-                            .to()
-                            .registrar()
-                            .getName() + "&7' does not offer bank support, cannot transfer accounts.");
-                }
-            }
+            Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
+            bankMigration.arriveAndAwaitAdvance();
 
             // Block until migration is complete.
             playerMigration.arriveAndAwaitAdvance();

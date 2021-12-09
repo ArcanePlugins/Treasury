@@ -6,6 +6,7 @@ package me.lokka30.treasury.plugin.core.command.subcommand;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
+import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -62,8 +63,18 @@ public class InfoSubcommand implements Subcommand {
                             placeholder("name", providerProvider.registrar().getName()),
                             placeholder("priority", providerProvider.getPriority()),
                             placeholder("api-version", provider.getSupportedAPIVersion()),
-                            placeholder("supports-bank-accounts", Utils.getYesNoStateMessage(provider.hasBankAccountSupport())),
-                            placeholder("supports-transaction-events", Utils.getYesNoStateMessage(provider.hasTransactionEventSupport())),
+                            placeholder("supports-negative-balances",
+                                    Utils.getYesNoStateMessage(
+                                            provider.getSupportedOptionalEconomyApiFeatures()
+                                                    .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES)
+                                    )
+                            ),
+                            placeholder("supports-transaction-events",
+                                    Utils.getYesNoStateMessage(
+                                            provider.getSupportedOptionalEconomyApiFeatures()
+                                                    .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS)
+                                    )
+                            ),
                             placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName())
                     )
             );
