@@ -64,7 +64,7 @@ public final class CurrencyParseResult {
      */
     @NotNull
     public static CurrencyParseResult success(double value, Optional<Currency> currencyOptional) {
-        return new CurrencyParseResult(State.SUCCESS, value, currencyOptional);
+        return new CurrencyParseResult(State.SUCCESS, OptionalDouble.of(value), currencyOptional);
     }
 
     /**
@@ -77,17 +77,17 @@ public final class CurrencyParseResult {
      */
     @NotNull
     public static CurrencyParseResult failure(@NotNull State state) {
-        return new CurrencyParseResult(state, -1, null);
+        return new CurrencyParseResult(state, OptionalDouble.empty(), Optional.empty());
     }
 
     private final State state;
     private final OptionalDouble value;
     private final Optional<Currency> currency;
 
-    private CurrencyParseResult(@NotNull State state, double value, Optional<Currency> currencyOptional) {
+    private CurrencyParseResult(@NotNull State state, @NotNull OptionalDouble value, @NotNull Optional<Currency> currency) {
         this.state = Objects.requireNonNull(state, "state");
-        this.value = value == -1 ? OptionalDouble.empty() : OptionalDouble.of(value);
-        this.currency = currencyOptional != null ? currencyOptional : Optional.empty();
+        this.value = value;
+        this.currency = currency;
     }
 
     /**
