@@ -129,6 +129,14 @@ public enum FailureReason {
     CURRENCY_NOT_FOUND,
 
     /**
+     * A constant representing failure due to a null parameter
+     * being specified when a null parameter was not expected.
+     *
+     * @since v1.0.0
+     */
+    NULL_PARAMETER,
+
+    /**
      * Use this constant if the method resulted in a complete failure,
      * AND no other constant in this enum is applicable to the issue
      * that occured. In this case, use this constant, and please
