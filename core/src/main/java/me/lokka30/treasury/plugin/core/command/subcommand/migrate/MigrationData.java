@@ -5,12 +5,9 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 import me.lokka30.treasury.plugin.core.debug.DebugHandler;
@@ -26,7 +23,6 @@ class MigrationData {
     private final @NotNull ProviderEconomy to;
     private final boolean debugEnabled;
     private final @NotNull QuickTimer timer = new QuickTimer();
-    private final @NotNull Map<Currency, Currency> migratedCurrencies = new ConcurrentHashMap<>();
     private final @NotNull Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
     private final @NotNull AtomicInteger playerAccountsProcessed = new AtomicInteger();
     private final @NotNull AtomicInteger bankAccountsProcessed = new AtomicInteger();
@@ -57,10 +53,6 @@ class MigrationData {
 
     @NotNull QuickTimer timer() {
         return timer;
-    }
-
-    @NotNull Map<Currency, Currency> migratedCurrencies() {
-        return migratedCurrencies;
     }
 
     @NotNull Collection<String> nonMigratedCurrencies() {

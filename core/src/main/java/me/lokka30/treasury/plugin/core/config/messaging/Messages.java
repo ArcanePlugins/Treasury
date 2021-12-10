@@ -226,14 +226,13 @@ public class Messages {
             );
 
             @Comment("Placeholders: %prefix%, %time%, %player-accounts%,")
-            @Comment("              %migrated-currencies%, %non-migrated-currencies%")
+            @Comment("              %non-migrated-currencies%")
             @Key("subcommands.migrate.finished-migration")
             private List<String> migrateFinishedMigration = Arrays.asList(
                     "%prefix% Migration complete! Statistics:",
                     "&8 &m->&7 Took &b%time%ms&7.",
                     "&8 &m->&7 Processed &b%player-accounts%&7 player accounts.",
                     "&8 &m->&7 Processed &b%bank-accounts%&7 bank accounts.",
-                    "&8 &m->&7 Migrated currencies: &b%migrated-currencies%&7.",
                     "&8 &m->&7 Non-migrated currencies: &b%non-migrated-currencies%&7."
             );
 
