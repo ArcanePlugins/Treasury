@@ -34,7 +34,6 @@ As far as I know, here they are:
 
 ### Economy Providers:
 
-* [NanoEconomy](https://github.com/lokka30/NanoEconomy) by [lokka30](https://github.com/lokka30)
 * [ElementalEconomy](https://github.com/lokka30/ElementalEconomy) by [lokka30](https://github.com/lokka30)
 * [EasyEconomyAdvanced](https://github.com/Geolykt/EasyConomyAdvanced) by [Geolykt](https://github.com/Geolykt/)
 * [EconomyPlus](https://www.spigotmc.org/resources/economyplus.92975/) by [_ItsWagPvP](https://www.spigotmc.org/resources/authors/_itswagpvp.445170/)
