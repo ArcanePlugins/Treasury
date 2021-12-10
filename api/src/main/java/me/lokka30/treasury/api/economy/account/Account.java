@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import java.util.Collection;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -151,5 +152,14 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
+
+    /**
+     * Returns the {@link Currency Currencies} this {@code Account} has balance in.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the currencies
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void retrieveCurrenciesById(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
 }

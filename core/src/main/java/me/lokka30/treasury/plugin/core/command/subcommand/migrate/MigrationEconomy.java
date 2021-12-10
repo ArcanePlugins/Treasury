@@ -99,26 +99,6 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void retrieveCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void retrieveCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void retrieveCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void retrieveCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
     public @NotNull Currency getPrimaryCurrency() {
         return currency;
     }

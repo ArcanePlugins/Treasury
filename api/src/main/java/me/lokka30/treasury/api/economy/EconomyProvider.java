@@ -141,44 +141,6 @@ public interface EconomyProvider {
     void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
-     * Request all {@link UUID UUIDs} for valid {@link Currency Currencies}.
-     *
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void retrieveCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
-
-    /**
-     * Request all names for valid {@link Currency Currencies}.
-     *
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void retrieveCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription);
-
-    /**
-     * Request a {@link Currency} by {@link UUID}.
-     *
-     * @param currencyId   the {@code UUID} identifying the {@code Currency}
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void retrieveCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
-
-    /**
-     * Request a {@link Currency} by name.
-     *
-     * @param currencyName the name of the {@code Currency}
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void retrieveCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
-
-    /**
      * Get the primary or main {@link Currency} of the economy.
      *
      * @return the primary currency
