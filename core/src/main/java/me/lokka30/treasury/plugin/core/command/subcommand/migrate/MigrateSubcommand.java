@@ -148,15 +148,6 @@ public class MigrateSubcommand implements Subcommand {
 
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
 
-            // Block until currencies have been populated.
-            establishCurrencies(migration).arriveAndAwaitAdvance();
-
-            if (migration.migratedCurrencies().isEmpty()) {
-                // Nothing to migrate. Maybe a special message?
-                sendMigrationMessage(sender, migration);
-                return;
-            }
-
             // Initialize account migration.
             Phaser playerMigration = migrateAccounts(migration, new PlayerAccountMigrator());
             Phaser bankMigration = migrateAccounts(migration, new BankAccountMigrator());
@@ -194,68 +185,9 @@ public class MigrateSubcommand implements Subcommand {
                         placeholder("time", migration.timer().getTimer()),
                         placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
                         placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
-                        placeholder(
-                                "migrated-currencies",
-                                Utils.formatListMessage(migration
-                                        .migratedCurrencies()
-                                        .keySet()
-                                        .stream()
-                                        .map(Currency::getPrimaryCurrencyName)
-                                        .collect(Collectors.toList()))
-                        ),
                         placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
                 )
         );
-    }
-
-    private Phaser establishCurrencies(@NotNull MigrationData migration) {
-        CompletableFuture<Collection<UUID>> fromCurrencyIdsFuture = new CompletableFuture<>();
-
-        // Initialize phaser with a single party: currency mapping completion.
-        Phaser phaser = new Phaser(1);
-
-        migration.from().provide().retrieveCurrencyIds(new PhasedFutureSubscriber<>(phaser, fromCurrencyIdsFuture));
-
-        fromCurrencyIdsFuture.thenAccept(fromCurrencyIds -> {
-            for (UUID fromCurrencyId : fromCurrencyIds) {
-
-                // Fetch from currency.
-                CompletableFuture<Currency> fromCurrencyFuture = new CompletableFuture<>();
-                migration.from().provide().retrieveCurrency(
-                        fromCurrencyId,
-                        new PhasedFutureSubscriber<>(phaser, fromCurrencyFuture)
-                );
-                fromCurrencyFuture.whenComplete(((currency, throwable) -> {
-                    if (throwable != null) {
-                        migration.debug(() -> "Unable to locate reported currency with ID '&b" + fromCurrencyId + "&7'.");
-                    }
-                }));
-
-                fromCurrencyFuture.thenAccept(fromCurrency -> {
-
-                    // Fetch to currency.
-                    CompletableFuture<Currency> toCurrencyFuture = new CompletableFuture<>();
-                    migration.to().provide().retrieveCurrency(
-                            fromCurrencyId,
-                            new PhasedFutureSubscriber<>(phaser, toCurrencyFuture)
-                    );
-                    toCurrencyFuture.whenComplete(((toCurrency, throwable) -> {
-                        if (toCurrency == null) {
-                            // Currency not found.
-                            migration.nonMigratedCurrencies().add(fromCurrency.getPrimaryCurrencyName());
-                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getPrimaryCurrencyName() + "&7' will not be migrated.");
-                        } else {
-                            // Currency located, map.
-                            migration.migratedCurrencies().put(fromCurrency, toCurrency);
-                            migration.debug(() -> "Currency of ID '&b" + fromCurrency.getPrimaryCurrencyName() + "&7' will be migrated.");
-                        }
-                    }));
-                });
-            }
-            phaser.arriveAndDeregister();
-        });
-
-        return phaser;
     }
 
     private <T extends Account> Phaser migrateAccounts(@NotNull MigrationData migration, @NotNull AccountMigrator<T> migrator) {
