@@ -45,7 +45,7 @@ interface AccountMigrator<T extends Account> {
     ) {
         CompletableFuture<Collection<UUID>> fromCurrencies = new CompletableFuture<>();
 
-        fromAccount.retrieveCurrenciesById(new PhasedSubscriber<Collection<UUID>>(phaser) {
+        fromAccount.retrieveHeldCurrencies(new PhasedSubscriber<Collection<UUID>>(phaser) {
             @Override
             public void phaseAccept(@NotNull final Collection<UUID> uuids) {
                 fromCurrencies.complete(uuids);

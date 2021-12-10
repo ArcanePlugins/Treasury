@@ -154,12 +154,12 @@ public interface Account {
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Returns the {@link Currency Currencies} this {@code Account} has balance in.
+     * Returns the {@link Currency Currencies} this {@code Account} holds balance for.
      *
      * @param subscription the {@link EconomySubscriber} accepting the currencies
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveCurrenciesById(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
 }
