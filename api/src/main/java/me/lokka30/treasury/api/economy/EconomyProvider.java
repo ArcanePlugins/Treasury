@@ -7,7 +7,6 @@ package me.lokka30.treasury.api.economy;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
-import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.BankAccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -148,7 +147,7 @@ public interface EconomyProvider {
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrNemo64
-     * @see #retrieveAllBankAccountsPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
+     * @see #retrieveAllBankAccountsPlayerHasPermission(UUID, EconomySubscriber, BankAccountPermission...)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveAllBankAccountsPlayerIsMemberOf(
@@ -160,16 +159,16 @@ public interface EconomyProvider {
      * Request all the {@link BankAccount bank accounts} where the given player has the given permissions.
      *
      * @param playerId     the player
-     * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
      * @author MrNemo64
      * @see #retrieveAllBankAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveAllBankAccountsPlayerHasPermission(
             @NotNull UUID playerId,
-            @NotNull BankAccountPermission[] permissions,
-            @NotNull EconomySubscriber<Collection<UUID>> subscription
+            @NotNull EconomySubscriber<Collection<UUID>> subscription,
+            @NotNull BankAccountPermission @NotNull ... permissions
     );
 
     /**
