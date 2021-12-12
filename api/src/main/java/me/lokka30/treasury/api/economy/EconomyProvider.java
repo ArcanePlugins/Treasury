@@ -4,9 +4,7 @@
 
 package me.lokka30.treasury.api.economy;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.account.Account;
@@ -16,7 +14,6 @@ import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
-import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
@@ -151,45 +148,13 @@ public interface EconomyProvider {
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrNemo64
-     * @see #retrieveAllAccountsIdPlayerIsMemberOf(UUID, EconomySubscriber)
-     * @see #retrieveAllAccountsPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
-     * @see #retrieveAllAccountsIdPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
+     * @see #retrieveAllBankAccountsPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveAllAccountsPlayerIsMemberOf(
             @NotNull UUID playerId,
-            @NotNull EconomySubscriber<Collection<? extends Account>> subscription
-    );
-
-    /**
-     * Request all {@link Account accounts ids} the given player is a member of.
-     *
-     * @param playerId     the player
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author MrNemo64
-     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
-     * @see #retrieveAllAccountsPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
-     * @see #retrieveAllAccountsIdPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    default void retrieveAllAccountsIdPlayerIsMemberOf(
-            @NotNull UUID playerId,
             @NotNull EconomySubscriber<Collection<UUID>> subscription
-    ) {
-        retrieveAllAccountsPlayerIsMemberOf(playerId, new EconomySubscriber<Collection<? extends Account>>() {
-            @Override
-            public void succeed(@NotNull final Collection<? extends Account> accounts) {
-                List<UUID> uuids = new ArrayList<>(accounts.size());
-                accounts.forEach((a) -> uuids.add(a.getUniqueId()));
-                subscription.succeed(uuids);
-            }
-
-            @Override
-            public void fail(@NotNull final EconomyException exception) {
-                subscription.fail(exception);
-            }
-        });
-    }
+    );
 
     /**
      * Request all the {@link BankAccount bank accounts} where the given player has the given permissions.
@@ -199,47 +164,13 @@ public interface EconomyProvider {
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrNemo64
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
-     * @see #retrieveAllAccountsIdPlayerIsMemberOf(UUID, EconomySubscriber)
-     * @see #retrieveAllAccountsIdPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveAllAccountsPlayerHasPermission(
-            @NotNull UUID playerId,
-            @NotNull BankAccountPermission[] permissions,
-            @NotNull EconomySubscriber<Collection<? extends BankAccount>> subscription
-    );
-
-    /**
-     * Request all the {@link BankAccount bank accounts ids} where the given player has the given permissions.
-     *
-     * @param playerId     the player
-     * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author MrNemo64
-     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
-     * @see #retrieveAllAccountsIdPlayerIsMemberOf(UUID, EconomySubscriber)
-     * @see #retrieveAllAccountsPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    default void retrieveAllAccountsIdPlayerHasPermission(
+    void retrieveAllBankAccountsPlayerHasPermission(
             @NotNull UUID playerId,
             @NotNull BankAccountPermission[] permissions,
             @NotNull EconomySubscriber<Collection<UUID>> subscription
-    ) {
-        retrieveAllAccountsPlayerHasPermission(playerId, permissions, new EconomySubscriber<Collection<? extends BankAccount>>() {
-            @Override
-            public void succeed(@NotNull final Collection<? extends BankAccount> bankAccounts) {
-                List<UUID> uuids = new ArrayList<>(bankAccounts.size());
-                bankAccounts.forEach((ba) -> uuids.add(ba.getUniqueId()));
-                subscription.succeed(uuids);
-            }
-
-            @Override
-            public void fail(@NotNull final EconomyException exception) {
-                subscription.fail(exception);
-            }
-        });
-    }
+    );
 
     /**
      * Get the primary or main {@link Currency} of the economy.
