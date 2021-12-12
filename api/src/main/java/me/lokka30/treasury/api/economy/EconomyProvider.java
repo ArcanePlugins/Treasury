@@ -143,7 +143,7 @@ public interface EconomyProvider {
     void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
-     * Request all {@link Account accounts} the given player is a member of.
+     * Request all {@link BankAccount bank accounts} the given player is a member of.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -151,7 +151,7 @@ public interface EconomyProvider {
      * @see #retrieveAllBankAccountsPlayerHasPermission(UUID, BankAccountPermission[], EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveAllAccountsPlayerIsMemberOf(
+    void retrieveAllBankAccountsPlayerIsMemberOf(
             @NotNull UUID playerId,
             @NotNull EconomySubscriber<Collection<UUID>> subscription
     );
@@ -163,7 +163,7 @@ public interface EconomyProvider {
      * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrNemo64
-     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
+     * @see #retrieveAllBankAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrieveAllBankAccountsPlayerHasPermission(
