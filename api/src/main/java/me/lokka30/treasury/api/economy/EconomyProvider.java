@@ -5,14 +5,20 @@
 package me.lokka30.treasury.api.economy;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.economy.account.BankAccount;
+import me.lokka30.treasury.api.economy.account.BankAccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
+import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,8 +43,7 @@ public interface EconomyProvider {
      * @author lokka30, MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    EconomyAPIVersion getSupportedAPIVersion();
+    @NotNull EconomyAPIVersion getSupportedAPIVersion();
 
     /**
      * Check which optional Treasury Economy API features the Economy Provider supports.
@@ -55,12 +60,11 @@ public interface EconomyProvider {
      * Economy Provider.
      *
      * @return the set of optional supported features from the economy provider/
-     * @see OptionalEconomyApiFeature
      * @author lokka30
+     * @see OptionalEconomyApiFeature
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    Set<OptionalEconomyApiFeature> getSupportedOptionalEconomyApiFeatures();
+    @NotNull Set<OptionalEconomyApiFeature> getSupportedOptionalEconomyApiFeatures();
 
     /**
      * Request whether a user has an associated {@link PlayerAccount}.
@@ -141,14 +145,119 @@ public interface EconomyProvider {
     void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
+     * Request all {@link BankAccount bank accounts} the given player is a member of.
+     *
+     * @param playerId     the player
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @author MrNemo64, MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    default void retrieveAllBankAccountsPlayerIsMemberOf(
+            @NotNull UUID playerId, @NotNull EconomySubscriber<Collection<UUID>> subscription
+    ) {
+        Objects.requireNonNull(playerId, "playerId");
+        Objects.requireNonNull(subscription, "subscription");
+        EconomySubscriber.asFuture(this::retrieveBankAccountIds).exceptionally(throwable -> {
+            if (throwable instanceof EconomyException) {
+                subscription.fail((EconomyException) throwable);
+            } else {
+                subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, throwable));
+            }
+            return new HashSet<>();
+        }).thenAccept(uuids -> {
+            if (uuids.isEmpty()) {
+                subscription.succeed(uuids);
+                return;
+            }
+            Set<UUID> ret = new HashSet<>();
+            for (UUID uuid : uuids) {
+                EconomySubscriber.<BankAccount>asFuture(subscriber -> retrieveBankAccount(uuid, subscriber)).exceptionally(
+                        throwable -> {
+                            if (throwable instanceof EconomyException) {
+                                subscription.fail((EconomyException) throwable);
+                            } else {
+                                subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, throwable));
+                            }
+                            return null;
+                        }).thenCompose(account -> {
+                    if (account == null) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+                    return EconomySubscriber.asFuture(subscriber -> account.isBankMember(playerId, subscriber));
+                }).thenAccept(val -> {
+                    if (val) {
+                        ret.add(uuid);
+                    }
+                });
+
+            }
+            subscription.succeed(ret);
+        });
+    }
+
+    /**
+     * Request all the {@link BankAccount bank accounts} where the given player has the given permissions.
+     *
+     * @param playerId     the player
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
+     * @author MrNemo64, MrIvanPlays
+     * @see #retrieveAllBankAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    default void retrieveAllBankAccountsPlayerHasPermission(
+            @NotNull UUID playerId,
+            @NotNull EconomySubscriber<Collection<UUID>> subscription,
+            @NotNull BankAccountPermission @NotNull ... permissions
+    ) {
+        Objects.requireNonNull(playerId, "playerId");
+        Objects.requireNonNull(subscription, "subscription");
+        Objects.requireNonNull(permissions, "permissions");
+        EconomySubscriber.asFuture(this::retrieveBankAccountIds).exceptionally(throwable -> {
+            if (throwable instanceof EconomyException) {
+                subscription.fail((EconomyException) throwable);
+            } else {
+                subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, throwable));
+            }
+            return new HashSet<>();
+        }).thenAccept(uuids -> {
+            if (uuids.isEmpty()) {
+                subscription.succeed(uuids);
+                return;
+            }
+            Set<UUID> ret = new HashSet<>();
+            for (UUID uuid : uuids) {
+                EconomySubscriber.<BankAccount>asFuture(subscriber -> retrieveBankAccount(uuid, subscriber)).exceptionally(
+                        throwable -> {
+                            if (throwable instanceof EconomyException) {
+                                subscription.fail((EconomyException) throwable);
+                            } else {
+                                subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, throwable));
+                            }
+                            return null;
+                        }).thenCompose(account -> {
+                    if (account == null) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+                    return EconomySubscriber.asFuture(subscriber -> account.hasPermission(playerId, subscriber, permissions));
+                }).thenAccept(val -> {
+                    if (val) {
+                        ret.add(uuid);
+                    }
+                });
+            }
+            subscription.succeed(ret);
+        });
+    }
+
+    /**
      * Get the primary or main {@link Currency} of the economy.
      *
      * @return the primary currency
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    Currency getPrimaryCurrency();
+    @NotNull Currency getPrimaryCurrency();
 
     /**
      * Get the {@link UUID} of the primary or main {@link Currency} of the economy.

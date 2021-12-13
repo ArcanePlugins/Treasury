@@ -104,16 +104,16 @@ public interface BankAccount extends Account {
      * Checks whether given player has the given permission on this bank account.
      *
      * @param player       the {@link UUID} of the player to check if they have the permission
-     * @param permission   the permission to check
-     * @param subscription the {@link EconomySubscriber} accepting whether the player has the permission
-     * @author MrNemo64
+     * @param subscription the {@link EconomySubscriber} accepting whether the player has all the specified permissions
+     * @param permissions  the permissions to check
+     * @author MrNemo64, MrIvanPlays
      * @see BankAccountPermission
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void hasPermission(
             @NotNull UUID player,
-            @NotNull BankAccountPermission permission,
-            @NotNull EconomySubscriber<Boolean> subscription
+            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull BankAccountPermission @NotNull ... permissions
     );
 
 }
