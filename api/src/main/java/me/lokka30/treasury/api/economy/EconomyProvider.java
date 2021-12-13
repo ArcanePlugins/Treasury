@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 import me.lokka30.treasury.api.economy.account.BankAccount;
 import me.lokka30.treasury.api.economy.account.BankAccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -150,7 +149,7 @@ public interface EconomyProvider {
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author MrNemo64
+     * @author MrNemo64, MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void retrieveAllBankAccountsPlayerIsMemberOf(
@@ -202,7 +201,7 @@ public interface EconomyProvider {
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
-     * @author MrNemo64
+     * @author MrNemo64, MrIvanPlays
      * @see #retrieveAllBankAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -240,49 +239,7 @@ public interface EconomyProvider {
                     if (account == null) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    AtomicBoolean modified = new AtomicBoolean(false);
-                    EconomySubscriber.<Boolean>asFuture(subscriber -> account.isBankMember(playerId, subscriber)).exceptionally(
-                            throwable -> {
-                                if (throwable instanceof EconomyException) {
-                                    subscription.fail((EconomyException) throwable);
-                                } else {
-                                    subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, throwable));
-                                }
-                                return null;
-                            }).thenAccept(val -> {
-                        if (!val) {
-                            modified.set(true);
-                        }
-                    });
-                    if (modified.get()) {
-                        return CompletableFuture.completedFuture(false);
-                    }
-                    AtomicBoolean hasPermission = new AtomicBoolean(true);
-                    for (BankAccountPermission permission : permissions) {
-                        if (modified.get()) {
-                            break;
-                        }
-                        EconomySubscriber
-                                .<Boolean>asFuture(subscriber -> account.hasPermission(playerId, permission, subscriber))
-                                .exceptionally(throwable -> {
-                                    if (throwable instanceof EconomyException) {
-                                        subscription.fail((EconomyException) throwable);
-                                    } else {
-                                        subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, throwable));
-                                    }
-                                    return null;
-                                })
-                                .thenAccept(val -> {
-                                    if (!val) {
-                                        modified.set(true);
-                                        hasPermission.set(false);
-                                    }
-                                });
-                        if (modified.get()) {
-                            break;
-                        }
-                    }
-                    return CompletableFuture.completedFuture(hasPermission.get());
+                    return EconomySubscriber.asFuture(subscriber -> account.hasPermission(playerId, subscriber, permissions));
                 }).thenAccept(val -> {
                     if (val) {
                         ret.add(uuid);
