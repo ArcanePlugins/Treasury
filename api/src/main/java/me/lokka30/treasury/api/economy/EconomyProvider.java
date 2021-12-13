@@ -211,6 +211,8 @@ public interface EconomyProvider {
             @NotNull EconomySubscriber<Collection<UUID>> subscription,
             @NotNull BankAccountPermission @NotNull ... permissions
     ) {
+        Objects.requireNonNull(playerId, "playerId");
+        Objects.requireNonNull(subscription, "subscription");
         Objects.requireNonNull(permissions, "permissions");
         EconomySubscriber.asFuture(this::retrieveBankAccountIds).exceptionally(throwable -> {
             if (throwable instanceof EconomyException) {
