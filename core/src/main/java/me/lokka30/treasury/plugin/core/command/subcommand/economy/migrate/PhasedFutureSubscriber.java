@@ -2,30 +2,30 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
+package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
-import java.util.function.Consumer;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import org.jetbrains.annotations.NotNull;
 
-final class FailureConsumer<T> extends PhasedSubscriber<T> {
+class PhasedFutureSubscriber<T> extends PhasedSubscriber<T> {
 
-    private final @NotNull Consumer<EconomyException> consumer;
+    private final @NotNull CompletableFuture<T> future;
 
-    FailureConsumer(@NotNull Phaser phaser, @NotNull Consumer<EconomyException> consumer) {
+    PhasedFutureSubscriber(@NotNull Phaser phaser, @NotNull CompletableFuture<T> future) {
         super(phaser);
-        this.consumer = consumer;
+        this.future = future;
     }
 
     @Override
     public void phaseAccept(@NotNull T t) {
-        // Do nothing.
+        future.complete(t);
     }
 
     @Override
     public void phaseFail(@NotNull EconomyException exception) {
-        consumer.accept(exception);
+        future.completeExceptionally(exception);
     }
 
 }

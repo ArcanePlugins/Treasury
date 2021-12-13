@@ -7,6 +7,7 @@ package me.lokka30.treasury.plugin.core;
 import java.util.List;
 import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate.EconomyMigrateSub;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
@@ -139,7 +140,7 @@ public abstract class TreasuryPlugin {
     /**
      * Returns the plugins' names, which are registering an economy provider,
      * as a list with {@link String strings}, as this is being used in
-     * {@link me.lokka30.treasury.plugin.core.command.subcommand.migrate.MigrateSubcommand}.
+     * {@link EconomyMigrateSub}.
      *
      * @return plugins' names
      */
