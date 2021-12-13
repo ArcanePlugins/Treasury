@@ -7,9 +7,7 @@ package me.lokka30.treasury.api.economy.account;
 import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
@@ -273,81 +271,43 @@ public interface Account {
     void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
+     * Request the {@link EconomyTransaction} history, limited by the {@code transactionCount} and the {@link Temporal}
+     * {@code from} and {@link Temporal} {@code to}, of this {@code Account}.
+     *
+     * <p>If the specified {@code transactionCount} is higher than the known transactions, then this will return all the
+     * transactions.
+     * <p>If this account does not have transactions, dating back to the specified {@code from}, it will start returning
+     * transactions from the oldest one.
+     *
+     * @param transactionCount the count of the transactions wanted
+     * @param from             the timestamp to get the transactions from
+     * @param to               the timestamp to get the transactions to
+     * @param subscription     the {@link EconomySubscriber} accepting the transaction history
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void retrieveTransactionHistory(
+            int transactionCount,
+            @NotNull Temporal from,
+            @NotNull Temporal to,
+            @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
+    );
+
+    /**
      * Request the {@link EconomyTransaction} history, limited by the {@code transactionCount}, of this {@code Account}.
      *
      * <p>If the specified {@code transactionCount} is higher than the known transactions, then this will return all the
      * transactions.
-     * <p>If the specified {@code transactionCount} is {@code -1}, then this will return all the transactions. <i>If you
-     * really need all the transactions, please use this with care, because an economy provider might do a query to a database
-     * .</i>
      *
      * @param transactionCount the count of the transactions wanted
      * @param subscription     the {@link EconomySubscriber} accepting the transaction history
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveTransactionHistory(
+    default void retrieveTransactionHistory(
             int transactionCount, @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
-    );
-
-    /**
-     * Request the {@link EconomyTransaction} history, starting from the {@link Temporal} {@code from} specified, of this
-     * {@code Account}.
-     *
-     * @param from         the timestamp to get the transactions from
-     * @param subscription the {@link EconomySubscriber} accepting the transaction history
-     * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    default void retrieveTransactionHistory(
-            @NotNull Temporal from, @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
     ) {
-        retrieveTransactionHistory(from, Instant.now(), subscription);
-    }
-
-    /**
-     * Request the {@link EconomyTransaction} history, starting from the {@link Temporal} {@code from} specified and
-     * ending at {@link Temporal} {@code to} specified, of this {@code Account}.
-     *
-     * @param from         the timestamp to get the transactions from
-     * @param to           the timestamp to get the transactions to
-     * @param subscription the {@link EconomySubscriber} accepting the transaction history
-     * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    default void retrieveTransactionHistory(
-            @NotNull Temporal from, @NotNull Temporal to, @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
-    ) {
-        Objects.requireNonNull(from, "from");
-        Objects.requireNonNull(to, "to");
-        Objects.requireNonNull(subscription, "subscription");
-
-        Instant fromInstant;
-        if (from instanceof Instant) {
-            fromInstant = (Instant) from;
-        } else {
-            fromInstant = Instant.from(from);
-        }
-        Instant toInstant;
-        if (to instanceof Instant) {
-            toInstant = (Instant) to;
-        } else {
-            toInstant = Instant.from(to);
-        }
-        retrieveTransactionHistory(-1, new EconomySubscriber<Collection<EconomyTransaction>>() {
-            @Override
-            public void succeed(@NotNull final Collection<EconomyTransaction> economyTransactions) {
-                subscription.succeed(economyTransactions.stream().filter(transaction -> {
-                    Instant timestamp = transaction.getTimestamp();
-                    return !timestamp.isBefore(fromInstant) && !timestamp.isAfter(toInstant);
-                }).collect(Collectors.toList()));
-            }
-
-            @Override
-            public void fail(@NotNull final EconomyException exception) {
-                subscription.fail(exception);
-            }
-        });
+        retrieveTransactionHistory(transactionCount, Instant.EPOCH, Instant.now(), subscription);
     }
 
 }
