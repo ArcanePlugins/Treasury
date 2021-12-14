@@ -10,9 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate.EconomyMigrateSub;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +30,8 @@ public final class EconomySubcommand implements Subcommand {
     public EconomySubcommand() {
         this.subcommands = new ConcurrentHashMap<>();
         registerSubcommand("info", new EconomyInfoSub());
+        registerSubcommand("help", new EconomyHelpSub());
+        registerSubcommand("migrate", new EconomyMigrateSub());
     }
 
     /**
@@ -48,16 +52,20 @@ public final class EconomySubcommand implements Subcommand {
 
     @Override
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy")) {
+            return;
+        }
+
         if (args.length == 0) {
             sender.sendMessage(
-                    Message.of(MessageKey.INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
+                    Message.of(MessageKey.ECONOMY_INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
             );
             return;
         }
         Subcommand subcommand = subcommands.get(args[0]);
         if (subcommand == null) {
             sender.sendMessage(Message.of(
-                            MessageKey.INVALID_USAGE_SPECIFIED,
+                            MessageKey.ECONOMY_INVALID_USAGE_SPECIFIED,
                             MessagePlaceholder.placeholder("label", label),
                             MessagePlaceholder.placeholder("subcommand", args[0])
                     )
@@ -72,7 +80,7 @@ public final class EconomySubcommand implements Subcommand {
     }
 
     @NotNull
-    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("info", "migrate");
+    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("info", "help", "migrate");
 
     @Nullable
     @Override

@@ -8,6 +8,7 @@ import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
+import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
 import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,13 +25,22 @@ public class EconomyInfoSub implements Subcommand {
 
     @Override
     public void execute(@NotNull final CommandSource sender, @NotNull final String label, final @NotNull String[] args) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.info")) {
+            return;
+        }
+
+        if (args.length != 0) {
+            sender.sendMessage(Message.of(MessageKey.ECONOMY_INFO_INVALID_USAGE, MessagePlaceholder.placeholder("label", label)));
+            return;
+        }
+
         ProviderEconomy providerProvider = main.economyProviderProvider();
         if (providerProvider == null) {
-            sender.sendMessage(Message.of(MessageKey.INFO_ECONOMY_PROVIDER_UNAVAILABLE));
+            sender.sendMessage(Message.of(MessageKey.ECONOMY_INFO_ECONOMY_PROVIDER_UNAVAILABLE));
         } else {
             EconomyProvider provider = providerProvider.provide();
             sender.sendMessage(Message.of(
-                    MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
+                    MessageKey.ECONOMY_INFO_ECONOMY_PROVIDER_AVAILABLE,
                     placeholder("name", providerProvider.registrar().getName()),
                     placeholder("priority", providerProvider.getPriority()),
                     placeholder("api-version", provider.getSupportedAPIVersion()),

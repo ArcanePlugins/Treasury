@@ -44,7 +44,7 @@ public class EconomyMigrateSub implements Subcommand {
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
-        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.migrate")) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.migrate")) {
             return;
         }
 

@@ -19,6 +19,7 @@ import me.lokka30.treasury.plugin.core.command.subcommand.economy.EconomySubcomm
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +65,10 @@ public final class TreasuryBaseCommand {
      * @param args   command args
      */
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury")) {
+            return;
+        }
+
         if (args.length == 0) {
             sender.sendMessage(
                     Message.of(MessageKey.INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
