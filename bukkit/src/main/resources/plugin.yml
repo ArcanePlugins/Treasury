@@ -22,7 +22,7 @@ depend: []
 softdepend: []
 
 # General info for the plugin loader
-main: "me.lokka30.treasury.plugin.bukkit.Treasury"
+main: "me.lokka30.treasury.plugin.bukkit.TreasuryBukkit"
 api-version: '1.13' # This is Spigot's API version, NOT Treasury's API version.
 load: "STARTUP"
 loadbefore: []
