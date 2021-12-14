@@ -1,21 +1,16 @@
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
- */
-
-package me.lokka30.treasury.plugin.core.command;
+package me.lokka30.treasury.plugin.core.command.subcommand.economy;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import me.lokka30.treasury.plugin.core.command.subcommand.HelpSubcommand;
-import me.lokka30.treasury.plugin.core.command.subcommand.InfoSubcommand;
-import me.lokka30.treasury.plugin.core.command.subcommand.ReloadSubcommand;
-import me.lokka30.treasury.plugin.core.command.subcommand.economy.EconomySubcommand;
+import me.lokka30.treasury.plugin.core.command.CommandSource;
+import me.lokka30.treasury.plugin.core.command.Subcommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate.EconomyMigrateSub;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
@@ -24,21 +19,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A class, containing the logic of the treasury command.
+ * A class, containing the logic of "/treasury economy" command.
  *
  * @author MrIvanPlays
- * @since v1.0.0
  */
-public final class TreasuryBaseCommand {
+public final class EconomySubcommand implements Subcommand {
 
     private Map<String, Subcommand> subcommands;
 
-    public TreasuryBaseCommand() {
-        this.subcommands = new HashMap<>();
-        registerSubcommand("help", new HelpSubcommand());
-        registerSubcommand("info", new InfoSubcommand());
-        registerSubcommand("reload", new ReloadSubcommand());
-        registerSubcommand("economy", new EconomySubcommand());
+    public EconomySubcommand() {
+        this.subcommands = new ConcurrentHashMap<>();
+        registerSubcommand("info", new EconomyInfoSub());
+        registerSubcommand("help", new EconomyHelpSub());
+        registerSubcommand("migrate", new EconomyMigrateSub());
     }
 
     /**
@@ -57,28 +50,22 @@ public final class TreasuryBaseCommand {
         }
     }
 
-    /**
-     * Executes the base /treasury command.
-     *
-     * @param sender who ran the command
-     * @param label  command label
-     * @param args   command args
-     */
+    @Override
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
-        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury")) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy")) {
             return;
         }
 
         if (args.length == 0) {
             sender.sendMessage(
-                    Message.of(MessageKey.INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
+                    Message.of(MessageKey.ECONOMY_INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
             );
             return;
         }
         Subcommand subcommand = subcommands.get(args[0]);
         if (subcommand == null) {
             sender.sendMessage(Message.of(
-                            MessageKey.INVALID_USAGE_SPECIFIED,
+                            MessageKey.ECONOMY_INVALID_USAGE_SPECIFIED,
                             MessagePlaceholder.placeholder("label", label),
                             MessagePlaceholder.placeholder("subcommand", args[0])
                     )
@@ -93,17 +80,10 @@ public final class TreasuryBaseCommand {
     }
 
     @NotNull
-    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("help", "info", "reload", "economy");
+    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("info", "help", "migrate");
 
-    /**
-     * Runs completions for the base /treasury command.
-     *
-     * @param sender who asked for tab completions
-     * @param label  command label
-     * @param args   command arguments
-     * @return list with completions, can be null
-     */
     @Nullable
+    @Override
     public List<String> complete(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
             return Collections.emptyList();

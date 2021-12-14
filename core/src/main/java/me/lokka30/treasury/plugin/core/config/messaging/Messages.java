@@ -114,6 +114,64 @@ public class Messages {
             );
 
             @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.economy.invalid-usage-unspecified")
+            private List<String> economyInvalidUsageUnspecified = Arrays.asList(
+                    "%prefix% Invalid usage - please specify a subcommand.",
+                    "%prefix% For a list of available subcommands, try ''&b/%label% economy help&7''."
+            );
+
+            @Comment("Placeholders: %prefix%, %label%, %subcomand%")
+            @Key("subcommands.economy.invalid-usage-specified")
+            private List<String> economyInvalidUsageSpecified = Arrays.asList(
+                    "%prefix% Invalid subcommand ''&b%subcommand%&7''.",
+                    "%prefix% For a list of available subcommands, try ''&b/%label% economy help&7''."
+            );
+
+            @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.economy.info.invalid-usage")
+            private List<String> infoEconomyInvalidUsage = Collections.singletonList(
+                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''."
+            );
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.economy.info.economy-provider-unavailable")
+            private List<String> infoEconomyProviderUnavailable = Arrays.asList(
+                    "&f&nEconomy Provider",
+                    "&8 &m->&7 You don''t have an Economy Provider installed.'",
+                    " "
+            );
+
+            @Comment("Placeholders: %prefix, %name%, %priority%, %api-version%")
+            @Comment("              %supports-bank-accounts%, %primary-currency%,")
+            @Comment("              %supports-transaction-events%")
+            @Key("subcommands.economy.info.economy-provider-available")
+            private List<String> infoEconomyProviderAvailable = Arrays.asList(
+                    "&f&nEconomy Provider",
+                    "&8 &m->&7 Name: &b%name%",
+                    "&8 &m->&7 Priority: &b%priority%",
+                    "&8 &m->&7 API Version: &b%api-version%",
+                    "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
+                    "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
+                    "&8 &m->&7 Primary currency: &b%primary-currency%",
+                    " "
+            );
+
+            @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.economy.help.invalid-usage")
+            private List<String> helpEconomyInvalidUsage = Collections.singletonList(
+                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''."
+            );
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.economy.help.available-commands")
+            private List<String> helpEconomyAvailableCommands = Arrays.asList(
+                    "%prefix% Available commands:",
+                    " &8&m->&b /treasury economy help &8- &7view a list of Treasury''s commands.",
+                    " &8&m->&b /treasury economy info &8- &7view info about Treasury.",
+                    " &8&m->&b /treasury economy migrate &8- &7migrate from one economy provider to another."
+            );
+
+            @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.help.invalid-usage")
             private List<String> helpInvalidUsage = Collections.singletonList(
                     "%prefix% Invalid usage, try ''&b/%label% help&7''."
@@ -125,8 +183,8 @@ public class Messages {
                     "%prefix% Available commands:",
                     " &8&m->&b /treasury help &8- &7view a list of Treasury''s commands.",
                     " &8&m->&b /treasury info &8- &7view info about Treasury.",
-                    " &8&m->&b /treasury migrate &8- &7migrate from one economy provider to another.",
-                    " &8&m->&b /treasury reload &8- &7re-load all of Treasury''s configuration files.'"
+                    " &8&m->&b /treasury reload &8- &7re-load all of Treasury''s configuration files.'",
+                    " &8&m->&b /treasury economy &8 - &7economy specific commands"
             );
 
             @Comment("Placeholders: %prefix%, %label%")
@@ -145,29 +203,6 @@ public class Messages {
                     "&8 &m->&7 Made possible by: &bSee &n%credits%",
                     "&8 &m->&7 API Version: &b%current-api-version%",
                     "&8 &m->&7 Learn more at: &b&n%repository%",
-                    " "
-            );
-
-            @Comment("Placeholders: %prefix%")
-            @Key("subcommands.info.economy-provider-unavailable")
-            private List<String> infoEconomyProviderUnavailable = Arrays.asList(
-                    "&f&nEconomy Provider",
-                    "&8 &m->&7 You don''t have an Economy Provider installed.'",
-                    " "
-            );
-
-            @Comment("Placeholders: %prefix, %name%, %priority%, %api-version%")
-            @Comment("              %supports-bank-accounts%, %primary-currency%,")
-            @Comment("              %supports-transaction-events%")
-            @Key("subcommands.info.economy-provider-available")
-            private List<String> infoEconomyProviderAvailable = Arrays.asList(
-                    "&f&nEconomy Provider",
-                    "&8 &m->&7 Name: &b%name%",
-                    "&8 &m->&7 Priority: &b%priority%",
-                    "&8 &m->&7 API Version: &b%api-version%",
-                    "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
-                    "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
-                    "&8 &m->&7 Primary currency: &b%primary-currency%",
                     " "
             );
 

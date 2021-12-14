@@ -53,33 +53,6 @@ public class InfoSubcommand implements Subcommand {
                 )
         );
 
-        ProviderEconomy providerProvider = main.economyProviderProvider();
-        if (providerProvider == null) {
-            sender.sendMessage(Message.of(MessageKey.INFO_ECONOMY_PROVIDER_UNAVAILABLE));
-        } else {
-            EconomyProvider provider = providerProvider.provide();
-            sender.sendMessage(Message.of(
-                            MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
-                            placeholder("name", providerProvider.registrar().getName()),
-                            placeholder("priority", providerProvider.getPriority()),
-                            placeholder("api-version", provider.getSupportedAPIVersion()),
-                            placeholder("supports-negative-balances",
-                                    Utils.getYesNoStateMessage(
-                                            provider.getSupportedOptionalEconomyApiFeatures()
-                                                    .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES)
-                                    )
-                            ),
-                            placeholder("supports-transaction-events",
-                                    Utils.getYesNoStateMessage(
-                                            provider.getSupportedOptionalEconomyApiFeatures()
-                                                    .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS)
-                                    )
-                            ),
-                            placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName())
-                    )
-            );
-        }
-
         sender.sendMessage(Message.of(MessageKey.INFO_MISC_INFO));
     }
 

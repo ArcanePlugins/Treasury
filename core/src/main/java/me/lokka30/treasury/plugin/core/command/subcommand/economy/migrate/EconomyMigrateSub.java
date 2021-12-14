@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.core.command.subcommand.migrate;
+package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,20 +33,18 @@ import org.jetbrains.annotations.Nullable;
 
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
-public class MigrateSubcommand implements Subcommand {
+public class EconomyMigrateSub implements Subcommand {
 
     /*
     inf: Migrates accounts from one economy plugin to another
-    cmd: /treasury migrate <providerFrom> <providerTo>
-    arg:         |       0              1            2
-    len:         0       1              2            3
+    cmd: /treasury economy migrate <providerFrom> <providerTo>
      */
 
     @Override
     public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
-        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.migrate")) {
+        if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.migrate")) {
             return;
         }
 

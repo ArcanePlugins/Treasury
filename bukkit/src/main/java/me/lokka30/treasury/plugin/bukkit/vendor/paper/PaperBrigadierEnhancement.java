@@ -27,11 +27,13 @@ public class PaperBrigadierEnhancement implements Listener {
         }
     }
 
+    //@formatter:off
     private LiteralCommandNode<BukkitBrigadierCommandSource> buildLiteral(
             String label,
             BukkitBrigadierCommand<BukkitBrigadierCommandSource> command
     ) {
         return LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal(label)
+                .requires(source -> source.getBukkitSender().hasPermission("treasury.command.treasury"))
                 .executes(command)
                 .then(
                         LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("help")
@@ -52,32 +54,52 @@ public class PaperBrigadierEnhancement implements Listener {
                                 .executes(command)
                 )
                 .then(
-                        LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("migrate")
-                                .requires(source -> source.getBukkitSender()
-                                        .hasPermission("treasury.command.treasury.migrate"))
+                        LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("economy")
+                                .requires(source -> source.getBukkitSender().hasPermission("treasury.command.treasury.economy"))
                                 .executes(command)
                                 .then(
-                                        RequiredArgumentBuilder.<BukkitBrigadierCommandSource, String>argument(
-                                                        "plugin1",
-                                                        StringArgumentType.word()
-                                                )
+                                        LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("info")
+                                                .requires(source -> source.getBukkitSender().hasPermission("treasury.command" +
+                                                        ".treasury.economy.info"))
+                                                .executes(command)
+                                )
+                                .then(
+                                        LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("help")
+                                                .requires(source -> source.getBukkitSender().hasPermission("treasury.command" +
+                                                        ".treasury.economy.help"))
+                                                .executes(command)
+                                )
+                                .then(
+                                        LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("migrate")
                                                 .requires(source -> source.getBukkitSender()
-                                                        .hasPermission("treasury.command.treasury.migrate"))
-                                                .suggests(plugins())
+                                                        .hasPermission("treasury.command.treasury.economy.migrate"))
                                                 .executes(command)
                                                 .then(
                                                         RequiredArgumentBuilder.<BukkitBrigadierCommandSource, String>argument(
-                                                                        "plugin2",
+                                                                        "plugin1",
                                                                         StringArgumentType.word()
                                                                 )
                                                                 .requires(source -> source.getBukkitSender()
                                                                         .hasPermission("treasury.command.treasury.migrate"))
                                                                 .suggests(plugins())
                                                                 .executes(command)
+                                                                .then(
+                                                                        RequiredArgumentBuilder
+                                                                                .<BukkitBrigadierCommandSource, String>argument(
+                                                                                        "plugin2",
+                                                                                        StringArgumentType.word()
+                                                                                )
+                                                                                .requires(source -> source.getBukkitSender()
+                                                                                        .hasPermission(
+                                                                                                "treasury.command.treasury.migrate"))
+                                                                                .suggests(plugins())
+                                                                                .executes(command)
+                                                                )
                                                 )
                                 )
                 ).build();
     }
+    //@formatter:on
 
     private SuggestionProvider<BukkitBrigadierCommandSource> plugins() {
         return (context, builder) -> {
