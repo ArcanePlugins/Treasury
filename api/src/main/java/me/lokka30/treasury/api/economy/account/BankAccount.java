@@ -5,9 +5,13 @@
 package me.lokka30.treasury.api.economy.account;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A Bank Account is an Account which is associated with a Player
@@ -23,6 +27,27 @@ import org.jetbrains.annotations.NotNull;
 public interface BankAccount extends Account {
 
     /**
+     * Returns the name of this {@code BankAccount}, if specified. Empty optional otherwise.
+     *
+     * <p>A economy provider may choose not to provide a name.
+     *
+     * @return an optional fulfilled with a name or an empty optional
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Optional<String> getName();
+
+    /**
+     * Sets a new name for this {@code BankAccount}, which may be null.
+     *
+     * @param name         the new name for this bank account.
+     * @param subscription the {@link EconomySubscriber} accepting whether name change was successful
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
+
+    /**
      * Request a listing of all members of the bank.
      *
      * @param subscription the {@link EconomySubscriber} accepting the members
@@ -32,16 +57,9 @@ public interface BankAccount extends Account {
     void retrieveBankMembersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
-     * Request a listing of all owners of the bank.
-     *
-     * @param subscription the {@link EconomySubscriber} accepting the owners
-     * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void retrieveBankOwnersIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
-
-    /**
      * Check if the specified user is a member of the bank.
+     *
+     * <p>A Bank member is any player with at least one allowed permission.
      *
      * @param memberId     the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
@@ -51,57 +69,44 @@ public interface BankAccount extends Account {
     void isBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Check if the specified user is an owner of the bank.
+     * Modifies the state of the specified {@link BankAccountPermission} {@code permissions} for the specified {@link UUID}
+     * {@code memberId}. The state is specified via the {@link TriState} {@code permissionValue}. If
+     * {@link TriState#UNSPECIFIED} is specified for a {@code permissionValue}, then the specified {@code permissions} get
+     * unbound from the specified {@code memberId}. If {@link TriState#FALSE} is specified for a {@code permissionValue}, then
+     * the specified {@code permissions} become forbidden for the {@code memberId}, no matter whether they had them in the past.
      *
-     * @param ownerId      the {@link UUID} of the potential owner
-     * @param subscription the {@link EconomySubscriber} accepting whether the user is an owner
-     * @author lokka30
+     * <p>Just a reminder: a Bank member is any player with at least one allowed permission.
+     *
+     * @param memberId        the member id you want to modify the permissions of
+     * @param permissionValue the permission value you want to set
+     * @param subscription    the {@link EconomySubscriber} accepting whether the permissions were removed or not
+     * @param permissions     the permissions to modify
+     * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void isBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
+    void setPermission(
+            @NotNull UUID memberId,
+            @NotNull TriState permissionValue,
+            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull BankAccountPermission @NotNull ... permissions
+    );
 
     /**
-     * Make a user a member of the bank.
+     * Request the {@link BankAccountPermission BankAccountPermissions} for the specified {@link UUID} {@code memberId}
      *
-     * @param memberId     the {@link UUID} of the new member
-     * @param subscription the {@link EconomySubscriber} accepting whether the member was added
-     * @author lokka30
+     * @param memberId     the member id to get the permissions for
+     * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
+     * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void addBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
-
-    /**
-     * Make a user an owner of the bank.
-     *
-     * @param ownerId      the {@link UUID} of the potential new owner
-     * @param subscription the {@link EconomySubscriber} accepting whether the owner was added
-     * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void addBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
-
-    /**
-     * Remove a member of the bank.
-     *
-     * @param memberId     the {@link UUID} of the member removed
-     * @param subscription the {@link EconomySubscriber} accepting whether the member was removed
-     * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void removeBankMember(@NotNull UUID memberId, @NotNull EconomySubscriber<Boolean> subscription);
-
-    /**
-     * Remove an owner of the bank.
-     *
-     * @param ownerId      the {@link UUID} of the owner removed
-     * @param subscription the {@link EconomySubscriber} accepting whether the owner was removed
-     * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void removeBankOwner(@NotNull UUID ownerId, @NotNull EconomySubscriber<Boolean> subscription);
+    void retrievePermissions(
+            @NotNull UUID memberId, @NotNull EconomySubscriber<Map<BankAccountPermission, TriState>> subscription
+    );
 
     /**
      * Checks whether given player has the given permission on this bank account.
+     *
+     * <p>Just a reminder: a Bank member is any player with at least one allowed permission.
      *
      * @param player       the {@link UUID} of the player to check if they have the permission
      * @param subscription the {@link EconomySubscriber} accepting whether the player has all the specified permissions

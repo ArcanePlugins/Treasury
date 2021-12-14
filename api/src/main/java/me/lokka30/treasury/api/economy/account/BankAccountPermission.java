@@ -6,6 +6,7 @@ package me.lokka30.treasury.api.economy.account;
 
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.misc.TriState;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
@@ -43,34 +44,10 @@ public enum BankAccountPermission {
     DEPOSIT,
 
     /**
-     * Allows a player to add members to the {@link BankAccount}.
+     * Allows a player to modify the permissions of other players on a {@link BankAccount}
      *
-     * @see BankAccount#addBankMember(UUID, EconomySubscriber)
+     * @see BankAccount#setPermission(UUID, TriState, EconomySubscriber, BankAccountPermission...)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    ADD_MEMBERS,
-
-    /**
-     * Allows a player to remove members from the {@link BankAccount}.
-     *
-     * @see BankAccount#removeBankMember(UUID, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    REMOVE_MEMBERS,
-
-    /**
-     * Allows a player to add owners to the {@link BankAccount}.
-     *
-     * @see BankAccount#addBankOwner(UUID, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    ADD_OWNERS,
-
-    /**
-     * Allows a player to remove owners from the {@link BankAccount}.
-     *
-     * @see BankAccount#removeBankOwner(UUID, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    REMOVE_OWNERS
+    MODIFY_PERMISSIONS
 }

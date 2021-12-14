@@ -20,6 +20,7 @@ import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementors providing and managing economy data create a class
@@ -133,7 +134,20 @@ public interface EconomyProvider {
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
+    default void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription) {
+        createBankAccount(null, accountId, subscription);
+    }
+
+    /**
+     * Request the creation of a {@link BankAccount} for a {@link UUID} {@code accountId} with {@link String} {@code name}.
+     *
+     * @param name         the name of the account
+     * @param accountId    the {@code UUID} of the account
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @author MrIvanPlays, Jikoo
+     * @since {@link EconomyAPIVersion#v1_0 v1.0}
+     */
+    void createBankAccount(@Nullable String name, @NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link BankAccount BankAccounts}.
