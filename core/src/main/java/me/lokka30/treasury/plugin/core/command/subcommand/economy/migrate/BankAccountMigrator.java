@@ -5,6 +5,7 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
@@ -12,8 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.BankAccount;
+import me.lokka30.treasury.api.economy.account.BankAccountPermission;
+import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 class BankAccountMigrator implements AccountMigrator<BankAccount> {
@@ -65,19 +69,26 @@ class BankAccountMigrator implements AccountMigrator<BankAccount> {
 
         CompletableFuture<Collection<UUID>> memberUuidsFuture = new CompletableFuture<>();
         fromAccount.retrieveBankMembersIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
-        memberUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankMember(uuid,
-                new FailureConsumer<>(phaser,
-                        exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))
-                )
-        )));
+        memberUuidsFuture.thenAccept(uuids -> {
+            for (UUID uuid : uuids) {
+                fromAccount.retrievePermissions(uuid, new EconomySubscriber<Map<BankAccountPermission, TriState>>() {
+                    @Override
+                    public void succeed(@NotNull final Map<BankAccountPermission, TriState> map) {
+                        for (Map.Entry<BankAccountPermission, TriState> entry : map.entrySet()) {
+                            toAccount.setPermission(uuid, entry.getValue(), new FailureConsumer<>(
+                                    phaser,
+                                    exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))
+                            ), entry.getKey());
+                        }
+                    }
 
-        CompletableFuture<Collection<UUID>> ownerUuidsFuture = new CompletableFuture<>();
-        fromAccount.retrieveBankOwnersIds(new PhasedFutureSubscriber<>(phaser, ownerUuidsFuture));
-        ownerUuidsFuture.thenAccept(uuids -> uuids.forEach(uuid -> toAccount.addBankOwner(uuid,
-                new FailureConsumer<>(phaser,
-                        exception -> migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception))
-                )
-        )));
+                    @Override
+                    public void fail(@NotNull final EconomyException exception) {
+                        migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
+                    }
+                });
+            }
+        });
     }
 
     @Override

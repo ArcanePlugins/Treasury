@@ -19,6 +19,7 @@ import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A dummy {@link EconomyProvider} used to prevent transactions with
@@ -31,13 +32,7 @@ class MigrationEconomy implements EconomyProvider {
     private final @NotNull EconomyException migrationException;
 
     MigrationEconomy() {
-        this.currency = Currency.of(
-                null,
-                0,
-                1,
-                (amt, $) -> String.valueOf(amt),
-                "MigrationMoney"
-        );
+        this.currency = Currency.of(null, 0, 1, (amt, $) -> String.valueOf(amt), "MigrationMoney");
         this.migrationException = new EconomyException(FailureReason.MIGRATION, "Economy unavailable during migration process.");
     }
 
@@ -59,16 +54,14 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     public void retrievePlayerAccount(
-            @NotNull UUID accountId,
-            @NotNull EconomySubscriber<PlayerAccount> subscription
+            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
     ) {
         subscription.fail(migrationException);
     }
 
     @Override
     public void createPlayerAccount(
-            @NotNull UUID accountId,
-            @NotNull EconomySubscriber<PlayerAccount> subscription
+            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
     ) {
         subscription.fail(migrationException);
     }
@@ -89,7 +82,9 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription) {
+    public void createBankAccount(
+            @Nullable String name, @NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription
+    ) {
         subscription.fail(migrationException);
     }
 
