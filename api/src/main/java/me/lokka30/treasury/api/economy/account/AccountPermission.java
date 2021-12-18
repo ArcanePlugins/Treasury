@@ -11,24 +11,24 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
 /**
- * Enum that holds the permissions of a {@link BankAccount}.
+ * Enum that holds the permissions of a {@link Account}.
  *
  * @author MrNemo64
- * @see BankAccount
+ * @see Account
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public enum BankAccountPermission {
+public enum AccountPermission {
 
     /**
-     * Allows a player to consult the balance of the {@link BankAccount}.
+     * Allows a player to see the balance of the {@link Account}.
      *
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    CONSULT,
+    BALANCE,
 
     /**
-     * Allows a player to withdraw from the {@link BankAccount}.
+     * Allows a player to withdraw from the {@link Account}.
      *
      * @see Account#withdrawBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -36,7 +36,7 @@ public enum BankAccountPermission {
     WITHDRAW,
 
     /**
-     * Allows a player to deposit on the {@link BankAccount}.
+     * Allows a player to deposit on the {@link Account}.
      *
      * @see Account#depositBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -44,9 +44,9 @@ public enum BankAccountPermission {
     DEPOSIT,
 
     /**
-     * Allows a player to modify the permissions of other players on a {@link BankAccount}
+     * Allows a player to modify the permissions of other players on a {@link Account}
      *
-     * @see BankAccount#setPermission(UUID, TriState, EconomySubscriber, BankAccountPermission...)
+     * @see GenericAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     MODIFY_PERMISSIONS

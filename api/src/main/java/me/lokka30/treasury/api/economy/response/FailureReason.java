@@ -4,6 +4,10 @@
 
 package me.lokka30.treasury.api.economy.response;
 
+import me.lokka30.treasury.api.economy.account.GenericAccount;
+import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+
 /**
  * A collection of constants describing common causes for request failures.
  *
@@ -68,7 +72,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already being a member of a
-     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     * {@link GenericAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -76,7 +80,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already being an owner of a
-     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     * {@link GenericAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -84,7 +88,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already not being a member of a
-     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     * {@link GenericAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -92,7 +96,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already not being an owner of a
-     * {@link me.lokka30.treasury.api.economy.account.BankAccount BankAccount}.
+     * {@link GenericAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -112,8 +116,8 @@ public enum FailureReason {
      * A constant representing failure due to a negative amount being
      * provided to a method that only accepts positive numbers.
      *
-     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(double, me.lokka30.treasury.api.economy.currency.Currency, EconomySubscriber)
-     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(double, me.lokka30.treasury.api.economy.currency.Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     NEGATIVE_AMOUNT_SPECIFIED,

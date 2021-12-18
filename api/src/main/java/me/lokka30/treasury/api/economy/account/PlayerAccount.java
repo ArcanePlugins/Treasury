@@ -5,10 +5,12 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
+import java.util.UUID;
 
 /**
  * A PlayerAccount is an Account owned by a Player.
@@ -23,6 +25,28 @@ import org.jetbrains.annotations.NotNull;
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface PlayerAccount extends Account {
+
+    /**
+     * Gets the string-based unique identifier for this account.
+     *
+     * @return The String unique identifier for this account.
+     * @author creatorfromhell
+     * @since {@link EconomyAPIVersion#v1_0 v1.0}
+     */
+    @Override
+    default @NotNull String identifier() {
+        return getUniqueId().toString();
+    }
+
+    /**
+     * Get the {@link UUID} of the {@code Account}.
+     *
+     * @return uuid of the Account.
+     * @author lokka30
+     * @see UUID
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    @NotNull UUID getUniqueId();
 
     /**
      * Resets the player's balance. Unlike resetting balances of non-player

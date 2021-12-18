@@ -7,6 +7,8 @@ package me.lokka30.treasury.api.economy.account;
 import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -15,6 +17,7 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,20 +29,40 @@ import org.jetbrains.annotations.Nullable;
  * @author lokka30, Geolykt
  * @see EconomyProvider
  * @see PlayerAccount
- * @see BankAccount
+ * @see GenericAccount
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface Account {
 
     /**
-     * Get the {@link UUID} of the {@code Account}.
+     * Gets the string-based unique identifier for this account.
      *
-     * @return uuid of the Account.
-     * @author lokka30
-     * @see UUID
+     * @return The String unique identifier for this account.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull UUID getUniqueId();
+    @NotNull String identifier();
+
+    /**
+     * Returns the name of this {@link Account}, if specified. Empty optional otherwise.
+     *
+     * <p>A economy provider may choose not to provide a name.
+     *
+     * @return an optional fulfilled with a name or an empty optional
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Optional<String> getName();
+
+    /**
+     * Sets a new name for this {@link Account}, which may be null.
+     *
+     * @param name         the new name for this account.
+     * @param subscription the {@link EconomySubscriber} accepting whether name change was successful
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
      * Request the balance of the {@code Account}.
@@ -309,5 +332,4 @@ public interface Account {
     ) {
         retrieveTransactionHistory(transactionCount, Instant.EPOCH, Instant.now(), subscription);
     }
-
 }

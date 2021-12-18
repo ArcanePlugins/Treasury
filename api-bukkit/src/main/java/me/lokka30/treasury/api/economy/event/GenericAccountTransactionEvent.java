@@ -4,20 +4,20 @@
 
 package me.lokka30.treasury.api.economy.event;
 
-import me.lokka30.treasury.api.economy.account.BankAccount;
+import me.lokka30.treasury.api.economy.account.GenericAccount;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an event, called when a {@link BankAccount} does a {@link EconomyTransaction}
+ * Represents an event, called when a {@link GenericAccount} does a {@link EconomyTransaction}
  *
  * @author lokka30
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public class BankAccountTransactionEvent extends AccountTransactionEvent {
+public class GenericAccountTransactionEvent extends AccountTransactionEvent {
 
-    public BankAccountTransactionEvent(@NotNull EconomyTransaction economyTransaction, @NotNull BankAccount account) {
+    public GenericAccountTransactionEvent(@NotNull EconomyTransaction economyTransaction, @NotNull GenericAccount account) {
         super(economyTransaction, account);
     }
 
@@ -25,8 +25,8 @@ public class BankAccountTransactionEvent extends AccountTransactionEvent {
      * {@inheritDoc}
      */
     @Override
-    public @NotNull BankAccount getAccount() {
-        return (BankAccount) super.getAccount();
+    public @NotNull GenericAccount getAccount() {
+        return (GenericAccount) super.getAccount();
     }
 
     public static HandlerList HANDLERS = new HandlerList();
