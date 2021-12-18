@@ -85,13 +85,7 @@ class MigrationEconomy implements EconomyProvider {
 
             @Override
             public void deformat(@NotNull final String formatted, @NotNull final EconomySubscriber<Double> subscription) {
-                try {
-                    Double value = Double.parseDouble(formatted);
-                    subscription.succeed(value);
-                } catch(Exception ignore) {
-                    subscription.fail(new EconomyException(FailureReason.OTHER_FAILURE, "Formatted is not a valid Double value" +
-                            "."));
-                }
+                subscription.fail(new EconomyException(FailureReason.MIGRATION, "Migration in progress, cannot deformat!"));
             }
 
             @Override
