@@ -95,7 +95,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void to(@NotNull Currency currency, @NotNull Double amount, @NotNull EconomySubscriber<Double> subscription);
+    void to(@NotNull Currency currency, double amount, @NotNull EconomySubscriber<Double> subscription);
 
     /**
      * Used to get the double representation of an amount represented by a formatted string.
@@ -126,7 +126,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(@NotNull Double amount);
+    String format(double amount);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
@@ -137,5 +137,5 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(@NotNull Double amount, @NotNull Integer precision);
+    String format(double amount, int precision);
 }

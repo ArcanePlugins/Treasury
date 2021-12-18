@@ -77,7 +77,7 @@ class MigrationEconomy implements EconomyProvider {
             @Override
             public void to(
                     @NotNull final Currency currency,
-                    @NotNull final Double amount,
+                    final double amount,
                     @NotNull final EconomySubscriber<Double> subscription
             ) {
                 subscription.fail(new EconomyException(FailureReason.MIGRATION, "Migration currency not convertable."));
@@ -94,12 +94,12 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String format(@NotNull final Double amount) {
+            public String format(final double amount) {
                 return String.valueOf(amount);
             }
 
             @Override
-            public String format(@NotNull final Double amount, @NotNull final Integer precision) {
+            public String format(final double amount, final int precision) {
                 return String.valueOf(amount);
             }
         };
