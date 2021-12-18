@@ -268,7 +268,7 @@ public interface Account {
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<Currency>> subscription);
 
     /**
      * Request the {@link EconomyTransaction} history, limited by the {@code transactionCount} and the {@link Temporal}

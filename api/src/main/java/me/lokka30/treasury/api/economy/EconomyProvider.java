@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.economy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -274,15 +275,48 @@ public interface EconomyProvider {
     @NotNull Currency getPrimaryCurrency();
 
     /**
-     * Get the {@link UUID} of the primary or main {@link Currency} of the economy.
+     * Used to find a currency based on a specific identifier.
      *
-     * @return the {@code UUID} identifying the primary currency
+     * @param identifier The {@link Currency#identifier()} of the {@link Currency} we are searching for.
+     * @return The {@link Optional} containing the search result. This will contain the
+     * resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Optional<Currency> findCurrency(@NotNull String identifier);
+
+    /**
+     * Used to get a set of every  {@link Currency} object for the server.
+     *
+     * @return A set of every {@link Currency} object that is available for the server.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Set<Currency> getCurrencies();
+
+    /**
+     * Get the String identifier of the primary or main {@link Currency} of the economy.
+     *
+     * @return the String identifier identifying the primary currency
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
-    default UUID getPrimaryCurrencyId() {
-        return getPrimaryCurrency().getCurrencyId();
+    default String getPrimaryCurrencyId() {
+        return getPrimaryCurrency().identifier();
     }
 
+    /**
+     * Used to register a currency with the {@link EconomyProvider} to be utilized by
+     * other plugins.
+     *
+     * @param currency The currency to register with the {@link EconomyProvider}.
+     * @param subscription The {@link EconomySubscriber} representing the result of the
+     *                     attempted {@link Currency} registration with an {@link Boolean}.
+     *                     This will be {@link Boolean#TRUE} if it was registered, otherwise
+     *                     it'll be {@link Boolean#FALSE}.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void registerCurrency(@NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription);
 }

@@ -56,7 +56,7 @@ public class EconomyInfoSub implements Subcommand {
                                     .getSupportedOptionalEconomyApiFeatures()
                                     .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS))
                     ),
-                    placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName())
+                    placeholder("primary-currency", provider.getPrimaryCurrency().display())
             ));
         }
     }
