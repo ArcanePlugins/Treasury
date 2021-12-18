@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
  * @author lokka30
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public class GenericAccountTransactionEvent extends AccountTransactionEvent {
+public class BankAccountTransactionEvent extends AccountTransactionEvent {
 
-    public GenericAccountTransactionEvent(@NotNull EconomyTransaction economyTransaction, @NotNull GenericAccount account) {
+    public BankAccountTransactionEvent(@NotNull EconomyTransaction economyTransaction, @NotNull GenericAccount account) {
         super(economyTransaction, account);
     }
 

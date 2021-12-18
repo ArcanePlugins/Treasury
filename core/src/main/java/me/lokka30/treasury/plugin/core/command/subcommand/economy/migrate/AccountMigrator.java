@@ -55,7 +55,7 @@ interface AccountMigrator<T extends Account> {
 
             @Override
             public void phaseFail(@NotNull final EconomyException exception) {
-                migration.debug(() -> getErrorLog(fromAccount.identifier(), exception));
+                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                 fromCurrencies.completeExceptionally(exception);
             }
         });
@@ -82,7 +82,7 @@ interface AccountMigrator<T extends Account> {
 
                     @Override
                     public void phaseFail(@NotNull final EconomyException exception) {
-                        migration.debug(() -> getErrorLog(fromAccount.identifier(), exception));
+                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                         balanceFuture.completeExceptionally(exception);
                     }
                 });
@@ -93,14 +93,14 @@ interface AccountMigrator<T extends Account> {
                     }
 
                     EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser, exception -> {
-                        migration.debug(() -> getErrorLog(fromAccount.identifier(), exception));
+                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                         fromAccount.setBalance(balance, initiator, currency, new FailureConsumer<>(phaser, exception1 -> {
-                            migration.debug(() -> getErrorLog(fromAccount.identifier(), exception1));
+                            migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception1));
                             migration.debug(() -> String.format(
                                     "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
                                     balance,
                                     currency.getPrimaryCurrencyName(),
-                                    fromAccount.identifier()
+                                    fromAccount.getIdentifier()
                             ));
                             if (!migration.nonMigratedCurrencies().contains(currency.getPrimaryCurrencyName())) {
                                 migration.nonMigratedCurrencies().add(currency.getPrimaryCurrencyName());

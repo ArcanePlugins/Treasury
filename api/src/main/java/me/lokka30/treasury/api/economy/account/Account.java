@@ -41,7 +41,7 @@ public interface Account {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull String identifier();
+    @NotNull String getIdentifier();
 
     /**
      * Returns the name of this {@link Account}, if specified. Empty optional otherwise.

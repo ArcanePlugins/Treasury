@@ -78,14 +78,14 @@ class GenericAccountMigrator implements AccountMigrator<Account> {
                         for (Map.Entry<AccountPermission, TriState> entry : map.entrySet()) {
                             ((GenericAccount)toAccount).setPermission(uuid, entry.getValue(), new FailureConsumer<>(
                                     phaser,
-                                    exception -> migration.debug(() -> getErrorLog(fromAccount.identifier(), exception))
+                                    exception -> migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception))
                             ), entry.getKey());
                         }
                     }
 
                     @Override
                     public void fail(@NotNull final EconomyException exception) {
-                        migration.debug(() -> getErrorLog(fromAccount.identifier(), exception));
+                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                     }
                 });
             }

@@ -34,7 +34,7 @@ public interface PlayerAccount extends Account {
      * @since {@link EconomyAPIVersion#v1_0 v1.0}
      */
     @Override
-    default @NotNull String identifier() {
+    default @NotNull String getIdentifier() {
         return getUniqueId().toString();
     }
 
