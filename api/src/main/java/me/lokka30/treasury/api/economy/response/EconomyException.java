@@ -18,6 +18,10 @@ public class EconomyException extends Exception {
 
     private final @NotNull FailureReason reason;
 
+    public EconomyException(@NotNull FailureReason reason) {
+        this(reason, reason.description(), null);
+    }
+
     /**
      * Construct a new {@code EconomyException}.
      *

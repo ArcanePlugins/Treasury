@@ -17,7 +17,7 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import me.lokka30.treasury.api.economy.response.FailureReason;
+import me.lokka30.treasury.api.economy.response.fail.TreasuryFailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ class MigrationEconomy implements EconomyProvider {
 
     MigrationEconomy() {
         this.currency = Currency.of(null, 0, 1, (amt, $) -> String.valueOf(amt), "MigrationMoney");
-        this.migrationException = new EconomyException(FailureReason.MIGRATION, "Economy unavailable during migration process.");
+        this.migrationException = new EconomyException(TreasuryFailureReason.MIGRATION, "Economy unavailable during migration process.");
     }
 
     @Override
