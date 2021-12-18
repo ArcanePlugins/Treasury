@@ -18,6 +18,12 @@ public class EconomyException extends Exception {
 
     private final @NotNull FailureReason reason;
 
+    /**
+     * Construct a new {@code EconomyException}.
+     *
+     * @param reason  the {@link FailureReason} representing the reason for failure
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
     public EconomyException(@NotNull FailureReason reason) {
         this(reason, reason.description(), null);
     }
