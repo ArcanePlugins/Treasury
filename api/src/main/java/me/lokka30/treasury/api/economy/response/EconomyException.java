@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.response;
 
+import me.lokka30.treasury.api.common.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +26,7 @@ public class EconomyException extends Exception {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public EconomyException(@NotNull FailureReason reason) {
-        this(reason, reason.description(), null);
+        this(reason, reason.getDescription(), null);
     }
 
     /**

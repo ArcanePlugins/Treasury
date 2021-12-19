@@ -1,13 +1,12 @@
-package me.lokka30.treasury.api.economy.response.fail;
+package me.lokka30.treasury.api.economy.response;
 
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import me.lokka30.treasury.api.economy.response.FailureReason;
+import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
-public enum TreasuryFailureReason implements FailureReason {
+public enum TreasuryEconomyFailureReason implements FailureReason {
 
     /**
      * Use this constant if the method can't be run in any capacity
