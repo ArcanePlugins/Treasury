@@ -17,7 +17,7 @@ import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
  * @see Account
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public enum AccountPermission {
+public enum SharedAccountPermission {
 
     /**
      * Allows a player to see the balance of the {@link Account}.
@@ -46,7 +46,7 @@ public enum AccountPermission {
     /**
      * Allows a player to modify the permissions of other players on a {@link Account}
      *
-     * @see GenericAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
+     * @see NonPlayerAccount#setPermission(UUID, TriState, EconomySubscriber, SharedAccountPermission...)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     MODIFY_PERMISSIONS

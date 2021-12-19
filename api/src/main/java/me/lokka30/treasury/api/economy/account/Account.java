@@ -7,7 +7,6 @@ package me.lokka30.treasury.api.economy.account;
 import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -17,7 +16,6 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
-import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * @author lokka30, Geolykt
  * @see EconomyProvider
  * @see PlayerAccount
- * @see GenericAccount
+ * @see NonPlayerAccount
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface Account {

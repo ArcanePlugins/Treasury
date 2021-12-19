@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.account.GenericAccount;
-import me.lokka30.treasury.api.economy.account.AccountPermission;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
+import me.lokka30.treasury.api.economy.account.SharedAccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
@@ -110,9 +110,9 @@ public interface EconomyProvider {
     /**
      * Request whether an identifier has an associated {@link Account}.
      *
-     * This method is safe for {@link GenericAccount non-player accounts}.
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
      *
-     * This could return an {@link GenericAccount} or an {@link PlayerAccount}.
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
      * @param identifier    the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -124,9 +124,9 @@ public interface EconomyProvider {
     /**
      * Request an existing {@link Account} for a specific identifier.
      *
-     * This method is safe for {@link GenericAccount non-player accounts}.
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
      *
-     * This could return an {@link GenericAccount} or an {@link PlayerAccount}.
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
      * @param identifier    the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -138,9 +138,9 @@ public interface EconomyProvider {
     /**
      * Request the creation of a {@link Account} for a specific identifier.
      *
-     * This method is safe for {@link GenericAccount non-player accounts}.
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
      *
-     * This could return an {@link GenericAccount} or an {@link PlayerAccount}.
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
      * @param identifier    the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -155,9 +155,9 @@ public interface EconomyProvider {
      * Request the creation of a {@link Account} for a specific identifier {@code identifier} with {@link String} {@code
      * name}.
      *
-     * This method is safe for {@link GenericAccount non-player accounts}.
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
      *
-     * This could return an {@link GenericAccount} or an {@link PlayerAccount}.
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      * @param name         the human readable name of the account
      * @param identifier    the unique identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -177,7 +177,7 @@ public interface EconomyProvider {
     void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request all identifiers with associated {@link GenericAccount Generic Accounts}.
+     * Request all identifiers with associated {@link NonPlayerAccount Generic Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
@@ -186,7 +186,7 @@ public interface EconomyProvider {
     void retrieveGenericAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request all {@link GenericAccount generic accounts} the given player is a member of.
+     * Request all {@link NonPlayerAccount generic accounts} the given player is a member of.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -225,10 +225,10 @@ public interface EconomyProvider {
                         return CompletableFuture.completedFuture(false);
                     }
 
-                    if(!(account instanceof GenericAccount)) {
+                    if(!(account instanceof NonPlayerAccount)) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    return EconomySubscriber.asFuture(subscriber -> ((GenericAccount)account).isMember(playerId, subscriber));
+                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount)account).isMember(playerId, subscriber));
                 }).thenAccept(val -> {
                     if (val) {
                         ret.add(identifier);
@@ -241,11 +241,11 @@ public interface EconomyProvider {
     }
 
     /**
-     * Request all the {@link GenericAccount generic accounts} where the given player has the given permissions.
+     * Request all the {@link NonPlayerAccount generic accounts} where the given player has the given permissions.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @param permissions  the permissions that the given player has to have on the {@link GenericAccount account}
+     * @param permissions  the permissions that the given player has to have on the {@link NonPlayerAccount account}
      * @author MrNemo64, MrIvanPlays
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -253,7 +253,7 @@ public interface EconomyProvider {
     default void retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId,
             @NotNull EconomySubscriber<Collection<String>> subscription,
-            @NotNull AccountPermission @NotNull ... permissions
+            @NotNull SharedAccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(subscription, "subscription");
@@ -285,10 +285,10 @@ public interface EconomyProvider {
                         return CompletableFuture.completedFuture(false);
                     }
 
-                    if (!(account instanceof GenericAccount)) {
+                    if (!(account instanceof NonPlayerAccount)) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    return EconomySubscriber.asFuture(subscriber -> ((GenericAccount)account).hasPermission(playerId, subscriber,
+                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount)account).hasPermission(playerId, subscriber,
                             permissions));
                 }).thenAccept(val -> {
                     if (val) {

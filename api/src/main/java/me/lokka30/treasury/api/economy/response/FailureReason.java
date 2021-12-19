@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.api.economy.response;
 
-import me.lokka30.treasury.api.economy.account.GenericAccount;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
@@ -72,7 +72,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already being a member of a
-     * {@link GenericAccount BankAccount}.
+     * {@link NonPlayerAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -80,7 +80,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already being an owner of a
-     * {@link GenericAccount BankAccount}.
+     * {@link NonPlayerAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -88,7 +88,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already not being a member of a
-     * {@link GenericAccount BankAccount}.
+     * {@link NonPlayerAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -96,7 +96,7 @@ public enum FailureReason {
 
     /**
      * A constant representing failure due to a user already not being an owner of a
-     * {@link GenericAccount BankAccount}.
+     * {@link NonPlayerAccount BankAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */

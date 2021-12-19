@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.account.GenericAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
