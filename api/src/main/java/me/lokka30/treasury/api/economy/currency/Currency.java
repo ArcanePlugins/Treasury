@@ -41,7 +41,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String display();
+    String displayName();
 
     /**
      * Gets the plural form of the currency's user-friendly display name.
@@ -50,7 +50,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String displayPlural();
+    String displayNamePlural();
 
     /**
      * Gets the currency's default number of decimal digits when formatting this currency.

@@ -50,12 +50,12 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String display() {
+            public String displayName() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String displayPlural() {
+            public String displayNamePlural() {
                 return "MigrationMonies";
             }
 

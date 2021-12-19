@@ -5,17 +5,21 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
 
 interface AccountMigrator<T extends Account> {
@@ -41,11 +45,11 @@ interface AccountMigrator<T extends Account> {
             @NotNull T toAccount,
             @NotNull MigrationData migration
     ) {
-        CompletableFuture<Collection<Currency>> fromCurrencies = new CompletableFuture<>();
+        CompletableFuture<Collection<String>> fromCurrencies = new CompletableFuture<>();
 
-        fromAccount.retrieveHeldCurrencies(new PhasedSubscriber<Collection<Currency>>(phaser) {
+        fromAccount.retrieveHeldCurrencies(new PhasedSubscriber<Collection<String>>(phaser) {
             @Override
-            public void phaseAccept(@NotNull final Collection<Currency> currencies) {
+            public void phaseAccept(@NotNull final Collection<String> currencies) {
                 fromCurrencies.complete(currencies);
             }
 
@@ -56,7 +60,24 @@ interface AccountMigrator<T extends Account> {
             }
         });
 
-        fromCurrencies.thenAccept(currencies -> {
+        fromCurrencies.thenAccept(currenciesIDS -> {
+
+            Collection<Currency> currencies = currenciesIDS.stream().map(identifier->{
+                if(TreasuryPlugin.getInstance().economyProviderProvider() == null) {
+                    migration.debug(() -> "Economy provider is null.");
+                    return null;
+                }
+
+                Optional<Currency> currency =
+                        TreasuryPlugin.getInstance().economyProviderProvider().provide().findCurrency(identifier);
+
+                if(currency.isPresent()) {
+                    return currency.get();
+                } else {
+                    migration.debug(() -> "Currency with ID '&b" + identifier + "&7' will " + "not be migrated.");
+                    return null;
+                }
+            }).filter(Objects::nonNull).collect(Collectors.toList());
 
             for (Currency currency : currencies) {
                 CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
@@ -86,11 +107,11 @@ interface AccountMigrator<T extends Account> {
                             migration.debug(() -> String.format(
                                     "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
                                     balance,
-                                    currency.display(),
+                                    currency.displayName(),
                                     fromAccount.getUniqueId()
                             ));
-                            if (!migration.nonMigratedCurrencies().contains(currency.display())) {
-                                migration.nonMigratedCurrencies().add(currency.display());
+                            if (!migration.nonMigratedCurrencies().contains(currency.displayName())) {
+                                migration.nonMigratedCurrencies().add(currency.displayName());
                             }
                         }));
                     });
