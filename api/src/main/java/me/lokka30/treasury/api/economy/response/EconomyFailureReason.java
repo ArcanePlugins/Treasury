@@ -6,7 +6,7 @@ import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
-public enum TreasuryEconomyFailureReason implements FailureReason {
+public enum EconomyFailureReason implements FailureReason {
 
     /**
      * Use this constant if the method can't be run in any capacity
@@ -19,11 +19,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     FEATURE_NOT_SUPPORTED {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -40,11 +36,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     MIGRATION {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -60,11 +52,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     REQUEST_CANCELLED {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -83,11 +71,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ACCOUNT_NOT_FOUND {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -105,11 +89,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ACCOUNT_DELETION_NOT_SUPPORTED {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -127,11 +107,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ACCOUNT_ALREADY_EXISTS {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -150,11 +126,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ALREADY_MEMBER_OF_ACCOUNT {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -171,11 +143,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ALREADY_OWNER_OF_ACCOUNT {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -192,11 +160,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ALREADY_NOT_MEMBER_OF_ACCOUNT {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -213,11 +177,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     ALREADY_NOT_OWNER_OF_ACCOUNT {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -236,11 +196,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     NEGATIVE_BALANCES_NOT_SUPPORTED {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -260,11 +216,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     NEGATIVE_AMOUNT_SPECIFIED {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -283,11 +235,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     CURRENCY_NOT_FOUND {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -304,11 +252,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     NULL_PARAMETER {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
@@ -328,11 +272,7 @@ public enum TreasuryEconomyFailureReason implements FailureReason {
     OTHER_FAILURE {
 
         /**
-         * Gets the getDescription behind this {@link FailureReason fail case}.
-         *
-         * @return The getDescription behind this {@link FailureReason fail case}.
-         * @author creatorfromhell
-         * @since {@link EconomyAPIVersion#v1_0 v1.0}
+         * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {

@@ -18,7 +18,7 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import me.lokka30.treasury.api.economy.response.TreasuryEconomyFailureReason;
+import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -175,7 +175,7 @@ public interface EconomyProvider {
             if (throwable instanceof EconomyException) {
                 subscription.fail((EconomyException) throwable);
             } else {
-                subscription.fail(new EconomyException(TreasuryEconomyFailureReason.OTHER_FAILURE, throwable));
+                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE, throwable));
             }
             return new HashSet<>();
         }).thenAccept(uuids -> {
@@ -190,7 +190,7 @@ public interface EconomyProvider {
                             if (throwable instanceof EconomyException) {
                                 subscription.fail((EconomyException) throwable);
                             } else {
-                                subscription.fail(new EconomyException(TreasuryEconomyFailureReason.OTHER_FAILURE, throwable));
+                                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE, throwable));
                             }
                             return null;
                         }).thenCompose(account -> {
@@ -231,7 +231,7 @@ public interface EconomyProvider {
             if (throwable instanceof EconomyException) {
                 subscription.fail((EconomyException) throwable);
             } else {
-                subscription.fail(new EconomyException(TreasuryEconomyFailureReason.OTHER_FAILURE, throwable));
+                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE, throwable));
             }
             return new HashSet<>();
         }).thenAccept(uuids -> {
@@ -246,7 +246,7 @@ public interface EconomyProvider {
                             if (throwable instanceof EconomyException) {
                                 subscription.fail((EconomyException) throwable);
                             } else {
-                                subscription.fail(new EconomyException(TreasuryEconomyFailureReason.OTHER_FAILURE, throwable));
+                                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE, throwable));
                             }
                             return null;
                         }).thenCompose(account -> {
