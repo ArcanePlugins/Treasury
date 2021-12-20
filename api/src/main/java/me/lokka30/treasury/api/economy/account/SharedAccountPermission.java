@@ -11,7 +11,7 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
 /**
- * Enum that holds the permissions of a {@link Account}.
+ * Enum that holds the permissions of an {@link Account} that is shared among multiple players.
  *
  * @author MrNemo64
  * @see Account
