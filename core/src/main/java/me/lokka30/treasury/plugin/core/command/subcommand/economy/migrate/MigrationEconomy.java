@@ -210,7 +210,7 @@ class MigrationEconomy implements EconomyProvider {
      */
     @Override
     public void registerCurrency(@NotNull final Currency currency, @NotNull final EconomySubscriber<Boolean> subscription) {
-subscription.fail(new EconomyException(FailureReason.MIGRATION, "Cannot register currencies during migration!"));
+        subscription.fail(new EconomyException(FailureReason.MIGRATION, "Cannot register currencies during migration!"));
     }
 
 }
