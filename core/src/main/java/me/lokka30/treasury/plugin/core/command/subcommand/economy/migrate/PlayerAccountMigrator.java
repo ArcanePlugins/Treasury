@@ -12,8 +12,8 @@ import java.util.function.BiConsumer;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import me.lokka30.treasury.api.economy.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
 
 class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
@@ -63,7 +63,7 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
                 UUID uuid = UUID.fromString(identifier);
                 provider.retrievePlayerAccount(uuid, subscription);
             } catch(Exception ignore) {
-                subscription.fail(new EconomyException(FailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
+                subscription.fail(new EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
             }
         };
     }
@@ -76,7 +76,7 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
                 UUID uuid = UUID.fromString(identifier);
                 provider.hasPlayerAccount(uuid, subscription);
             } catch(Exception ignore) {
-                subscription.fail(new EconomyException(FailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
+                subscription.fail(new EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
             }
 
             provider.hasAccount(identifier, subscription);
@@ -91,7 +91,7 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
                 UUID uuid = UUID.fromString(identifier);
                 provider.createPlayerAccount(uuid, subscription);
             } catch(Exception ignore) {
-                subscription.fail(new EconomyException(FailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
+                subscription.fail(new EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
             }
         };
     }
