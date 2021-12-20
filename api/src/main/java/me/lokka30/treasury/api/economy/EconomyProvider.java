@@ -177,16 +177,16 @@ public interface EconomyProvider {
     void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request all identifiers with associated {@link NonPlayerAccount Generic Accounts}.
+     * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveGenericAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
+    void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request all {@link NonPlayerAccount generic accounts} the given player is a member of.
+     * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
@@ -241,7 +241,7 @@ public interface EconomyProvider {
     }
 
     /**
-     * Request all the {@link NonPlayerAccount generic accounts} where the given player has the given permissions.
+     * Request all the {@link NonPlayerAccount non-player accounts} where the given player has the given permissions.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value

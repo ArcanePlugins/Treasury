@@ -12,7 +12,7 @@ import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A Generic account is any non-player account.
+ * A NonPlayer account is any non-player account.
  *
  * @author lokka30, MrNemo64
  * @see Account

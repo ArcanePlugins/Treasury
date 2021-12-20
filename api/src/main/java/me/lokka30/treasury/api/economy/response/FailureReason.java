@@ -19,7 +19,7 @@ public enum FailureReason {
      * Use this constant if the method can't be run in any capacity
      * as the economy provider does not provide support for the method.
      * It is paramount that plugins ensure that economy providers support
-     * certain methods (e.g. bank accounts) before attempting to access them.
+     * certain methods (e.g. non player accounts) before attempting to access them.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -68,39 +68,39 @@ public enum FailureReason {
      */
     ACCOUNT_ALREADY_EXISTS,
 
-    /* BankAccounts */
+    /* NonPlayerAccounts */
 
     /**
      * A constant representing failure due to a user already being a member of a
-     * {@link NonPlayerAccount BankAccount}.
+     * {@link NonPlayerAccount NonPlayerAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    ALREADY_MEMBER_OF_BANK_ACCOUNT,
+    ALREADY_MEMBER_OF_SHARED_ACCOUNT,
 
     /**
      * A constant representing failure due to a user already being an owner of a
-     * {@link NonPlayerAccount BankAccount}.
+     * {@link NonPlayerAccount NonPlayerAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    ALREADY_OWNER_OF_BANK_ACCOUNT,
+    ALREADY_OWNER_OF_SHARED_ACCOUNT,
 
     /**
      * A constant representing failure due to a user already not being a member of a
-     * {@link NonPlayerAccount BankAccount}.
+     * {@link NonPlayerAccount NonPlayerAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    ALREADY_NOT_MEMBER_OF_BANK_ACCOUNT,
+    ALREADY_NOT_MEMBER_OF_SHARED_ACCOUNT,
 
     /**
      * A constant representing failure due to a user already not being an owner of a
-     * {@link NonPlayerAccount BankAccount}.
+     * {@link NonPlayerAccount NonPlayerAccount}.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    ALREADY_NOT_OWNER_OF_BANK_ACCOUNT,
+    ALREADY_NOT_OWNER_OF_SHARED_ACCOUNT,
 
     /* Balances */
 

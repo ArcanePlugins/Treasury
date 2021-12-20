@@ -94,7 +94,7 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void retrieveGenericAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription) {
+    public void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription) {
         subscription.fail(migrationException);
     }
 

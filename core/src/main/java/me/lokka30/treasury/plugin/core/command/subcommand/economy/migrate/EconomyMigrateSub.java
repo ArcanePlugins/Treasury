@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -134,8 +133,9 @@ public class EconomyMigrateSub implements Subcommand {
 
             // Initialize account migration.
             Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new PlayerAccountMigrator());
-            Phaser bankMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new GenericAccountMigrator());
-            bankMigration.arriveAndAwaitAdvance();
+            Phaser nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration,
+                    new NonPlayerAccountMigrator());
+            nonPlayerMigration.arriveAndAwaitAdvance();
 
             // Block until migration is complete.
             playerMigration.arriveAndAwaitAdvance();
@@ -166,7 +166,7 @@ public class EconomyMigrateSub implements Subcommand {
         sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
                 placeholder("time", migration.timer().getTimer()),
                 placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                placeholder("bank-accounts", migration.genericAccountsProcessed().toString()),
+                placeholder("nonplayer-accounts", migration.nonPlayerAccountsProcessed().toString()),
                 placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
         ));
     }

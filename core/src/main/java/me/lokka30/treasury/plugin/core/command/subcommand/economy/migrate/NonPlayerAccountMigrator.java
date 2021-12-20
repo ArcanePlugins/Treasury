@@ -21,26 +21,26 @@ import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
-class GenericAccountMigrator implements AccountMigrator<Account> {
+class NonPlayerAccountMigrator implements AccountMigrator<Account> {
 
     @Override
     public @NotNull String getBulkFailLog(@NotNull Throwable throwable) {
-        return "Unable to fetch bank account UUIDs for migration: " + throwable.getMessage();
+        return "Unable to fetch non player account UUIDs for migration: " + throwable.getMessage();
     }
 
     @Override
     public @NotNull String getInitLog(@NotNull String identifier) {
-        return "Migrating generic account of ID '&b" + identifier + "&7'.";
+        return "Migrating non player account of ID '&b" + identifier + "&7'.";
     }
 
     @Override
     public @NotNull String getErrorLog(@NotNull String identifier, @NotNull Throwable throwable) {
-        return "Error migrating generic account ID '&b" + identifier + "&7': &b" + throwable.getMessage();
+        return "Error migrating non player account ID '&b" + identifier + "&7': &b" + throwable.getMessage();
     }
 
     @Override
     public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<String>>> requestAccountIds() {
-        return EconomyProvider::retrieveGenericAccountIds;
+        return EconomyProvider::retrieveNonPlayerAccountIds;
     }
 
     @Override
@@ -94,7 +94,7 @@ class GenericAccountMigrator implements AccountMigrator<Account> {
 
     @Override
     public @NotNull AtomicInteger getSuccessfulMigrations(@NotNull MigrationData migration) {
-        return migration.genericAccountsProcessed();
+        return migration.nonPlayerAccountsProcessed();
     }
 
 }

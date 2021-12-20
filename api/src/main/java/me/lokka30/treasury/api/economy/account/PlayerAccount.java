@@ -50,7 +50,7 @@ public interface PlayerAccount extends Account {
 
     /**
      * Resets the player's balance. Unlike resetting balances of non-player
-     * and bank accounts, resetting a player account's balance will set the
+     * and non player accounts, resetting a player account's balance will set the
      * player's balance to the 'starting balance' of the currency (other
      * accounts set it to zero instead). This is why the overriden method exists.
      *
