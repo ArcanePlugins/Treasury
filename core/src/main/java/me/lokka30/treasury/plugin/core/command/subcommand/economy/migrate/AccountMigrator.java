@@ -107,11 +107,11 @@ interface AccountMigrator<T extends Account> {
                             migration.debug(() -> String.format(
                                     "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
                                     balance,
-                                    currency.displayName(),
+                                    currency.getDisplayName(),
                                     fromAccount.getUniqueId()
                             ));
-                            if (!migration.nonMigratedCurrencies().contains(currency.displayName())) {
-                                migration.nonMigratedCurrencies().add(currency.displayName());
+                            if (!migration.nonMigratedCurrencies().contains(currency.getIdentifier())) {
+                                migration.nonMigratedCurrencies().add(currency.getIdentifier());
                             }
                         }));
                     });

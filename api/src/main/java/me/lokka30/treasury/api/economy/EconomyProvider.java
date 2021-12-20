@@ -277,7 +277,7 @@ public interface EconomyProvider {
     /**
      * Used to find a currency based on a specific identifier.
      *
-     * @param identifier The {@link Currency#identifier()} of the {@link Currency} we are searching for.
+     * @param identifier The {@link Currency#getIdentifier()} of the {@link Currency} we are searching for.
      * @return The {@link Optional} containing the search result. This will contain the
      * resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.
      * @author creatorfromhell
@@ -303,7 +303,7 @@ public interface EconomyProvider {
      */
     @NotNull
     default String getPrimaryCurrencyId() {
-        return getPrimaryCurrency().identifier();
+        return getPrimaryCurrency().getIdentifier();
     }
 
     /**

@@ -35,32 +35,32 @@ class MigrationEconomy implements EconomyProvider {
     MigrationEconomy() {
         this.currency = new Currency() {
             @Override
-            public String identifier() {
+            public String getIdentifier() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String symbol() {
+            public String getSymbol() {
                 return "$";
             }
 
             @Override
-            public char decimal() {
+            public char getDecimal() {
                 return 0;
             }
 
             @Override
-            public String displayName() {
+            public String getDisplayName() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String displayNamePlural() {
+            public String getDisplayNamePlural() {
                 return "MigrationMonies";
             }
 
             @Override
-            public int precision() {
+            public int getPrecision() {
                 return 0;
             }
 
@@ -84,7 +84,7 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public void deformat(@NotNull final String formatted, @NotNull final EconomySubscriber<Double> subscription) {
+            public void parse(@NotNull final String formatted, @NotNull final EconomySubscriber<Double> subscription) {
                 subscription.fail(new EconomyException(FailureReason.MIGRATION, "Migration in progress, cannot deformat!"));
             }
 
@@ -171,7 +171,7 @@ class MigrationEconomy implements EconomyProvider {
     /**
      * Used to find a currency based on a specific identifier.
      *
-     * @param identifier The {@link Currency#identifier()} of the {@link Currency} we are searching for.
+     * @param identifier The {@link Currency#getIdentifier()} of the {@link Currency} we are searching for.
      *
      * @return The {@link Optional} containing the search result. This will contain the
      * resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.

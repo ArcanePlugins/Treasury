@@ -14,7 +14,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String identifier();
+    String getIdentifier();
 
     /**
      * Gets the currency's symbol. This could be something as simple as a dollar sign '$'.
@@ -23,7 +23,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String symbol();
+    String getSymbol();
 
     /**
      * Get's the currency's decimal character to be used for formatting purposes.
@@ -32,7 +32,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    char decimal();
+    char getDecimal();
 
     /**
      * Gets the currency's user-friendly display name.
@@ -41,7 +41,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String displayName();
+    String getDisplayName();
 
     /**
      * Gets the plural form of the currency's user-friendly display name.
@@ -50,7 +50,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String displayNamePlural();
+    String getDisplayNamePlural();
 
     /**
      * Gets the currency's default number of decimal digits when formatting this currency.
@@ -59,7 +59,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    int precision();
+    int getPrecision();
 
     /**
      * Checks if this currency is the default currency to use in a global context.
@@ -106,7 +106,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void deformat(@NotNull String formatted, @NotNull EconomySubscriber<Double> subscription);
+    void parse(@NotNull String formatted, @NotNull EconomySubscriber<Double> subscription);
 
     /**
      * Gets the starting balance of a specific player account for this currency.

@@ -46,7 +46,7 @@ public class EconomyTransaction {
     /**
      * Creates a new account transaction object.
      *
-     * @param currencyID             the currency's {@link Currency#identifier() identifier} the transaction was made into
+     * @param currencyID             the currency's {@link Currency#getIdentifier() identifier} the transaction was made into
      * @param initiator              the one who initiated the transaction
      * @param timestamp              the time at which this transaction occurred. specifying null would mean "now"
      * @param economyTransactionType the transaction type
@@ -93,13 +93,13 @@ public class EconomyTransaction {
     }
 
     /**
-     * Returns the {@link me.lokka30.treasury.api.economy.currency.Currency}'s {@link Currency#identifier() identifier } with
+     * Returns the {@link me.lokka30.treasury.api.economy.currency.Currency}'s {@link Currency#getIdentifier() identifier } with
      * which the transaction was made.
      *
      * <p>A {@code Currency} object is retrievable via {@link me.lokka30.treasury.api.economy.EconomyProvider#findCurrency(String)} if
      * you need such.
      *
-     * @return The currency {@link Currency#identifier() identifier}.
+     * @return The currency {@link Currency#getIdentifier() identifier}.
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
@@ -183,12 +183,12 @@ public class EconomyTransaction {
          * @return this instance for chaining
          */
         public Builder withCurrency(@NotNull Currency currency) {
-            this.currencyID = Objects.requireNonNull(currency, "currency").identifier();
+            this.currencyID = Objects.requireNonNull(currency, "currency").getIdentifier();
             return this;
         }
 
         /**
-         * Specify the {@link Currency#identifier() identifier} of a {@link Currency} the transaction was made in.
+         * Specify the {@link Currency#getIdentifier() identifier} of a {@link Currency} the transaction was made in.
          *
          * @param currencyId currency id
          * @return this instance for chaining
