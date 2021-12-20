@@ -12,7 +12,8 @@ import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A NonPlayer account is any non-player account.
+ * This is used to differentiate between a {@link PlayerAccount player account} and an
+ * {@link Account account} that is not associated with a player.
  *
  * @author lokka30, MrNemo64
  * @see Account
