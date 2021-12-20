@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
-import me.lokka30.treasury.api.economy.account.SharedAccountPermission;
+import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
@@ -72,10 +72,10 @@ class NonPlayerAccountMigrator implements AccountMigrator<Account> {
         ((NonPlayerAccount)fromAccount).retrieveMemberIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
         memberUuidsFuture.thenAccept(uuids -> {
             for (UUID uuid : uuids) {
-                ((NonPlayerAccount)fromAccount).retrievePermissions(uuid, new EconomySubscriber<Map<SharedAccountPermission, TriState>>() {
+                ((NonPlayerAccount)fromAccount).retrievePermissions(uuid, new EconomySubscriber<Map<AccountPermission, TriState>>() {
                     @Override
-                    public void succeed(@NotNull final Map<SharedAccountPermission, TriState> map) {
-                        for (Map.Entry<SharedAccountPermission, TriState> entry : map.entrySet()) {
+                    public void succeed(@NotNull final Map<AccountPermission, TriState> map) {
+                        for (Map.Entry<AccountPermission, TriState> entry : map.entrySet()) {
                             ((NonPlayerAccount)toAccount).setPermission(uuid, entry.getValue(), new FailureConsumer<>(
                                     phaser,
                                     exception -> migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception))

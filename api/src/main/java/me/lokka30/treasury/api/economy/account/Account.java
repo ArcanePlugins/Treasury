@@ -355,7 +355,7 @@ public interface Account {
     void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Modifies the state of the specified {@link SharedAccountPermission} {@code permissions} for the specified {@link UUID}
+     * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the specified {@link UUID}
      * {@code player}. The state is specified via the {@link TriState} {@code permissionValue}. If
      * {@link TriState#UNSPECIFIED} is specified for a {@code permissionValue}, then the specified {@code permissions} get
      * unbound from the specified {@code player}. If {@link TriState#FALSE} is specified for a {@code permissionValue}, then
@@ -374,11 +374,11 @@ public interface Account {
             @NotNull UUID player,
             @NotNull TriState permissionValue,
             @NotNull EconomySubscriber<Boolean> subscription,
-            @NotNull SharedAccountPermission @NotNull ... permissions
+            @NotNull AccountPermission @NotNull ... permissions
     );
 
     /**
-     * Request the {@link SharedAccountPermission AccountPermissions} for the specified {@link UUID} {@code player}
+     * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID} {@code player}
      *
      * @param player     the player {@link UUID} to get the permissions for
      * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
@@ -386,7 +386,7 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrievePermissions(
-            @NotNull UUID player, @NotNull EconomySubscriber<Map<SharedAccountPermission, TriState>> subscription
+            @NotNull UUID player, @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
     );
 
     /**
@@ -398,12 +398,12 @@ public interface Account {
      * @param subscription the {@link EconomySubscriber} accepting whether the player has all the specified permissions
      * @param permissions  the permissions to check
      * @author MrNemo64, MrIvanPlays
-     * @see SharedAccountPermission
+     * @see AccountPermission
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void hasPermission(
             @NotNull UUID player,
             @NotNull EconomySubscriber<Boolean> subscription,
-            @NotNull SharedAccountPermission @NotNull ... permissions
+            @NotNull AccountPermission @NotNull ... permissions
     );
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
-import me.lokka30.treasury.api.economy.account.SharedAccountPermission;
+import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
@@ -253,7 +253,7 @@ public interface EconomyProvider {
     default void retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId,
             @NotNull EconomySubscriber<Collection<String>> subscription,
-            @NotNull SharedAccountPermission @NotNull ... permissions
+            @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(subscription, "subscription");
