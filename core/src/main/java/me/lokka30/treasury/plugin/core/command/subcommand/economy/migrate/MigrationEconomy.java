@@ -18,7 +18,7 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import me.lokka30.treasury.api.economy.response.FailureReason;
+import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,12 +80,12 @@ class MigrationEconomy implements EconomyProvider {
                     final double amount,
                     @NotNull final EconomySubscriber<Double> subscription
             ) {
-                subscription.fail(new EconomyException(FailureReason.MIGRATION, "Migration currency not convertable."));
+                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Migration currency not convertable."));
             }
 
             @Override
             public void parse(@NotNull final String formatted, @NotNull final EconomySubscriber<Double> subscription) {
-                subscription.fail(new EconomyException(FailureReason.MIGRATION, "Migration in progress, cannot deformat!"));
+                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Migration in progress, cannot deformat!"));
             }
 
             @Override
@@ -103,7 +103,8 @@ class MigrationEconomy implements EconomyProvider {
                 return String.valueOf(amount);
             }
         };
-        this.migrationException = new EconomyException(FailureReason.MIGRATION, "Economy unavailable during migration process.");
+        this.migrationException = new EconomyException(EconomyFailureReason.MIGRATION, "Economy unavailable during migration process.");
+
     }
 
     @Override
@@ -210,7 +211,7 @@ class MigrationEconomy implements EconomyProvider {
      */
     @Override
     public void registerCurrency(@NotNull final Currency currency, @NotNull final EconomySubscriber<Boolean> subscription) {
-        subscription.fail(new EconomyException(FailureReason.MIGRATION, "Cannot register currencies during migration!"));
+        subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Cannot register currencies during migration!"));
     }
 
 }
