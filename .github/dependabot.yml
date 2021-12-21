@@ -6,4 +6,4 @@ updates:
       - dependencies
     schedule:
       interval: daily
-    open-pull-requests-limit: 99
+    open-pull-requests-limit: 10
