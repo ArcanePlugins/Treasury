@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -134,8 +133,9 @@ public class EconomyMigrateSub implements Subcommand {
 
             // Initialize account migration.
             Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new PlayerAccountMigrator());
-            Phaser bankMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new BankAccountMigrator());
-            bankMigration.arriveAndAwaitAdvance();
+            Phaser nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration,
+                    new NonPlayerAccountMigrator());
+            nonPlayerMigration.arriveAndAwaitAdvance();
 
             // Block until migration is complete.
             playerMigration.arriveAndAwaitAdvance();
@@ -166,7 +166,7 @@ public class EconomyMigrateSub implements Subcommand {
         sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
                 placeholder("time", migration.timer().getTimer()),
                 placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                placeholder("bank-accounts", migration.bankAccountsProcessed().toString()),
+                placeholder("nonplayer-accounts", migration.nonPlayerAccountsProcessed().toString()),
                 placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
         ));
     }
@@ -179,11 +179,11 @@ public class EconomyMigrateSub implements Subcommand {
         // Initialize phaser with a single party: migration completion.
         Phaser phaser = new Phaser(1);
 
-        migrator.requestAccountIds().accept(migration.from().provide(), new PhasedSubscriber<Collection<UUID>>(phaser) {
+        migrator.requestAccountIds().accept(migration.from().provide(), new PhasedSubscriber<Collection<String>>(phaser) {
             @Override
-            public void phaseAccept(@NotNull Collection<UUID> uuids) {
-                for (UUID uuid : uuids) {
-                    migrateAccount(initiator, phaser, uuid, migration, migrator);
+            public void phaseAccept(@NotNull Collection<String> identifiers) {
+                for (String identifier : identifiers) {
+                    migrateAccount(initiator, phaser, identifier, migration, migrator);
                 }
             }
 
@@ -199,37 +199,37 @@ public class EconomyMigrateSub implements Subcommand {
     private <T extends Account> void migrateAccount(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Phaser phaser,
-            @NotNull UUID uuid,
+            @NotNull String identifier,
             @NotNull MigrationData migration,
             @NotNull AccountMigrator<T> migrator
     ) {
-        migration.debug(() -> migrator.getInitLog(uuid));
+        migration.debug(() -> migrator.getInitLog(identifier));
 
         // Set up logging for failure.
         // Because from and to accounts are requested in parallel, guard against duplicate failure logging.
         AtomicBoolean failed = new AtomicBoolean();
         BiConsumer<T, Throwable> failureConsumer = (account, throwable) -> {
             if (throwable != null && failed.compareAndSet(false, true)) {
-                migration.debug(() -> migrator.getErrorLog(uuid, throwable));
+                migration.debug(() -> migrator.getErrorLog(identifier, throwable));
             }
         };
 
         CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
         migrator.requestAccount().accept(migration.from().provide(),
-                uuid,
+                identifier,
                 new PhasedFutureSubscriber<>(phaser, fromAccountFuture)
         );
         fromAccountFuture.whenComplete(failureConsumer);
 
         CompletableFuture<T> toAccountFuture = new CompletableFuture<>();
-        migrator.checkAccountExistence().accept(migration.to().provide(), uuid, new PhasedSubscriber<Boolean>(phaser) {
+        migrator.checkAccountExistence().accept(migration.to().provide(), identifier, new PhasedSubscriber<Boolean>(phaser) {
             @Override
             public void phaseAccept(@NotNull Boolean hasAccount) {
                 PhasedFutureSubscriber<T> subscription = new PhasedFutureSubscriber<>(phaser, toAccountFuture);
                 if (hasAccount) {
-                    migrator.requestAccount().accept(migration.to().provide(), uuid, subscription);
+                    migrator.requestAccount().accept(migration.to().provide(), identifier, subscription);
                 } else {
-                    migrator.createAccount().accept(migration.to().provide(), uuid, subscription);
+                    migrator.createAccount().accept(migration.to().provide(), identifier, subscription);
                 }
             }
 
