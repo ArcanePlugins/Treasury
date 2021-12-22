@@ -125,9 +125,8 @@ public interface PlayerAccount extends Account {
             @NotNull EconomySubscriber<Boolean> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     ) {
-        // do nothing. economy api users and by users I mean plugins which are not the economy
-        // provider plugin shall not be able to modify anything on a player account except do
-        // transactions.
+        // do nothing. The default interaction is that a consumer plugin may not modify the
+        // permissions of a player account, although is left for the provider plugin to override this interaction.
     }
 
     /**

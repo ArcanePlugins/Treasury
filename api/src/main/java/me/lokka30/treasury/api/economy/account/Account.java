@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -349,14 +348,10 @@ public interface Account {
      *
      * @param player       the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
-     * @author lokka30, MrIvanPlays
+     * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
-        Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
-        hasPermission(player, subscription, AccountPermission.BALANCE); // permission doesn't matter
-    }
+    void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
      * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the specified {@link UUID}
