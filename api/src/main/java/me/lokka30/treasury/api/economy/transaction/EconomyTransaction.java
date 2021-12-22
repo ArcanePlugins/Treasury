@@ -34,7 +34,7 @@ public class EconomyTransaction {
 
     private final double transactionAmount;
     @NotNull
-    private final UUID currencyUUID;
+    private final String currencyID;
     @NotNull
     private final EconomyTransactionInitiator<?> initiator;
     @NotNull
@@ -46,7 +46,7 @@ public class EconomyTransaction {
     /**
      * Creates a new account transaction object.
      *
-     * @param currencyUUID           the currency's UUID the transaction was made into
+     * @param currencyID             the currency's {@link Currency#getIdentifier() identifier} the transaction was made into
      * @param initiator              the one who initiated the transaction
      * @param timestamp              the time at which this transaction occurred. specifying null would mean "now"
      * @param economyTransactionType the transaction type
@@ -55,14 +55,14 @@ public class EconomyTransaction {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public EconomyTransaction(
-            @NotNull UUID currencyUUID,
+            @NotNull String currencyID,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @Nullable Temporal timestamp,
             @NotNull EconomyTransactionType economyTransactionType,
             @Nullable String reason,
             final double transactionAmount
     ) {
-        this.currencyUUID = Objects.requireNonNull(currencyUUID, "currencyUUID");
+        this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
         this.initiator = Objects.requireNonNull(initiator, "initiator");
         this.economyTransactionType = Objects.requireNonNull(economyTransactionType, "transactionType");
         this.reason = Optional.ofNullable(reason);
@@ -93,17 +93,18 @@ public class EconomyTransaction {
     }
 
     /**
-     * Returns the {@link me.lokka30.treasury.api.economy.currency.Currency}'s {@link UUID} with which the transaction was made.
+     * Returns the {@link me.lokka30.treasury.api.economy.currency.Currency}'s {@link Currency#getIdentifier() identifier } with
+     * which the transaction was made.
      *
-     * <p>A {@code Currency} object is retrievable via the {@link me.lokka30.treasury.api.economy.currency.CurrencyManager} if
+     * <p>A {@code Currency} object is retrievable via {@link me.lokka30.treasury.api.economy.EconomyProvider#findCurrency(String)} if
      * you need such.
      *
-     * @return currency
+     * @return The currency {@link Currency#getIdentifier() identifier}.
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
-    public UUID getCurrencyUniqueId() {
-        return currencyUUID;
+    public String getCurrencyID() {
+        return currencyID;
     }
 
     /**
@@ -142,7 +143,7 @@ public class EconomyTransaction {
      */
     public static class Builder {
 
-        private UUID currencyUUID;
+        private String currencyID;
         private EconomyTransactionInitiator<?> initiator;
         private Temporal timestamp;
         private EconomyTransactionType economyTransactionType;
@@ -158,7 +159,7 @@ public class EconomyTransaction {
          * @param other the other builder to create a new builder from
          */
         public Builder(Builder other) {
-            this.currencyUUID = other.currencyUUID;
+            this.currencyID = other.currencyID;
             this.initiator = other.initiator;
             this.timestamp = other.timestamp;
             this.economyTransactionType = other.economyTransactionType;
@@ -182,18 +183,18 @@ public class EconomyTransaction {
          * @return this instance for chaining
          */
         public Builder withCurrency(@NotNull Currency currency) {
-            this.currencyUUID = Objects.requireNonNull(currency, "currency").getCurrencyId();
+            this.currencyID = Objects.requireNonNull(currency, "currency").getIdentifier();
             return this;
         }
 
         /**
-         * Specify the {@link UUID} {@code currencyId} of a {@link Currency} the transaction was made in.
+         * Specify the {@link Currency#getIdentifier() identifier} of a {@link Currency} the transaction was made in.
          *
          * @param currencyId currency id
          * @return this instance for chaining
          */
-        public Builder withCurrencyId(@NotNull UUID currencyId) {
-            this.currencyUUID = Objects.requireNonNull(currencyId, "currencyId");
+        public Builder withCurrencyId(@NotNull String currencyId) {
+            this.currencyID = Objects.requireNonNull(currencyId, "currencyId");
             return this;
         }
 
@@ -259,11 +260,11 @@ public class EconomyTransaction {
          * @return transaction object
          */
         public EconomyTransaction build() {
-            Objects.requireNonNull(currencyUUID, "currencyUUID");
+            Objects.requireNonNull(currencyID, "currencyID");
             Objects.requireNonNull(initiator, "initiator");
             Objects.requireNonNull(economyTransactionType, "transactionType");
             Objects.requireNonNull(transactionAmount, "transactionAmount");
-            return new EconomyTransaction(currencyUUID, initiator, timestamp, economyTransactionType, reason, transactionAmount);
+            return new EconomyTransaction(currencyID, initiator, timestamp, economyTransactionType, reason, transactionAmount);
         }
 
     }

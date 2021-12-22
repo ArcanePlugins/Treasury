@@ -5,10 +5,8 @@
 package me.lokka30.treasury.api.economy.currency;
 
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,218 +17,133 @@ import org.jetbrains.annotations.Nullable;
  * plugin can award players 'Tokens', but a job plugin
  * can award players 'Dollars'. Facilitates great customisability.
  *
- * @author lokka30, Geolykt, MrIvanPlays
+ * @author creatorfromhell
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public class Currency {
+public interface Currency {
 
     /**
-     * Creates a new currency with random {@link UUID} {@code currencyId} and a {@code startingBalance} handler of
-     * always returning 0.
+     * Gets the unique non-user friendly identifier for the currency.
      *
-     * @param currencyChar          a way to identify the currency via a character e.g. '$' for a dollar. can be null.
-     * @param roundedDigits         to which digit shall we round balances. can specify -1 for no rounding.
-     * @param conversionCoefficient coefficient at which this currency is going to be converted to other currencies.
-     * @param balanceFormatter      a function, giving a human-readable format of a balance.
-     * @param names                 acceptable names of the currency. primary name shall be the first specified.
-     * @return new currency instance
-     * @author MrIvanPlays
+     * @return A unique non-user friendly identifier for the currency.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    public static Currency of(
-            @Nullable Character currencyChar,
-            int roundedDigits,
-            double conversionCoefficient,
-            @NotNull BiFunction<Double, Locale, String> balanceFormatter,
-            @NotNull String @NotNull ... names
-    ) {
-        return new Currency(
-                null,
-                currencyChar,
-                roundedDigits,
-                conversionCoefficient,
-                null,
-                balanceFormatter,
-                names
-        );
-    }
+    String getIdentifier();
 
     /**
-     * Creates a new currency.
+     * Gets the currency's symbol. This could be something as simple as a dollar sign '$'.
      *
-     * @param currencyId            the currency id.
-     * @param currencyChar          a way to identify the currency via a character e.g. '$' for a dollar. can be null.
-     * @param roundedDigits         to which digit shall we round balances. can specify -1 for no rounding.
-     * @param conversionCoefficient coefficient at which this currency is going to be converted to other currencies.
-     * @param startingBalance       a function, giving a starting balance for the inputted player uuid, which can be null.
-     * @param balanceFormatter      a function, giving a human-readable format of a balance.
-     * @param names                 acceptable names of the currency. primary name shall be the first specified.
-     * @return new currency instance
-     * @author MrIvanPlays
+     * @return The currency's symbol.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    public static Currency of(
-            @NotNull UUID currencyId,
-            @Nullable Character currencyChar,
-            int roundedDigits,
-            double conversionCoefficient,
-            @Nullable Function<UUID, Double> startingBalance,
-            @NotNull BiFunction<Double, Locale, String> balanceFormatter,
-            @NotNull String @NotNull ... names
-    ) {
-        Objects.requireNonNull(currencyId, "currencyId");
-        return new Currency(
-                currencyId,
-                currencyChar,
-                roundedDigits,
-                conversionCoefficient,
-                startingBalance,
-                balanceFormatter,
-                names
-        );
-    }
-
-    private final UUID currencyId;
-    private final Character currencyChar;
-    private final String[] names;
-    private final int roundedDigits;
-    private double conversionCoefficient;
-    private final Function<UUID, Double> startingBalance;
-    private final BiFunction<Double, Locale, String> balanceFormatter;
-
-    private Currency(
-            @Nullable UUID currencyId,
-            @Nullable Character currencyChar,
-            int roundedDigits,
-            double conversionCoefficient,
-            @Nullable Function<UUID, Double> startingBalance,
-            @NotNull BiFunction<Double, Locale, String> balanceFormatter,
-            @NotNull String @NotNull ... names
-    ) {
-        if (names.length < 1) {
-            throw new IllegalArgumentException("Empty array specified for currency name.");
-        }
-        this.balanceFormatter = Objects.requireNonNull(balanceFormatter, "balanceFormatter");
-        this.names = Objects.requireNonNull(names, "names");
-        this.currencyId = currencyId == null ? UUID.randomUUID() : currencyId;
-        this.currencyChar = currencyChar;
-        this.roundedDigits = roundedDigits;
-        this.conversionCoefficient = conversionCoefficient;
-        this.startingBalance = startingBalance == null ? ($) -> 0d : startingBalance;
-    }
+    String getSymbol();
 
     /**
-     * Gets the {@link UUID} of the currency.
+     * Get's the currency's decimal character to be used for formatting purposes.
      *
-     * @return the UUID of the currency
-     * @author lokka30, MrIvanPlays
+     * @return The currency's decimal character.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    public UUID getCurrencyId() {
-        return currencyId;
-    }
+    char getDecimal();
 
     /**
-     * Gets the character which identifies this currency, which may be null.
+     * Gets the currency's user-friendly display name.
      *
-     * @return char identifier. could be null
-     * @author MrIvanPlays
+     * @return The currency's user-friendly display name.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @Nullable
-    public Character getCurrencyCharacter() {
-        return currencyChar;
-    }
+    String getDisplayName();
 
     /**
-     * Get the primary name of the currency, e.g. 'dollar' or 'token'.
+     * Gets the plural form of the currency's user-friendly display name.
      *
-     * @return the name of the currency
-     * @author lokka30, MrIvanPlays
+     * @return The plural form of the currency's user-friendly display name.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    public String getPrimaryCurrencyName() {
-        return names[0];
-    }
+    String getDisplayNamePlural();
 
     /**
-     * Get the acceptable currency names. Used for parsing.
+     * Gets the currency's default number of decimal digits when formatting this currency.
      *
-     * @return acceptable currency names
-     * @author MrIvanPlays
+     * @return The currency's default number of decimal digits when formatting this currency.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    public String @NotNull [] getCurrencyNames() {
-        return names;
-    }
+    int getPrecision();
 
     /**
-     * Some economy providers like to round balances' decimals.
-     * Economy providers that do not round any digits should specify `-1`.
+     * Checks if this currency is the default currency to use.
      *
-     * @return how many rounded digits the provider uses, or `-1` for none
-     * @author lokka30, MrIvanPlays
+     * @return True if this currency is the default currency. This method should use a global
+     *         context if multi-world support is not present, otherwise it should use the default world
+     *         for this check.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public int getRoundedDigits() {
-        return roundedDigits;
-    }
+    boolean isDefault();
 
     /**
-     * Get the conversion coefficient of this currency.
+     * Used to convert this {@link Currency} to another based on a specified amount of the other
+     * currency.
      *
-     * @return conversion coefficient
-     * @author MrIvanPlays
+     * @param currency     The currency we are converting to.
+     * @param amount       The amount to be converted to the specified {@link Currency}
+     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link Double} that
+     *                     represents the converted amount of the specified {@link Currency}.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public double getConversionCoefficient() {
-        return conversionCoefficient;
-    }
+    void to(@NotNull Currency currency, double amount, @NotNull EconomySubscriber<Double> subscription);
 
     /**
-     * Sets a new conversion coefficient of this currency.
+     * Used to get the double representation of an amount represented by a formatted string.
      *
-     * @param conversionCoefficient new conversion coefficient
-     * @author MrIvanPlays
+     * @param formatted    The formatted string to be converted to double form.
+     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link Double} that
+     *                     represents the deformatted amount of the formatted String.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    protected void setConversionCoefficient(double conversionCoefficient) {
-        this.conversionCoefficient = conversionCoefficient;
-    }
+    void parse(@NotNull String formatted, @NotNull EconomySubscriber<Double> subscription);
 
     /**
-     * Get the starting balance of the currency.
-     * The player {@link UUID} is nullable, it should be specified if the starting balance
-     * concerns a {@link me.lokka30.treasury.api.economy.account.PlayerAccount}.
+     * Gets the starting balance of a specific player account for this currency.
      *
-     * @param playerUUID a UUID of the player account created. For global scenarios, specify `null`.
-     * @return the starting balance of the currency concerning specified player's UUID.
-     * @author lokka30, Geolykt, MrIvanPlays
+     * @param playerID The UUID of the player we are getting the starting balance for.
+     * @return The starting balance of the player for this currency.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public double getStartingBalance(@Nullable UUID playerUUID) {
-        return startingBalance.apply(playerUUID);
-    }
+    double getStartingBalance(@Nullable UUID playerID);
 
     /**
-     * Gets a human-readable format of the balance.
-     * For example, '$1.50' or '1.50 dollars' or 'One dollar and fifty cents'.
+     * Used to translate an amount to a user readable format with the default precision.
      *
-     * @param amount to be formatted.
-     * @param locale of the formatted balance being requested.
-     * @return the human-readable format of the specified amount and locale.
-     * @author lokka30, MrIvanPlays
+     * @param amount The amount to format.
+     * @param locale The locale to use for formatting the balance. This value may be null if the
+     *               provider should provide the default Locale.
+     * @return The formatted text.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    public String formatBalance(double amount, @NotNull Locale locale) {
-        Objects.requireNonNull(locale, "locale");
-        return balanceFormatter.apply(amount, locale);
-    }
+    String format(double amount, @Nullable Locale locale);
+
+    /**
+     * Used to translate an amount to a user readable format with the specified amount of decimal places.
+     *
+     * @param amount    The amount to format.
+     * @param locale    The locale to use for formatting the balance. This value may be null if the
+     *                  *               provider should provide the default Locale.
+     * @param precision The amount of decimal digits to use when formatting.
+     * @return The formatted text.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    String format(double amount, @Nullable Locale locale, int precision);
 
 }

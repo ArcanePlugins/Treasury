@@ -285,13 +285,13 @@ public interface Account {
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Returns the {@link Currency Currencies} this {@code Account} holds balance for.
+     * Returns the {@link Currency#getIdentifier()  Currencies} this {@code Account} holds balance for.
      *
      * @param subscription the {@link EconomySubscriber} accepting the currencies
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
      * Request the {@link EconomyTransaction} history, limited by the {@code transactionCount} and the {@link Temporal}

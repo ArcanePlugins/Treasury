@@ -7,6 +7,8 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -16,8 +18,8 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
+import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +34,79 @@ class MigrationEconomy implements EconomyProvider {
     private final @NotNull EconomyException migrationException;
 
     MigrationEconomy() {
-        this.currency = Currency.of(null, 0, 1, (amt, $) -> String.valueOf(amt), "MigrationMoney");
-        this.migrationException = new EconomyException(EconomyFailureReason.MIGRATION, "Economy unavailable during migration process.");
+        this.currency = new Currency() {
+            @Override
+            public String getIdentifier() {
+                return "MigrationMoney";
+            }
+
+            @Override
+            public String getSymbol() {
+                return "$";
+            }
+
+            @Override
+            public char getDecimal() {
+                return 0;
+            }
+
+            @Override
+            public String getDisplayName() {
+                return "MigrationMoney";
+            }
+
+            @Override
+            public String getDisplayNamePlural() {
+                return "MigrationMonies";
+            }
+
+            @Override
+            public int getPrecision() {
+                return 0;
+            }
+
+            @Override
+            public boolean isDefault() {
+                return false;
+            }
+
+            @Override
+            public void to(
+                    @NotNull final Currency currency,
+                    final double amount,
+                    @NotNull final EconomySubscriber<Double> subscription
+            ) {
+                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Migration currency not convertable."));
+            }
+
+            @Override
+            public void parse(@NotNull final String formatted, @NotNull final EconomySubscriber<Double> subscription) {
+                subscription.fail(new EconomyException(
+                        EconomyFailureReason.MIGRATION,
+                        "Migration in progress, cannot deformat!"
+                ));
+            }
+
+            @Override
+            public double getStartingBalance(@Nullable final UUID playerID) {
+                return 0;
+            }
+
+            @Override
+            public String format(final double amount, @Nullable final Locale locale) {
+                return String.valueOf(amount);
+            }
+
+            @Override
+            public String format(final double amount, @Nullable final Locale locale, final int precision) {
+                return String.valueOf(amount);
+            }
+        };
+        this.migrationException = new EconomyException(
+                EconomyFailureReason.MIGRATION,
+                "Economy unavailable during migration process."
+        );
+
     }
 
     @Override
@@ -101,6 +174,21 @@ class MigrationEconomy implements EconomyProvider {
     @Override
     public @NotNull Currency getPrimaryCurrency() {
         return currency;
+    }
+
+    @Override
+    public Optional<Currency> findCurrency(@NotNull final String identifier) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Set<Currency> getCurrencies() {
+        return new HashSet<>();
+    }
+
+    @Override
+    public void registerCurrency(@NotNull final Currency currency, @NotNull final EconomySubscriber<Boolean> subscription) {
+        subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Cannot register currencies during migration!"));
     }
 
 }
