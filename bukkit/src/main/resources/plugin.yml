@@ -15,17 +15,17 @@
 name: "Treasury"
 version: "${project.version}"
 description: "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server."
-authors: ["lokka30", "Jikoo" , "MrIvanPlays"]
+authors: [ "lokka30", "Jikoo" , "MrIvanPlays" ]
 
 # Dependencies
-depend: []
-softdepend: []
+depend: [ ]
+softdepend: [ ]
 
 # General info for the plugin loader
 main: "me.lokka30.treasury.plugin.bukkit.TreasuryBukkit"
 api-version: '1.13' # This is Spigot's API version, NOT Treasury's API version.
 load: "STARTUP"
-loadbefore: []
+loadbefore: [ ]
 
 # All registered base commands are listed here
 commands:
