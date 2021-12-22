@@ -46,7 +46,7 @@ public interface EconomySubscriber<T> {
      *     public void setBalance(
      *             @NotNull CommandSender issuer,
      *             @NotNull UUID target,
-     *             double balance,
+     *             BigDecimal balance,
      *             @NotNull Currency currency) {
      *         EconomyProvider economy = // Obtain provider
      *

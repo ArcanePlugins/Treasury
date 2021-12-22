@@ -10,6 +10,7 @@ import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -65,12 +66,12 @@ public interface PlayerAccount extends Account {
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
-            @NotNull EconomySubscriber<Double> subscription
+            @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        final double newBalance = currency.getStartingBalance(null);
-        setBalance(newBalance, initiator, currency, new EconomySubscriber<Double>() {
+        final BigDecimal newBalance = currency.getStartingBalance(null);
+        setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override
-            public void succeed(@NotNull Double value) {
+            public void succeed(@NotNull BigDecimal value) {
                 subscription.succeed(newBalance);
             }
 

@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,14 +74,14 @@ class MigrationEconomy implements EconomyProvider {
             @Override
             public void to(
                     @NotNull final Currency currency,
-                    final double amount,
-                    @NotNull final EconomySubscriber<Double> subscription
+                    final BigDecimal amount,
+                    @NotNull final EconomySubscriber<BigDecimal> subscription
             ) {
                 subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Migration currency not convertable."));
             }
 
             @Override
-            public void parse(@NotNull final String formatted, @NotNull final EconomySubscriber<Double> subscription) {
+            public void parse(@NotNull final String formatted, @NotNull final EconomySubscriber<BigDecimal> subscription) {
                 subscription.fail(new EconomyException(
                         EconomyFailureReason.MIGRATION,
                         "Migration in progress, cannot deformat!"
@@ -88,18 +89,18 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public double getStartingBalance(@Nullable final UUID playerID) {
-                return 0;
+            public BigDecimal getStartingBalance(@Nullable final UUID playerID) {
+                return BigDecimal.ZERO;
             }
 
             @Override
-            public String format(final double amount, @Nullable final Locale locale) {
-                return String.valueOf(amount);
+            public String format(final BigDecimal amount, @Nullable final Locale locale) {
+                return amount.toPlainString();
             }
 
             @Override
-            public String format(final double amount, @Nullable final Locale locale, final int precision) {
-                return String.valueOf(amount);
+            public String format(final BigDecimal amount, @Nullable final Locale locale, final int precision) {
+                return amount.toPlainString();
             }
         };
         this.migrationException = new EconomyException(

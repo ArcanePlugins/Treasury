@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.currency;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
@@ -93,23 +94,23 @@ public interface Currency {
      *
      * @param currency     The currency we are converting to.
      * @param amount       The amount to be converted to the specified {@link Currency}
-     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link Double} that
+     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the converted amount of the specified {@link Currency}.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void to(@NotNull Currency currency, double amount, @NotNull EconomySubscriber<Double> subscription);
+    void to(@NotNull Currency currency, BigDecimal amount, @NotNull EconomySubscriber<BigDecimal> subscription);
 
     /**
-     * Used to get the double representation of an amount represented by a formatted string.
+     * Used to get the BigDecimal representation of an amount represented by a formatted string.
      *
-     * @param formatted    The formatted string to be converted to double form.
-     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link Double} that
+     * @param formatted    The formatted string to be converted to BigDecimal form.
+     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the deformatted amount of the formatted String.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void parse(@NotNull String formatted, @NotNull EconomySubscriber<Double> subscription);
+    void parse(@NotNull String formatted, @NotNull EconomySubscriber<BigDecimal> subscription);
 
     /**
      * Gets the starting balance of a specific player account for this currency.
@@ -119,7 +120,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    double getStartingBalance(@Nullable UUID playerID);
+    BigDecimal getStartingBalance(@Nullable UUID playerID);
 
     /**
      * Used to translate an amount to a user readable format with the default precision.
@@ -131,7 +132,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(double amount, @Nullable Locale locale);
+    String format(BigDecimal amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
@@ -144,6 +145,6 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(double amount, @Nullable Locale locale, int precision);
+    String format(BigDecimal amount, @Nullable Locale locale, int precision);
 
 }

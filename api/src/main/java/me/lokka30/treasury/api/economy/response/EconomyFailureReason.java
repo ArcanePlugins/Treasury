@@ -5,6 +5,7 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
+import java.math.BigDecimal;
 
 public enum EconomyFailureReason implements FailureReason {
 
@@ -208,8 +209,8 @@ public enum EconomyFailureReason implements FailureReason {
      * A constant representing failure due to a negative amount being
      * provided to a method that only accepts positive numbers.
      *
-     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     NEGATIVE_AMOUNT_SPECIFIED {
