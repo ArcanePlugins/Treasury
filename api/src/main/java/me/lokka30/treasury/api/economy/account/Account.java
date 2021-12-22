@@ -7,6 +7,8 @@ package me.lokka30.treasury.api.economy.account;
 import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -15,6 +17,7 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,20 +29,40 @@ import org.jetbrains.annotations.Nullable;
  * @author lokka30, Geolykt
  * @see EconomyProvider
  * @see PlayerAccount
- * @see BankAccount
+ * @see NonPlayerAccount
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface Account {
 
     /**
-     * Get the {@link UUID} of the {@code Account}.
+     * Gets the string-based unique identifier for this account.
      *
-     * @return uuid of the Account.
-     * @author lokka30
-     * @see UUID
+     * @return The String unique identifier for this account.
+     * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull UUID getUniqueId();
+    @NotNull String getIdentifier();
+
+    /**
+     * Returns the name of this {@link Account}, if specified. Empty optional otherwise.
+     *
+     * <p>A economy provider may choose not to provide a name.
+     *
+     * @return an optional fulfilled with a name or an empty optional
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Optional<String> getName();
+
+    /**
+     * Sets a new name for this {@link Account}, which may be null.
+     *
+     * @param name         the new name for this account.
+     * @param subscription the {@link EconomySubscriber} accepting whether name change was successful
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
      * Request the balance of the {@code Account}.
@@ -262,7 +285,7 @@ public interface Account {
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Returns the {@link Currency#identifier()}  Currencies} this {@code Account} holds balance for.
+     * Returns the {@link Currency#getIdentifier()  Currencies} this {@code Account} holds balance for.
      *
      * @param subscription the {@link EconomySubscriber} accepting the currencies
      * @author MrIvanPlays
@@ -310,4 +333,77 @@ public interface Account {
         retrieveTransactionHistory(transactionCount, Instant.EPOCH, Instant.now(), subscription);
     }
 
+    /**
+     * Request a listing of all member players of the account.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the members
+     * @author lokka30
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+
+    /**
+     * Check if the specified user is a member of the account.
+     *
+     * <p>A member is any player with at least one allowed permission.
+     *
+     * @param player     the {@link UUID} of the potential member
+     * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
+     * @author lokka30
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
+
+    /**
+     * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the specified {@link UUID}
+     * {@code player}. The state is specified via the {@link TriState} {@code permissionValue}. If
+     * {@link TriState#UNSPECIFIED} is specified for a {@code permissionValue}, then the specified {@code permissions} get
+     * unbound from the specified {@code player}. If {@link TriState#FALSE} is specified for a {@code permissionValue}, then
+     * the specified {@code permissions} become forbidden for the {@code player}, no matter whether they had them in the past.
+     *
+     * <p>Just a reminder: a member is any player with at least one allowed permission.
+     *
+     * @param player        the player id you want to modify the permissions of
+     * @param permissionValue the permission value you want to set
+     * @param subscription    the {@link EconomySubscriber} accepting whether the permissions were removed or not
+     * @param permissions     the permissions to modify
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void setPermission(
+            @NotNull UUID player,
+            @NotNull TriState permissionValue,
+            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull AccountPermission @NotNull ... permissions
+    );
+
+    /**
+     * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID} {@code player}
+     *
+     * @param player     the player {@link UUID} to get the permissions for
+     * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
+     * @author MrIvanPlays
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void retrievePermissions(
+            @NotNull UUID player, @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+    );
+
+    /**
+     * Checks whether given player has the given permission on this account.
+     *
+     * <p>Just a reminder: a member is any player with at least one allowed permission.
+     *
+     * @param player       the {@link UUID} of the player to check if they have the permission
+     * @param subscription the {@link EconomySubscriber} accepting whether the player has all the specified permissions
+     * @param permissions  the permissions to check
+     * @author MrNemo64, MrIvanPlays
+     * @see AccountPermission
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void hasPermission(
+            @NotNull UUID player,
+            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull AccountPermission @NotNull ... permissions
+    );
 }

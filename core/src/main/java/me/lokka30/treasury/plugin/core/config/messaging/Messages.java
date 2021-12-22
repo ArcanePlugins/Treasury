@@ -142,7 +142,7 @@ public class Messages {
             );
 
             @Comment("Placeholders: %prefix, %name%, %priority%, %api-version%")
-            @Comment("              %supports-bank-accounts%, %primary-currency%,")
+            @Comment("              %supports-nonplayer-accounts%, %primary-currency%,")
             @Comment("              %supports-transaction-events%")
             @Key("subcommands.economy.info.economy-provider-available")
             private List<String> infoEconomyProviderAvailable = Arrays.asList(
@@ -267,7 +267,7 @@ public class Messages {
                     "%prefix% Migration complete! Statistics:",
                     "&8 &m->&7 Took &b%time%ms&7.",
                     "&8 &m->&7 Processed &b%player-accounts%&7 player accounts.",
-                    "&8 &m->&7 Processed &b%bank-accounts%&7 bank accounts.",
+                    "&8 &m->&7 Processed &b%nonplayer-accounts%&7 non player accounts.",
                     "&8 &m->&7 Non-migrated currencies: &b%non-migrated-currencies%&7."
             );
 

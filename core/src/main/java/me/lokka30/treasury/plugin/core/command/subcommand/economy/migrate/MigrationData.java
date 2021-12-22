@@ -25,7 +25,7 @@ class MigrationData {
     private final @NotNull QuickTimer timer = new QuickTimer();
     private final @NotNull Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
     private final @NotNull AtomicInteger playerAccountsProcessed = new AtomicInteger();
-    private final @NotNull AtomicInteger bankAccountsProcessed = new AtomicInteger();
+    private final @NotNull AtomicInteger nonPlayerAccountsProcessed = new AtomicInteger();
 
     MigrationData(
             @NotNull ProviderEconomy from,
@@ -63,8 +63,8 @@ class MigrationData {
         return playerAccountsProcessed;
     }
 
-    @NotNull AtomicInteger bankAccountsProcessed() {
-        return bankAccountsProcessed;
+    @NotNull AtomicInteger nonPlayerAccountsProcessed() {
+        return nonPlayerAccountsProcessed;
     }
 
 }

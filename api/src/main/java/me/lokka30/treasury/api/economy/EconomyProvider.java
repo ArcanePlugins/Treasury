@@ -11,8 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import me.lokka30.treasury.api.economy.account.BankAccount;
-import me.lokka30.treasury.api.economy.account.BankAccountPermission;
+import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
+import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
@@ -108,85 +109,111 @@ public interface EconomyProvider {
     void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
-     * Request whether a {@link UUID} has an associated {@link BankAccount}.
+     * Request whether an identifier has an associated {@link Account}.
      *
-     * @param accountId    the {@code UUID} of the account
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     *
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
+     *
+     * @param identifier    the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void hasBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
+    void hasAccount(@NotNull String identifier, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Request an existing {@link BankAccount} for a {@link UUID}.
+     * Request an existing {@link Account} for a specific identifier.
      *
-     * @param accountId    the {@code UUID} of the account
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     *
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
+     *
+     * @param identifier    the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
+    void retrieveAccount(@NotNull String identifier, @NotNull EconomySubscriber<Account> subscription);
 
     /**
-     * Request the creation of a {@link BankAccount} for a {@link UUID}.
+     * Request the creation of a {@link Account} for a specific identifier.
      *
-     * @param accountId    the {@code UUID} of the account
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     *
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
+     *
+     * @param identifier    the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription) {
-        createBankAccount(null, accountId, subscription);
+    default void createAccount(@NotNull String identifier, @NotNull EconomySubscriber<Account> subscription) {
+        createAccount(null, identifier, subscription);
     }
 
     /**
-     * Request the creation of a {@link BankAccount} for a {@link UUID} {@code accountId} with {@link String} {@code name}.
+     * Request the creation of a {@link Account} for a specific identifier {@code identifier} with {@link String} {@code
+     * name}.
      *
-     * @param name         the name of the account
-     * @param accountId    the {@code UUID} of the account
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     *
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
+     * @param name         the human readable name of the account
+     * @param identifier    the unique identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrIvanPlays, Jikoo
      * @since {@link EconomyAPIVersion#v1_0 v1.0}
      */
-    void createBankAccount(@Nullable String name, @NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
+    void createAccount(@Nullable String name, @NotNull String identifier,
+                          @NotNull EconomySubscriber<Account> subscription);
 
     /**
-     * Request all {@link UUID UUIDs} with associated {@link BankAccount BankAccounts}.
+     * Request all identifiers with associated {@link Account Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request all {@link BankAccount bank accounts} the given player is a member of.
+     * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
+     *
+     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @author Jikoo
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
+
+    /**
+     * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrNemo64, MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default void retrieveAllBankAccountsPlayerIsMemberOf(
-            @NotNull UUID playerId, @NotNull EconomySubscriber<Collection<UUID>> subscription
+    default void retrieveAllAccountsPlayerIsMemberOf(
+            @NotNull UUID playerId, @NotNull EconomySubscriber<Collection<String>> subscription
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(subscription, "subscription");
-        EconomySubscriber.asFuture(this::retrieveBankAccountIds).exceptionally(throwable -> {
+        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
             if (throwable instanceof EconomyException) {
                 subscription.fail((EconomyException) throwable);
             } else {
                 subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE, throwable));
             }
             return new HashSet<>();
-        }).thenAccept(uuids -> {
-            if (uuids.isEmpty()) {
-                subscription.succeed(uuids);
+        }).thenAccept(identifiers -> {
+            if (identifiers.isEmpty()) {
+                subscription.succeed(identifiers);
                 return;
             }
-            Set<UUID> ret = new HashSet<>();
-            for (UUID uuid : uuids) {
-                EconomySubscriber.<BankAccount>asFuture(subscriber -> retrieveBankAccount(uuid, subscriber)).exceptionally(
+            Set<String> ret = new HashSet<>();
+            for (String identifier: identifiers) {
+                EconomySubscriber.<Account>asFuture(subscriber -> retrieveAccount(identifier, subscriber)).exceptionally(
                         throwable -> {
                             if (throwable instanceof EconomyException) {
                                 subscription.fail((EconomyException) throwable);
@@ -198,10 +225,14 @@ public interface EconomyProvider {
                     if (account == null) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    return EconomySubscriber.asFuture(subscriber -> account.isBankMember(playerId, subscriber));
+
+                    if(!(account instanceof NonPlayerAccount)) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount)account).isMember(playerId, subscriber));
                 }).thenAccept(val -> {
                     if (val) {
-                        ret.add(uuid);
+                        ret.add(identifier);
                     }
                 });
 
@@ -211,38 +242,38 @@ public interface EconomyProvider {
     }
 
     /**
-     * Request all the {@link BankAccount bank accounts} where the given player has the given permissions.
+     * Request all the {@link NonPlayerAccount non-player accounts} where the given player has the given permissions.
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @param permissions  the permissions that the given player has to have on the {@link BankAccount account}
+     * @param permissions  the permissions that the given player has to have on the {@link NonPlayerAccount account}
      * @author MrNemo64, MrIvanPlays
-     * @see #retrieveAllBankAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
+     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default void retrieveAllBankAccountsPlayerHasPermission(
+    default void retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId,
-            @NotNull EconomySubscriber<Collection<UUID>> subscription,
-            @NotNull BankAccountPermission @NotNull ... permissions
+            @NotNull EconomySubscriber<Collection<String>> subscription,
+            @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(subscription, "subscription");
         Objects.requireNonNull(permissions, "permissions");
-        EconomySubscriber.asFuture(this::retrieveBankAccountIds).exceptionally(throwable -> {
+        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
             if (throwable instanceof EconomyException) {
                 subscription.fail((EconomyException) throwable);
             } else {
                 subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE, throwable));
             }
             return new HashSet<>();
-        }).thenAccept(uuids -> {
-            if (uuids.isEmpty()) {
-                subscription.succeed(uuids);
+        }).thenAccept(identifiers -> {
+            if (identifiers.isEmpty()) {
+                subscription.succeed(identifiers);
                 return;
             }
-            Set<UUID> ret = new HashSet<>();
-            for (UUID uuid : uuids) {
-                EconomySubscriber.<BankAccount>asFuture(subscriber -> retrieveBankAccount(uuid, subscriber)).exceptionally(
+            Set<String> ret = new HashSet<>();
+            for (String identifier : identifiers) {
+                EconomySubscriber.<Account>asFuture(subscriber -> retrieveAccount(identifier, subscriber)).exceptionally(
                         throwable -> {
                             if (throwable instanceof EconomyException) {
                                 subscription.fail((EconomyException) throwable);
@@ -254,10 +285,15 @@ public interface EconomyProvider {
                     if (account == null) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    return EconomySubscriber.asFuture(subscriber -> account.hasPermission(playerId, subscriber, permissions));
+
+                    if (!(account instanceof NonPlayerAccount)) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount)account).hasPermission(playerId, subscriber,
+                            permissions));
                 }).thenAccept(val -> {
                     if (val) {
-                        ret.add(uuid);
+                        ret.add(identifier);
                     }
                 });
             }

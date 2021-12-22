@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.BankAccount;
+import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
@@ -144,24 +144,29 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void hasBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription) {
+    public void hasAccount(@NotNull String accountId, @NotNull EconomySubscriber<Boolean> subscription) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void retrieveBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription) {
+    public void retrieveAccount(@NotNull String accountId, @NotNull EconomySubscriber<Account> subscription) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void createBankAccount(
-            @Nullable String name, @NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription
+    public void createAccount(
+            @Nullable String name, @NotNull String accountId, @NotNull EconomySubscriber<Account> subscription
     ) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+    public void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription) {
+        subscription.fail(migrationException);
+    }
+
+    @Override
+    public void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription) {
         subscription.fail(migrationException);
     }
 

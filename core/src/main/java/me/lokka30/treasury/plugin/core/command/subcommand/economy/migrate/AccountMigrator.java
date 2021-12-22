@@ -26,17 +26,17 @@ interface AccountMigrator<T extends Account> {
 
     @NotNull String getBulkFailLog(@NotNull Throwable throwable);
 
-    @NotNull String getInitLog(@NotNull UUID uuid);
+    @NotNull String getInitLog(@NotNull String identifier);
 
-    @NotNull String getErrorLog(@NotNull UUID uuid, @NotNull Throwable throwable);
+    @NotNull String getErrorLog(@NotNull String identifier, @NotNull Throwable throwable);
 
-    @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<UUID>>> requestAccountIds();
+    @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<String>>> requestAccountIds();
 
-    @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<T>> requestAccount();
+    @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<T>> requestAccount();
 
-    @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<Boolean>> checkAccountExistence();
+    @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<Boolean>> checkAccountExistence();
 
-    @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull UUID, @NotNull EconomySubscriber<T>> createAccount();
+    @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<T>> createAccount();
 
     default void migrate(
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -55,7 +55,7 @@ interface AccountMigrator<T extends Account> {
 
             @Override
             public void phaseFail(@NotNull final EconomyException exception) {
-                migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
+                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                 fromCurrencies.completeExceptionally(exception);
             }
         });
@@ -90,7 +90,7 @@ interface AccountMigrator<T extends Account> {
 
                     @Override
                     public void phaseFail(@NotNull final EconomyException exception) {
-                        migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
+                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                         balanceFuture.completeExceptionally(exception);
                     }
                 });
@@ -101,14 +101,14 @@ interface AccountMigrator<T extends Account> {
                     }
 
                     EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser, exception -> {
-                        migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception));
+                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
                         fromAccount.setBalance(balance, initiator, currency, new FailureConsumer<>(phaser, exception1 -> {
-                            migration.debug(() -> getErrorLog(fromAccount.getUniqueId(), exception1));
+                            migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception1));
                             migration.debug(() -> String.format(
                                     "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
                                     balance,
                                     currency.getDisplayName(),
-                                    fromAccount.getUniqueId()
+                                    fromAccount.getIdentifier()
                             ));
                             if (!migration.nonMigratedCurrencies().contains(currency.getIdentifier())) {
                                 migration.nonMigratedCurrencies().add(currency.getIdentifier());
