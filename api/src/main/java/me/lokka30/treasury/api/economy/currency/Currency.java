@@ -3,6 +3,8 @@ package me.lokka30.treasury.api.economy.currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface Currency {
@@ -122,20 +124,24 @@ public interface Currency {
      * Used to translate an amount to a user readable format with the default precision.
      *
      * @param amount The amount to format.
+     * @param locale The locale to use for formatting the balance. This value may be null if the
+     *               provider should provide the default Locale.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(double amount);
+    String format(double amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
      *
      * @param amount The amount to format.
+     * @param locale The locale to use for formatting the balance. This value may be null if the
+     *      *               provider should provide the default Locale.
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(double amount, int precision);
+    String format(double amount, @Nullable Locale locale, int precision);
 }

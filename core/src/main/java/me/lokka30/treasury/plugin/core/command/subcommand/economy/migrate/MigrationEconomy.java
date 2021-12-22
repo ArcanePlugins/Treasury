@@ -7,6 +7,7 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -94,12 +95,12 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String format(final double amount) {
+            public String format(final double amount, @Nullable final Locale locale) {
                 return String.valueOf(amount);
             }
 
             @Override
-            public String format(final double amount, final int precision) {
+            public String format(final double amount, @Nullable final Locale locale, final int precision) {
                 return String.valueOf(amount);
             }
         };
