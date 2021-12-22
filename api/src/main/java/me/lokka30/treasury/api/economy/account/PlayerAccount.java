@@ -5,12 +5,18 @@
 package me.lokka30.treasury.api.economy.account;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,6 +32,18 @@ import org.jetbrains.annotations.NotNull;
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface PlayerAccount extends Account {
+
+    /**
+     * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
+     * {@link TriState#TRUE}
+     */
+    Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(new ConcurrentHashMap<AccountPermission, TriState>() {
+        {
+            for (AccountPermission permission : AccountPermission.values()) {
+                put(permission, TriState.TRUE);
+            }
+        }
+    });
 
     /**
      * Gets the string-based unique identifier for this account.
@@ -48,6 +66,79 @@ public interface PlayerAccount extends Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull UUID getUniqueId();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+        if (getUniqueId().equals(player)) {
+            subscription.succeed(true);
+        } else {
+            subscription.succeed(false);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+        Objects.requireNonNull(subscription, "subscription");
+        subscription.succeed(Collections.singletonList(getUniqueId()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void hasPermission(
+            @NotNull UUID player,
+            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull AccountPermission @NotNull ... permissions
+    ) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+        if (getUniqueId().equals(player)) {
+            subscription.succeed(true);
+        } else {
+            subscription.succeed(false);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void retrievePermissions(
+            @NotNull UUID player,
+            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+    ) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+        if (getUniqueId().equals(player)) {
+            subscription.succeed(ALL_PERMISSIONS_MAP);
+        } else {
+            subscription.succeed(Collections.emptyMap());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void setPermission(
+            @NotNull UUID player,
+            @NotNull TriState permissionValue,
+            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull AccountPermission @NotNull... permissions
+    ) {
+        // do nothing. economy api users and by users I mean plugins which are not the economy
+        // provider plugin shall not be able to modify anything on a player account except do
+        // transactions.
+    }
 
     /**
      * Resets the player's balance. Unlike resetting balances of non-player
