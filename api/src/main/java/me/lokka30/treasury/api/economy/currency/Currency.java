@@ -1,12 +1,25 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ */
+
 package me.lokka30.treasury.api.economy.currency;
 
+import java.util.Locale;
+import java.util.UUID;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
 
+/**
+ * One of Treasury's core features is multi-currency support.
+ * This allows economy providers and plugins to use different
+ * currencies for different transactions, e.g. a daily reward
+ * plugin can award players 'Tokens', but a job plugin
+ * can award players 'Dollars'. Facilitates great customisability.
+ *
+ * @author creatorfromhell
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ */
 public interface Currency {
 
     /**
@@ -64,34 +77,22 @@ public interface Currency {
     int getPrecision();
 
     /**
-     * Checks if this currency is the default currency to use in a global context.
+     * Checks if this currency is the default currency to use.
      *
      * @return True if this currency is the default currency. This method should use a global
-     * context if multi-world support is not present, otherwise it should use the default world
-     * for this check.
+     *         context if multi-world support is not present, otherwise it should use the default world
+     *         for this check.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     boolean isDefault();
 
     /**
-     * Checks if this currency is the default currency in a specific world.
-     *
-     * @param world The name of the world to use for the check.
-     * @return True if this currency is the default currency for the specified world. This
-     * method should default to a global context if multi-world support is not present. If the world
-     * does not exist, this should default to the default world.
-     * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    boolean isDefault(@NotNull String world);
-
-    /**
      * Used to convert this {@link Currency} to another based on a specified amount of the other
      * currency.
      *
-     * @param currency The currency we are converting to.
-     * @param amount The amount to be converted to the specified {@link Currency}
+     * @param currency     The currency we are converting to.
+     * @param amount       The amount to be converted to the specified {@link Currency}
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link Double} that
      *                     represents the converted amount of the specified {@link Currency}.
      * @author creatorfromhell
@@ -102,7 +103,7 @@ public interface Currency {
     /**
      * Used to get the double representation of an amount represented by a formatted string.
      *
-     * @param formatted The formatted string to be converted to double form.
+     * @param formatted    The formatted string to be converted to double form.
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link Double} that
      *                     represents the deformatted amount of the formatted String.
      * @author creatorfromhell
@@ -135,13 +136,14 @@ public interface Currency {
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
      *
-     * @param amount The amount to format.
-     * @param locale The locale to use for formatting the balance. This value may be null if the
-     *      *               provider should provide the default Locale.
+     * @param amount    The amount to format.
+     * @param locale    The locale to use for formatting the balance. This value may be null if the
+     *                  *               provider should provide the default Locale.
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     String format(double amount, @Nullable Locale locale, int precision);
+
 }
