@@ -21,7 +21,9 @@ import org.jetbrains.annotations.Nullable;
 public final class Message {
 
     @NotNull
-    public static Message of(@NotNull MessageKey messageKey, @Nullable MessagePlaceholder... placeholders) {
+    public static Message of(
+            @NotNull MessageKey messageKey, @Nullable MessagePlaceholder... placeholders
+    ) {
         return new Message(messageKey, placeholders);
     }
 
@@ -52,7 +54,11 @@ public final class Message {
         if (placeholders == null) {
             return message.replaceAll(
                     "%prefix%",
-                    TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
+                    TreasuryPlugin
+                            .getInstance()
+                            .configAdapter()
+                            .getMessages()
+                            .getSingleMessage(MessageKey.PREFIX)
             );
         }
         boolean prefixHandled = false;
@@ -72,7 +78,11 @@ public final class Message {
         if (!prefixHandled) {
             message = message.replaceAll(
                     "%prefix%",
-                    TreasuryPlugin.getInstance().configAdapter().getMessages().getSingleMessage(MessageKey.PREFIX)
+                    TreasuryPlugin
+                            .getInstance()
+                            .configAdapter()
+                            .getMessages()
+                            .getSingleMessage(MessageKey.PREFIX)
             );
         }
         return message;

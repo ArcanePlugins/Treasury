@@ -35,7 +35,7 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 
     @Override
     public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<String>>> requestAccountIds() {
-        return (provider, subscriber)->{
+        return (provider, subscriber) -> {
 
             provider.retrievePlayerAccountIds(new EconomySubscriber<Collection<UUID>>() {
                 @Override
@@ -57,26 +57,32 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 
     @Override
     public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<PlayerAccount>> requestAccount() {
-        return (provider, identifier, subscription)->{
+        return (provider, identifier, subscription) -> {
 
             try {
                 UUID uuid = UUID.fromString(identifier);
                 provider.retrievePlayerAccount(uuid, subscription);
-            } catch(Exception ignore) {
-                subscription.fail(new EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
+            } catch (Exception ignore) {
+                subscription.fail(new EconomyException(
+                        EconomyFailureReason.ACCOUNT_NOT_FOUND,
+                        "Invalid UUID for player account."
+                ));
             }
         };
     }
 
     @Override
     public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<Boolean>> checkAccountExistence() {
-        return (provider, identifier, subscription)->{
+        return (provider, identifier, subscription) -> {
 
             try {
                 UUID uuid = UUID.fromString(identifier);
                 provider.hasPlayerAccount(uuid, subscription);
-            } catch(Exception ignore) {
-                subscription.fail(new EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
+            } catch (Exception ignore) {
+                subscription.fail(new EconomyException(
+                        EconomyFailureReason.ACCOUNT_NOT_FOUND,
+                        "Invalid UUID for player account."
+                ));
             }
 
             provider.hasAccount(identifier, subscription);
@@ -85,13 +91,16 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 
     @Override
     public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<PlayerAccount>> createAccount() {
-        return (provider, identifier, subscription)->{
+        return (provider, identifier, subscription) -> {
 
             try {
                 UUID uuid = UUID.fromString(identifier);
                 provider.createPlayerAccount(uuid, subscription);
-            } catch(Exception ignore) {
-                subscription.fail(new EconomyException(EconomyFailureReason.ACCOUNT_NOT_FOUND, "Invalid UUID for player account."));
+            } catch (Exception ignore) {
+                subscription.fail(new EconomyException(
+                        EconomyFailureReason.ACCOUNT_NOT_FOUND,
+                        "Invalid UUID for player account."
+                ));
             }
         };
     }

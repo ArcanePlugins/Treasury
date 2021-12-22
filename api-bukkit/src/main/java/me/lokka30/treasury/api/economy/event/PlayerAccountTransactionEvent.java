@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PlayerAccountTransactionEvent extends AccountTransactionEvent {
 
-    public PlayerAccountTransactionEvent(@NotNull EconomyTransaction economyTransaction, @NotNull PlayerAccount account) {
+    public PlayerAccountTransactionEvent(
+            @NotNull EconomyTransaction economyTransaction, @NotNull PlayerAccount account
+    ) {
         super(economyTransaction, account);
     }
 

@@ -30,8 +30,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 
-public class BukkitTreasuryPlugin extends TreasuryPlugin
-        implements Logger, Scheduler, ConfigAdapter {
+public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Scheduler,
+        ConfigAdapter {
 
     private final TreasuryBukkit plugin;
     private final PluginVersion pluginVersion;
@@ -57,11 +57,15 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     @Override
     public @NotNull List<ProviderEconomy> allProviders() {
-        Collection<RegisteredServiceProvider<EconomyProvider>> providers =
-                Bukkit.getServicesManager().getRegistrations(EconomyProvider.class);
+        Collection<RegisteredServiceProvider<EconomyProvider>> providers = Bukkit
+                .getServicesManager()
+                .getRegistrations(EconomyProvider.class);
         List<ProviderEconomy> ret = new ArrayList<>();
         for (RegisteredServiceProvider<EconomyProvider> rsp : providers) {
-            ret.add(new ProviderEconomyImpl(rsp.getPriority(), new RegistrarInfoImpl(rsp.getPlugin()), rsp.getProvider()));
+            ret.add(new ProviderEconomyImpl(rsp.getPriority(),
+                    new RegistrarInfoImpl(rsp.getPlugin()),
+                    rsp.getProvider()
+            ));
         }
         if (!ret.isEmpty()) {
             ret.sort(((Comparator<ProviderEconomy>) (o1, o2) -> {
@@ -81,7 +85,11 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
 
     @Override
     public void registerProvider(@NotNull EconomyProvider newProvider) {
-        Bukkit.getServicesManager().register(EconomyProvider.class, newProvider, plugin, ServicePriority.Highest);
+        Bukkit.getServicesManager().register(EconomyProvider.class,
+                newProvider,
+                plugin,
+                ServicePriority.Highest
+        );
     }
 
     @Override
@@ -135,15 +143,16 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
         if (cachedPluginList != null) {
             return cachedPluginList;
         }
-        cachedPluginList = Arrays.stream(
-                Bukkit.getPluginManager().getPlugins()
-        ).filter(pl -> {
-            List<RegisteredServiceProvider<?>> registrations = Bukkit.getServicesManager().getRegistrations(pl);
+        cachedPluginList = Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(pl -> {
+            List<RegisteredServiceProvider<?>> registrations = Bukkit
+                    .getServicesManager()
+                    .getRegistrations(pl);
             if (registrations.isEmpty()) {
                 return false;
             }
             if (registrations.size() == 1) {
-                return registrations.get(0).getProvider().getClass().isAssignableFrom(EconomyProvider.class);
+                return registrations.get(0).getProvider().getClass().isAssignableFrom(
+                        EconomyProvider.class);
             }
             boolean hasRegistration = false;
             for (RegisteredServiceProvider<?> provider : registrations) {
@@ -168,9 +177,10 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin
     }
 
     public String colorize(@NotNull String message) {
-        return BukkitVendor.isSpigot()
-                ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', message)
-                : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
+        return BukkitVendor.isSpigot() ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes(
+                '&',
+                message
+        ) : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
     }
 
     @Override

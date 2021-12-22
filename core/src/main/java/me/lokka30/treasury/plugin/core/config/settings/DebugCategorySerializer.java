@@ -34,10 +34,10 @@ public class DebugCategorySerializer implements FieldTypeSerializer<List<DebugCa
             try {
                 ret.add(DebugCategory.valueOf(val.toUpperCase(Locale.ROOT)));
             } catch (IllegalArgumentException e) {
-                TreasuryPlugin.getInstance().logger().error(
-                        "Invalid DebugCategory '&b" + val + "&7' specified in &bsettings.yml&7 at location "
-                                + "'&bdebug.enabled-categories.list&7'! Please fix this ASAP."
-                );
+                TreasuryPlugin
+                        .getInstance()
+                        .logger()
+                        .error("Invalid DebugCategory '&b" + val + "&7' specified in &bsettings.yml&7 at location " + "'&bdebug.enabled-categories.list&7'! Please fix this ASAP.");
             }
         }
         return ret;

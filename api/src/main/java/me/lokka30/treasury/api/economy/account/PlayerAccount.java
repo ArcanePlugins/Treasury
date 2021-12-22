@@ -4,14 +4,14 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import java.math.BigDecimal;
+import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
-import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * A PlayerAccount is an Account owned by a Player.
@@ -21,7 +21,7 @@ import java.util.UUID;
  * when trying to access a player account which may not exist
  * yet for a player.
  *
- * @author lokka30, Geolykt
+ * @author lokka30, Geolykt, creatorfromhell
  * @see Account
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */

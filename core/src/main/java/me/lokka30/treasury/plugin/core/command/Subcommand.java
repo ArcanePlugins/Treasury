@@ -33,7 +33,9 @@ public interface Subcommand {
      * @since v1.0.0
      */
     @Nullable
-    default List<String> complete(@NotNull CommandSource source, @NotNull String label, @NotNull String[] args) {
+    default List<String> complete(
+            @NotNull CommandSource source, @NotNull String label, @NotNull String[] args
+    ) {
         return Collections.emptyList();
     }
 

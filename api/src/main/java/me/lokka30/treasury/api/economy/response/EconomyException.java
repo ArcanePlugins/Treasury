@@ -22,7 +22,7 @@ public class EconomyException extends Exception {
     /**
      * Construct a new {@code EconomyException}.
      *
-     * @param reason  the {@link FailureReason} representing the reason for failure
+     * @param reason the {@link FailureReason} representing the reason for failure
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     public EconomyException(@NotNull FailureReason reason) {
@@ -63,7 +63,9 @@ public class EconomyException extends Exception {
      * @param cause   the {@link Throwable} representing or causing the problem
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public EconomyException(@NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause) {
+    public EconomyException(
+            @NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause
+    ) {
         super(message, cause, true, false);
         this.reason = reason;
     }

@@ -22,7 +22,8 @@ public class DebugHandler {
      * @return true if enabled, false otherwise
      */
     public static boolean isCategoryEnabled(@NotNull final DebugCategory debugCategory) {
-        return TreasuryPlugin.getInstance()
+        return TreasuryPlugin
+                .getInstance()
                 .configAdapter()
                 .getSettings()
                 .getDebugCategories()
@@ -36,7 +37,10 @@ public class DebugHandler {
      * @param msg           the message you want to log
      */
     public static void log(@NotNull final DebugCategory debugCategory, @NotNull final String msg) {
-        TreasuryPlugin.getInstance().logger().info("&8[&3DEBUG &8| &3" + debugCategory + "&8]: &7" + msg);
+        TreasuryPlugin
+                .getInstance()
+                .logger()
+                .info("&8[&3DEBUG &8| &3" + debugCategory + "&8]: &7" + msg);
     }
 
 }

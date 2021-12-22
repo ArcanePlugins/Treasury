@@ -99,7 +99,11 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void to(@NotNull Currency currency, BigDecimal amount, @NotNull EconomySubscriber<BigDecimal> subscription);
+    void to(
+            @NotNull Currency currency,
+            BigDecimal amount,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    );
 
     /**
      * Used to get the BigDecimal representation of an amount represented by a formatted string.

@@ -29,8 +29,7 @@ public class PaperBrigadierEnhancement implements Listener {
 
     //@formatter:off
     private LiteralCommandNode<BukkitBrigadierCommandSource> buildLiteral(
-            String label,
-            BukkitBrigadierCommand<BukkitBrigadierCommandSource> command
+            String label, BukkitBrigadierCommand<BukkitBrigadierCommandSource> command
     ) {
         return LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal(label)
                 .requires(source -> source.getBukkitSender().hasPermission("treasury.command.treasury"))
@@ -105,7 +104,9 @@ public class PaperBrigadierEnhancement implements Listener {
         return (context, builder) -> {
             String lastArg = builder.getRemainingLowerCase();
 
-            for (String pluginRegistering : TreasuryPlugin.getInstance().pluginsListRegisteringProvider()) {
+            for (String pluginRegistering : TreasuryPlugin
+                    .getInstance()
+                    .pluginsListRegisteringProvider()) {
                 if (pluginRegistering.toLowerCase(Locale.ROOT).startsWith(lastArg)) {
                     builder.suggest(pluginRegistering);
                 }

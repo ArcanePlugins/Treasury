@@ -28,9 +28,7 @@ class MigrationData {
     private final @NotNull AtomicInteger nonPlayerAccountsProcessed = new AtomicInteger();
 
     MigrationData(
-            @NotNull ProviderEconomy from,
-            @NotNull ProviderEconomy to,
-            boolean debugEnabled
+            @NotNull ProviderEconomy from, @NotNull ProviderEconomy to, boolean debugEnabled
     ) {
         this.from = from;
         this.to = to;

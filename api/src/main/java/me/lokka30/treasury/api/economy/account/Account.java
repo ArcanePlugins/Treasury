@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * something bound by a UUID. For example, a PlayerAccount is bound to
  * a Player on a server by their UUID.
  *
- * @author lokka30, Geolykt
+ * @author lokka30, Geolykt, creatorfromhell
  * @see EconomyProvider
  * @see PlayerAccount
  * @see NonPlayerAccount
@@ -74,12 +74,12 @@ public interface Account {
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveBalance(@NotNull Currency currency, @NotNull EconomySubscriber<BigDecimal> subscription);
+    void retrieveBalance(
+            @NotNull Currency currency, @NotNull EconomySubscriber<BigDecimal> subscription
+    );
 
     /**
      * Set the balance of the {@code Account}.
-     *
-     * <p>Specified amounts must be AT OR ABOVE zero.
      *
      * @param amount       the amount the new balance will be
      * @param initiator    the one who initiated the transaction
@@ -98,8 +98,6 @@ public interface Account {
 
     /**
      * Withdraw an amount from the {@code Account} balance.
-     *
-     * <p>Specified amounts must be ABOVE zero.
      *
      * @param amount       the amount the balance will be reduced by
      * @param initiator    the one who initiated the transaction
@@ -121,8 +119,6 @@ public interface Account {
 
     /**
      * Withdraw an amount from the {@code Account} balance.
-     *
-     * <p>Specified amounts must be ABOVE zero.
      *
      * @param amount       the amount the balance will be reduced by
      * @param initiator    the one who initiated the transaction
@@ -154,8 +150,6 @@ public interface Account {
     /**
      * Deposit an amount into the {@code Account} balance.
      *
-     * <p>Specified amounts must be ABOVE zero.
-     *
      * @param amount       the amount the balance will be increased by
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
@@ -176,8 +170,6 @@ public interface Account {
 
     /**
      * Deposit an amount into the {@code Account} balance.
-     *
-     * <p>Specified amounts must be ABOVE zero.
      *
      * @param amount       the amount the balance will be increased by
      * @param initiator    the one who initiated the transaction
@@ -215,7 +207,9 @@ public interface Account {
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void doTransaction(@NotNull EconomyTransaction economyTransaction, EconomySubscriber<BigDecimal> subscription);
+    void doTransaction(
+            @NotNull EconomyTransaction economyTransaction, EconomySubscriber<BigDecimal> subscription
+    );
 
     /**
      * Reset the {@code Account} balance to its starting amount.
@@ -251,8 +245,6 @@ public interface Account {
     /**
      * Check if the {@code Account} can afford a withdrawal of a certain amount.
      *
-     * <p>Specified amounts must be ABOVE zero.
-     *
      * @param amount       the amount the balance must meet or exceed
      * @param currency     the {@link Currency} of the balance being queried
      * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
@@ -260,7 +252,11 @@ public interface Account {
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    default void canAfford(BigDecimal amount, @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription) {
+    default void canAfford(
+            BigDecimal amount,
+            @NotNull Currency currency,
+            @NotNull EconomySubscriber<Boolean> subscription
+    ) {
         retrieveBalance(currency, new EconomySubscriber<BigDecimal>() {
             @Override
             public void succeed(@NotNull BigDecimal value) {
@@ -329,7 +325,8 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void retrieveTransactionHistory(
-            int transactionCount, @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
+            int transactionCount,
+            @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
     ) {
         retrieveTransactionHistory(transactionCount, Instant.EPOCH, Instant.now(), subscription);
     }
@@ -348,7 +345,7 @@ public interface Account {
      *
      * <p>A member is any player with at least one allowed permission.
      *
-     * @param player     the {@link UUID} of the potential member
+     * @param player       the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -364,7 +361,7 @@ public interface Account {
      *
      * <p>Just a reminder: a member is any player with at least one allowed permission.
      *
-     * @param player        the player id you want to modify the permissions of
+     * @param player          the player id you want to modify the permissions of
      * @param permissionValue the permission value you want to set
      * @param subscription    the {@link EconomySubscriber} accepting whether the permissions were removed or not
      * @param permissions     the permissions to modify
@@ -381,13 +378,14 @@ public interface Account {
     /**
      * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID} {@code player}
      *
-     * @param player     the player {@link UUID} to get the permissions for
+     * @param player       the player {@link UUID} to get the permissions for
      * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void retrievePermissions(
-            @NotNull UUID player, @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+            @NotNull UUID player,
+            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
     );
 
     /**
@@ -407,4 +405,5 @@ public interface Account {
             @NotNull EconomySubscriber<Boolean> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
+
 }

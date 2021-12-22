@@ -1,8 +1,7 @@
 package me.lokka30.treasury.api.economy.response;
 
-import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.common.response.FailureReason;
+import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
@@ -12,13 +11,10 @@ public enum EconomyFailureReason implements FailureReason {
     /**
      * Use this constant if the method can't be run in any capacity
      * as the economy provider does not provide support for the method.
-     * It is paramount that plugins ensure that economy providers support
-     * certain methods (e.g. bank accounts) before attempting to access them.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     FEATURE_NOT_SUPPORTED {
-
         /**
          * {@inheritDoc}
          */
@@ -35,7 +31,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     MIGRATION {
-
         /**
          * {@inheritDoc}
          */
@@ -51,7 +46,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     REQUEST_CANCELLED {
-
         /**
          * {@inheritDoc}
          */
@@ -70,31 +64,12 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     ACCOUNT_NOT_FOUND {
-
         /**
          * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
             return "The account you attempted to perform that action on was unable to be located.";
-        }
-    },
-
-    /**
-     * A constant representing failure due to
-     * {@link me.lokka30.treasury.api.economy.account.Account Account}
-     * deletion being unsupported.
-     *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    ACCOUNT_DELETION_NOT_SUPPORTED {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "Account deletion is not supported.";
         }
     },
 
@@ -106,83 +81,12 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     ACCOUNT_ALREADY_EXISTS {
-
         /**
          * {@inheritDoc}
          */
         @Override
         public @NotNull String getDescription() {
             return "An account with that identifier already exists!";
-        }
-    },
-
-    /* Non-Player Accounts */
-
-    /**
-     * A constant representing failure due to a user already being a member of a
-     * {@link me.lokka30.treasury.api.economy.account.NonPlayerAccount Non-player account}.
-     *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    ALREADY_MEMBER_OF_ACCOUNT {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "That feature is currently not supported by this Economy Provider.";
-        }
-    },
-
-    /**
-     * A constant representing failure due to a user already being an owner of a
-     * {@link me.lokka30.treasury.api.economy.account.NonPlayerAccount Non-player account}.
-     *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    ALREADY_OWNER_OF_ACCOUNT {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "The specified user is already a member of the account mentioned.";
-        }
-    },
-
-    /**
-     * A constant representing failure due to a user already not being a member of a
-     * {@link me.lokka30.treasury.api.economy.account.NonPlayerAccount Non-player account}.
-     *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    ALREADY_NOT_MEMBER_OF_ACCOUNT {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "The specified user is already not a member of the account mentioned.";
-        }
-    },
-
-    /**
-     * A constant representing failure due to a user already not being an owner of a
-     * {@link me.lokka30.treasury.api.economy.account.NonPlayerAccount Non-player account}.
-     *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    ALREADY_NOT_OWNER_OF_ACCOUNT {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "The specified user is already not an owner of the account mentioned.";
         }
     },
 
@@ -195,7 +99,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     NEGATIVE_BALANCES_NOT_SUPPORTED {
-
         /**
          * {@inheritDoc}
          */
@@ -214,7 +117,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     NEGATIVE_AMOUNT_SPECIFIED {
-
         /**
          * {@inheritDoc}
          */
@@ -233,7 +135,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     CURRENCY_NOT_FOUND {
-
         /**
          * {@inheritDoc}
          */
@@ -250,7 +151,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     NULL_PARAMETER {
-
         /**
          * {@inheritDoc}
          */
@@ -270,7 +170,6 @@ public enum EconomyFailureReason implements FailureReason {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     OTHER_FAILURE {
-
         /**
          * {@inheritDoc}
          */

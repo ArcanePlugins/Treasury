@@ -25,7 +25,8 @@ public class PaperAsyncTabEnhancement implements Listener {
         }
 
         String[] parts = buffer.split(" ");
-        if (!parts[0].equalsIgnoreCase("/treasury") && !parts[0].equalsIgnoreCase("/treasury:treasury")) {
+        if (!parts[0].equalsIgnoreCase("/treasury") && !parts[0].equalsIgnoreCase(
+                "/treasury:treasury")) {
             return;
         }
         if (parts[1] != null) {
@@ -39,11 +40,10 @@ public class PaperAsyncTabEnhancement implements Listener {
                     event.setHandled(true);
                     return;
                 } else if (parts[2] != null) {
-                    event.setCompletions(
-                            EconomySubcommand.SUBCOMMAND_COMPLETIONS.stream()
-                                    .filter(s -> s.startsWith(parts[2].toLowerCase(Locale.ROOT)))
-                                    .collect(Collectors.toList())
-                    );
+                    event.setCompletions(EconomySubcommand.SUBCOMMAND_COMPLETIONS
+                            .stream()
+                            .filter(s -> s.startsWith(parts[2].toLowerCase(Locale.ROOT)))
+                            .collect(Collectors.toList()));
                     event.setHandled(true);
                     return;
                 }
@@ -51,18 +51,19 @@ public class PaperAsyncTabEnhancement implements Listener {
             if (parts.length > 3) {
                 event.setCompletions(Collections.emptyList());
             } else {
-                event.setCompletions(
-                        TreasuryBaseCommand.SUBCOMMAND_COMPLETIONS.stream()
-                                .filter(s -> s.startsWith(subcommand.toLowerCase(Locale.ROOT)))
-                                .collect(Collectors.toList())
-                );
+                event.setCompletions(TreasuryBaseCommand.SUBCOMMAND_COMPLETIONS
+                        .stream()
+                        .filter(s -> s.startsWith(subcommand.toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList()));
             }
             event.setHandled(true);
         }
     }
 
     private List<String> getCompletions(String lastArg) {
-        return TreasuryPlugin.getInstance().pluginsListRegisteringProvider()
+        return TreasuryPlugin
+                .getInstance()
+                .pluginsListRegisteringProvider()
                 .stream()
                 .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                 .collect(Collectors.toList());

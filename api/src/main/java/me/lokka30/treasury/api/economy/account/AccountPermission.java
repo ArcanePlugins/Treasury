@@ -7,9 +7,9 @@ package me.lokka30.treasury.api.economy.account;
 import java.math.BigDecimal;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.misc.TriState;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.misc.TriState;
 
 /**
  * Enum that holds the permissions of an {@link Account} that is shared among multiple players.

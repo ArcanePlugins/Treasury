@@ -77,13 +77,17 @@ class MigrationEconomy implements EconomyProvider {
                     final BigDecimal amount,
                     @NotNull final EconomySubscriber<BigDecimal> subscription
             ) {
-                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Migration currency not convertable."));
+                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
+                        "Migration currency not convertable."
+                ));
             }
 
             @Override
-            public void parse(@NotNull final String formatted, @NotNull final EconomySubscriber<BigDecimal> subscription) {
-                subscription.fail(new EconomyException(
-                        EconomyFailureReason.MIGRATION,
+            public void parse(
+                    @NotNull final String formatted,
+                    @NotNull final EconomySubscriber<BigDecimal> subscription
+            ) {
+                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
                         "Migration in progress, cannot deformat!"
                 ));
             }
@@ -99,12 +103,13 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String format(final BigDecimal amount, @Nullable final Locale locale, final int precision) {
+            public String format(
+                    final BigDecimal amount, @Nullable final Locale locale, final int precision
+            ) {
                 return amount.toPlainString();
             }
         };
-        this.migrationException = new EconomyException(
-                EconomyFailureReason.MIGRATION,
+        this.migrationException = new EconomyException(EconomyFailureReason.MIGRATION,
                 "Economy unavailable during migration process."
         );
 
@@ -122,7 +127,9 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void hasPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription) {
+    public void hasPlayerAccount(
+            @NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription
+    ) {
         subscription.fail(migrationException);
     }
 
@@ -146,18 +153,24 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void hasAccount(@NotNull String accountId, @NotNull EconomySubscriber<Boolean> subscription) {
+    public void hasAccount(
+            @NotNull String accountId, @NotNull EconomySubscriber<Boolean> subscription
+    ) {
         subscription.fail(migrationException);
     }
 
     @Override
-    public void retrieveAccount(@NotNull String accountId, @NotNull EconomySubscriber<Account> subscription) {
+    public void retrieveAccount(
+            @NotNull String accountId, @NotNull EconomySubscriber<Account> subscription
+    ) {
         subscription.fail(migrationException);
     }
 
     @Override
     public void createAccount(
-            @Nullable String name, @NotNull String accountId, @NotNull EconomySubscriber<Account> subscription
+            @Nullable String name,
+            @NotNull String accountId,
+            @NotNull EconomySubscriber<Account> subscription
     ) {
         subscription.fail(migrationException);
     }
@@ -188,8 +201,12 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public void registerCurrency(@NotNull final Currency currency, @NotNull final EconomySubscriber<Boolean> subscription) {
-        subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION, "Cannot register currencies during migration!"));
+    public void registerCurrency(
+            @NotNull final Currency currency, @NotNull final EconomySubscriber<Boolean> subscription
+    ) {
+        subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
+                "Cannot register currencies during migration!"
+        ));
     }
 
 }

@@ -78,7 +78,8 @@ public interface EconomyTransactionInitiator<T> {
                     throw new IllegalArgumentException("Player initiator with no data");
                 }
                 if (!(data instanceof UUID)) {
-                    throw new IllegalArgumentException("Player initiator with data which is not an UUID");
+                    throw new IllegalArgumentException(
+                            "Player initiator with data which is not an UUID");
                 }
                 break;
             case PLUGIN:
@@ -86,7 +87,8 @@ public interface EconomyTransactionInitiator<T> {
                     throw new IllegalArgumentException("Plugin initiator with no data");
                 }
                 if (!(data instanceof String)) {
-                    throw new IllegalArgumentException("Plugin initiator with data which is not an String");
+                    throw new IllegalArgumentException(
+                            "Plugin initiator with data which is not an String");
                 }
                 break;
             case SERVER:

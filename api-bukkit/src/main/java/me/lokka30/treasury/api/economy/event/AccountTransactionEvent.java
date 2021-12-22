@@ -22,7 +22,9 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
     private final EconomyTransaction economyTransaction;
     private boolean isCancelled = false;
 
-    public AccountTransactionEvent(@NotNull final EconomyTransaction economyTransaction, @NotNull final Account account) {
+    public AccountTransactionEvent(
+            @NotNull final EconomyTransaction economyTransaction, @NotNull final Account account
+    ) {
         super(account);
         this.economyTransaction = economyTransaction;
     }
