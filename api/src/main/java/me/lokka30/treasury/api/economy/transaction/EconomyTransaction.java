@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.transaction;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class EconomyTransaction {
         return new Builder();
     }
 
-    private final double transactionAmount;
+    private final BigDecimal transactionAmount;
     @NotNull
     private final String currencyID;
     @NotNull
@@ -59,7 +60,7 @@ public class EconomyTransaction {
             @Nullable Temporal timestamp,
             @NotNull EconomyTransactionType economyTransactionType,
             @Nullable String reason,
-            final double transactionAmount
+            final BigDecimal transactionAmount
     ) {
         this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
         this.initiator = Objects.requireNonNull(initiator, "initiator");
@@ -79,7 +80,7 @@ public class EconomyTransaction {
      * @return transaction amount
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public double getTransactionAmount() {
+    public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
 
@@ -150,7 +151,7 @@ public class EconomyTransaction {
         private Temporal timestamp;
         private EconomyTransactionType economyTransactionType;
         private String reason;
-        private Double transactionAmount;
+        private BigDecimal transactionAmount;
 
         public Builder() {
         }
@@ -253,7 +254,7 @@ public class EconomyTransaction {
          * @param transactionAmount transaction amount
          * @return this instance for chaining
          */
-        public Builder withTransactionAmount(double transactionAmount) {
+        public Builder withTransactionAmount(BigDecimal transactionAmount) {
             this.transactionAmount = transactionAmount;
             return this;
         }

@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -82,14 +83,14 @@ interface AccountMigrator<T extends Account> {
             }).filter(Objects::nonNull).collect(Collectors.toList());
 
             for (Currency currency : currencies) {
-                CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
+                CompletableFuture<BigDecimal> balanceFuture = new CompletableFuture<>();
 
-                fromAccount.setBalance(0.0D,
+                fromAccount.setBalance(BigDecimal.ZERO,
                         initiator,
                         currency,
-                        new PhasedSubscriber<Double>(phaser) {
+                        new PhasedSubscriber<BigDecimal>(phaser) {
                             @Override
-                            public void phaseAccept(@NotNull final Double balance) {
+                            public void phaseAccept(@NotNull final BigDecimal balance) {
                                 balanceFuture.complete(balance);
                             }
 
@@ -104,11 +105,11 @@ interface AccountMigrator<T extends Account> {
                 );
 
                 balanceFuture.thenAccept(balance -> {
-                    if (balance == 0) {
+                    if (balance.compareTo(BigDecimal.ZERO) == 0) {
                         return;
                     }
 
-                    EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser,
+                    EconomySubscriber<BigDecimal> subscriber = new FailureConsumer<>(phaser,
                             exception -> {
                                 migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
                                         exception
@@ -138,7 +139,7 @@ interface AccountMigrator<T extends Account> {
                             }
                     );
 
-                    if (balance < 0) {
+                    if (balance.compareTo(BigDecimal.ZERO) < 0) {
                         toAccount.withdrawBalance(balance, initiator, currency, subscriber);
                     } else {
                         toAccount.depositBalance(balance, initiator, currency, subscriber);

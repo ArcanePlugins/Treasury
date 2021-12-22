@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
@@ -30,7 +31,7 @@ public enum AccountPermission {
     /**
      * Allows a player to withdraw from the {@link Account}.
      *
-     * @see Account#withdrawBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     WITHDRAW,
@@ -38,7 +39,7 @@ public enum AccountPermission {
     /**
      * Allows a player to deposit on the {@link Account}.
      *
-     * @see Account#depositBalance(double, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     DEPOSIT,

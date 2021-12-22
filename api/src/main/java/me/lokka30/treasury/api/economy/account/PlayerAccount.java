@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
@@ -57,7 +58,7 @@ public interface PlayerAccount extends Account {
      * @param initiator    the one who initiated this transaction
      * @param currency     of the balance being reset
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, MrIvanPlays
+     * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -65,12 +66,12 @@ public interface PlayerAccount extends Account {
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
-            @NotNull EconomySubscriber<Double> subscription
+            @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        final double newBalance = currency.getStartingBalance(null);
-        setBalance(newBalance, initiator, currency, new EconomySubscriber<Double>() {
+        final BigDecimal newBalance = currency.getStartingBalance(null);
+        setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override
-            public void succeed(@NotNull Double value) {
+            public void succeed(@NotNull BigDecimal value) {
                 subscription.succeed(newBalance);
             }
 
