@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Arcane Plugins Discord
+    url: https://www.discord.io/arcaneplugins
+    about: Use `#help-chat` or `#create-a-ticket` to get in touch!
+  - name: Questions
+    url: https://github.com/lokka30/Treasury/discussions/categories/q-a
+    about: Got a question? Ask in Discussions

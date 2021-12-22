@@ -1,0 +1,67 @@
+name: "Feature Request"
+description: "Suggest anything you think could improve Treasury."
+labels: [ "enhancement", "unassigned" ]
+
+body:
+
+  - type: "markdown"
+    attributes:
+      value: "## Feature Request"
+
+  - type: "textarea"
+    attributes:
+      label: "User Story"
+      description: |-
+        A clear and concise feature story helps communicate both your request and the reasoning behind it, allowing developers
+          to create a more desirable solution.
+        <details>
+        <summary>Story template</summary>
+
+        ```
+        **As**
+        **I want**
+        **Because**
+        ```
+
+        </details>
+      placeholder: |-
+        **As** an API user
+        **I want** to be able to check a player's balance
+        **So that** I can see how much money they have
+        **Because** I want to display their current balance
+    validations:
+      required: true
+
+  - type: "textarea"
+    attributes:
+      label: "Is your feature request related to a problem?"
+      description: "A clear and concise description of what the problem is."
+      placeholder: "I can't figure out how to get a player's current balance."
+    validations:
+      required: false
+
+  - type: "textarea"
+    attributes:
+      label: "Describe the solution you'd like."
+      description: "A clear and concise description of what you want to happen."
+      placeholder: "I would like to be able to query a player's current balance so I can display it."
+    validations:
+      required: true
+
+  - type: "textarea"
+    attributes:
+      label: "Describe alternatives you've considered."
+      description: "List any alternative solutions or features you've considered."
+      placeholder: "I could charge them nothing and display the resulting balance."
+    validations:
+      required: true
+
+  - type: "textarea"
+    attributes:
+      label: "Additional information"
+      description: |-
+        Please include other helpful information or screenshots below, if any.
+        The more information we receive, the more easily we will be able to understand the request and create a satisfactory
+          solution.
+    validations:
+      required: false
