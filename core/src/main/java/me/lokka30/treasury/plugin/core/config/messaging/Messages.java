@@ -62,8 +62,7 @@ public class Messages {
         @Comment("Placeholders: %prefix%, %permission%")
         @Key("no-permission")
         private List<String> noPermission = Collections.singletonList(
-                "%prefix% You don't have access to that &8(&7requires permission &b%permission%&8)&7."
-        );
+                "%prefix% You don't have access to that &8(&7requires permission &b%permission%&8)&7.");
 
         @ConfigObject
         private States states = new States();
@@ -130,8 +129,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.economy.info.invalid-usage")
             private List<String> infoEconomyInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''."
-            );
+                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''.");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.economy.info.economy-provider-unavailable")
@@ -159,8 +157,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.economy.help.invalid-usage")
             private List<String> helpEconomyInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''."
-            );
+                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''.");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.economy.help.available-commands")
@@ -174,8 +171,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.help.invalid-usage")
             private List<String> helpInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% help&7''."
-            );
+                    "%prefix% Invalid usage, try ''&b/%label% help&7''.");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.help.available-commands")
@@ -190,8 +186,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.info.invalid-usage")
             private List<String> infoInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% info&7''."
-            );
+                    "%prefix% Invalid usage, try ''&b/%label% info&7''.");
 
             @Comment("Placeholders: %prefix%, %version%, %description%, %credits%,")
             @Comment("              %latest-api-version%, %repository%")
@@ -223,8 +218,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.migrate.requires-two-providers")
             private List<String> migrateRequiresTwoProviders = Collections.singletonList(
-                    "%prefix% You can''t use this subcommand unless you have 2 economy providers set up."
-            );
+                    "%prefix% You can''t use this subcommand unless you have 2 economy providers set up.");
 
             @Comment("Placeholders: %prefix%, %providers%")
             @Key("subcommands.migrate.providers-match")
@@ -257,8 +251,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.migrate.internal-error")
             private List<String> migrateInternalError = Collections.singletonList(
-                    "%prefix% An internal error occurred whilst attempting to migrate. Please check console for more information."
-            );
+                    "%prefix% An internal error occurred whilst attempting to migrate. Please check console for more information.");
 
             @Comment("Placeholders: %prefix%, %time%, %player-accounts%,")
             @Comment("              %non-migrated-currencies%")
@@ -274,20 +267,17 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.reload.invalid-usage")
             private List<String> reloadInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try '&b/%label% reload&7'."
-            );
+                    "%prefix% Invalid usage, try '&b/%label% reload&7'.");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.reload.reload-start")
             private List<String> reloadStart = Collections.singletonList(
-                    "%prefix% Reloading Treasury..."
-            );
+                    "%prefix% Reloading Treasury...");
 
             @Comment("Placeholders: %prefix%, %time%")
             @Key("subcommands.reload.reload-complete")
             private List<String> reloadComplete = Collections.singletonList(
-                    "%prefix% Reload successful &8(&7took &b%time%ms&8)&7."
-            );
+                    "%prefix% Reload successful &8(&7took &b%time%ms&8)&7.");
 
         }
 
@@ -368,10 +358,10 @@ public class Messages {
                     for (Map.Entry<String, MessageHolder> entry : deep.entrySet()) {
                         MessageKey key = MessageKey.getByConfigKey(entry.getKey());
                         if (key == null) {
-                            TreasuryPlugin.getInstance().logger().error(
-                                    "The key '" + entry.getKey() + "' has not been registered "
-                                            + "into MessageKey - please inform a Treasury developer ASAP."
-                            );
+                            TreasuryPlugin
+                                    .getInstance()
+                                    .logger()
+                                    .error("The key '" + entry.getKey() + "' has not been registered " + "into MessageKey - please inform a Treasury developer ASAP.");
                             continue;
                         }
                         messagesMap.put(key, entry.getValue());
@@ -384,17 +374,18 @@ public class Messages {
             String configKey = AnnotationUtils.getKey(field);
             MessageKey key = MessageKey.getByConfigKey(configKey);
             if (key == null) {
-                TreasuryPlugin.getInstance().logger().error(
-                        "The key '" + configKey + "' has not been registered "
-                                + "into MessageKey - please inform a Treasury developer ASAP."
-                );
+                TreasuryPlugin
+                        .getInstance()
+                        .logger()
+                        .error("The key '" + configKey + "' has not been registered " + "into MessageKey - please inform a Treasury developer ASAP.");
                 continue;
             }
             messagesMap.put(key, getMessageHolder(field, null));
         }
     }
 
-    private Map<String, MessageHolder> getDeepMessages(Field field, Object parent) throws IllegalAccessException {
+    private Map<String, MessageHolder> getDeepMessages(Field field, Object parent) throws
+            IllegalAccessException {
         String key = AnnotationUtils.getKey(field);
         Object toAccess = field.get(parent == null ? this : parent);
         Map<String, MessageHolder> map = new HashMap<>();
@@ -410,7 +401,10 @@ public class Messages {
                 }
                 continue;
             }
-            map.put(key + "." + AnnotationUtils.getKey(fToAccess), getMessageHolder(fToAccess, toAccess));
+            map.put(
+                    key + "." + AnnotationUtils.getKey(fToAccess),
+                    getMessageHolder(fToAccess, toAccess)
+            );
         }
         return map;
     }

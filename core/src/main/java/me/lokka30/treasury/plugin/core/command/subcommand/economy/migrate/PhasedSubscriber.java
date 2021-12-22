@@ -10,6 +10,7 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
 abstract class PhasedSubscriber<T> implements EconomySubscriber<T> {
+
     private final @NotNull Phaser phaser;
 
     PhasedSubscriber(@NotNull Phaser phaser) {

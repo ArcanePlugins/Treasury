@@ -1,3 +1,7 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ */
+
 package me.lokka30.treasury.plugin.core.command.subcommand.economy;
 
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -24,13 +28,20 @@ public class EconomyInfoSub implements Subcommand {
     }
 
     @Override
-    public void execute(@NotNull final CommandSource sender, @NotNull final String label, final @NotNull String[] args) {
+    public void execute(
+            @NotNull final CommandSource sender,
+            @NotNull final String label,
+            final @NotNull String[] args
+    ) {
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.info")) {
             return;
         }
 
         if (args.length != 0) {
-            sender.sendMessage(Message.of(MessageKey.ECONOMY_INFO_INVALID_USAGE, MessagePlaceholder.placeholder("label", label)));
+            sender.sendMessage(Message.of(
+                    MessageKey.ECONOMY_INFO_INVALID_USAGE,
+                    MessagePlaceholder.placeholder("label", label)
+            ));
             return;
         }
 

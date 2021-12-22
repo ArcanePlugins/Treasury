@@ -19,7 +19,6 @@ public interface RegistrarInfo {
      *
      * @return name
      */
-    @NotNull
-    String getName();
+    @NotNull String getName();
 
 }

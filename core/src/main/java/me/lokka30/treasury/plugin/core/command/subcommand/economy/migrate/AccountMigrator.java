@@ -7,7 +7,6 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,16 +61,19 @@ interface AccountMigrator<T extends Account> {
 
         fromCurrencies.thenAccept(currenciesIDS -> {
 
-            Collection<Currency> currencies = currenciesIDS.stream().map(identifier->{
-                if(TreasuryPlugin.getInstance().economyProviderProvider() == null) {
+            Collection<Currency> currencies = currenciesIDS.stream().map(identifier -> {
+                if (TreasuryPlugin.getInstance().economyProviderProvider() == null) {
                     migration.debug(() -> "Economy provider is null.");
                     return null;
                 }
 
-                Optional<Currency> currency =
-                        TreasuryPlugin.getInstance().economyProviderProvider().provide().findCurrency(identifier);
+                Optional<Currency> currency = TreasuryPlugin
+                        .getInstance()
+                        .economyProviderProvider()
+                        .provide()
+                        .findCurrency(identifier);
 
-                if(currency.isPresent()) {
+                if (currency.isPresent()) {
                     return currency.get();
                 } else {
                     migration.debug(() -> "Currency with ID '&b" + identifier + "&7' will " + "not be migrated.");
@@ -82,39 +84,59 @@ interface AccountMigrator<T extends Account> {
             for (Currency currency : currencies) {
                 CompletableFuture<Double> balanceFuture = new CompletableFuture<>();
 
-                fromAccount.setBalance(0.0D, initiator, currency, new PhasedSubscriber<Double>(phaser) {
-                    @Override
-                    public void phaseAccept(@NotNull final Double balance) {
-                        balanceFuture.complete(balance);
-                    }
+                fromAccount.setBalance(0.0D,
+                        initiator,
+                        currency,
+                        new PhasedSubscriber<Double>(phaser) {
+                            @Override
+                            public void phaseAccept(@NotNull final Double balance) {
+                                balanceFuture.complete(balance);
+                            }
 
-                    @Override
-                    public void phaseFail(@NotNull final EconomyException exception) {
-                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
-                        balanceFuture.completeExceptionally(exception);
-                    }
-                });
+                            @Override
+                            public void phaseFail(@NotNull final EconomyException exception) {
+                                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
+                                        exception
+                                ));
+                                balanceFuture.completeExceptionally(exception);
+                            }
+                        }
+                );
 
                 balanceFuture.thenAccept(balance -> {
                     if (balance == 0) {
                         return;
                     }
 
-                    EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser, exception -> {
-                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception));
-                        fromAccount.setBalance(balance, initiator, currency, new FailureConsumer<>(phaser, exception1 -> {
-                            migration.debug(() -> getErrorLog(fromAccount.getIdentifier(), exception1));
-                            migration.debug(() -> String.format(
-                                    "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
-                                    balance,
-                                    currency.getDisplayName(),
-                                    fromAccount.getIdentifier()
-                            ));
-                            if (!migration.nonMigratedCurrencies().contains(currency.getIdentifier())) {
-                                migration.nonMigratedCurrencies().add(currency.getIdentifier());
+                    EconomySubscriber<Double> subscriber = new FailureConsumer<>(phaser,
+                            exception -> {
+                                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
+                                        exception
+                                ));
+                                fromAccount.setBalance(balance,
+                                        initiator,
+                                        currency,
+                                        new FailureConsumer<>(phaser, exception1 -> {
+                                            migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
+                                                    exception1
+                                            ));
+                                            migration.debug(() -> String.format(
+                                                    "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
+                                                    balance,
+                                                    currency.getDisplayName(),
+                                                    fromAccount.getIdentifier()
+                                            ));
+                                            if (!migration
+                                                    .nonMigratedCurrencies()
+                                                    .contains(currency.getIdentifier())) {
+                                                migration
+                                                        .nonMigratedCurrencies()
+                                                        .add(currency.getIdentifier());
+                                            }
+                                        })
+                                );
                             }
-                        }));
-                    });
+                    );
 
                     if (balance < 0) {
                         toAccount.withdrawBalance(balance, initiator, currency, subscriber);

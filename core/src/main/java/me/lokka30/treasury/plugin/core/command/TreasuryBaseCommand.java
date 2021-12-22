@@ -64,36 +64,39 @@ public final class TreasuryBaseCommand {
      * @param label  command label
      * @param args   command args
      */
-    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury")) {
             return;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(
-                    Message.of(MessageKey.INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
-            );
+            sender.sendMessage(Message.of(MessageKey.INVALID_USAGE_UNSPECIFIED,
+                    MessagePlaceholder.placeholder("label", label)
+            ));
             return;
         }
         Subcommand subcommand = subcommands.get(args[0]);
         if (subcommand == null) {
-            sender.sendMessage(Message.of(
-                            MessageKey.INVALID_USAGE_SPECIFIED,
-                            MessagePlaceholder.placeholder("label", label),
-                            MessagePlaceholder.placeholder("subcommand", args[0])
-                    )
-            );
+            sender.sendMessage(Message.of(MessageKey.INVALID_USAGE_SPECIFIED,
+                    MessagePlaceholder.placeholder("label", label),
+                    MessagePlaceholder.placeholder("subcommand", args[0])
+            ));
             return;
         }
-        subcommand.execute(
-                sender,
+        subcommand.execute(sender,
                 label,
                 args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length)
         );
     }
 
     @NotNull
-    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("help", "info", "reload", "economy");
+    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("help",
+            "info",
+            "reload",
+            "economy"
+    );
 
     /**
      * Runs completions for the base /treasury command.
@@ -104,13 +107,14 @@ public final class TreasuryBaseCommand {
      * @return list with completions, can be null
      */
     @Nullable
-    public List<String> complete(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public List<String> complete(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (args.length == 0) {
             return Collections.emptyList();
         } else if (args.length == 1) {
-            return SUBCOMMAND_COMPLETIONS.stream()
-                    .filter(c -> c.startsWith(args[0].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+            return SUBCOMMAND_COMPLETIONS.stream().filter(c -> c.startsWith(args[0].toLowerCase(
+                    Locale.ROOT))).collect(Collectors.toList());
         } else {
             Subcommand subcommand = subcommands.get(args[0]);
             if (subcommand == null) {

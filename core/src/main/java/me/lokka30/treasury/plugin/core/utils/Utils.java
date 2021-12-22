@@ -30,17 +30,18 @@ public class Utils {
      * @author lokka30
      * @since v1.0.0
      */
-    public static boolean checkPermissionForCommand(@NotNull CommandSource source, @NotNull String permission) {
+    public static boolean checkPermissionForCommand(
+            @NotNull CommandSource source, @NotNull String permission
+    ) {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(permission, "permission");
         if (source.hasPermission(permission)) {
             return true;
         } else {
             source.sendMessage(Message.of(
-                            MessageKey.NO_PERMISSION,
-                            MessagePlaceholder.placeholder("%permission%", permission)
-                    )
-            );
+                    MessageKey.NO_PERMISSION,
+                    MessagePlaceholder.placeholder("%permission%", permission)
+            ));
             return false;
         }
     }
@@ -48,9 +49,8 @@ public class Utils {
     @NotNull
     public static String getYesNoStateMessage(final boolean state) {
         Messages messages = TreasuryPlugin.getInstance().configAdapter().getMessages();
-        return state
-                ? messages.getSingleMessage(MessageKey.STATE_YES)
-                : messages.getSingleMessage(MessageKey.STATE_NO);
+        return state ? messages.getSingleMessage(MessageKey.STATE_YES) : messages.getSingleMessage(
+                MessageKey.STATE_NO);
     }
 
     @NotNull
@@ -65,7 +65,9 @@ public class Utils {
         return String.join(delimiter, list);
     }
 
-    public static PluginVersion.ComparisonResult compareAPIVersions(EconomyAPIVersion version1, EconomyAPIVersion version2) {
+    public static PluginVersion.ComparisonResult compareAPIVersions(
+            EconomyAPIVersion version1, EconomyAPIVersion version2
+    ) {
         if (version1.getMajorRevision() < version2.getMajorRevision()) {
             return PluginVersion.ComparisonResult.OLDER;
         } else if (version1.getMajorRevision() > version2.getMajorRevision()) {

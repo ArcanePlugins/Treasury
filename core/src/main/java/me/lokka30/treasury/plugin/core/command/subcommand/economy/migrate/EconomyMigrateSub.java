@@ -40,7 +40,9 @@ public class EconomyMigrateSub implements Subcommand {
      */
 
     @Override
-    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.migrate")) {
@@ -50,14 +52,17 @@ public class EconomyMigrateSub implements Subcommand {
         List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
 
         if (args.length != 2) {
-            sender.sendMessage(Message.of(MessageKey.MIGRATE_INVALID_USAGE, placeholder("label", label), placeholder("providers",
-                    serviceProviders.isEmpty()
-                            ? "No providers found "
-                            : Utils.formatListMessage(serviceProviders
-                                    .stream()
-                                    .map(provider -> provider.registrar().getName())
-                                    .collect(Collectors.toList()))
-            )));
+            sender.sendMessage(Message.of(MessageKey.MIGRATE_INVALID_USAGE,
+                    placeholder("label", label),
+                    placeholder("providers",
+                            serviceProviders.isEmpty()
+                                    ? "No providers found "
+                                    : Utils.formatListMessage(serviceProviders
+                                            .stream()
+                                            .map(provider -> provider.registrar().getName())
+                                            .collect(Collectors.toList()))
+                    )
+            ));
             return;
         }
 
@@ -113,7 +118,9 @@ public class EconomyMigrateSub implements Subcommand {
 
         if (debugEnabled) {
             DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
-                    "Migrating from '&b" + from.registrar().getName() + "&7' to '&b" + to.registrar().getName() + "&7'."
+                    "Migrating from '&b" + from.registrar().getName() + "&7' to '&b" + to
+                            .registrar()
+                            .getName() + "&7'."
             );
         }
 
@@ -132,9 +139,14 @@ public class EconomyMigrateSub implements Subcommand {
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
 
             // Initialize account migration.
-            Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration, new PlayerAccountMigrator());
-            Phaser nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(), migration,
-                    new NonPlayerAccountMigrator());
+            Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
+                    migration,
+                    new PlayerAccountMigrator()
+            );
+            Phaser nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
+                    migration,
+                    new NonPlayerAccountMigrator()
+            );
             nonPlayerMigration.arriveAndAwaitAdvance();
 
             // Block until migration is complete.
@@ -149,25 +161,37 @@ public class EconomyMigrateSub implements Subcommand {
 
     @Override
     @Nullable
-    public List<String> complete(@NotNull CommandSource source, @NotNull String label, @NotNull String[] args) {
+    public List<String> complete(
+            @NotNull CommandSource source, @NotNull String label, @NotNull String[] args
+    ) {
         if (args.length == 0) {
             return Collections.emptyList();
         }
-        if ((args.length == 1 || args.length == 2) && source.hasPermission("treasury.command.treasury.migrate")) {
+        if ((args.length == 1 || args.length == 2) && source.hasPermission(
+                "treasury.command.treasury.migrate")) {
             String lastArg = args[args.length - 1].toLowerCase(Locale.ROOT);
-            return TreasuryPlugin.getInstance().pluginsListRegisteringProvider().stream().filter(name -> name
-                    .toLowerCase(Locale.ROOT)
-                    .startsWith(lastArg)).collect(Collectors.toList());
+            return TreasuryPlugin
+                    .getInstance()
+                    .pluginsListRegisteringProvider()
+                    .stream()
+                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
 
-    private void sendMigrationMessage(@NotNull CommandSource sender, @NotNull MigrationData migration) {
+    private void sendMigrationMessage(
+            @NotNull CommandSource sender, @NotNull MigrationData migration
+    ) {
         sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
                 placeholder("time", migration.timer().getTimer()),
                 placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                placeholder("nonplayer-accounts", migration.nonPlayerAccountsProcessed().toString()),
-                placeholder("non-migrated-currencies", Utils.formatListMessage(migration.nonMigratedCurrencies()))
+                placeholder("nonplayer-accounts",
+                        migration.nonPlayerAccountsProcessed().toString()
+                ),
+                placeholder("non-migrated-currencies",
+                        Utils.formatListMessage(migration.nonMigratedCurrencies())
+                )
         ));
     }
 
@@ -179,19 +203,21 @@ public class EconomyMigrateSub implements Subcommand {
         // Initialize phaser with a single party: migration completion.
         Phaser phaser = new Phaser(1);
 
-        migrator.requestAccountIds().accept(migration.from().provide(), new PhasedSubscriber<Collection<String>>(phaser) {
-            @Override
-            public void phaseAccept(@NotNull Collection<String> identifiers) {
-                for (String identifier : identifiers) {
-                    migrateAccount(initiator, phaser, identifier, migration, migrator);
-                }
-            }
+        migrator.requestAccountIds().accept(migration.from().provide(),
+                new PhasedSubscriber<Collection<String>>(phaser) {
+                    @Override
+                    public void phaseAccept(@NotNull Collection<String> identifiers) {
+                        for (String identifier : identifiers) {
+                            migrateAccount(initiator, phaser, identifier, migration, migrator);
+                        }
+                    }
 
-            @Override
-            public void phaseFail(@NotNull EconomyException exception) {
-                migration.debug(() -> migrator.getBulkFailLog(exception));
-            }
-        });
+                    @Override
+                    public void phaseFail(@NotNull EconomyException exception) {
+                        migration.debug(() -> migrator.getBulkFailLog(exception));
+                    }
+                }
+        );
 
         return phaser;
     }
@@ -222,22 +248,33 @@ public class EconomyMigrateSub implements Subcommand {
         fromAccountFuture.whenComplete(failureConsumer);
 
         CompletableFuture<T> toAccountFuture = new CompletableFuture<>();
-        migrator.checkAccountExistence().accept(migration.to().provide(), identifier, new PhasedSubscriber<Boolean>(phaser) {
-            @Override
-            public void phaseAccept(@NotNull Boolean hasAccount) {
-                PhasedFutureSubscriber<T> subscription = new PhasedFutureSubscriber<>(phaser, toAccountFuture);
-                if (hasAccount) {
-                    migrator.requestAccount().accept(migration.to().provide(), identifier, subscription);
-                } else {
-                    migrator.createAccount().accept(migration.to().provide(), identifier, subscription);
-                }
-            }
+        migrator.checkAccountExistence().accept(migration.to().provide(),
+                identifier,
+                new PhasedSubscriber<Boolean>(phaser) {
+                    @Override
+                    public void phaseAccept(@NotNull Boolean hasAccount) {
+                        PhasedFutureSubscriber<T> subscription = new PhasedFutureSubscriber<>(phaser,
+                                toAccountFuture
+                        );
+                        if (hasAccount) {
+                            migrator.requestAccount().accept(migration.to().provide(),
+                                    identifier,
+                                    subscription
+                            );
+                        } else {
+                            migrator.createAccount().accept(migration.to().provide(),
+                                    identifier,
+                                    subscription
+                            );
+                        }
+                    }
 
-            @Override
-            public void phaseFail(@NotNull EconomyException exception) {
-                toAccountFuture.completeExceptionally(exception);
-            }
-        });
+                    @Override
+                    public void phaseFail(@NotNull EconomyException exception) {
+                        toAccountFuture.completeExceptionally(exception);
+                    }
+                }
+        );
         toAccountFuture.whenComplete(failureConsumer);
 
         fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccount, toAccount) -> {

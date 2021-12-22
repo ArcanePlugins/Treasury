@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,11 +63,14 @@ public class EconomyTransaction {
     ) {
         this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
         this.initiator = Objects.requireNonNull(initiator, "initiator");
-        this.economyTransactionType = Objects.requireNonNull(economyTransactionType, "transactionType");
+        this.economyTransactionType = Objects.requireNonNull(economyTransactionType,
+                "transactionType"
+        );
         this.reason = Optional.ofNullable(reason);
         this.transactionAmount = transactionAmount;
-        this.timestamp = timestamp == null ? Instant.now() : (timestamp instanceof Instant ? (Instant) timestamp : Instant.from(
-                timestamp));
+        this.timestamp = timestamp == null
+                ? Instant.now()
+                : (timestamp instanceof Instant ? (Instant) timestamp : Instant.from(timestamp));
     }
 
     /**
@@ -227,7 +229,9 @@ public class EconomyTransaction {
          * @return this instance for chaining
          */
         public Builder withTransactionType(@NotNull EconomyTransactionType economyTransactionType) {
-            this.economyTransactionType = Objects.requireNonNull(economyTransactionType, "transactionType");
+            this.economyTransactionType = Objects.requireNonNull(economyTransactionType,
+                    "transactionType"
+            );
             return this;
         }
 
@@ -264,7 +268,13 @@ public class EconomyTransaction {
             Objects.requireNonNull(initiator, "initiator");
             Objects.requireNonNull(economyTransactionType, "transactionType");
             Objects.requireNonNull(transactionAmount, "transactionAmount");
-            return new EconomyTransaction(currencyID, initiator, timestamp, economyTransactionType, reason, transactionAmount);
+            return new EconomyTransaction(currencyID,
+                    initiator,
+                    timestamp,
+                    economyTransactionType,
+                    reason,
+                    transactionAmount
+            );
         }
 
     }

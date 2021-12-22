@@ -98,7 +98,11 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void to(@NotNull Currency currency, double amount, @NotNull EconomySubscriber<Double> subscription);
+    void to(
+            @NotNull Currency currency,
+            double amount,
+            @NotNull EconomySubscriber<Double> subscription
+    );
 
     /**
      * Used to get the double representation of an amount represented by a formatted string.

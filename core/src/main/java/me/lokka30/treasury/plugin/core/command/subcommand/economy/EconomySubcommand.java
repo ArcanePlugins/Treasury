@@ -1,3 +1,7 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ */
+
 package me.lokka30.treasury.plugin.core.command.subcommand.economy;
 
 import java.util.Arrays;
@@ -51,46 +55,49 @@ public final class EconomySubcommand implements Subcommand {
     }
 
     @Override
-    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy")) {
             return;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(
-                    Message.of(MessageKey.ECONOMY_INVALID_USAGE_UNSPECIFIED, MessagePlaceholder.placeholder("label", label))
-            );
+            sender.sendMessage(Message.of(MessageKey.ECONOMY_INVALID_USAGE_UNSPECIFIED,
+                    MessagePlaceholder.placeholder("label", label)
+            ));
             return;
         }
         Subcommand subcommand = subcommands.get(args[0]);
         if (subcommand == null) {
-            sender.sendMessage(Message.of(
-                            MessageKey.ECONOMY_INVALID_USAGE_SPECIFIED,
-                            MessagePlaceholder.placeholder("label", label),
-                            MessagePlaceholder.placeholder("subcommand", args[0])
-                    )
-            );
+            sender.sendMessage(Message.of(MessageKey.ECONOMY_INVALID_USAGE_SPECIFIED,
+                    MessagePlaceholder.placeholder("label", label),
+                    MessagePlaceholder.placeholder("subcommand", args[0])
+            ));
             return;
         }
-        subcommand.execute(
-                sender,
+        subcommand.execute(sender,
                 label,
                 args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length)
         );
     }
 
     @NotNull
-    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("info", "help", "migrate");
+    public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("info",
+            "help",
+            "migrate"
+    );
 
     @Nullable
     @Override
-    public List<String> complete(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public List<String> complete(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (args.length == 0) {
             return Collections.emptyList();
         } else if (args.length == 1) {
-            return SUBCOMMAND_COMPLETIONS.stream()
-                    .filter(c -> c.startsWith(args[0].toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+            return SUBCOMMAND_COMPLETIONS.stream().filter(c -> c.startsWith(args[0].toLowerCase(
+                    Locale.ROOT))).collect(Collectors.toList());
         } else {
             Subcommand subcommand = subcommands.get(args[0]);
             if (subcommand == null) {

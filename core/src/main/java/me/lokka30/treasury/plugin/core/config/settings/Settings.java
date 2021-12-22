@@ -47,7 +47,9 @@ public class Settings {
         Type debugCategoryList = new TypeToken<List<DebugCategory>>() {
         }.getType();
         if (!SerializerRegistry.INSTANCE.hasSerializer(debugCategoryList)) {
-            SerializerRegistry.INSTANCE.registerSerializer(debugCategoryList, DebugCategorySerializer.INSTANCE);
+            SerializerRegistry.INSTANCE.registerSerializer(debugCategoryList,
+                    DebugCategorySerializer.INSTANCE
+            );
         }
         Settings settings = new Settings();
         YamlConfig.getConfigResolver().loadOrDump(settings, file);
@@ -154,10 +156,7 @@ public class Settings {
                 break;
             default:
                 TreasuryPlugin.getInstance().logger().error(
-                        "Invalid list mode specified in &bsettings.yml&7 at location "
-                                + "'&bdebug.enabled-categories.mode&7'! "
-                                + "You can only use '&bWHITELIST&7' or '&bBLACKLIST&7'. Please fix this ASAP."
-                );
+                        "Invalid list mode specified in &bsettings.yml&7 at location " + "'&bdebug.enabled-categories.mode&7'! " + "You can only use '&bWHITELIST&7' or '&bBLACKLIST&7'. Please fix this ASAP.");
         }
         return enabledCategories;
     }

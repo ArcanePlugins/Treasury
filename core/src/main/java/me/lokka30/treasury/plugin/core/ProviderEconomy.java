@@ -21,23 +21,20 @@ public interface ProviderEconomy {
      *
      * @return provider
      */
-    @NotNull
-    EconomyProvider provide();
+    @NotNull EconomyProvider provide();
 
     /**
      * Returns a registrar info
      *
      * @return registrar info
      */
-    @NotNull
-    RegistrarInfo registrar();
+    @NotNull RegistrarInfo registrar();
 
     /**
      * Returns the priority the provider has been registered on
      *
      * @return priority
      */
-    @NotNull
-    String getPriority();
+    @NotNull String getPriority();
 
 }

@@ -29,13 +29,16 @@ public enum MessageKey {
     INVALID_USAGE_SPECIFIED("commands.treasury.invalid-usage-specified"),
 
     // Subcommands
-    ECONOMY_INVALID_USAGE_UNSPECIFIED("commands.treasury.subcommands.economy.invalid-usage-unspecified"),
+    ECONOMY_INVALID_USAGE_UNSPECIFIED(
+            "commands.treasury.subcommands.economy.invalid-usage-unspecified"),
     ECONOMY_INVALID_USAGE_SPECIFIED("commands.treasury.subcommands.economy.invalid-usage-specified"),
     ECONOMY_HELP_INVALID_USAGE("commands.treasury.subcommands.economy.help.invalid-usage"),
     ECONOMY_HELP_AVAILABLE_COMMANDS("commands.treasury.subcommands.economy.help.available-commands"),
     ECONOMY_INFO_INVALID_USAGE("commands.treasury.subcommands.economy.info.invalid-usage"),
-    ECONOMY_INFO_ECONOMY_PROVIDER_UNAVAILABLE("commands.treasury.subcommands.economy.info.economy-provider-unavailable"),
-    ECONOMY_INFO_ECONOMY_PROVIDER_AVAILABLE("commands.treasury.subcommands.economy.info.economy-provider-available"),
+    ECONOMY_INFO_ECONOMY_PROVIDER_UNAVAILABLE(
+            "commands.treasury.subcommands.economy.info.economy-provider-unavailable"),
+    ECONOMY_INFO_ECONOMY_PROVIDER_AVAILABLE(
+            "commands.treasury.subcommands.economy.info.economy-provider-available"),
     HELP_INVALID_USAGE("commands.treasury.subcommands.help.invalid-usage"),
     HELP_AVAILABLE_COMMANDS("commands.treasury.subcommands.help.available-commands"),
     INFO_INVALID_USAGE("commands.treasury.subcommands.info.invalid-usage"),

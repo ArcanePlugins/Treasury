@@ -20,10 +20,7 @@ public class BukkitCommandSource implements CommandSource {
     public BukkitCommandSource(CommandSender sender) {
         this.sender = sender;
         if (sender instanceof Player) {
-            this.initiator = EconomyTransactionInitiator.createInitiator(
-                    EconomyTransactionInitiator.Type.PLAYER,
-                    ((Player) sender).getUniqueId()
-            );
+            this.initiator = EconomyTransactionInitiator.createInitiator(EconomyTransactionInitiator.Type.PLAYER, ((Player) sender).getUniqueId());
         } else {
             this.initiator = EconomyTransactionInitiator.SERVER;
         }
