@@ -74,11 +74,7 @@ public interface PlayerAccount extends Account {
     default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
-        if (getUniqueId().equals(player)) {
-            subscription.succeed(true);
-        } else {
-            subscription.succeed(false);
-        }
+        subscription.succeed(getUniqueId().equals(player));
     }
 
     /**
@@ -101,11 +97,7 @@ public interface PlayerAccount extends Account {
     ) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
-        if (getUniqueId().equals(player)) {
-            subscription.succeed(true);
-        } else {
-            subscription.succeed(false);
-        }
+        subscription.succeed(getUniqueId().equals(player));
     }
 
     /**
@@ -118,11 +110,9 @@ public interface PlayerAccount extends Account {
     ) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
-        if (getUniqueId().equals(player)) {
-            subscription.succeed(ALL_PERMISSIONS_MAP);
-        } else {
-            subscription.succeed(Collections.emptyMap());
-        }
+        subscription.succeed((getUniqueId().equals(player)
+                ? ALL_PERMISSIONS_MAP
+                : Collections.emptyMap()));
     }
 
     /**
@@ -133,7 +123,7 @@ public interface PlayerAccount extends Account {
             @NotNull UUID player,
             @NotNull TriState permissionValue,
             @NotNull EconomySubscriber<Boolean> subscription,
-            @NotNull AccountPermission @NotNull... permissions
+            @NotNull AccountPermission @NotNull ... permissions
     ) {
         // do nothing. economy api users and by users I mean plugins which are not the economy
         // provider plugin shall not be able to modify anything on a player account except do
