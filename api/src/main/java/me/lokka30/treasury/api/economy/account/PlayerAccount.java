@@ -5,12 +5,13 @@
 package me.lokka30.treasury.api.economy.account;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
@@ -37,13 +38,9 @@ public interface PlayerAccount extends Account {
      * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
      * {@link TriState#TRUE}
      */
-    Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(new ConcurrentHashMap<AccountPermission, TriState>() {
-        {
-            for (AccountPermission permission : AccountPermission.values()) {
-                put(permission, TriState.TRUE);
-            }
-        }
-    });
+    Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
+            .stream(AccountPermission.values())
+            .collect(Collectors.toConcurrentMap(p -> p, $ -> TriState.TRUE)));
 
     /**
      * Gets the string-based unique identifier for this account.
