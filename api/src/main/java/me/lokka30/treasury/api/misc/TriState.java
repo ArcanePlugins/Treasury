@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.misc;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -16,6 +17,17 @@ public enum TriState {
     TRUE(true),
     FALSE(false),
     UNSPECIFIED(null);
+
+    /**
+     * Returns a {@link TriState} from the specified {@link Boolean} value, which may be null.
+     *
+     * @param bool the boolean value to create TriState from
+     * @return TriState value
+     */
+    @NotNull
+    public static TriState fromBoolean(@Nullable Boolean bool) {
+        return bool == null ? UNSPECIFIED : (bool ? TRUE : FALSE);
+    }
 
     private final Boolean asBoolean;
 

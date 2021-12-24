@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.misc.TriState;
@@ -122,8 +123,8 @@ public interface PlayerAccount extends Account {
             @NotNull EconomySubscriber<Boolean> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     ) {
-        // do nothing. The default interaction is that a consumer plugin may not modify the
-        // permissions of a player account, although is left for the provider plugin to override this interaction.
+        Objects.requireNonNull(subscription, "subscription");
+        subscription.fail(new EconomyException(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
     /**

@@ -1,10 +1,14 @@
 package me.lokka30.treasury.api.economy.response;
 
+import java.math.BigDecimal;
+import java.util.UUID;
 import me.lokka30.treasury.api.common.response.FailureReason;
+import me.lokka30.treasury.api.economy.account.AccountPermission;
+import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
-import java.math.BigDecimal;
 
 public enum EconomyFailureReason implements FailureReason {
 
@@ -87,6 +91,22 @@ public enum EconomyFailureReason implements FailureReason {
         @Override
         public @NotNull String getDescription() {
             return "An account with that identifier already exists!";
+        }
+    },
+
+    /**
+     * A constant representing failure whenever the default implementation of
+     * {@link PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)} has been called
+     *
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public @NotNull String getDescription() {
+            return "Cannot modify the permissions of a player account!";
         }
     },
 
