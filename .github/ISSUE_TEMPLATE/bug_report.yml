@@ -1,0 +1,85 @@
+name: "Bug Report"
+description: "Treasury-related bugs. Please do not report bugs with implementations of Treasury's API - you should report
+those to the implementation vendor."
+labels: [ "unassigned", "unconfirmed bug" ]
+
+body:
+
+  - type: "markdown"
+    attributes:
+      value: "## Bug Report"
+
+  - type: "textarea"
+    attributes:
+      label: "Expected behavior"
+      description: "A clear and concise description of what you expected to happen."
+    validations:
+      required: true
+
+  - type: "textarea"
+    attributes:
+      label: "Observed behavior"
+      description: "A clear and concise description of what actually happened."
+    validations:
+      required: true
+
+  - type: "textarea"
+    attributes:
+      label: "Reproduction steps"
+      description: |-
+        A list of steps allowing us to replicate the issue. This may include relevant screenshots or other information.
+        Please keep in mind that if your steps are not completely accurate or the bug is inconsistent/random, we may not be
+          able to reproduce it.
+      placeholder: |-
+        1. Step 1.
+        2. Step 2.
+        3. ???
+        4. Profit!
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: "Stack trace or error log"
+      render: "shell"
+      description: |-
+        Please paste in the entire stack trace or error log. Be careful to include both the exception itself and the cause!
+        If the logs are particularly long, please create a [gist](https://gist.github.com) and paste the link instead.
+      placeholder: |-
+        [12:34:56] [Server thread/ERROR]: null
+        me.lokka30.treasury.ExampleException: Unhandled exception doing a thing in Treasury v1.2.3
+        	at me.lokka30.treasury.Example.function(Example.java:30) ~[example.jar:version]
+        	at me.lokka30.treasury.Example.otherFunction(Example.java:60) ~[example.jar:version]
+        Caused by: java.lang.IllegalArgumentException: This is an example!
+        	at me.lokka30.treasury.Example.ohNo(Example.java:10) ~[?:?]
+        	at me.lokka30.treasury.Example.unhelper(Example.java:50) ~[example.jar:version]
+        	... 10 more
+    validations:
+        required: false
+
+  - type: "textarea"
+    attributes:
+      label: "Treasury information"
+      render: "shell"
+      description: |-
+        Run `/treasury info` on your server and paste the output here.
+        Please do not provide a screenshot, it is much easier for us to use text-based output.
+      placeholder: |-
+        > treasury info
+        [12:34:56 INFO]: About Treasury
+        [12:34:56 INFO]:  -> Running Treasury v%version%
+        [12:34:56 INFO]:  -> Description: %description%
+        [12:34:56 INFO]:  -> Made possible by: See %credits%
+        [12:34:56 INFO]:  -> API Version: %current-api-version%
+        [12:34:56 INFO]:  -> Learn more at: %repository%
+    validations:
+        required: true
+
+  - type: "textarea"
+    attributes:
+      label: "Additional information"
+      description: |-
+        Please include other helpful information or screenshots below, if any.
+        The more information we receive, the quicker and more effective we can be at finding a solution to the issue.
+    validations:
+      required: false

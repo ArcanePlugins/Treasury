@@ -22,15 +22,17 @@ public class HelpSubcommand implements Subcommand {
      */
 
     @Override
-    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.help")) {
             return;
         }
 
         if (args.length != 0) {
-            sender.sendMessage(
-                    Message.of(MessageKey.HELP_INVALID_USAGE, MessagePlaceholder.placeholder("label", label))
-            );
+            sender.sendMessage(Message.of(MessageKey.HELP_INVALID_USAGE,
+                    MessagePlaceholder.placeholder("label", label)
+            ));
             return;
         }
 

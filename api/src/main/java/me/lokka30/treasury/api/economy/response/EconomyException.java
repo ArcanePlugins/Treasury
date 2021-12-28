@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.response;
 
+import me.lokka30.treasury.api.common.response.FailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,16 @@ import org.jetbrains.annotations.Nullable;
 public class EconomyException extends Exception {
 
     private final @NotNull FailureReason reason;
+
+    /**
+     * Construct a new {@code EconomyException}.
+     *
+     * @param reason the {@link FailureReason} representing the reason for failure
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    public EconomyException(@NotNull FailureReason reason) {
+        this(reason, reason.getDescription(), null);
+    }
 
     /**
      * Construct a new {@code EconomyException}.
@@ -52,7 +63,9 @@ public class EconomyException extends Exception {
      * @param cause   the {@link Throwable} representing or causing the problem
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    public EconomyException(@NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause) {
+    public EconomyException(
+            @NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause
+    ) {
         super(message, cause, true, false);
         this.reason = reason;
     }

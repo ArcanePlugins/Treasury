@@ -18,9 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class CommandSources implements Listener {
 
-    public static final CommandSource CONSOLE = new BukkitCommandSource(
-            Bukkit.getConsoleSender()
-    );
+    public static final CommandSource CONSOLE = new BukkitCommandSource(Bukkit.getConsoleSender());
 
     private Map<UUID, CommandSource> byUUID = new HashMap<>();
 

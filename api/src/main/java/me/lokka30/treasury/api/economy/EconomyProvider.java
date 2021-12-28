@@ -5,22 +5,31 @@
 package me.lokka30.treasury.api.economy;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import me.lokka30.treasury.api.economy.account.BankAccount;
+import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.AccountPermission;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
+import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementors providing and managing economy data create a class
  * which implements this interface to be registered in
  * the specific platform they're implementing it for.
  *
- * @author lokka30, Jikoo, MrIvanPlays, NoahvdAa
+ * @author lokka30, Jikoo, MrIvanPlays, NoahvdAa, creatorfromhell
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface EconomyProvider {
@@ -37,8 +46,7 @@ public interface EconomyProvider {
      * @author lokka30, MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    EconomyAPIVersion getSupportedAPIVersion();
+    @NotNull EconomyAPIVersion getSupportedAPIVersion();
 
     /**
      * Check which optional Treasury Economy API features the Economy Provider supports.
@@ -55,12 +63,11 @@ public interface EconomyProvider {
      * Economy Provider.
      *
      * @return the set of optional supported features from the economy provider/
-     * @see OptionalEconomyApiFeature
      * @author lokka30
+     * @see OptionalEconomyApiFeature
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    Set<OptionalEconomyApiFeature> getSupportedOptionalEconomyApiFeatures();
+    @NotNull Set<OptionalEconomyApiFeature> getSupportedOptionalEconomyApiFeatures();
 
     /**
      * Request whether a user has an associated {@link PlayerAccount}.
@@ -70,7 +77,9 @@ public interface EconomyProvider {
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void hasPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
+    void hasPlayerAccount(
+            @NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription
+    );
 
     /**
      * Request an existing {@link PlayerAccount} for a user.
@@ -80,7 +89,9 @@ public interface EconomyProvider {
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrievePlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
+    void retrievePlayerAccount(
+            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
+    );
 
     /**
      * Request the creation of a {@link PlayerAccount} for a user.
@@ -90,7 +101,9 @@ public interface EconomyProvider {
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void createPlayerAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription);
+    void createPlayerAccount(
+            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
+    );
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
@@ -102,81 +115,219 @@ public interface EconomyProvider {
     void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
-     * Request whether a {@link UUID} has an associated {@link BankAccount}.
+     * Request whether an identifier has an associated {@link Account}.
+     * <p>
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     * <p>
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param accountId    the {@code UUID} of the account
+     * @param identifier   the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void hasBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription);
+    void hasAccount(@NotNull String identifier, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Request an existing {@link BankAccount} for a {@link UUID}.
+     * Request an existing {@link Account} for a specific identifier.
+     * <p>
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     * <p>
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param accountId    the {@code UUID} of the account
+     * @param identifier   the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
+    void retrieveAccount(
+            @NotNull String identifier, @NotNull EconomySubscriber<Account> subscription
+    );
 
     /**
-     * Request the creation of a {@link BankAccount} for a {@link UUID}.
+     * Request the creation of a {@link Account} for a specific identifier.
+     * <p>
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     * <p>
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param accountId    the {@code UUID} of the account
+     * @param identifier   the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void createBankAccount(@NotNull UUID accountId, @NotNull EconomySubscriber<BankAccount> subscription);
+    default void createAccount(
+            @NotNull String identifier, @NotNull EconomySubscriber<Account> subscription
+    ) {
+        createAccount(null, identifier, subscription);
+    }
 
     /**
-     * Request all {@link UUID UUIDs} with associated {@link BankAccount BankAccounts}.
+     * Request the creation of a {@link Account} for a specific identifier {@code identifier} with {@link String} {@code
+     * name}.
+     * <p>
+     * This method is safe for {@link NonPlayerAccount non-player accounts}.
+     * <p>
+     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
+     * @param name         the human readable name of the account
+     * @param identifier   the unique identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @author MrIvanPlays, Jikoo
+     * @since {@link EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveBankAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void createAccount(
+            @Nullable String name,
+            @NotNull String identifier,
+            @NotNull EconomySubscriber<Account> subscription
+    );
 
     /**
-     * Request all {@link UUID UUIDs} for valid {@link Currency Currencies}.
+     * Request all identifiers with associated {@link Account Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveCurrencyIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request all names for valid {@link Currency Currencies}.
+     * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveCurrencyNames(@NotNull EconomySubscriber<Collection<String>> subscription);
+    void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
 
     /**
-     * Request a {@link Currency} by {@link UUID}.
+     * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
-     * @param currencyId   the {@code UUID} identifying the {@code Currency}
+     * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
+     * @author MrNemo64, MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveCurrency(@NotNull UUID currencyId, @NotNull EconomySubscriber<Currency> subscription);
+    default void retrieveAllAccountsPlayerIsMemberOf(
+            @NotNull UUID playerId, @NotNull EconomySubscriber<Collection<String>> subscription
+    ) {
+        Objects.requireNonNull(playerId, "playerId");
+        Objects.requireNonNull(subscription, "subscription");
+        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
+            if (throwable instanceof EconomyException) {
+                subscription.fail((EconomyException) throwable);
+            } else {
+                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
+                        throwable
+                ));
+            }
+            return new HashSet<>();
+        }).thenAccept(identifiers -> {
+            if (identifiers.isEmpty()) {
+                subscription.succeed(identifiers);
+                return;
+            }
+            Set<String> ret = new HashSet<>();
+            for (String identifier : identifiers) {
+                EconomySubscriber.<Account>asFuture(subscriber -> retrieveAccount(identifier,
+                        subscriber
+                )).exceptionally(throwable -> {
+                    if (throwable instanceof EconomyException) {
+                        subscription.fail((EconomyException) throwable);
+                    } else {
+                        subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
+                                throwable
+                        ));
+                    }
+                    return null;
+                }).thenCompose(account -> {
+                    if (account == null) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+
+                    if (!(account instanceof NonPlayerAccount)) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+                    return EconomySubscriber.asFuture(subscriber -> account.isMember(playerId,
+                            subscriber
+                    ));
+                }).thenAccept(val -> {
+                    if (val) {
+                        ret.add(identifier);
+                    }
+                });
+
+            }
+            subscription.succeed(ret);
+        });
+    }
 
     /**
-     * Request a {@link Currency} by name.
+     * Request all the {@link NonPlayerAccount non-player accounts} where the given player has the given permissions.
      *
-     * @param currencyName the name of the {@code Currency}
+     * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
+     * @param permissions  the permissions that the given player has to have on the {@link NonPlayerAccount account}
+     * @author MrNemo64, MrIvanPlays
+     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    void retrieveCurrency(@NotNull String currencyName, @NotNull EconomySubscriber<Currency> subscription);
+    default void retrieveAllAccountsPlayerHasPermission(
+            @NotNull UUID playerId,
+            @NotNull EconomySubscriber<Collection<String>> subscription,
+            @NotNull AccountPermission @NotNull ... permissions
+    ) {
+        Objects.requireNonNull(playerId, "playerId");
+        Objects.requireNonNull(subscription, "subscription");
+        Objects.requireNonNull(permissions, "permissions");
+        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
+            if (throwable instanceof EconomyException) {
+                subscription.fail((EconomyException) throwable);
+            } else {
+                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
+                        throwable
+                ));
+            }
+            return new HashSet<>();
+        }).thenAccept(identifiers -> {
+            if (identifiers.isEmpty()) {
+                subscription.succeed(identifiers);
+                return;
+            }
+            Set<String> ret = new HashSet<>();
+            for (String identifier : identifiers) {
+                EconomySubscriber.<Account>asFuture(subscriber -> retrieveAccount(identifier,
+                        subscriber
+                )).exceptionally(throwable -> {
+                    if (throwable instanceof EconomyException) {
+                        subscription.fail((EconomyException) throwable);
+                    } else {
+                        subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
+                                throwable
+                        ));
+                    }
+                    return null;
+                }).thenCompose(account -> {
+                    if (account == null) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+
+                    if (!(account instanceof NonPlayerAccount)) {
+                        return CompletableFuture.completedFuture(false);
+                    }
+                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount) account).hasPermission(playerId,
+                            subscriber,
+                            permissions
+                    ));
+                }).thenAccept(val -> {
+                    if (val) {
+                        ret.add(identifier);
+                    }
+                });
+            }
+            subscription.succeed(ret);
+        });
+    }
 
     /**
      * Get the primary or main {@link Currency} of the economy.
@@ -185,19 +336,54 @@ public interface EconomyProvider {
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    Currency getPrimaryCurrency();
+    @NotNull Currency getPrimaryCurrency();
 
     /**
-     * Get the {@link UUID} of the primary or main {@link Currency} of the economy.
+     * Used to find a currency based on a specific identifier.
      *
-     * @return the {@code UUID} identifying the primary currency
+     * @param identifier The {@link Currency#getIdentifier()} of the {@link Currency} we are searching for.
+     * @return The {@link Optional} containing the search result. This will contain the
+     *         resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Optional<Currency> findCurrency(@NotNull String identifier);
+
+    /**
+     * Used to get a set of every  {@link Currency} object for the server.
+     *
+     * @return A set of every {@link Currency} object that is available for the server.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    Set<Currency> getCurrencies();
+
+    /**
+     * Get the String identifier of the primary or main {@link Currency} of the economy.
+     *
+     * @return the String identifier identifying the primary currency
      * @author lokka30
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
-    default UUID getPrimaryCurrencyId() {
-        return getPrimaryCurrency().getCurrencyId();
+    default String getPrimaryCurrencyId() {
+        return getPrimaryCurrency().getIdentifier();
     }
+
+    /**
+     * Used to register a currency with the {@link EconomyProvider} to be utilized by
+     * other plugins.
+     *
+     * @param currency     The currency to register with the {@link EconomyProvider}.
+     * @param subscription The {@link EconomySubscriber} representing the result of the
+     *                     attempted {@link Currency} registration with an {@link Boolean}.
+     *                     This will be {@link Boolean#TRUE} if it was registered, otherwise
+     *                     it'll be {@link Boolean#FALSE}.
+     * @author creatorfromhell
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    void registerCurrency(
+            @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription
+    );
 
 }

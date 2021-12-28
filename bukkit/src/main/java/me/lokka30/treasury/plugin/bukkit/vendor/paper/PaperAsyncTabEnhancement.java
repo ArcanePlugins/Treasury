@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
+import me.lokka30.treasury.plugin.core.command.subcommand.economy.EconomySubcommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -24,34 +25,45 @@ public class PaperAsyncTabEnhancement implements Listener {
         }
 
         String[] parts = buffer.split(" ");
-        if (!parts[0].equalsIgnoreCase("/treasury") && !parts[0].equalsIgnoreCase("/treasury:treasury")) {
+        if (!parts[0].equalsIgnoreCase("/treasury") && !parts[0].equalsIgnoreCase(
+                "/treasury:treasury")) {
             return;
         }
         if (parts[1] != null) {
             String subcommand = parts[1];
-            if (subcommand.equalsIgnoreCase("migrate")) {
-                if (parts.length > 4) {
+            if (subcommand.equalsIgnoreCase("economy")) {
+                if (parts[2] != null && parts[2].equalsIgnoreCase("migrate")) {
+                    if (parts.length > 5) {
+                        return;
+                    }
+                    event.setCompletions(getCompletions(parts[parts.length - 1].toLowerCase(Locale.ROOT)));
+                    event.setHandled(true);
+                    return;
+                } else if (parts[2] != null) {
+                    event.setCompletions(EconomySubcommand.SUBCOMMAND_COMPLETIONS
+                            .stream()
+                            .filter(s -> s.startsWith(parts[2].toLowerCase(Locale.ROOT)))
+                            .collect(Collectors.toList()));
+                    event.setHandled(true);
                     return;
                 }
-                event.setCompletions(getCompletions(parts[parts.length - 1].toLowerCase(Locale.ROOT)));
-                event.setHandled(true);
-                return;
             }
-            if (parts.length > 2) {
+            if (parts.length > 3) {
                 event.setCompletions(Collections.emptyList());
             } else {
-                event.setCompletions(
-                        TreasuryBaseCommand.SUBCOMMAND_COMPLETIONS.stream()
-                                .filter(s -> s.startsWith(subcommand.toLowerCase(Locale.ROOT)))
-                                .collect(Collectors.toList())
-                );
+                event.setCompletions(TreasuryBaseCommand.SUBCOMMAND_COMPLETIONS
+                        .stream()
+                        .filter(s -> s.startsWith(subcommand.toLowerCase(Locale.ROOT)))
+                        .collect(Collectors.toList()));
             }
             event.setHandled(true);
         }
     }
 
     private List<String> getCompletions(String lastArg) {
-        return TreasuryPlugin.getInstance().pluginsListRegisteringProvider()
+        return TreasuryPlugin
+                .getInstance()
+                .pluginsListRegisteringProvider()
                 .stream()
                 .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                 .collect(Collectors.toList());

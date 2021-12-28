@@ -26,17 +26,11 @@ public final class PluginVersion {
             developmentVersion = false;
         }
         if (input.indexOf('.') == -1) {
-            throw new IllegalArgumentException(
-                    "Illegal Treasury version found! " +
-                            "If this is a live environment version or you're a developer doing changes, please fix this ASAP!"
-            );
+            throw new IllegalArgumentException("Illegal Treasury version found! " + "If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
         }
         String[] parts = input.split("\\.");
         if (parts.length != 3) {
-            throw new IllegalArgumentException(
-                    "Illegal Treasury version found! " +
-                            "If this is a live environment version or you're a developer doing changes, please fix this ASAP!"
-            );
+            throw new IllegalArgumentException("Illegal Treasury version found! " + "If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
         }
         this.majorRevision = Short.parseShort(parts[0]);
         this.minorRevision = Short.parseShort(parts[1]);

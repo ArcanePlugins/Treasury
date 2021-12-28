@@ -62,8 +62,7 @@ public class Messages {
         @Comment("Placeholders: %prefix%, %permission%")
         @Key("no-permission")
         private List<String> noPermission = Collections.singletonList(
-                "%prefix% You don't have access to that &8(&7requires permission &b%permission%&8)&7."
-        );
+                "%prefix% You don't have access to that &8(&7requires permission &b%permission%&8)&7.");
 
         @ConfigObject
         private States states = new States();
@@ -114,10 +113,65 @@ public class Messages {
             );
 
             @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.economy.invalid-usage-unspecified")
+            private List<String> economyInvalidUsageUnspecified = Arrays.asList(
+                    "%prefix% Invalid usage - please specify a subcommand.",
+                    "%prefix% For a list of available subcommands, try ''&b/%label% economy help&7''."
+            );
+
+            @Comment("Placeholders: %prefix%, %label%, %subcomand%")
+            @Key("subcommands.economy.invalid-usage-specified")
+            private List<String> economyInvalidUsageSpecified = Arrays.asList(
+                    "%prefix% Invalid subcommand ''&b%subcommand%&7''.",
+                    "%prefix% For a list of available subcommands, try ''&b/%label% economy help&7''."
+            );
+
+            @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.economy.info.invalid-usage")
+            private List<String> infoEconomyInvalidUsage = Collections.singletonList(
+                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''.");
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.economy.info.economy-provider-unavailable")
+            private List<String> infoEconomyProviderUnavailable = Arrays.asList(
+                    "&f&nEconomy Provider",
+                    "&8 &m->&7 You don''t have an Economy Provider installed.'",
+                    " "
+            );
+
+            @Comment("Placeholders: %prefix, %name%, %priority%, %api-version%")
+            @Comment("              %supports-nonplayer-accounts%, %primary-currency%,")
+            @Comment("              %supports-transaction-events%")
+            @Key("subcommands.economy.info.economy-provider-available")
+            private List<String> infoEconomyProviderAvailable = Arrays.asList(
+                    "&f&nEconomy Provider",
+                    "&8 &m->&7 Name: &b%name%",
+                    "&8 &m->&7 Priority: &b%priority%",
+                    "&8 &m->&7 API Version: &b%api-version%",
+                    "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
+                    "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
+                    "&8 &m->&7 Primary currency: &b%primary-currency%",
+                    " "
+            );
+
+            @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.economy.help.invalid-usage")
+            private List<String> helpEconomyInvalidUsage = Collections.singletonList(
+                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''.");
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.economy.help.available-commands")
+            private List<String> helpEconomyAvailableCommands = Arrays.asList(
+                    "%prefix% Available commands:",
+                    " &8&m->&b /treasury economy help &8- &7view a list of Treasury''s commands.",
+                    " &8&m->&b /treasury economy info &8- &7view info about Treasury.",
+                    " &8&m->&b /treasury economy migrate &8- &7migrate from one economy provider to another."
+            );
+
+            @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.help.invalid-usage")
             private List<String> helpInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% help&7''."
-            );
+                    "%prefix% Invalid usage, try ''&b/%label% help&7''.");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.help.available-commands")
@@ -125,15 +179,14 @@ public class Messages {
                     "%prefix% Available commands:",
                     " &8&m->&b /treasury help &8- &7view a list of Treasury''s commands.",
                     " &8&m->&b /treasury info &8- &7view info about Treasury.",
-                    " &8&m->&b /treasury migrate &8- &7migrate from one economy provider to another.",
-                    " &8&m->&b /treasury reload &8- &7re-load all of Treasury''s configuration files.'"
+                    " &8&m->&b /treasury reload &8- &7re-load all of Treasury''s configuration files.'",
+                    " &8&m->&b /treasury economy &8 - &7economy specific commands"
             );
 
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.info.invalid-usage")
             private List<String> infoInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% info&7''."
-            );
+                    "%prefix% Invalid usage, try ''&b/%label% info&7''.");
 
             @Comment("Placeholders: %prefix%, %version%, %description%, %credits%,")
             @Comment("              %latest-api-version%, %repository%")
@@ -145,29 +198,6 @@ public class Messages {
                     "&8 &m->&7 Made possible by: &bSee &n%credits%",
                     "&8 &m->&7 API Version: &b%current-api-version%",
                     "&8 &m->&7 Learn more at: &b&n%repository%",
-                    " "
-            );
-
-            @Comment("Placeholders: %prefix%")
-            @Key("subcommands.info.economy-provider-unavailable")
-            private List<String> infoEconomyProviderUnavailable = Arrays.asList(
-                    "&f&nEconomy Provider",
-                    "&8 &m->&7 You don''t have an Economy Provider installed.'",
-                    " "
-            );
-
-            @Comment("Placeholders: %prefix, %name%, %priority%, %api-version%")
-            @Comment("              %supports-bank-accounts%, %primary-currency%,")
-            @Comment("              %supports-transaction-events%")
-            @Key("subcommands.info.economy-provider-available")
-            private List<String> infoEconomyProviderAvailable = Arrays.asList(
-                    "&f&nEconomy Provider",
-                    "&8 &m->&7 Name: &b%name%",
-                    "&8 &m->&7 Priority: &b%priority%",
-                    "&8 &m->&7 API Version: &b%api-version%",
-                    "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
-                    "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
-                    "&8 &m->&7 Primary currency: &b%primary-currency%",
                     " "
             );
 
@@ -188,8 +218,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.migrate.requires-two-providers")
             private List<String> migrateRequiresTwoProviders = Collections.singletonList(
-                    "%prefix% You can''t use this subcommand unless you have 2 economy providers set up."
-            );
+                    "%prefix% You can''t use this subcommand unless you have 2 economy providers set up.");
 
             @Comment("Placeholders: %prefix%, %providers%")
             @Key("subcommands.migrate.providers-match")
@@ -222,38 +251,33 @@ public class Messages {
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.migrate.internal-error")
             private List<String> migrateInternalError = Collections.singletonList(
-                    "%prefix% An internal error occurred whilst attempting to migrate. Please check console for more information."
-            );
+                    "%prefix% An internal error occurred whilst attempting to migrate. Please check console for more information.");
 
             @Comment("Placeholders: %prefix%, %time%, %player-accounts%,")
-            @Comment("              %migrated-currencies%, %non-migrated-currencies%")
+            @Comment("              %non-migrated-currencies%")
             @Key("subcommands.migrate.finished-migration")
             private List<String> migrateFinishedMigration = Arrays.asList(
                     "%prefix% Migration complete! Statistics:",
                     "&8 &m->&7 Took &b%time%ms&7.",
                     "&8 &m->&7 Processed &b%player-accounts%&7 player accounts.",
-                    "&8 &m->&7 Processed &b%bank-accounts%&7 bank accounts.",
-                    "&8 &m->&7 Migrated currencies: &b%migrated-currencies%&7.",
+                    "&8 &m->&7 Processed &b%nonplayer-accounts%&7 non player accounts.",
                     "&8 &m->&7 Non-migrated currencies: &b%non-migrated-currencies%&7."
             );
 
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.reload.invalid-usage")
             private List<String> reloadInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try '&b/%label% reload&7'."
-            );
+                    "%prefix% Invalid usage, try '&b/%label% reload&7'.");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.reload.reload-start")
             private List<String> reloadStart = Collections.singletonList(
-                    "%prefix% Reloading Treasury..."
-            );
+                    "%prefix% Reloading Treasury...");
 
             @Comment("Placeholders: %prefix%, %time%")
             @Key("subcommands.reload.reload-complete")
             private List<String> reloadComplete = Collections.singletonList(
-                    "%prefix% Reload successful &8(&7took &b%time%ms&8)&7."
-            );
+                    "%prefix% Reload successful &8(&7took &b%time%ms&8)&7.");
 
         }
 
@@ -334,10 +358,10 @@ public class Messages {
                     for (Map.Entry<String, MessageHolder> entry : deep.entrySet()) {
                         MessageKey key = MessageKey.getByConfigKey(entry.getKey());
                         if (key == null) {
-                            TreasuryPlugin.getInstance().logger().error(
-                                    "The key '" + entry.getKey() + "' has not been registered "
-                                            + "into MessageKey - please inform a Treasury developer ASAP."
-                            );
+                            TreasuryPlugin
+                                    .getInstance()
+                                    .logger()
+                                    .error("The key '" + entry.getKey() + "' has not been registered " + "into MessageKey - please inform a Treasury developer ASAP.");
                             continue;
                         }
                         messagesMap.put(key, entry.getValue());
@@ -350,17 +374,18 @@ public class Messages {
             String configKey = AnnotationUtils.getKey(field);
             MessageKey key = MessageKey.getByConfigKey(configKey);
             if (key == null) {
-                TreasuryPlugin.getInstance().logger().error(
-                        "The key '" + configKey + "' has not been registered "
-                                + "into MessageKey - please inform a Treasury developer ASAP."
-                );
+                TreasuryPlugin
+                        .getInstance()
+                        .logger()
+                        .error("The key '" + configKey + "' has not been registered " + "into MessageKey - please inform a Treasury developer ASAP.");
                 continue;
             }
             messagesMap.put(key, getMessageHolder(field, null));
         }
     }
 
-    private Map<String, MessageHolder> getDeepMessages(Field field, Object parent) throws IllegalAccessException {
+    private Map<String, MessageHolder> getDeepMessages(Field field, Object parent) throws
+            IllegalAccessException {
         String key = AnnotationUtils.getKey(field);
         Object toAccess = field.get(parent == null ? this : parent);
         Map<String, MessageHolder> map = new HashMap<>();
@@ -376,7 +401,10 @@ public class Messages {
                 }
                 continue;
             }
-            map.put(key + "." + AnnotationUtils.getKey(fToAccess), getMessageHolder(fToAccess, toAccess));
+            map.put(
+                    key + "." + AnnotationUtils.getKey(fToAccess),
+                    getMessageHolder(fToAccess, toAccess)
+            );
         }
         return map;
     }

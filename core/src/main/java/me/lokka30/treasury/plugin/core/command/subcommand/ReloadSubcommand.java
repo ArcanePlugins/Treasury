@@ -24,15 +24,18 @@ public class ReloadSubcommand implements Subcommand {
      */
 
     @Override
-    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.reload")) {
             return;
         }
 
         if (args.length != 0) {
-            sender.sendMessage(
-                    Message.of(MessageKey.RELOAD_INVALID_USAGE, MessagePlaceholder.placeholder("label", label))
-            );
+            sender.sendMessage(Message.of(
+                    MessageKey.RELOAD_INVALID_USAGE,
+                    MessagePlaceholder.placeholder("label", label)
+            ));
             return;
         }
 
@@ -42,9 +45,10 @@ public class ReloadSubcommand implements Subcommand {
 
         TreasuryPlugin.getInstance().reload();
 
-        sender.sendMessage(
-                Message.of(MessageKey.RELOAD_COMPLETE, MessagePlaceholder.placeholder("time", timer.getTimer()))
-        );
+        sender.sendMessage(Message.of(
+                MessageKey.RELOAD_COMPLETE,
+                MessagePlaceholder.placeholder("time", timer.getTimer())
+        ));
     }
 
 }

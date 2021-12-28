@@ -40,11 +40,7 @@ public class TreasuryCommand implements TabExecutor {
             @NotNull String label,
             @NotNull String[] args
     ) {
-        base.execute(
-                sources.obtainSource(sender),
-                label,
-                args
-        );
+        base.execute(sources.obtainSource(sender), label, args);
         return true;
     }
 
@@ -55,11 +51,7 @@ public class TreasuryCommand implements TabExecutor {
             @NotNull String label,
             @NotNull String[] args
     ) {
-        return base.complete(
-                sources.obtainSource(sender),
-                label,
-                args
-        );
+        return base.complete(sources.obtainSource(sender), label, args);
     }
 
 }

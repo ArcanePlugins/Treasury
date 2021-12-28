@@ -4,10 +4,7 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand;
 
-import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
-import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
@@ -29,56 +26,29 @@ public class InfoSubcommand implements Subcommand {
      */
 
     @Override
-    public void execute(@NotNull CommandSource sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(
+            @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
+    ) {
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.info")) {
             return;
         }
 
         if (args.length != 0) {
-            sender.sendMessage(
-                    Message.of(MessageKey.INFO_INVALID_USAGE, MessagePlaceholder.placeholder("label", label))
-            );
+            sender.sendMessage(Message.of(MessageKey.INFO_INVALID_USAGE,
+                    MessagePlaceholder.placeholder("label", label)
+            ));
             return;
         }
 
         TreasuryPlugin main = TreasuryPlugin.getInstance();
 
-        sender.sendMessage(Message.of(
-                        MessageKey.INFO_TREASURY,
-                        placeholder("version", main.getVersion()),
-                        placeholder("description", TreasuryPlugin.DESCRIPTION),
-                        placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
-                        placeholder("current-api-version", EconomyAPIVersion.getCurrentAPIVersion()),
-                        placeholder("repository", "https://github.com/lokka30/Treasury/")
-                )
-        );
-
-        ProviderEconomy providerProvider = main.economyProviderProvider();
-        if (providerProvider == null) {
-            sender.sendMessage(Message.of(MessageKey.INFO_ECONOMY_PROVIDER_UNAVAILABLE));
-        } else {
-            EconomyProvider provider = providerProvider.provide();
-            sender.sendMessage(Message.of(
-                            MessageKey.INFO_ECONOMY_PROVIDER_AVAILABLE,
-                            placeholder("name", providerProvider.registrar().getName()),
-                            placeholder("priority", providerProvider.getPriority()),
-                            placeholder("api-version", provider.getSupportedAPIVersion()),
-                            placeholder("supports-negative-balances",
-                                    Utils.getYesNoStateMessage(
-                                            provider.getSupportedOptionalEconomyApiFeatures()
-                                                    .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES)
-                                    )
-                            ),
-                            placeholder("supports-transaction-events",
-                                    Utils.getYesNoStateMessage(
-                                            provider.getSupportedOptionalEconomyApiFeatures()
-                                                    .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS)
-                                    )
-                            ),
-                            placeholder("primary-currency", provider.getPrimaryCurrency().getPrimaryCurrencyName())
-                    )
-            );
-        }
+        sender.sendMessage(Message.of(MessageKey.INFO_TREASURY,
+                placeholder("version", main.getVersion()),
+                placeholder("description", TreasuryPlugin.DESCRIPTION),
+                placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
+                placeholder("current-api-version", EconomyAPIVersion.getCurrentAPIVersion()),
+                placeholder("repository", "https://github.com/lokka30/Treasury/")
+        ));
 
         sender.sendMessage(Message.of(MessageKey.INFO_MISC_INFO));
     }

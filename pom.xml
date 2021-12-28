@@ -21,7 +21,8 @@
     <packaging>pom</packaging>
 
     <name>Treasury-Parent</name>
-    <description>A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server.
+    <description>A modern, multi-platform library facilitating the interaction between 'provider'
+        plugins on your server.
     </description>
 
     <inceptionYear>2021</inceptionYear>
@@ -34,9 +35,9 @@
 
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
-        <jetbrains.annotations.version>22.0.0</jetbrains.annotations.version>
+        <jetbrains.annotations.version>23.0.0</jetbrains.annotations.version>
         <junit.version>5.8.2</junit.version>
-        <gson.version>2.8.0</gson.version>
+        <gson.version>2.8.9</gson.version>
         <guava.version>21.0</guava.version>
         <bstats.version>2.2.1</bstats.version>
         <annotationconfig.version>2.1.0-SNAPSHOT</annotationconfig.version>
@@ -61,21 +62,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.22.2</version>
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.1.0</version>
-                    </dependency>
-                    <dependency>
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-engine</artifactId>
-                        <version>5.1.0</version>
+                        <version>5.8.2</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -105,7 +101,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.7.0</version>
+                        <version>3.8.1</version>
                         <configuration>
                             <showDeprecation>false</showDeprecation>
                             <showWarnings>false</showWarnings>
@@ -117,28 +113,23 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.19.1</version>
+                        <version>2.22.2</version>
                         <configuration>
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
                         </configuration>
                         <dependencies>
                             <dependency>
-                                <groupId>org.junit.platform</groupId>
-                                <artifactId>junit-platform-surefire-provider</artifactId>
-                                <version>1.1.0</version>
-                            </dependency>
-                            <dependency>
                                 <groupId>org.junit.jupiter</groupId>
                                 <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.1.0</version>
+                                <version>5.8.2</version>
                             </dependency>
                         </dependencies>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <version>3.2.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -151,7 +142,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <version>3.3.1</version>
                         <configuration>
                             <quiet>true</quiet>
                             <detectOfflineLinks>false</detectOfflineLinks>

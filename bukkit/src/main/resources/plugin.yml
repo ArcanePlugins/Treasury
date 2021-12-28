@@ -12,45 +12,57 @@
 # properly, and register its commands and permissions.
 
 # Main plugin information
-name: 'Treasury'
-version: '${project.version}'
-description: 'A modern, multi-platform library facilitating the interaction between \'provider\' plugins on your server.'
-authors: ['lokka30', 'Jikoo' , 'MrIvanPlays']
+name: "Treasury"
+version: "${project.version}"
+description: "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server."
+authors: [ "lokka30", "Jikoo" , "MrIvanPlays" ]
 
 # Dependencies
-depend: []
-softdepend: []
+depend: [ ]
+softdepend: [ ]
 
 # General info for the plugin loader
-main: 'me.lokka30.treasury.plugin.bukkit.Treasury'
+main: "me.lokka30.treasury.plugin.bukkit.TreasuryBukkit"
 api-version: '1.13' # This is Spigot's API version, NOT Treasury's API version.
-load: 'STARTUP'
-loadbefore: []
+load: "STARTUP"
+loadbefore: [ ]
 
 # All registered base commands are listed here
 commands:
   treasury:
-    description: 'Manage the Treasury plugin.'
-    usage: '/<command> help'
+    description: "Manage the Treasury plugin."
+    usage: "/<command> help"
 
 # All permissions used are listed here
 permissions:
   treasury.command.treasury:
-    description: 'Ability to run `/treasury`.'
+    description: "Ability to run `/treasury`."
     default: true
 
   treasury.command.treasury.help:
-    description: 'Ability to run `/treasury help`.'
+    description: "Ability to run `/treasury help`."
     default: true
 
   treasury.command.treasury.info:
-    description: 'Ability to run `/treasury info`.'
-    default: true
-
-  treasury.command.treasury.migrate:
-    description: 'Ability to run `/treasury migrate`.'
+    description: "Ability to run `/treasury info`."
     default: op
 
   treasury.command.treasury.reload:
-    description: 'Ability to run `/treasury reload`.'
+    description: "Ability to run `/treasury reload`."
+    default: op
+
+  treasury.command.treasury.economy:
+    description: "Ability to run `/treasury economy`."
+    default: true
+
+  treasury.command.treasury.economy.help:
+    description: "Ability to run `/treasury economy help`."
+    default: true
+
+  treasury.command.treasury.economy.info:
+    description: "Ability to run `/treasury economy info`."
+    default: op
+
+  treasury.command.treasury.economy.migrate:
+    description: "Ability to run `/treasury economy migrate`."
     default: op

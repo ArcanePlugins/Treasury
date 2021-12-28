@@ -29,7 +29,8 @@ public enum EconomyAPIVersion {
 
     EconomyAPIVersion(short[] versionArray) {
         if (versionArray == null || versionArray.length > 2) {
-            throw new IllegalArgumentException("versionArray must not be null and must contain only 2 versions e.g 1, 0");
+            throw new IllegalArgumentException(
+                    "versionArray must not be null and must contain only 2 versions e.g 1, 0");
         }
         this.versionArray = versionArray;
     }
