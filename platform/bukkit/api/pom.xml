@@ -15,7 +15,6 @@
     </parent>
 
     <artifactId>treasury-bukkit-api</artifactId>
-
     <name>Treasury-Bukkit-API</name>
 
     <properties>
@@ -31,4 +30,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
 </project>

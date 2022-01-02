@@ -22,7 +22,6 @@
     </modules>
 
     <artifactId>treasury-bukkit</artifactId>
-
     <name>Treasury-Bukkit</name>
 
     <repositories>
@@ -55,4 +54,5 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
 </project>
