@@ -18,6 +18,11 @@
     <name>Treasury-API</name>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains</groupId>

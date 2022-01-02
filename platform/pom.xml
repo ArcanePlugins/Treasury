@@ -24,11 +24,6 @@
 
     <name>Treasury-Platform</name>
 
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>me.lokka30</groupId>
