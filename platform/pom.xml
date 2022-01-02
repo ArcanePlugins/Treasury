@@ -29,4 +29,12 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>me.lokka30</groupId>
+            <artifactId>treasury-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>
