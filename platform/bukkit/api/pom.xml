@@ -3,26 +3,25 @@
   ~ This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>treasury-parent</artifactId>
+        <artifactId>treasury-bukkit</artifactId>
         <groupId>me.lokka30</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>treasury-api-bukkit</artifactId>
+    <artifactId>treasury-bukkit-api</artifactId>
 
-    <name>Treasury-API-Bukkit</name>
+    <name>Treasury-Bukkit-API</name>
 
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -31,11 +30,5 @@
             <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>me.lokka30</groupId>
-            <artifactId>treasury-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
-
 </project>
