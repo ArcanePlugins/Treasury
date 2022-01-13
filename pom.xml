@@ -70,7 +70,7 @@
     <build>
         <defaultGoal>clean package</defaultGoal>
         <finalName>
-            ${artifactId}-${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}
+            ${project.artifactId}-${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}
         </finalName>
         <plugins>
             <plugin>
@@ -146,7 +146,7 @@
             <build>
                 <defaultGoal>clean package</defaultGoal>
                 <finalName>
-                    ${artifactId}-${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}
+                    ${project.artifactId}-${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}
                 </finalName>
                 <plugins>
                     <plugin>

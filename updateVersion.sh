@@ -8,11 +8,11 @@
 # WARNING: THIS DOES NOT UPDATE THE VERSIONS OF THE API MODULES. YOU HAVE TO DO THAT BY HAND IF
 # NEEDED.
 # ================================================================================================
-# How to use: if you just want to change the version, plainly run "./updateVersion.sh" in the 
+# How to use: if you just want to change the version, plainly run "./updateVersion.sh" in the
 # terminal and it will tell you to specify a new version.
-# If you want to change the version and commit, you have to run "./updateVersion.sh commit" in 
+# If you want to change the version and commit, you have to run "./updateVersion.sh commit" in
 # the terminal and it will again tell you to specify a new version.
-# If you want to change the version, commit and push, you have to run "./updateVersion.sh commit 
+# If you want to change the version, commit and push, you have to run "./updateVersion.sh commit
 # push" in the terminal and it will again tell you to specify a new version.
 # ================================================================================================
 
@@ -20,10 +20,18 @@ function commit {
     version=$1
     push=$2
     git add "pom.xml"
-    for f in * ; do
-        if [ -d "$f" ] && [ -f "$f"/pom.xml ]; then
-            git add "$f"/pom.xml
-        fi
+    git add "api/pom.xml"
+    git add "core/pom.xml"
+    SCRIPT_DIR=$(dirname $0)
+
+    for PLATFORM in $SCRIPT_DIR/platform/*/; do
+        for MODULE in ${PLATFORM}*/; do
+            POM_FILE=${MODULE}pom.xml
+
+            if [[ -f $POM_FILE ]]; then
+                git add $POM_FILE
+            fi
+        done
     done
     git commit -m "(updateVersion.sh) Bump version to ${version}"
     if [ -n "$push" ] && [ "$push" = "push" ]; then
