@@ -1,6 +1,7 @@
 package me.lokka30.treasury.plugin.core.utils;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,38 +12,35 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PluginVersion {
 
+    private static final Pattern VERSION_VALIDATOR = Pattern.compile(
+            "\\d+\\.\\d+\\.\\d+-[0-9A-Fa-f]{7}-(SNAPSHOT|RELEASE)");
+
     private final short majorRevision, minorRevision, patchRevision;
     private final boolean developmentVersion, release;
-    private final String commit, stringVersion;
+    private final String stringVersion, commit;
 
     public PluginVersion(@NotNull String input, @NotNull Logger logger) {
         Objects.requireNonNull(input, "input");
         Objects.requireNonNull(logger, "logger");
+
+        if (!VERSION_VALIDATOR.matcher(input).matches()) {
+            throw new IllegalArgumentException(
+                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
+        }
+
         this.stringVersion = input;
 
-        if (input.indexOf('.') == -1 || input.indexOf('-') == -1) {
-            throw new IllegalArgumentException(
-                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
-        }
-        // parse commit before version
-        String[] bigParts = input.split("-");
-        if (bigParts.length != 3) {
-            throw new IllegalArgumentException(
-                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
-        }
-        this.commit = bigParts[1];
+        String[] parts = input.split("-");
 
-        this.developmentVersion = bigParts[2].equalsIgnoreCase("SNAPSHOT");
-        this.release = bigParts[2].equalsIgnoreCase("RELEASE");
+        this.commit = parts[1];
 
-        String[] parts = bigParts[0].split("\\.");
-        if (parts.length != 3) {
-            throw new IllegalArgumentException(
-                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
-        }
-        this.majorRevision = Short.parseShort(parts[0]);
-        this.minorRevision = Short.parseShort(parts[1]);
-        this.patchRevision = Short.parseShort(parts[2]);
+        this.developmentVersion = parts[2].equalsIgnoreCase("SNAPSHOT");
+        this.release = parts[2].equalsIgnoreCase("RELEASE");
+
+        String[] versionNoParts = parts[0].split("\\.");
+        this.majorRevision = Short.parseShort(versionNoParts[0]);
+        this.minorRevision = Short.parseShort(versionNoParts[1]);
+        this.patchRevision = Short.parseShort(versionNoParts[2]);
     }
 
     /**

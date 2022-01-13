@@ -126,15 +126,23 @@ public final class UpdateChecker {
         PluginVersion currentVersion = plugin.getVersion();
         PluginVersion.ComparisonResult comparisonResult = currentVersion.compare(latestVersionRead);
 
+        if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
+            // this statement means that the "latestVersionRead" is newer than the version we're running.
+            plugin
+                    .logger()
+                    .warn("A new Treasury update is available - '&bv" + latestVersionRead + "&e' - please update as soon as possible. &8(&7You're running '&bv" + currentVersion + "&7'&8)");
+        } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
+            // this statement means that the "latestVersionRead" is older than the version we're running.
+            plugin.logger().warn(
+                    "You are running a newer version of Treasury than known. How did we get here?");
+        }
+
         ProviderEconomy providerEconomyProvider = plugin.economyProviderProvider();
-        if (providerEconomyProvider == null) {
-            handlePluginVersioning(plugin, comparisonResult, latestVersionRead);
-        } else {
+        if (providerEconomyProvider != null) {
             EconomyProvider provider = providerEconomyProvider.provide();
             EconomyAPIVersion providerVersion = provider.getSupportedAPIVersion();
             EconomyAPIVersion latestVersion = EconomyAPIVersion.getCurrentAPIVersion();
 
-            handlePluginVersioning(plugin, comparisonResult, latestVersionRead);
             handleAPIVersioning(providerVersion,
                     latestVersion,
                     providerEconomyProvider,
@@ -162,6 +170,20 @@ public final class UpdateChecker {
         } else if (comparisonResult == PluginVersion.ComparisonResult.UNKNOWN) {
             plugin.logger().warn(
                     "Couldn't check for a development version update. You are running a development version. Please check for updates and stay updated :).");
+        }
+
+        ProviderEconomy providerEconomyProvider = plugin.economyProviderProvider();
+        if (providerEconomyProvider != null) {
+            EconomyProvider provider = providerEconomyProvider.provide();
+            EconomyAPIVersion providerVersion = provider.getSupportedAPIVersion();
+            EconomyAPIVersion latestVersion = EconomyAPIVersion.getCurrentAPIVersion();
+
+            handleAPIVersioning(providerVersion,
+                    latestVersion,
+                    providerEconomyProvider,
+                    comparisonResult,
+                    plugin.getVersion().isDevelopmentVersion()
+            );
         }
     }
 
@@ -230,24 +252,6 @@ public final class UpdateChecker {
                     "You must resolve this issue as soon as possible. Leaving this issue unresolved can");
             plugin.logger().error(
                     "cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
-        }
-    }
-
-    private static void handlePluginVersioning(
-            TreasuryPlugin plugin,
-            PluginVersion.ComparisonResult comparisonResult,
-            PluginVersion latestVersionRead
-    ) {
-        PluginVersion currentVersion = plugin.getVersion();
-        if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
-            // this statement means that the "latestVersionRead" is newer than the version we're running.
-            plugin
-                    .logger()
-                    .warn("A new Treasury update is available - '&bv" + latestVersionRead + "&e' - please update as soon as possible. &8(&7You're running '&bv" + currentVersion + "&7'&8)");
-        } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
-            // this statement means that the "latestVersionRead" is older than the version we're running.
-            plugin.logger().warn(
-                    "You are running a newer version of Treasury than known. How did we get here?");
         }
     }
 
