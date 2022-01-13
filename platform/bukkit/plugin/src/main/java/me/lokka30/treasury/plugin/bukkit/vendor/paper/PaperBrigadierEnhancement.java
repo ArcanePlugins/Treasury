@@ -102,7 +102,7 @@ public class PaperBrigadierEnhancement implements Listener {
 
     private SuggestionProvider<BukkitBrigadierCommandSource> plugins() {
         return (context, builder) -> {
-            String lastArg = builder.getRemainingLowerCase();
+            String lastArg = builder.getRemaining().toLowerCase(Locale.ROOT);
 
             for (String pluginRegistering : TreasuryPlugin
                     .getInstance()
