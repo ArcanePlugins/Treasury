@@ -59,7 +59,10 @@ public final class UpdateChecker {
                         handleSpigotVersionCheck(latestVersion);
                     }
                 } catch (IOException e) {
-                    plugin.logger().error("IO whilst trying to request Spigot", e);
+                    plugin.logger().error(
+                            "Unable to retrieve the latest version data for the Treasury resource on SpigotMC.org (IOException)",
+                            e
+                    );
                 }
             });
         } else if (current.isDevelopmentVersion()) {
@@ -104,7 +107,10 @@ public final class UpdateChecker {
                         handleGitHubVersioning(comparisonResult);
                     }
                 } catch (IOException e) {
-                    plugin.logger().error("IO whilst trying to request GitHub", e);
+                    plugin.logger().error(
+                            "Unable to retrieve the latest version data for the Treasury resource on GitHub.com (IOException)",
+                            e
+                    );
                 }
             });
         } else {
