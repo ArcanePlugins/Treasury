@@ -18,6 +18,11 @@
 
     <name>Treasury-API</name>
 
+    <properties>
+        <!-- This stops the updateVersion script from changing the version of the module -->
+        <maven.versions.skip>true</maven.versions.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains</groupId>

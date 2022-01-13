@@ -23,7 +23,6 @@
     </properties>
 
     <build>
-        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -84,7 +83,7 @@
         <dependency>
             <groupId>me.lokka30</groupId>
             <artifactId>treasury-api-bukkit</artifactId>
-            <version>${project.version}</version>
+            <version>${api.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>

@@ -33,6 +33,16 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- Versions for specifying in plugin.yml's -->
+        <plugin.version>1.0.0</plugin.version>
+        <plugin.specificationVersion>SNAPSHOT</plugin.specificationVersion>
+
+        <!--
+        Maven module API version.
+        Should be synced with api module and it's delegates (e.g api-bukkit)
+         -->
+        <api.version>1.0-SNAPSHOT</api.version>
+
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
         <jetbrains.annotations.version>23.0.0</jetbrains.annotations.version>
@@ -58,6 +68,10 @@
     </scm>
 
     <build>
+        <defaultGoal>clean package</defaultGoal>
+        <finalName>
+            ${artifactId}-${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}
+        </finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -74,6 +88,40 @@
                         <version>5.8.2</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.0.0</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                    <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+                </configuration>
+            </plugin>
+            <!--
+                Embrace the commit date as an implementation version, so we don't need to send 2
+                requests to github
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Version>${git.commit.time}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -97,6 +145,9 @@
             </distributionManagement>
             <build>
                 <defaultGoal>clean package</defaultGoal>
+                <finalName>
+                    ${artifactId}-${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}
+                </finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -125,6 +176,38 @@
                                 <version>5.8.2</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>4.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>get-the-git-infos</id>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                            <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Implementation-Version>
+                                        ${git.commit.time}
+                                    </Implementation-Version>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
