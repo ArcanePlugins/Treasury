@@ -12,25 +12,33 @@ import org.jetbrains.annotations.NotNull;
 public final class PluginVersion {
 
     private final short majorRevision, minorRevision, patchRevision;
-    private final boolean developmentVersion;
-    private final String stringVersion;
+    private final boolean developmentVersion, release;
+    private final String commit, stringVersion;
 
     public PluginVersion(@NotNull String input, @NotNull Logger logger) {
         Objects.requireNonNull(input, "input");
         Objects.requireNonNull(logger, "logger");
         this.stringVersion = input;
-        if (input.endsWith("-SNAPSHOT")) {
-            developmentVersion = true;
-            input = input.replace("-SNAPSHOT", "");
-        } else {
-            developmentVersion = false;
+
+        if (input.indexOf('.') == -1 || input.indexOf('-') == -1) {
+            throw new IllegalArgumentException(
+                    "Illegal Treasury version found! If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
         }
-        if (input.indexOf('.') == -1) {
-            throw new IllegalArgumentException("Illegal Treasury version found! " + "If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
+        // parse commit before version
+        String[] bigParts = input.split("-");
+        if (bigParts.length != 3) {
+            throw new IllegalArgumentException(
+                    "Illegal Treasury version found! If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
         }
-        String[] parts = input.split("\\.");
+        this.commit = bigParts[1];
+
+        this.developmentVersion = bigParts[2].equalsIgnoreCase("SNAPSHOT");
+        this.release = bigParts[2].equalsIgnoreCase("RELEASE");
+
+        String[] parts = bigParts[0].split("\\.");
         if (parts.length != 3) {
-            throw new IllegalArgumentException("Illegal Treasury version found! " + "If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
+            throw new IllegalArgumentException(
+                    "Illegal Treasury version found! If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
         }
         this.majorRevision = Short.parseShort(parts[0]);
         this.minorRevision = Short.parseShort(parts[1]);
@@ -74,6 +82,24 @@ public final class PluginVersion {
     }
 
     /**
+     * Returns whether this plugin version is a release version.
+     *
+     * @return release version or not
+     */
+    public boolean isReleaseVersion() {
+        return release;
+    }
+
+    /**
+     * Returns the abbreviated commit id, stored inside the version.
+     *
+     * @return commit id
+     */
+    public String getCommit() {
+        return commit;
+    }
+
+    /**
      * Compares the specified {@link PluginVersion} {@code other} to this plugin version.
      *
      * @param other version to compare to
@@ -95,21 +121,9 @@ public final class PluginVersion {
                 } else if (other.getPatchRevision() < patchRevision) {
                     return ComparisonResult.OLDER;
                 } else {
-                    if (other.isDevelopmentVersion() && developmentVersion) {
-                        // we're safe to return equal and call it a day since we're warning the user
-                        // that this is a development version and there might be a new one
-                        return ComparisonResult.EQUAL;
-                    } else if (other.isDevelopmentVersion()) {
-                        // assume it's older since if this is not a development version it means it is a release
-                        // and releases are newer than development versions
-                        return ComparisonResult.OLDER;
-                    } else if (developmentVersion) {
-                        // assume it's newer since if the other version is not a development version it means it is
-                        // a release and releases are newer than development versions
-                        return ComparisonResult.NEWER;
-                    } else {
-                        return ComparisonResult.EQUAL;
-                    }
+                    // do not compare development versions - we do other stuff inside the update
+                    // checker
+                    return ComparisonResult.EQUAL;
                 }
             }
         }
@@ -135,7 +149,13 @@ public final class PluginVersion {
         /**
          * The version which was given to compare to is the same as the version comparing.
          */
-        EQUAL
+        EQUAL,
+
+        /**
+         * Special case comparison result constant, which means the version which was given to
+         * compare was something we couldn't understand somehow.
+         */
+        UNKNOWN
     }
 
     @Override

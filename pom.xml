@@ -104,6 +104,23 @@
                 </executions>
                 <configuration>
                     <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                    <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+                </configuration>
+            </plugin>
+            <!--
+                Embrace the commit date as an implementation version, so we don't need to send 2
+                requests to github
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Version>${git.commit.time}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -175,6 +192,21 @@
                         </executions>
                         <configuration>
                             <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                            <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Implementation-Version>
+                                        ${git.commit.time}
+                                    </Implementation-Version>
+                                </manifestEntries>
+                            </archive>
                         </configuration>
                     </plugin>
                     <plugin>
