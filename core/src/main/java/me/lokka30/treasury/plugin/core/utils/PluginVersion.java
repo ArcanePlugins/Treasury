@@ -22,13 +22,13 @@ public final class PluginVersion {
 
         if (input.indexOf('.') == -1 || input.indexOf('-') == -1) {
             throw new IllegalArgumentException(
-                    "Illegal Treasury version found! If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
+                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
         }
         // parse commit before version
         String[] bigParts = input.split("-");
         if (bigParts.length != 3) {
             throw new IllegalArgumentException(
-                    "Illegal Treasury version found! If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
+                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
         }
         this.commit = bigParts[1];
 
@@ -38,7 +38,7 @@ public final class PluginVersion {
         String[] parts = bigParts[0].split("\\.");
         if (parts.length != 3) {
             throw new IllegalArgumentException(
-                    "Illegal Treasury version found! If this is a live environment version or you're a developer doing changes, please fix this ASAP!");
+                    "Your current Treasury version is not formatted correctly! Please inform a Treasury maintainer as soon as possible.");
         }
         this.majorRevision = Short.parseShort(parts[0]);
         this.minorRevision = Short.parseShort(parts[1]);
