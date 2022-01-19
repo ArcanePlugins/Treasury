@@ -50,7 +50,7 @@ public class Messages {
     private CommonMessages common = new CommonMessages();
 
     @Comment("These messages are used across multiple other messages,")
-    @Comment("so they have been grouped together in the 'common' category.")
+    @Comment("so they have been grouped together in the \"common\" category.")
     public static class CommonMessages {
 
         @Comment("This text replaces the `%prefix%` placeholder in all applicable messages.")
@@ -79,7 +79,7 @@ public class Messages {
 
         @Comment("The delimiter used in lists of things - this separates each list term.")
         @Comment("For example, the non-colored version of a list can look like:")
-        @Comment("'List item 1&7, &bList item 2&7, &bList item 3'")
+        @Comment("\"List item 1&7, &bList item 2&7, &bList item 3\"")
         @Comment("Notice how the list delimiter is used to separate each term in the list.")
         @Key("list-delimiter")
         private String listDelimiter = "&7, &b";
@@ -102,40 +102,40 @@ public class Messages {
             @Key("invalid-usage-unspecified")
             private List<String> invalidUsageUnspecified = Arrays.asList(
                     "%prefix% Invalid usage - please specify a subcommand.",
-                    "%prefix% For a list of available subcommands, try ''&b/%label% help&7''."
+                    "%prefix% For a list of available subcommands, try \"&b/%label% help&7\"."
             );
 
             @Comment("Placeholders: %prefix%, %label%, %subcomand%")
             @Key("invalid-usage-specified")
             private List<String> invalidUsageSpecified = Arrays.asList(
-                    "%prefix% Invalid subcommand ''&b%subcommand%&7''.",
-                    "%prefix% For a list of available subcommands, try ''&b/%label% help&7''."
+                    "%prefix% Invalid subcommand \"&b%subcommand%&7\".",
+                    "%prefix% For a list of available subcommands, try \"&b/%label% help&7\"."
             );
 
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.economy.invalid-usage-unspecified")
             private List<String> economyInvalidUsageUnspecified = Arrays.asList(
                     "%prefix% Invalid usage - please specify a subcommand.",
-                    "%prefix% For a list of available subcommands, try ''&b/%label% economy help&7''."
+                    "%prefix% For a list of available subcommands, try \"&b/%label% economy help&7\"."
             );
 
             @Comment("Placeholders: %prefix%, %label%, %subcomand%")
             @Key("subcommands.economy.invalid-usage-specified")
             private List<String> economyInvalidUsageSpecified = Arrays.asList(
-                    "%prefix% Invalid subcommand ''&b%subcommand%&7''.",
-                    "%prefix% For a list of available subcommands, try ''&b/%label% economy help&7''."
+                    "%prefix% Invalid subcommand \"&b%subcommand%&7\".",
+                    "%prefix% For a list of available subcommands, try \"&b/%label% economy help&7\"."
             );
 
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.economy.info.invalid-usage")
             private List<String> infoEconomyInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''.");
+                    "%prefix% Invalid usage, try \"&b/%label% economy help&7\".");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.economy.info.economy-provider-unavailable")
             private List<String> infoEconomyProviderUnavailable = Arrays.asList(
                     "&f&nEconomy Provider",
-                    "&8 &m->&7 You don''t have an Economy Provider installed.'",
+                    "&8 &m->&7 You don't have an Economy Provider installed.",
                     " "
             );
 
@@ -157,13 +157,13 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.economy.help.invalid-usage")
             private List<String> helpEconomyInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% economy help&7''.");
+                    "%prefix% Invalid usage, try \"&b/%label% economy help&7\".");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.economy.help.available-commands")
             private List<String> helpEconomyAvailableCommands = Arrays.asList(
                     "%prefix% Available commands:",
-                    " &8&m->&b /treasury economy help &8- &7view a list of Treasury''s commands.",
+                    " &8&m->&b /treasury economy help &8- &7view a list of Treasury's commands.",
                     " &8&m->&b /treasury economy info &8- &7view info about Treasury.",
                     " &8&m->&b /treasury economy migrate &8- &7migrate from one economy provider to another."
             );
@@ -171,22 +171,22 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.help.invalid-usage")
             private List<String> helpInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% help&7''.");
+                    "%prefix% Invalid usage, try \"&b/%label% help&7\".");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.help.available-commands")
             private List<String> helpAvailableCommands = Arrays.asList(
                     "%prefix% Available commands:",
-                    " &8&m->&b /treasury help &8- &7view a list of Treasury''s commands.",
+                    " &8&m->&b /treasury help &8- &7view a list of Treasury's commands.",
                     " &8&m->&b /treasury info &8- &7view info about Treasury.",
-                    " &8&m->&b /treasury reload &8- &7re-load all of Treasury''s configuration files.'",
+                    " &8&m->&b /treasury reload &8- &7re-load all of Treasury's configuration files.",
                     " &8&m->&b /treasury economy &8 - &7economy specific commands"
             );
 
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.info.invalid-usage")
             private List<String> infoInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try ''&b/%label% info&7''.");
+                    "%prefix% Invalid usage, try \"&b/%label% info&7\".");
 
             @Comment("Placeholders: %prefix%, %version%, %description%, %credits%,")
             @Comment("              %latest-api-version%, %repository%")
@@ -205,20 +205,20 @@ public class Messages {
             @Key("subcommands.info.misc-info")
             private List<String> infoMiscInfo = Arrays.asList(
                     "&f&nMiscellaneous Info:",
-                    "&8 &m->&7 For a list of commands, run ''&b/treasury help&7''."
+                    "&8 &m->&7 For a list of commands, run \"&b/treasury help&7\"."
             );
 
             @Comment("Placeholders: %prefix%, %label%, %providers%")
             @Key("subcommands.migrate.invalid-usage")
             private List<String> migrateInvalidUsage = Arrays.asList(
-                    "%prefix% Invalid usage, try ''&b/%label% migrate <providerFrom> <providerTo>&7''.",
+                    "%prefix% Invalid usage, try \"&b/%label% migrate <providerFrom> <providerTo>&7\".",
                     "%prefix% Valid economy providers: &b%providers%&7."
             );
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.migrate.requires-two-providers")
             private List<String> migrateRequiresTwoProviders = Collections.singletonList(
-                    "%prefix% You can''t use this subcommand unless you have 2 economy providers set up.");
+                    "%prefix% You can't use this subcommand unless you have 2 economy providers set up.");
 
             @Comment("Placeholders: %prefix%, %providers%")
             @Key("subcommands.migrate.providers-match")
@@ -237,7 +237,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %providers%")
             @Key("subcommands.migrate.requires-valid-to")
             private List<String> migrateRequiresValidTo = Arrays.asList(
-                    "%prefix% You must specify a valid economy provider to migrate to.'",
+                    "%prefix% You must specify a valid economy provider to migrate to.",
                     "%prefix% Valid economy providers: &b%providers%&7."
             );
 
@@ -267,7 +267,7 @@ public class Messages {
             @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.reload.invalid-usage")
             private List<String> reloadInvalidUsage = Collections.singletonList(
-                    "%prefix% Invalid usage, try '&b/%label% reload&7'.");
+                    "%prefix% Invalid usage, try \"&b/%label% reload&7\".");
 
             @Comment("Placeholders: %prefix%")
             @Key("subcommands.reload.reload-start")
