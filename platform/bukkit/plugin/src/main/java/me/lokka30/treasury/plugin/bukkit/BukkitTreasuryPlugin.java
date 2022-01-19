@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
@@ -25,6 +27,7 @@ import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
@@ -177,10 +180,28 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     public String colorize(@NotNull String message) {
-        return BukkitVendor.isSpigot() ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes(
-                '&',
+        message = colorizeHex(message);
+        return BukkitVendor.isSpigot() ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&',
                 message
-        ) : org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
+        ) : ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-f0-9]{6})");
+
+    private String colorizeHex(@NotNull String message) {
+        Matcher matcher = HEX_PATTERN.matcher(message);
+        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            matcher.appendReplacement(
+                    buffer,
+                    ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(
+                            1) + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(
+                            3) + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(
+                            5)
+            );
+        }
+        return matcher.appendTail(buffer).toString();
     }
 
     @Override
