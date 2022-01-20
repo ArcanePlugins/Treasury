@@ -1,0 +1,50 @@
+on:
+  push:
+    tags:
+      - '*'
+
+name: Upload Release Asset and Deploy to Nexus
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 17
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Restore settings.xml
+        env:
+          MAVEN_SETTINGS: ${{ secrets.MAVEN_SETTINGS }}
+        shell: bash
+        run: |
+          mkdir -p ~/.m2/
+          echo "M2_HOME=${HOME}/.m2" >> $GITHUB_ENV
+          echo "${MAVEN_SETTINGS}" > ~/.m2/settings.xml
+      - name: Build
+        run: mvn deploy
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            api/target/treasury-api-*.jar
+            api/target/treasury-api-*-javadoc.jar
+            api/target/treasury-api-*-sources.jar
+            api-bukkit/target/treasury-api-bukkit-*.jar
+            api-bukkit/target/treasury-api-bukkit-*-javadoc.jar
+            api-bukkit/target/treasury-api-bukkit-*-sources.jar
+            bukkit/target/treasury-bukkit-*.jar
+
+
