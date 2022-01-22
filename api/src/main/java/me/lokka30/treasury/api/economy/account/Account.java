@@ -18,7 +18,6 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
-import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -354,13 +353,11 @@ public interface Account {
     void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the specified {@link UUID}
-     * {@code player}. The state is specified via the {@link TriState} {@code permissionValue}. If
-     * {@link TriState#UNSPECIFIED} is specified for a {@code permissionValue}, then the specified {@code permissions} get
-     * unbound from the specified {@code player}. If {@link TriState#FALSE} is specified for a {@code permissionValue}, then
-     * the specified {@code permissions} become forbidden for the {@code player}, no matter whether they had them in the past.
-     *
-     * <p>Just a reminder: a member is any player with at least one allowed permission.
+     * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the
+     * specified {@link UUID} {@code player}.
+     * The state of the permission is specified via the {@code permissionValue} boolean, where
+     * {@code true} is 'has permission', and {@code false} is 'does not have permission'.
+     * Just a reminder: a member is any player with at least one allowed permission.
      *
      * @param player          the player id you want to modify the permissions of
      * @param permissionValue the permission value you want to set
@@ -371,13 +368,14 @@ public interface Account {
      */
     void setPermission(
             @NotNull UUID player,
-            @NotNull TriState permissionValue,
+            boolean permissionValue,
             @NotNull EconomySubscriber<Boolean> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
 
     /**
-     * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID} {@code player}
+     * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID}
+     * {@code player}.
      *
      * @param player       the player {@link UUID} to get the permissions for
      * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
@@ -386,7 +384,7 @@ public interface Account {
      */
     void retrievePermissions(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+            @NotNull EconomySubscriber<Map<AccountPermission, Boolean>> subscription
     );
 
     /**

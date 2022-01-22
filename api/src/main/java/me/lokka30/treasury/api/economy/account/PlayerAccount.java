@@ -18,7 +18,6 @@ import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,12 +35,12 @@ import org.jetbrains.annotations.NotNull;
 public interface PlayerAccount extends Account {
 
     /**
-     * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
-     * {@link TriState#TRUE}
+     * Returns a map fulfilled with all {@link AccountPermission} with {@link Boolean} values of
+     * {@code true}.
      */
-    Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
+    Map<AccountPermission, Boolean> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
             .stream(AccountPermission.values())
-            .collect(Collectors.toConcurrentMap(p -> p, $ -> TriState.TRUE)));
+            .collect(Collectors.toConcurrentMap(p -> p, $ -> true)));
 
     /**
      * Gets the string-based unique identifier for this account.
@@ -104,7 +103,7 @@ public interface PlayerAccount extends Account {
     @Override
     default void retrievePermissions(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+            @NotNull EconomySubscriber<Map<AccountPermission, Boolean>> subscription
     ) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
@@ -119,7 +118,7 @@ public interface PlayerAccount extends Account {
     @Override
     default void setPermission(
             @NotNull UUID player,
-            @NotNull TriState permissionValue,
+            boolean permissionValue,
             @NotNull EconomySubscriber<Boolean> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     ) {

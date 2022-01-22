@@ -9,7 +9,6 @@ import java.util.UUID;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.api.misc.TriState;
 
 /**
  * Enum that holds the permissions of an {@link Account} that is shared among multiple players.
@@ -47,7 +46,7 @@ public enum AccountPermission {
     /**
      * Allows a player to modify the permissions of other players on a {@link Account}
      *
-     * @see NonPlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
+     * @see NonPlayerAccount#setPermission(UUID, boolean, EconomySubscriber, AccountPermission...)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     MODIFY_PERMISSIONS
