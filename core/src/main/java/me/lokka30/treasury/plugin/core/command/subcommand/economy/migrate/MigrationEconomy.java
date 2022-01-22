@@ -67,7 +67,7 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public boolean isDefault() {
+            public boolean isPrimary() {
                 return false;
             }
 

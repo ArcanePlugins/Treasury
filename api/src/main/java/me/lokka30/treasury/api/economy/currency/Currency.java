@@ -78,15 +78,15 @@ public interface Currency {
     int getPrecision();
 
     /**
-     * Checks if this currency is the default currency to use.
+     * Checks if this currency is the primary currency to use.
      *
-     * @return True if this currency is the default currency. This method should use a global
+     * @return True if this currency is the primary currency. This method should use a global
      *         context if multi-world support is not present, otherwise it should use the default world
      *         for this check.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    boolean isDefault();
+    boolean isPrimary();
 
     /**
      * Used to convert this {@link Currency} to another based on a specified amount of the other
