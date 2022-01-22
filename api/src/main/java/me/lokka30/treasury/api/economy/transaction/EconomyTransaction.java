@@ -33,15 +33,12 @@ public class EconomyTransaction {
     }
 
     private final BigDecimal transactionAmount;
-    @NotNull
     private final String currencyID;
-    @NotNull
     private final EconomyTransactionInitiator<?> initiator;
-    @NotNull
     private final Instant timestamp;
-    @NotNull
     private final EconomyTransactionType economyTransactionType;
     private final Optional<String> reason;
+    private final EconomyTransactionImportance importance;
 
     /**
      * Creates a new account transaction object.
@@ -60,7 +57,8 @@ public class EconomyTransaction {
             @Nullable Temporal timestamp,
             @NotNull EconomyTransactionType economyTransactionType,
             @Nullable String reason,
-            final BigDecimal transactionAmount
+            final BigDecimal transactionAmount,
+            @NotNull EconomyTransactionImportance importance
     ) {
         this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
         this.initiator = Objects.requireNonNull(initiator, "initiator");
@@ -72,6 +70,7 @@ public class EconomyTransaction {
         this.timestamp = timestamp == null
                 ? Instant.now()
                 : (timestamp instanceof Instant ? (Instant) timestamp : Instant.from(timestamp));
+        this.importance = importance;
     }
 
     /**
@@ -140,9 +139,17 @@ public class EconomyTransaction {
     }
 
     /**
+     * Returns the importance of the transaction.
+     *
+     * @return importance
+     */
+    @NotNull
+    public EconomyTransactionImportance getImportance() { return importance; }
+
+    /**
      * Represents a builder of {@link EconomyTransaction}
      *
-     * @author MrIvanPlays
+     * @author MrIvanPlays, lokka30
      */
     public static class Builder {
 
@@ -152,9 +159,9 @@ public class EconomyTransaction {
         private EconomyTransactionType economyTransactionType;
         private String reason;
         private BigDecimal transactionAmount;
+        private EconomyTransactionImportance importance;
 
-        public Builder() {
-        }
+        public Builder() {}
 
         /**
          * Creates a new {@link Builder} out of the specified {@code other}
@@ -168,6 +175,7 @@ public class EconomyTransaction {
             this.economyTransactionType = other.economyTransactionType;
             this.reason = other.reason;
             this.transactionAmount = other.transactionAmount;
+            this.importance = other.importance;
         }
 
         /**
@@ -260,6 +268,17 @@ public class EconomyTransaction {
         }
 
         /**
+         * Specify the importance this transaction should have.
+         *
+         * @param importance importance of the transaction
+         * @return this insatance for chaining
+         */
+        public Builder withImportance(EconomyTransactionImportance importance) {
+            this.importance = importance;
+            return this;
+        }
+
+        /**
          * Builds the specified stuff into a new {@link EconomyTransaction}
          *
          * @return transaction object
@@ -269,12 +288,14 @@ public class EconomyTransaction {
             Objects.requireNonNull(initiator, "initiator");
             Objects.requireNonNull(economyTransactionType, "transactionType");
             Objects.requireNonNull(transactionAmount, "transactionAmount");
+            Objects.requireNonNull(importance, "importance");
             return new EconomyTransaction(currencyID,
                     initiator,
                     timestamp,
                     economyTransactionType,
                     reason,
-                    transactionAmount
+                    transactionAmount,
+                    importance
             );
         }
 
