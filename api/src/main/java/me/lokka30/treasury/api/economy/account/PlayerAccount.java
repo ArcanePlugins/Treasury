@@ -110,9 +110,9 @@ public interface PlayerAccount extends Account {
     ) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(getUniqueId().equals(player)
+        subscription.succeed((getUniqueId().equals(player)
                 ? ALL_PERMISSIONS_MAP
-                : Collections.emptyMap());
+                : Collections.emptyMap()));
     }
 
     /**
