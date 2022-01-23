@@ -124,7 +124,7 @@ interface AccountMigrator<T extends Account> {
                                             migration.debug(() -> String.format(
                                                     "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
                                                     balance,
-                                                    currency.getDisplayName(),
+                                                    currency.getDisplayNameSingular(),
                                                     fromAccount.getIdentifier()
                                             ));
                                             if (!migration

@@ -52,7 +52,7 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String getDisplayName() {
+            public String getDisplayNameSingular() {
                 return "MigrationMoney";
             }
 
@@ -117,6 +117,7 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     public @NotNull EconomyAPIVersion getSupportedAPIVersion() {
+        //noinspection deprecation
         return EconomyAPIVersion.getCurrentAPIVersion();
     }
 
