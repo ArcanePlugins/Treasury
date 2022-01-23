@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.plugin.core;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -64,6 +65,22 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract PluginVersion getVersion();
+
+    /**
+     * Returns the platform on which the treasury plugin is running.
+     *
+     * @return platform
+     */
+    @NotNull
+    public abstract Platform getPlatform();
+
+    /**
+     * Returns the path to the platform we're running onto - plugin directory.
+     *
+     * @return plugins folder
+     */
+    @NotNull
+    public abstract Path getPluginsFolder();
 
     /**
      * Returns the first {@link ProviderEconomy}

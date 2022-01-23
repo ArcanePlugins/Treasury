@@ -5,6 +5,7 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
+import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
@@ -56,6 +58,16 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     @Override
     public @NotNull PluginVersion getVersion() {
         return pluginVersion;
+    }
+
+    @Override
+    public @NotNull  Platform getPlatform() {
+        return Platform.BUKKIT;
+    }
+
+    @Override
+    public @NotNull Path getPluginsFolder() {
+        return plugin.getDataFolder().getParentFile().toPath();
     }
 
     @Override
