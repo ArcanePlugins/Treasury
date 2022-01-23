@@ -52,10 +52,9 @@ public enum EconomyFailureReason implements FailureReason {
         }
     },
 
+    // TODO document further. check what this constant would be used for.
     /**
      * A constant representing failure due to request cancellation.
-     *
-     * //TODO document further. check what this constant would be used for.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
