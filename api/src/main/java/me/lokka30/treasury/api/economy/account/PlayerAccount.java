@@ -5,12 +5,17 @@
 package me.lokka30.treasury.api.economy.account;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
+import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.misc.TriState;
@@ -29,6 +34,14 @@ import org.jetbrains.annotations.NotNull;
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface PlayerAccount extends Account {
+
+    /**
+     * Returns a map fulfilled with all {@link AccountPermission} with {@link Boolean} values of
+     * {@link TriState#TRUE}.
+     */
+    Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
+            .stream(AccountPermission.values())
+            .collect(Collectors.toConcurrentMap(p -> p, $ -> TriState.TRUE)));
 
     /**
      * Gets the string-based unique identifier for this account.
@@ -56,49 +69,73 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
-    void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
+    default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
+        subscription.succeed(player.equals(getUniqueId()));
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    default void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+        subscription.succeed(Collections.singletonList(getUniqueId()));
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void hasPermission(
+    default void hasPermission(
             @NotNull UUID player,
             @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
-    );
+    ) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+        Objects.requireNonNull(permissions, "permissions");
+
+        subscription.succeed(TriState.fromBoolean(player.equals(getUniqueId())));
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void retrievePermissions(
+    default void retrievePermissions(
             @NotNull UUID player,
             @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
-    );
+    ) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+
+        if(player.equals(getUniqueId())) {
+            subscription.succeed(ALL_PERMISSIONS_MAP);
+        } else {
+            subscription.succeed(Collections.emptyMap());
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    void setPermission(
+    default void setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
             @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
-    );
+    ) {
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+
+        subscription.fail(new EconomyException(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
+    }
 
     /**
      * Resets the player's balance. Unlike resetting balances of non-player
      * and non player accounts, resetting a player account's balance will set the
      * player's balance to the 'starting balance' of the currency (other
-     * accounts set it to zero instead). This is why the overriden method exists.
+     * accounts set it to zero instead). This is why the overridden method exists.
      *
      * @param initiator    the one who initiated this transaction
      * @param currency     of the balance being reset
@@ -113,6 +150,10 @@ public interface PlayerAccount extends Account {
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
+        Objects.requireNonNull(initiator, "initiator");
+        Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(subscription, "subscription");
+
         final BigDecimal newBalance = currency.getStartingBalance(null);
         setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override

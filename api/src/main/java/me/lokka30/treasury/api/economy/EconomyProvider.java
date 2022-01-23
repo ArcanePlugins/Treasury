@@ -39,7 +39,7 @@ public interface EconomyProvider {
      *
      * <p>Warning: The Treasury API version is completely different to any other platform version,
      * such as the 'api-version' value in the Bukkit implementation's plugin.yml file.
-     * <p>Warning: Do not use {@link EconomyAPIVersion#getCurrentAPIVersion()}, this is for internal Treasury use only.
+     * <p>Warning: Do not use this method! It is for internal Treasury use only.
      * <b>You must only use the constants provided.</b>
      *
      * @return the API version
@@ -170,7 +170,7 @@ public interface EconomyProvider {
      * <p>
      * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param name         the human readable name of the account
+     * @param name         the human-readable name of the account
      * @param identifier   the unique identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @author MrIvanPlays, Jikoo
@@ -315,7 +315,8 @@ public interface EconomyProvider {
                     if (!(account instanceof NonPlayerAccount)) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount) account).hasPermission(playerId,
+                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount) account).hasPermission(
+                            playerId,
                             subscriber,
                             permissions
                     ));
