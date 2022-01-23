@@ -362,7 +362,8 @@ public interface Account {
      *
      * @param player          the player id you want to modify the permissions of
      * @param permissionValue the permission value you want to set
-     * @param subscription    the {@link EconomySubscriber} accepting whether the permissions were removed or not
+     * @param subscription    the {@link EconomySubscriber} accepting if the permissions of the
+     *                        member were adjusted.
      * @param permissions     the permissions to modify
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
