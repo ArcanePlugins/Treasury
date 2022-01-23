@@ -24,12 +24,12 @@ public enum EconomyFailureReason implements FailureReason {
          */
         @Override
         public @NotNull String getDescription() {
-            return "That feature is currently not supported by this Economy Provider.";
+            return "The feature is not supported by this Economy Provider.";
         }
     },
 
     /**
-     * A constant represeting failure due to economies being in the middle
+     * A constant representing failure due to economies being in the middle
      * of migrating.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -40,7 +40,7 @@ public enum EconomyFailureReason implements FailureReason {
          */
         @Override
         public @NotNull String getDescription() {
-            return "That feature is currently not available during migration!";
+            return "That feature is currently not available during migration.";
         }
     },
 
@@ -58,8 +58,6 @@ public enum EconomyFailureReason implements FailureReason {
             return "The pending action requested was cancelled.";
         }
     },
-
-    /* Accounts */
 
     /**
      * A constant representing failure due to the inability to locate an
@@ -111,8 +109,6 @@ public enum EconomyFailureReason implements FailureReason {
         }
     },
 
-    /* Balances */
-
     /**
      * A constant representing failure due to an overdraft when
      * negative balances are not supported.
@@ -146,8 +142,6 @@ public enum EconomyFailureReason implements FailureReason {
             return "This economy provider does not support negative amounts!";
         }
     },
-
-    /* Currencies */
 
     /**
      * A constant representing failure due to the inability to locate a
