@@ -16,6 +16,7 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import me.lokka30.treasury.api.misc.TriState;
@@ -90,7 +91,7 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void setBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
@@ -109,12 +110,19 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void withdrawBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        withdrawBalance(amount, initiator, currency, null, subscription);
+        withdrawBalance(
+                amount,
+                initiator,
+                currency,
+                EconomyTransactionImportance.NORMAL,
+                null,
+                subscription
+        );
     }
 
     /**
@@ -123,6 +131,30 @@ public interface Account {
      * @param amount       the amount the balance will be reduced by
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
+     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    default void withdrawBalance(
+            @NotNull BigDecimal amount,
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    ) {
+        withdrawBalance(amount, initiator, currency, importance, null, subscription);
+    }
+
+    /**
+     * Withdraw an amount from the {@code Account} balance.
+     *
+     * @param amount       the amount the balance will be reduced by
+     * @param initiator    the one who initiated the transaction
+     * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @author MrIvanPlays, creatorfromhell
@@ -131,9 +163,10 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void withdrawBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
             @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
@@ -143,6 +176,7 @@ public interface Account {
                 .withInitiator(initiator)
                 .withReason(reason)
                 .withTransactionAmount(amount)
+                .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.WITHDRAWAL)
                 .build(), subscription);
     }
@@ -160,12 +194,19 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void depositBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        depositBalance(amount, initiator, currency, null, subscription);
+        depositBalance(
+                amount,
+                initiator,
+                currency,
+                EconomyTransactionImportance.NORMAL,
+                null,
+                subscription
+        );
     }
 
     /**
@@ -174,6 +215,30 @@ public interface Account {
      * @param amount       the amount the balance will be increased by
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, MrIvanPlays, creatorfromhell
+     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    default void depositBalance(
+            @NotNull BigDecimal amount,
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    ) {
+        depositBalance(amount, initiator, currency, importance, null, subscription);
+    }
+
+    /**
+     * Deposit an amount into the {@code Account} balance.
+     *
+     * @param amount       the amount the balance will be increased by
+     * @param initiator    the one who initiated the transaction
+     * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @author MrIvanPlays, creatorfromhell
@@ -182,9 +247,10 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void depositBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
             @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
@@ -194,6 +260,7 @@ public interface Account {
                 .withInitiator(initiator)
                 .withTransactionAmount(amount)
                 .withReason(reason)
+                .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.DEPOSIT)
                 .build(), subscription);
     }
@@ -254,7 +321,7 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void canAfford(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<Boolean> subscription
     ) {
@@ -354,17 +421,16 @@ public interface Account {
     void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
-     * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the specified {@link UUID}
-     * {@code player}. The state is specified via the {@link TriState} {@code permissionValue}. If
-     * {@link TriState#UNSPECIFIED} is specified for a {@code permissionValue}, then the specified {@code permissions} get
-     * unbound from the specified {@code player}. If {@link TriState#FALSE} is specified for a {@code permissionValue}, then
-     * the specified {@code permissions} become forbidden for the {@code player}, no matter whether they had them in the past.
-     *
-     * <p>Just a reminder: a member is any player with at least one allowed permission.
+     * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the
+     * specified {@link UUID} {@code player}.
+     * The state of the permission is specified via the {@code permissionValue} boolean, where
+     * {@code TRUE} is 'has permission', and {@code FALSE} is 'does not have permission'.
+     * Just a reminder: a member is any player with at least one allowed permission.
      *
      * @param player          the player id you want to modify the permissions of
      * @param permissionValue the permission value you want to set
-     * @param subscription    the {@link EconomySubscriber} accepting whether the permissions were removed or not
+     * @param subscription    the {@link EconomySubscriber} accepting if the permissions of the
+     *                        member were adjusted.
      * @param permissions     the permissions to modify
      * @author MrIvanPlays
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
@@ -372,12 +438,13 @@ public interface Account {
     void setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
 
     /**
-     * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID} {@code player}
+     * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID}
+     * {@code player}.
      *
      * @param player       the player {@link UUID} to get the permissions for
      * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
@@ -403,7 +470,7 @@ public interface Account {
      */
     void hasPermission(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
 

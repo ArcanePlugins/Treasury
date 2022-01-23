@@ -10,6 +10,7 @@ import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.Optional;
 import me.lokka30.treasury.api.economy.currency.Currency;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,15 +34,12 @@ public class EconomyTransaction {
     }
 
     private final BigDecimal transactionAmount;
-    @NotNull
     private final String currencyID;
-    @NotNull
     private final EconomyTransactionInitiator<?> initiator;
-    @NotNull
     private final Instant timestamp;
-    @NotNull
     private final EconomyTransactionType economyTransactionType;
     private final Optional<String> reason;
+    private final EconomyTransactionImportance importance;
 
     /**
      * Creates a new account transaction object.
@@ -60,7 +58,8 @@ public class EconomyTransaction {
             @Nullable Temporal timestamp,
             @NotNull EconomyTransactionType economyTransactionType,
             @Nullable String reason,
-            final BigDecimal transactionAmount
+            @NotNull final BigDecimal transactionAmount,
+            @NotNull EconomyTransactionImportance importance
     ) {
         this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
         this.initiator = Objects.requireNonNull(initiator, "initiator");
@@ -72,6 +71,7 @@ public class EconomyTransaction {
         this.timestamp = timestamp == null
                 ? Instant.now()
                 : (timestamp instanceof Instant ? (Instant) timestamp : Instant.from(timestamp));
+        this.importance = importance;
     }
 
     /**
@@ -140,9 +140,19 @@ public class EconomyTransaction {
     }
 
     /**
+     * Returns the importance of the transaction.
+     *
+     * @return importance
+     */
+    @NotNull
+    public EconomyTransactionImportance getImportance() {
+        return importance;
+    }
+
+    /**
      * Represents a builder of {@link EconomyTransaction}
      *
-     * @author MrIvanPlays
+     * @author MrIvanPlays, lokka30
      */
     public static class Builder {
 
@@ -152,6 +162,7 @@ public class EconomyTransaction {
         private EconomyTransactionType economyTransactionType;
         private String reason;
         private BigDecimal transactionAmount;
+        private EconomyTransactionImportance importance;
 
         public Builder() {
         }
@@ -168,6 +179,7 @@ public class EconomyTransaction {
             this.economyTransactionType = other.economyTransactionType;
             this.reason = other.reason;
             this.transactionAmount = other.transactionAmount;
+            this.importance = other.importance;
         }
 
         /**
@@ -185,6 +197,7 @@ public class EconomyTransaction {
          * @param currency currency
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withCurrency(@NotNull Currency currency) {
             this.currencyID = Objects.requireNonNull(currency, "currency").getIdentifier();
             return this;
@@ -196,6 +209,7 @@ public class EconomyTransaction {
          * @param currencyId currency id
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withCurrencyId(@NotNull String currencyId) {
             this.currencyID = Objects.requireNonNull(currencyId, "currencyId");
             return this;
@@ -207,6 +221,7 @@ public class EconomyTransaction {
          * @param initiator initiator
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withInitiator(@NotNull EconomyTransactionInitiator<?> initiator) {
             this.initiator = Objects.requireNonNull(initiator, "initiator");
             return this;
@@ -218,6 +233,7 @@ public class EconomyTransaction {
          * @param timestamp timestamp
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withTimestamp(@Nullable Temporal timestamp) {
             this.timestamp = timestamp;
             return this;
@@ -229,6 +245,7 @@ public class EconomyTransaction {
          * @param economyTransactionType transaction type
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withTransactionType(@NotNull EconomyTransactionType economyTransactionType) {
             this.economyTransactionType = Objects.requireNonNull(economyTransactionType,
                     "transactionType"
@@ -242,6 +259,7 @@ public class EconomyTransaction {
          * @param reason reason
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withReason(@Nullable String reason) {
             this.reason = reason;
             return this;
@@ -254,8 +272,21 @@ public class EconomyTransaction {
          * @param transactionAmount transaction amount
          * @return this instance for chaining
          */
-        public Builder withTransactionAmount(BigDecimal transactionAmount) {
+        @Contract("_ -> this")
+        public Builder withTransactionAmount(@NotNull BigDecimal transactionAmount) {
             this.transactionAmount = transactionAmount;
+            return this;
+        }
+
+        /**
+         * Specify the importance this transaction should have.
+         *
+         * @param importance importance of the transaction
+         * @return this insatance for chaining
+         */
+        @Contract("_ -> this")
+        public Builder withImportance(@NotNull EconomyTransactionImportance importance) {
+            this.importance = importance;
             return this;
         }
 
@@ -269,12 +300,14 @@ public class EconomyTransaction {
             Objects.requireNonNull(initiator, "initiator");
             Objects.requireNonNull(economyTransactionType, "transactionType");
             Objects.requireNonNull(transactionAmount, "transactionAmount");
+            Objects.requireNonNull(importance, "importance");
             return new EconomyTransaction(currencyID,
                     initiator,
                     timestamp,
                     economyTransactionType,
                     reason,
-                    transactionAmount
+                    transactionAmount,
+                    importance
             );
         }
 

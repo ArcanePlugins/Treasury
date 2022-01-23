@@ -37,12 +37,12 @@ class MigrationEconomy implements EconomyProvider {
     MigrationEconomy() {
         this.currency = new Currency() {
             @Override
-            public String getIdentifier() {
+            public @NotNull String getIdentifier() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String getSymbol() {
+            public @NotNull String getSymbol() {
                 return "$";
             }
 
@@ -52,12 +52,12 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String getDisplayName() {
+            public @NotNull String getDisplayNameSingular() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String getDisplayNamePlural() {
+            public @NotNull String getDisplayNamePlural() {
                 return "MigrationMonies";
             }
 
@@ -67,18 +67,18 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public boolean isDefault() {
+            public boolean isPrimary() {
                 return false;
             }
 
             @Override
             public void to(
                     @NotNull final Currency currency,
-                    final BigDecimal amount,
+                    @NotNull final BigDecimal amount,
                     @NotNull final EconomySubscriber<BigDecimal> subscription
             ) {
                 subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                        "Migration currency not convertable."
+                        "Migration currency not convertible."
                 ));
             }
 
@@ -88,23 +88,30 @@ class MigrationEconomy implements EconomyProvider {
                     @NotNull final EconomySubscriber<BigDecimal> subscription
             ) {
                 subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                        "Migration in progress, cannot deformat!"
+                        "Migration in progress, cannot parse value."
                 ));
             }
 
             @Override
+            @NotNull
             public BigDecimal getStartingBalance(@Nullable final UUID playerID) {
                 return BigDecimal.ZERO;
             }
 
             @Override
-            public String format(final BigDecimal amount, @Nullable final Locale locale) {
+            @NotNull
+            public String format(
+                    final @NotNull BigDecimal amount, final @Nullable Locale locale
+            ) {
                 return amount.toPlainString();
             }
 
             @Override
+            @NotNull
             public String format(
-                    final BigDecimal amount, @Nullable final Locale locale, final int precision
+                    final @NotNull BigDecimal amount,
+                    final @Nullable Locale locale,
+                    final int precision
             ) {
                 return amount.toPlainString();
             }
@@ -117,6 +124,7 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     public @NotNull EconomyAPIVersion getSupportedAPIVersion() {
+        //noinspection deprecation
         return EconomyAPIVersion.getCurrentAPIVersion();
     }
 

@@ -16,9 +16,11 @@ import org.jetbrains.annotations.Nullable;
  * This allows economy providers and plugins to use different
  * currencies for different transactions, e.g. a daily reward
  * plugin can award players 'Tokens', but a job plugin
- * can award players 'Dollars'. Facilitates great customisability.
+ * can award players 'Dollars'. This facilitates a high
+ * potential for customization, to create a more interesting
+ * economy.
  *
- * @author creatorfromhell
+ * @author creatorfromhell, lokka30
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface Currency {
@@ -30,7 +32,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String getIdentifier();
+    @NotNull String getIdentifier();
 
     /**
      * Gets the currency's symbol. This could be something as simple as a dollar sign '$'.
@@ -39,7 +41,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String getSymbol();
+    @NotNull String getSymbol();
 
     /**
      * Get's the currency's decimal character to be used for formatting purposes.
@@ -51,22 +53,26 @@ public interface Currency {
     char getDecimal();
 
     /**
-     * Gets the currency's user-friendly display name.
+     * Gets the singular form of the currency's user-friendly display name.
+     * The singular form is used when the amount is exactly {@code 1.00}.
      *
      * @return The currency's user-friendly display name.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String getDisplayName();
+    @NotNull String getDisplayNameSingular();
 
     /**
      * Gets the plural form of the currency's user-friendly display name.
+     * The plural form is used when the amount is not exactly {@code 1.00}.
+     * If a plural form of the {@link Currency} is not available, the value from
+     * {@link Currency#getDisplayNameSingular()} should be returned.
      *
      * @return The plural form of the currency's user-friendly display name.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String getDisplayNamePlural();
+    @NotNull String getDisplayNamePlural();
 
     /**
      * Gets the currency's default number of decimal digits when formatting this currency.
@@ -78,15 +84,15 @@ public interface Currency {
     int getPrecision();
 
     /**
-     * Checks if this currency is the default currency to use.
+     * Checks if this currency is the primary currency to use.
      *
-     * @return True if this currency is the default currency. This method should use a global
+     * @return True if this currency is the primary currency. This method should use a global
      *         context if multi-world support is not present, otherwise it should use the default world
      *         for this check.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    boolean isDefault();
+    boolean isPrimary();
 
     /**
      * Used to convert this {@link Currency} to another based on a specified amount of the other
@@ -101,54 +107,64 @@ public interface Currency {
      */
     void to(
             @NotNull Currency currency,
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomySubscriber<BigDecimal> subscription
     );
 
     /**
      * Used to get the BigDecimal representation of an amount represented by a formatted string.
+     * If the {@code formatted} value can't be parsed, then
+     * {@link me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR}
+     * should be used as the {@code FailureReason} for the failure reason in the accompanied
+     * {@link me.lokka30.treasury.api.economy.response.EconomyException}.
      *
      * @param formatted    The formatted string to be converted to BigDecimal form.
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the deformatted amount of the formatted String.
      * @author creatorfromhell
+     * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void parse(@NotNull String formatted, @NotNull EconomySubscriber<BigDecimal> subscription);
 
     /**
      * Gets the starting balance of a specific player account for this currency.
+     * If a per-player starting balance system is not used, simply ignore the parameter.
      *
-     * @param playerID The UUID of the player we are getting the starting balance for.
+     * @param playerID The UUID of the player we are getting the starting balance for. If the
+     *                 'general' starting balance of a currency is desired (not for a specific
+     *                 player), then specify {@code null} for this parameter.
      * @return The starting balance of the player for this currency.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    BigDecimal getStartingBalance(@Nullable UUID playerID);
+    @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID);
 
     /**
      * Used to translate an amount to a user readable format with the default precision.
+     * If a per-locale format is not used, simply ignore the parameter.
      *
      * @param amount The amount to format.
-     * @param locale The locale to use for formatting the balance. This value may be null if the
-     *               provider should provide the default Locale.
+     * @param locale The locale to use for formatting the balance. This value may be
+     *               {@code null} if the provider should provide their 'default' Locale.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(BigDecimal amount, @Nullable Locale locale);
+    @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
+     * If a per-locale format is not used, simply ignore the parameter.
      *
      * @param amount    The amount to format.
-     * @param locale    The locale to use for formatting the balance. This value may be null if the
-     *                  *               provider should provide the default Locale.
+     * @param locale    The locale to use for formatting the balance. This value may be
+     *                  {@code null} if the provider should provide their 'default' Locale.
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(BigDecimal amount, @Nullable Locale locale, int precision);
+    @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);
 
 }

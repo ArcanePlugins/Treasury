@@ -37,7 +37,7 @@ public interface PlayerAccount extends Account {
 
     /**
      * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
-     * {@link TriState#TRUE}
+     * {@link TriState#TRUE}.
      */
     Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
             .stream(AccountPermission.values())
@@ -90,12 +90,14 @@ public interface PlayerAccount extends Account {
     @Override
     default void hasPermission(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(getUniqueId().equals(player));
+        Objects.requireNonNull(permissions, "permissions");
+
+        subscription.succeed(TriState.fromBoolean(player.equals(getUniqueId())));
     }
 
     /**
@@ -120,10 +122,12 @@ public interface PlayerAccount extends Account {
     default void setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     ) {
+        Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
+
         subscription.fail(new EconomyException(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
@@ -131,7 +135,7 @@ public interface PlayerAccount extends Account {
      * Resets the player's balance. Unlike resetting balances of non-player
      * and non player accounts, resetting a player account's balance will set the
      * player's balance to the 'starting balance' of the currency (other
-     * accounts set it to zero instead). This is why the overriden method exists.
+     * accounts set it to zero instead). This is why the overridden method exists.
      *
      * @param initiator    the one who initiated this transaction
      * @param currency     of the balance being reset
@@ -146,7 +150,11 @@ public interface PlayerAccount extends Account {
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        final BigDecimal newBalance = currency.getStartingBalance(null);
+        Objects.requireNonNull(initiator, "initiator");
+        Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(subscription, "subscription");
+
+        final BigDecimal newBalance = currency.getStartingBalance(getUniqueId());
         setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override
             public void succeed(@NotNull BigDecimal value) {

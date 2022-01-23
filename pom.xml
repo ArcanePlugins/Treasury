@@ -21,8 +21,9 @@
     <packaging>pom</packaging>
 
     <name>Treasury-Parent</name>
-    <description>A modern, multi-platform library facilitating the interaction between 'provider'
-        plugins on your server.
+    <description>
+        Treasury is a modern multi-platform library facilitating the integration
+        between service providing/consuming plugins on Minecraft servers.
     </description>
 
     <inceptionYear>2021</inceptionYear>
