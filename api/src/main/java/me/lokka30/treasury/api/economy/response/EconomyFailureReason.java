@@ -226,6 +226,25 @@ public enum EconomyFailureReason implements FailureReason {
     },
 
     /**
+     * A constant representing failure due to a String not
+     * following an expected format/pattern when attempting
+     * to parse it into a number type such as {@link BigDecimal}.
+     *
+     * @see Currency#parse(String, EconomySubscriber)
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    NUMBER_PARSING_ERROR {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public @NotNull String getDescription() {
+            return "Action failed because a String was unable to be converted into a number due " +
+                    "to an incompatible format.";
+        }
+    },
+
+    /**
      * Use this constant if the method resulted in a complete failure,
      * AND no other constant in this enum is applicable to the issue
      * that occurred. In this case, use this constant, and please

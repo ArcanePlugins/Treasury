@@ -64,7 +64,7 @@ public interface EconomySubscriber<T> {
      *             });
      *     }
      * }</pre>
-     * Note that due to the lack of explict requirement it is far easier to
+     * Note that due to the lack of explicit requirement it is far easier to
      * forget exception handling.
      *
      * @param subscriberConsumer a {@link Consumer} accepting an {@code EconomySubscriber}

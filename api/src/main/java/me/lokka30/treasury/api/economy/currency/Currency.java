@@ -55,7 +55,8 @@ public interface Currency {
     char getDecimal();
 
     /**
-     * Gets the currency's user-friendly display name.
+     * Gets the singular form of the currency's user-friendly display name.
+     * The singular form is used when the amount is exactly {@code 1.00}.
      *
      * @return The currency's user-friendly display name.
      * @author creatorfromhell
@@ -66,6 +67,9 @@ public interface Currency {
 
     /**
      * Gets the plural form of the currency's user-friendly display name.
+     * The plural form is used when the amount is not exactly {@code 1.00}.
+     * If a plural form of the {@link Currency} is not available, the value from
+     * {@link Currency#getDisplayNameSingular()} should be returned.
      *
      * @return The plural form of the currency's user-friendly display name.
      * @author creatorfromhell
@@ -113,17 +117,23 @@ public interface Currency {
 
     /**
      * Used to get the BigDecimal representation of an amount represented by a formatted string.
+     * If the {@code formatted} value can't be parsed, then
+     * {@link me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR}
+     * should be used as the {@code FailureReason} for the failure reason in the accompanied
+     * {@link me.lokka30.treasury.api.economy.response.EconomyException}.
      *
      * @param formatted    The formatted string to be converted to BigDecimal form.
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the deformatted amount of the formatted String.
      * @author creatorfromhell
+     * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void parse(@NotNull String formatted, @NotNull EconomySubscriber<BigDecimal> subscription);
 
     /**
      * Gets the starting balance of a specific player account for this currency.
+     * If a per-player starting balance system is not used, simply ignore the parameter.
      *
      * @param playerID The UUID of the player we are getting the starting balance for. If the
      *                 'general' starting balance of a currency is desired (not for a specific
@@ -137,6 +147,7 @@ public interface Currency {
 
     /**
      * Used to translate an amount to a user readable format with the default precision.
+     * If a per-locale format is not used, simply ignore the parameter.
      *
      * @param amount The amount to format.
      * @param locale The locale to use for formatting the balance. This value may be
@@ -150,6 +161,7 @@ public interface Currency {
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
+     * If a per-locale format is not used, simply ignore the parameter.
      *
      * @param amount    The amount to format.
      * @param locale The locale to use for formatting the balance. This value may be
