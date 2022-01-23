@@ -37,7 +37,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         ConfigAdapter {
 
     private final TreasuryBukkit plugin;
-    public @NotNull TreasuryBukkit getJavaPlugin() { return plugin; }
     private final PluginVersion pluginVersion;
     private Messages messages;
     private Settings settings;
