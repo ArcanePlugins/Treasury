@@ -4,6 +4,9 @@
 
 package me.lokka30.treasury.plugin.bukkit;
 
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
+import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
@@ -11,6 +14,8 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -50,9 +55,79 @@ public class TreasuryBukkit extends JavaPlugin {
         }
 
         UpdateChecker.checkForUpdates();
-        new Metrics(this, 12927);
+
+        loadMetrics();
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
+    }
+
+    private void loadMetrics() {
+        Metrics metrics = new Metrics(this, 12927);
+
+        RegisteredServiceProvider<EconomyProvider> serviceProvider = getServer()
+                .getServicesManager()
+                .getRegistration(EconomyProvider.class);
+
+        EconomyProvider economyProvider = serviceProvider == null
+                ? null
+                : serviceProvider.getProvider();
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-name",
+                () -> economyProvider == null ? "None" : serviceProvider.getPlugin().getName()
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-supports-negative-balances",
+                () -> economyProvider == null
+                        ? null
+                        : Boolean.toString(economyProvider
+                                .getSupportedOptionalEconomyApiFeatures()
+                                .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES))
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-supports-bukkit-transaction-events",
+                () -> economyProvider == null
+                        ? null
+                        : Boolean.toString(economyProvider
+                                .getSupportedOptionalEconomyApiFeatures()
+                                .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS))
+        ));
+
+        metrics.addCustomChart(new SimplePie("economy-treasury-api-version", () -> {
+            //noinspection deprecation
+            return EconomyAPIVersion.getCurrentAPIVersion().toString();
+        }));
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-api-version",
+                () -> economyProvider == null
+                        ? null
+                        : economyProvider.getSupportedAPIVersion().toString()
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                "plugin-update-checking-enabled",
+                () -> Boolean.toString(treasuryPlugin
+                        .configAdapter()
+                        .getSettings()
+                        .checkForUpdates())
+        ));
+
+        metrics.addCustomChart(new SimplePie("economy-provider-currencies", () -> {
+            if (economyProvider == null) {
+                return null;
+            }
+
+            final int size = economyProvider.getCurrencies().size();
+
+            if (size >= 10) {
+                return "10+";
+            } else {
+                return Integer.toString(size);
+            }
+        }));
     }
 
     /**
