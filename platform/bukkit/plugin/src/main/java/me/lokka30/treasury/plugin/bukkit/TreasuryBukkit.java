@@ -5,12 +5,12 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
+import me.lokka30.treasury.plugin.bukkit.metrics.BukkitMetricsManager;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -24,6 +24,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
+    public BukkitTreasuryPlugin getTreasuryPlugin() { return treasuryPlugin; }
+
+    private final BukkitMetricsManager metricsManager = new BukkitMetricsManager(this);
 
     /**
      * Run the start-up procedure for the plugin.
@@ -50,7 +53,8 @@ public class TreasuryBukkit extends JavaPlugin {
         }
 
         UpdateChecker.checkForUpdates();
-        new Metrics(this, 12927);
+
+        metricsManager.load();
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
     }
