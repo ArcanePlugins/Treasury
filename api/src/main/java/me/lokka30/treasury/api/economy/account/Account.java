@@ -90,7 +90,7 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     void setBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
