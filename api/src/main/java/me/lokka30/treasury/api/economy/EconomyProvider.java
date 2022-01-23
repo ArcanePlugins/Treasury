@@ -322,11 +322,7 @@ public interface EconomyProvider {
                     account.hasPermission(playerId, new EconomySubscriber<TriState>() {
                         @Override
                         public void succeed(@NotNull final TriState triState) {
-                            if (triState == TriState.UNSPECIFIED || triState == TriState.FALSE) {
-                                ret1.complete(false);
-                                return;
-                            }
-                            ret1.complete(true);
+                            ret1.complete(triState == TriState.TRUE);
                         }
 
                         @Override
