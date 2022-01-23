@@ -115,7 +115,7 @@ public class TreasuryBukkit extends JavaPlugin {
                         .checkForUpdates())
         ));
 
-        metrics.addCustomChart(new SimplePie("economy-provider-currencies", () -> {
+            metrics.addCustomChart(new SimplePie("economy-provider-currencies", () -> {
             if (economyProvider == null) {
                 return null;
             }
