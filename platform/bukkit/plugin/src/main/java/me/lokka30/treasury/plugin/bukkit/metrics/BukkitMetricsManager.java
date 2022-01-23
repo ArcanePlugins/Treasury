@@ -27,15 +27,15 @@ public class BukkitMetricsManager {
         metrics.addCustomChart(new SimplePie("economy-provider-supports-negative-balances", () -> {
             final RegisteredServiceProvider<EconomyProvider> economyProvider = getEconomyProviderRegistration();
             return economyProvider == null ? null :
-                    economyProvider.getProvider().getSupportedOptionalEconomyApiFeatures()
-                            .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES) + "";
+                    Boolean.toString(economyProvider.getProvider().getSupportedOptionalEconomyApiFeatures()
+                            .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES));
         }));
 
         metrics.addCustomChart(new SimplePie("economy-provider-supports-bukkit-transaction-events", () -> {
             final RegisteredServiceProvider<EconomyProvider> economyProvider = getEconomyProviderRegistration();
             return economyProvider == null ? null :
-                    economyProvider.getProvider().getSupportedOptionalEconomyApiFeatures()
-                            .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS) + "";
+                    Boolean.toString(economyProvider.getProvider().getSupportedOptionalEconomyApiFeatures()
+                            .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS));
         }));
 
         metrics.addCustomChart(new SimplePie("economy-treasury-api-version", () -> {
@@ -50,7 +50,7 @@ public class BukkitMetricsManager {
         }));
 
         metrics.addCustomChart(new SimplePie("plugin-update-checking-enabled", () ->
-                TreasuryPlugin.getInstance().configAdapter().getSettings().checkForUpdates() + ""));
+                Boolean.toString(TreasuryPlugin.getInstance().configAdapter().getSettings().checkForUpdates())));
 
         metrics.addCustomChart(new SimplePie("economy-provider-supports-negative-balances", () -> {
             final RegisteredServiceProvider<EconomyProvider> economyProvider = getEconomyProviderRegistration();
@@ -61,7 +61,7 @@ public class BukkitMetricsManager {
             if(size >= 10) {
                 return "10+";
             } else {
-                return size + "";
+                return Integer.toString(size);
             }
         }));
     }
