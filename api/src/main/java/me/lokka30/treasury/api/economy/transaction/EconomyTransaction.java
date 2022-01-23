@@ -57,7 +57,7 @@ public class EconomyTransaction {
             @Nullable Temporal timestamp,
             @NotNull EconomyTransactionType economyTransactionType,
             @Nullable String reason,
-            final BigDecimal transactionAmount,
+            @NotNull final BigDecimal transactionAmount,
             @NotNull EconomyTransactionImportance importance
     ) {
         this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
