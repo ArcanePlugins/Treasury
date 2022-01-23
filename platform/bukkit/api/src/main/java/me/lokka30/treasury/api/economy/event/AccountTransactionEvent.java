@@ -23,9 +23,11 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
     private boolean isCancelled = false;
 
     public AccountTransactionEvent(
-            @NotNull final EconomyTransaction economyTransaction, @NotNull final Account account
+            @NotNull final EconomyTransaction economyTransaction,
+            @NotNull final Account account,
+            boolean async
     ) {
-        super(account);
+        super(account, async);
         this.economyTransaction = economyTransaction;
     }
 
