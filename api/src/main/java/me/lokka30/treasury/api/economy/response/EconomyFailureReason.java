@@ -48,13 +48,15 @@ public enum EconomyFailureReason implements FailureReason {
          */
         @Override
         public @NotNull String getDescription() {
-            return "That feature is currently not available during migration.";
+            return "The feature is currently not available during migration.";
         }
     },
 
-    // TODO document further. check what this constant would be used for.
     /**
      * A constant representing failure due to request cancellation.
+     * <p>
+     * "Request cancellation" could be anything that results in a request being cancelled, server
+     * shutdown, thread interruption, etc.
      *
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -85,8 +87,7 @@ public enum EconomyFailureReason implements FailureReason {
          * {@inheritDoc}
          */
         @Override
-        @NotNull
-        public String getDescription() {
+        public @NotNull String getDescription() {
             return "The account you attempted to perform that action on was unable to be located.";
         }
     },

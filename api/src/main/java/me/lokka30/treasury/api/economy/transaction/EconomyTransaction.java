@@ -10,6 +10,7 @@ import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.Optional;
 import me.lokka30.treasury.api.economy.currency.Currency;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -196,6 +197,7 @@ public class EconomyTransaction {
          * @param currency currency
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withCurrency(@NotNull Currency currency) {
             this.currencyID = Objects.requireNonNull(currency, "currency").getIdentifier();
             return this;
@@ -207,6 +209,7 @@ public class EconomyTransaction {
          * @param currencyId currency id
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withCurrencyId(@NotNull String currencyId) {
             this.currencyID = Objects.requireNonNull(currencyId, "currencyId");
             return this;
@@ -218,6 +221,7 @@ public class EconomyTransaction {
          * @param initiator initiator
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withInitiator(@NotNull EconomyTransactionInitiator<?> initiator) {
             this.initiator = Objects.requireNonNull(initiator, "initiator");
             return this;
@@ -229,6 +233,7 @@ public class EconomyTransaction {
          * @param timestamp timestamp
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withTimestamp(@Nullable Temporal timestamp) {
             this.timestamp = timestamp;
             return this;
@@ -240,6 +245,7 @@ public class EconomyTransaction {
          * @param economyTransactionType transaction type
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withTransactionType(@NotNull EconomyTransactionType economyTransactionType) {
             this.economyTransactionType = Objects.requireNonNull(economyTransactionType,
                     "transactionType"
@@ -253,6 +259,7 @@ public class EconomyTransaction {
          * @param reason reason
          * @return this instance for chaining
          */
+        @Contract("_ -> this")
         public Builder withReason(@Nullable String reason) {
             this.reason = reason;
             return this;
@@ -265,7 +272,8 @@ public class EconomyTransaction {
          * @param transactionAmount transaction amount
          * @return this instance for chaining
          */
-        public Builder withTransactionAmount(BigDecimal transactionAmount) {
+        @Contract("_ -> this")
+        public Builder withTransactionAmount(@NotNull BigDecimal transactionAmount) {
             this.transactionAmount = transactionAmount;
             return this;
         }
@@ -276,7 +284,8 @@ public class EconomyTransaction {
          * @param importance importance of the transaction
          * @return this insatance for chaining
          */
-        public Builder withImportance(EconomyTransactionImportance importance) {
+        @Contract("_ -> this")
+        public Builder withImportance(@NotNull EconomyTransactionImportance importance) {
             this.importance = importance;
             return this;
         }

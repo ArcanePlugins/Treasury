@@ -16,6 +16,7 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import me.lokka30.treasury.api.misc.TriState;
@@ -109,12 +110,19 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void withdrawBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        withdrawBalance(amount, initiator, currency, null, subscription);
+        withdrawBalance(
+                amount,
+                initiator,
+                currency,
+                EconomyTransactionImportance.NORMAL,
+                null,
+                subscription
+        );
     }
 
     /**
@@ -123,6 +131,30 @@ public interface Account {
      * @param amount       the amount the balance will be reduced by
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
+     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    default void withdrawBalance(
+            @NotNull BigDecimal amount,
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    ) {
+        withdrawBalance(amount, initiator, currency, importance, null, subscription);
+    }
+
+    /**
+     * Withdraw an amount from the {@code Account} balance.
+     *
+     * @param amount       the amount the balance will be reduced by
+     * @param initiator    the one who initiated the transaction
+     * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @author MrIvanPlays, creatorfromhell
@@ -131,9 +163,10 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void withdrawBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
             @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
@@ -143,6 +176,7 @@ public interface Account {
                 .withInitiator(initiator)
                 .withReason(reason)
                 .withTransactionAmount(amount)
+                .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.WITHDRAWAL)
                 .build(), subscription);
     }
@@ -160,12 +194,19 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void depositBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        depositBalance(amount, initiator, currency, null, subscription);
+        depositBalance(
+                amount,
+                initiator,
+                currency,
+                EconomyTransactionImportance.NORMAL,
+                null,
+                subscription
+        );
     }
 
     /**
@@ -174,6 +215,30 @@ public interface Account {
      * @param amount       the amount the balance will be increased by
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @author lokka30, MrIvanPlays, creatorfromhell
+     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     */
+    default void depositBalance(
+            @NotNull BigDecimal amount,
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    ) {
+        depositBalance(amount, initiator, currency, importance, null, subscription);
+    }
+
+    /**
+     * Deposit an amount into the {@code Account} balance.
+     *
+     * @param amount       the amount the balance will be increased by
+     * @param initiator    the one who initiated the transaction
+     * @param currency     the {@link Currency} of the balance being modified
+     * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @author MrIvanPlays, creatorfromhell
@@ -182,9 +247,10 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void depositBalance(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
             @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
@@ -194,6 +260,7 @@ public interface Account {
                 .withInitiator(initiator)
                 .withTransactionAmount(amount)
                 .withReason(reason)
+                .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.DEPOSIT)
                 .build(), subscription);
     }
@@ -254,7 +321,7 @@ public interface Account {
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     default void canAfford(
-            BigDecimal amount,
+            @NotNull BigDecimal amount,
             @NotNull Currency currency,
             @NotNull EconomySubscriber<Boolean> subscription
     ) {
