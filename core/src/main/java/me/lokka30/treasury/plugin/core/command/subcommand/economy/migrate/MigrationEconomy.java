@@ -37,12 +37,12 @@ class MigrationEconomy implements EconomyProvider {
     MigrationEconomy() {
         this.currency = new Currency() {
             @Override
-            public String getIdentifier() {
+            public @NotNull String getIdentifier() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String getSymbol() {
+            public @NotNull String getSymbol() {
                 return "$";
             }
 
@@ -52,12 +52,12 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public String getDisplayNameSingular() {
+            public @NotNull String getDisplayNameSingular() {
                 return "MigrationMoney";
             }
 
             @Override
-            public String getDisplayNamePlural() {
+            public @NotNull String getDisplayNamePlural() {
                 return "MigrationMonies";
             }
 
@@ -74,11 +74,11 @@ class MigrationEconomy implements EconomyProvider {
             @Override
             public void to(
                     @NotNull final Currency currency,
-                    final BigDecimal amount,
+                    @NotNull final BigDecimal amount,
                     @NotNull final EconomySubscriber<BigDecimal> subscription
             ) {
                 subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                        "Migration currency not convertable."
+                        "Migration currency not convertible."
                 ));
             }
 
@@ -88,23 +88,27 @@ class MigrationEconomy implements EconomyProvider {
                     @NotNull final EconomySubscriber<BigDecimal> subscription
             ) {
                 subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                        "Migration in progress, cannot deformat!"
+                        "Migration in progress, cannot parse value."
                 ));
             }
 
             @Override
-            public @NotNull BigDecimal getStartingBalance(@Nullable final UUID playerID) {
+            public @NotNull BigDecimal getStartingBalance(@Nullable final Optional<UUID> playerID) {
                 return BigDecimal.ZERO;
             }
 
             @Override
-            public @NotNull String format(final @NotNull BigDecimal amount, @Nullable final Locale locale) {
+            public @NotNull String format(
+                    final @NotNull BigDecimal amount,
+                    @Nullable final Optional<Locale> locale
+            ) {
                 return amount.toPlainString();
             }
 
             @Override
             public @NotNull String format(
-                    final @NotNull BigDecimal amount, @Nullable final Locale locale, final int precision
+                    final @NotNull BigDecimal amount, @Nullable final Optional<Locale> locale,
+                    final int precision
             ) {
                 return amount.toPlainString();
             }

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -154,7 +155,7 @@ public interface PlayerAccount extends Account {
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(subscription, "subscription");
 
-        final BigDecimal newBalance = currency.getStartingBalance(null);
+        final BigDecimal newBalance = currency.getStartingBalance(Optional.of(getUniqueId()));
         setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override
             public void succeed(@NotNull BigDecimal value) {
