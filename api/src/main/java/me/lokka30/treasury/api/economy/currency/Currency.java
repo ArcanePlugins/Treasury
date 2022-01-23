@@ -124,6 +124,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
+    @NotNull
     BigDecimal getStartingBalance(@Nullable UUID playerID);
 
     /**
@@ -136,7 +137,8 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(BigDecimal amount, @Nullable Locale locale);
+    @NotNull
+    String format(@NotNull BigDecimal amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
@@ -149,6 +151,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    String format(BigDecimal amount, @Nullable Locale locale, int precision);
+    @NotNull
+    String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);
 
 }
