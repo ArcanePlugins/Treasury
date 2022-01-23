@@ -20,7 +20,8 @@ public class AccountEvent extends Event {
     @NotNull
     private final Account account;
 
-    public AccountEvent(@NotNull final Account account) {
+    public AccountEvent(@NotNull final Account account, boolean async) {
+        super(async);
         this.account = account;
     }
 
