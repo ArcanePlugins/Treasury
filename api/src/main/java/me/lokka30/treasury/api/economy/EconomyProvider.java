@@ -21,6 +21,7 @@ import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -315,11 +316,24 @@ public interface EconomyProvider {
                     if (!(account instanceof NonPlayerAccount)) {
                         return CompletableFuture.completedFuture(false);
                     }
-                    return EconomySubscriber.asFuture(subscriber -> ((NonPlayerAccount) account).hasPermission(
-                            playerId,
-                            subscriber,
-                            permissions
-                    ));
+
+                    CompletableFuture<Boolean> ret1 = new CompletableFuture<>();
+                    account.hasPermission(playerId, new EconomySubscriber<TriState>() {
+                        @Override
+                        public void succeed(@NotNull final TriState triState) {
+                            if (triState == TriState.UNSPECIFIED || triState == TriState.FALSE) {
+                                ret1.complete(false);
+                                return;
+                            }
+                            ret1.complete(true);
+                        }
+
+                        @Override
+                        public void fail(@NotNull final EconomyException exception) {
+                            ret1.completeExceptionally(exception);
+                        }
+                    }, permissions);
+                    return ret1;
                 }).thenAccept(val -> {
                     if (val) {
                         ret.add(identifier);
