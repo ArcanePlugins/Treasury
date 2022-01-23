@@ -80,7 +80,7 @@ public class TreasuryBukkit extends JavaPlugin {
         metrics.addCustomChart(new SimplePie(
                 "economy-provider-supports-negative-balances",
                 () -> economyProvider == null
-                        ? null
+                        ? "No provider"
                         : Boolean.toString(economyProvider
                                 .getSupportedOptionalEconomyApiFeatures()
                                 .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES))
@@ -89,7 +89,7 @@ public class TreasuryBukkit extends JavaPlugin {
         metrics.addCustomChart(new SimplePie(
                 "economy-provider-supports-bukkit-transaction-events",
                 () -> economyProvider == null
-                        ? null
+                        ? "No provider"
                         : Boolean.toString(economyProvider
                                 .getSupportedOptionalEconomyApiFeatures()
                                 .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS))
@@ -103,7 +103,7 @@ public class TreasuryBukkit extends JavaPlugin {
         metrics.addCustomChart(new SimplePie(
                 "economy-provider-api-version",
                 () -> economyProvider == null
-                        ? null
+                        ? "No provider"
                         : economyProvider.getSupportedAPIVersion().toString()
         ));
 
