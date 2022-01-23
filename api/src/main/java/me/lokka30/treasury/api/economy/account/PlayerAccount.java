@@ -5,19 +5,15 @@
 package me.lokka30.treasury.api.economy.account;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,14 +29,6 @@ import org.jetbrains.annotations.NotNull;
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
 public interface PlayerAccount extends Account {
-
-    /**
-     * Returns a map fulfilled with all {@link AccountPermission} with {@link Boolean} values of
-     * {@code true}.
-     */
-    Map<AccountPermission, Boolean> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
-            .stream(AccountPermission.values())
-            .collect(Collectors.toConcurrentMap(p -> p, $ -> true)));
 
     /**
      * Gets the string-based unique identifier for this account.
@@ -68,63 +56,43 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
-    default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
-        Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(getUniqueId().equals(player));
-    }
+    void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(Collections.singletonList(getUniqueId()));
-    }
+    void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void hasPermission(
+    void hasPermission(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
-    ) {
-        Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(getUniqueId().equals(player));
-    }
+    );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void retrievePermissions(
+    void retrievePermissions(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Map<AccountPermission, Boolean>> subscription
-    ) {
-        Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed((getUniqueId().equals(player)
-                ? ALL_PERMISSIONS_MAP
-                : Collections.emptyMap()));
-    }
+            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+    );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void setPermission(
+    void setPermission(
             @NotNull UUID player,
-            boolean permissionValue,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull TriState permissionValue,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
-    ) {
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.fail(new EconomyException(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
-    }
+    );
 
     /**
      * Resets the player's balance. Unlike resetting balances of non-player

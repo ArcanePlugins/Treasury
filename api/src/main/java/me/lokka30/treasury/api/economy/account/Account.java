@@ -18,6 +18,7 @@ import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -356,7 +357,7 @@ public interface Account {
      * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the
      * specified {@link UUID} {@code player}.
      * The state of the permission is specified via the {@code permissionValue} boolean, where
-     * {@code true} is 'has permission', and {@code false} is 'does not have permission'.
+     * {@code TRUE} is 'has permission', and {@code FALSE} is 'does not have permission'.
      * Just a reminder: a member is any player with at least one allowed permission.
      *
      * @param player          the player id you want to modify the permissions of
@@ -368,8 +369,8 @@ public interface Account {
      */
     void setPermission(
             @NotNull UUID player,
-            boolean permissionValue,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull TriState permissionValue,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
 
@@ -384,7 +385,7 @@ public interface Account {
      */
     void retrievePermissions(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Map<AccountPermission, Boolean>> subscription
+            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
     );
 
     /**
@@ -401,7 +402,7 @@ public interface Account {
      */
     void hasPermission(
             @NotNull UUID player,
-            @NotNull EconomySubscriber<Boolean> subscription,
+            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
 

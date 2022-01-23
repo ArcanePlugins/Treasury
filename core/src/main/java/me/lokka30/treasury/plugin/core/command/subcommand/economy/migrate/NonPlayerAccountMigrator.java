@@ -17,6 +17,7 @@ import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 class NonPlayerAccountMigrator implements AccountMigrator<Account> {
@@ -73,10 +74,10 @@ class NonPlayerAccountMigrator implements AccountMigrator<Account> {
         memberUuidsFuture.thenAccept(uuids -> {
             for (UUID uuid : uuids) {
                 fromAccount.retrievePermissions(uuid,
-                        new EconomySubscriber<Map<AccountPermission, Boolean>>() {
+                        new EconomySubscriber<Map<AccountPermission, TriState>>() {
                             @Override
-                            public void succeed(@NotNull final Map<AccountPermission, Boolean> map) {
-                                for (Map.Entry<AccountPermission, Boolean> entry : map.entrySet()) {
+                            public void succeed(@NotNull final Map<AccountPermission, TriState> map) {
+                                for (Map.Entry<AccountPermission, TriState> entry : map.entrySet()) {
                                     toAccount.setPermission(uuid,
                                             entry.getValue(),
                                             new FailureConsumer<>(phaser,
