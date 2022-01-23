@@ -27,8 +27,10 @@ public abstract class TreasuryPlugin {
     /**
      * Description of the plugin.
      */
-    public static final String DESCRIPTION = "Treasury is a modern, multi-platform library facilitating the interaction between" +
-            " 'provider' plugins on your server.";
+    public static final String DESCRIPTION =
+            "Treasury is a modern multi-platform library facilitating " +
+                    "the integration between service providing/consuming " +
+                    "plugins on Minecraft servers. ";
 
     private static TreasuryPlugin instance;
 
