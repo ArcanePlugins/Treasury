@@ -24,9 +24,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
-    public BukkitTreasuryPlugin getTreasuryPlugin() { return treasuryPlugin; }
 
-    private final BukkitMetricsManager metricsManager = new BukkitMetricsManager(this);
+    private final BukkitMetricsManager metricsManager = new BukkitMetricsManager();
 
     /**
      * Run the start-up procedure for the plugin.

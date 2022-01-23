@@ -3,23 +3,21 @@ package me.lokka30.treasury.plugin.bukkit.metrics;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
+import me.lokka30.treasury.plugin.bukkit.BukkitTreasuryPlugin;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BukkitMetricsManager {
 
-    private final TreasuryBukkit plugin;
-    public BukkitMetricsManager(final @NotNull TreasuryBukkit plugin) { this.plugin = plugin; }
-
     Metrics metrics;
 
     public void load() {
-        metrics = new Metrics(plugin, 12927);
+        metrics = new Metrics(((BukkitTreasuryPlugin) TreasuryPlugin.getInstance()).getJavaPlugin(),
+                12927);
 
         metrics.addCustomChart(new SimplePie("economy-provider-name", () -> {
             final RegisteredServiceProvider<EconomyProvider> economyProvider = getEconomyProviderRegistration();
@@ -52,7 +50,7 @@ public class BukkitMetricsManager {
         }));
 
         metrics.addCustomChart(new SimplePie("plugin-update-checking-enabled", () ->
-                plugin.getTreasuryPlugin().getSettings().checkForUpdates() + ""));
+                TreasuryPlugin.getInstance().configAdapter().getSettings().checkForUpdates() + ""));
 
         metrics.addCustomChart(new SimplePie("economy-provider-supports-negative-balances", () -> {
             final RegisteredServiceProvider<EconomyProvider> economyProvider = getEconomyProviderRegistration();
