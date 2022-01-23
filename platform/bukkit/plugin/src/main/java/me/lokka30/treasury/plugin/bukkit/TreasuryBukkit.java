@@ -115,9 +115,9 @@ public class TreasuryBukkit extends JavaPlugin {
                         .checkForUpdates())
         ));
 
-        metrics.addCustomChart(new SimplePie("economy-provider-supports-negative-balances", () -> {
+        metrics.addCustomChart(new SimplePie("economy-provider-currencies", () -> {
             if (economyProvider == null) {
-                return "No provider";
+                return null;
             }
 
             final int size = economyProvider.getCurrencies().size();
