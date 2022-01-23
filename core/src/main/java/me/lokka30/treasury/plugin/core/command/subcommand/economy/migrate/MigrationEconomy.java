@@ -92,23 +92,25 @@ class MigrationEconomy implements EconomyProvider {
                 ));
             }
 
-            @Override @NotNull
+            @Override
+            @NotNull
             public BigDecimal getStartingBalance(@Nullable final UUID playerID) {
                 return BigDecimal.ZERO;
             }
 
-            @Override @NotNull
+            @Override
+            @NotNull
             public String format(
-                    final @NotNull BigDecimal amount,
-                    final @Nullable Locale locale
+                    final @NotNull BigDecimal amount, final @Nullable Locale locale
             ) {
                 return amount.toPlainString();
             }
 
-            @Override @NotNull
+            @Override
+            @NotNull
             public String format(
                     final @NotNull BigDecimal amount,
-                    final @Nullable  Locale locale,
+                    final @Nullable Locale locale,
                     final int precision
             ) {
                 return amount.toPlainString();

@@ -74,17 +74,18 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if the account exists before attempting to
      * interact with it.
      *
-     * @see EconomyProvider#hasAccount(String, EconomySubscriber) 
-     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber) 
+     * @see EconomyProvider#hasAccount(String, EconomySubscriber)
+     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
      * @see EconomyProvider#retrieveAccount(String, EconomySubscriber)
-     * @see EconomyProvider#retrievePlayerAccount(UUID, EconomySubscriber) 
+     * @see EconomyProvider#retrievePlayerAccount(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     ACCOUNT_NOT_FOUND {
         /**
          * {@inheritDoc}
          */
-        @Override @NotNull
+        @Override
+        @NotNull
         public String getDescription() {
             return "The account you attempted to perform that action on was unable to be located.";
         }
@@ -97,11 +98,11 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if an account exists before attempting to create
      * one that uses the same identifier.
      *
-     * @see EconomyProvider#hasAccount(String, EconomySubscriber) 
-     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber) 
+     * @see EconomyProvider#hasAccount(String, EconomySubscriber)
+     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
      * @see EconomyProvider#createAccount(String, EconomySubscriber)
-     * @see EconomyProvider#createAccount(String, String, EconomySubscriber) 
-     * @see EconomyProvider#createPlayerAccount(UUID, EconomySubscriber) 
+     * @see EconomyProvider#createAccount(String, String, EconomySubscriber)
+     * @see EconomyProvider#createPlayerAccount(UUID, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     ACCOUNT_ALREADY_EXISTS {
@@ -120,7 +121,7 @@ public enum EconomyFailureReason implements FailureReason {
      * has been called.
      * To avoid this failure, do not try to set permissions on player accounts.
      *
-     * @see PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...) 
+     * @see PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED {
@@ -140,7 +141,7 @@ public enum EconomyFailureReason implements FailureReason {
      * checking if the {@code NEGATIVE_BALANCES} constant exists in the collection from
      * {@link EconomyProvider#getSupportedOptionalEconomyApiFeatures()}.
      *
-     * @see EconomyProvider#getSupportedOptionalEconomyApiFeatures() 
+     * @see EconomyProvider#getSupportedOptionalEconomyApiFeatures()
      * @see me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature#NEGATIVE_BALANCES
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
@@ -191,11 +192,11 @@ public enum EconomyFailureReason implements FailureReason {
     },
 
     /**
-     * A constant representing failure due to the {@link Currency} already being registered by the 
+     * A constant representing failure due to the {@link Currency} already being registered by the
      * economy provider.
      * To avoid this failure, check if a currency exists before attempting to register it.
-     * 
-     * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency, EconomySubscriber) 
+     *
+     * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency, EconomySubscriber)
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     CURRENCY_ALREADY_REGISTERED {
@@ -238,8 +239,7 @@ public enum EconomyFailureReason implements FailureReason {
          */
         @Override
         public @NotNull String getDescription() {
-            return "Action failed because a String was unable to be converted into a number due " +
-                    "to an incompatible format.";
+            return "Action failed because a String was unable to be converted into a number due to an incompatible format.";
         }
     },
 

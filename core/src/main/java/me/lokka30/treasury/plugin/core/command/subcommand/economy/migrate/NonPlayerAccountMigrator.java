@@ -68,9 +68,7 @@ class NonPlayerAccountMigrator implements AccountMigrator<Account> {
         AccountMigrator.super.migrate(initiator, phaser, fromAccount, toAccount, migration);
 
         CompletableFuture<Collection<UUID>> memberUuidsFuture = new CompletableFuture<>();
-        fromAccount.retrieveMemberIds(new PhasedFutureSubscriber<>(phaser,
-                memberUuidsFuture
-        ));
+        fromAccount.retrieveMemberIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
         memberUuidsFuture.thenAccept(uuids -> {
             for (UUID uuid : uuids) {
                 fromAccount.retrievePermissions(uuid,

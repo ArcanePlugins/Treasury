@@ -32,8 +32,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    String getIdentifier();
+    @NotNull String getIdentifier();
 
     /**
      * Gets the currency's symbol. This could be something as simple as a dollar sign '$'.
@@ -42,8 +41,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    String getSymbol();
+    @NotNull String getSymbol();
 
     /**
      * Get's the currency's decimal character to be used for formatting purposes.
@@ -62,8 +60,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    String getDisplayNameSingular();
+    @NotNull String getDisplayNameSingular();
 
     /**
      * Gets the plural form of the currency's user-friendly display name.
@@ -75,8 +72,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    String getDisplayNamePlural();
+    @NotNull String getDisplayNamePlural();
 
     /**
      * Gets the currency's default number of decimal digits when formatting this currency.
@@ -142,8 +138,7 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    BigDecimal getStartingBalance(@Nullable UUID playerID);
+    @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID);
 
     /**
      * Used to translate an amount to a user readable format with the default precision.
@@ -156,22 +151,20 @@ public interface Currency {
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    String format(@NotNull BigDecimal amount, @Nullable Locale locale);
+    @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
      * If a per-locale format is not used, simply ignore the parameter.
      *
      * @param amount    The amount to format.
-     * @param locale The locale to use for formatting the balance. This value may be
-     *               {@code null} if the provider should provide their 'default' Locale.
+     * @param locale    The locale to use for formatting the balance. This value may be
+     *                  {@code null} if the provider should provide their 'default' Locale.
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    @NotNull
-    String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);
+    @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);
 
 }

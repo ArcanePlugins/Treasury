@@ -144,7 +144,9 @@ public class EconomyTransaction {
      * @return importance
      */
     @NotNull
-    public EconomyTransactionImportance getImportance() { return importance; }
+    public EconomyTransactionImportance getImportance() {
+        return importance;
+    }
 
     /**
      * Represents a builder of {@link EconomyTransaction}
@@ -161,7 +163,8 @@ public class EconomyTransaction {
         private BigDecimal transactionAmount;
         private EconomyTransactionImportance importance;
 
-        public Builder() {}
+        public Builder() {
+        }
 
         /**
          * Creates a new {@link Builder} out of the specified {@code other}
