@@ -6,10 +6,10 @@ package me.lokka30.treasury.api.economy.currency;
 
 import java.math.BigDecimal;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * One of Treasury's core features is multi-currency support.
@@ -137,13 +137,13 @@ public interface Currency {
      *
      * @param playerID The UUID of the player we are getting the starting balance for. If the
      *                 'general' starting balance of a currency is desired (not for a specific
-     *                 player), then specify {@link Optional#empty()} for this parameter.
+     *                 player), then specify {@code null} for this parameter.
      * @return The starting balance of the player for this currency.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
-    BigDecimal getStartingBalance(@NotNull Optional<UUID> playerID);
+    BigDecimal getStartingBalance(@Nullable UUID playerID);
 
     /**
      * Used to translate an amount to a user readable format with the default precision.
@@ -151,13 +151,13 @@ public interface Currency {
      *
      * @param amount The amount to format.
      * @param locale The locale to use for formatting the balance. This value may be
-     *               {@link Optional#empty()} if the provider should provide their 'default' Locale.
+     *               {@code null} if the provider should provide their 'default' Locale.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
-    String format(@NotNull BigDecimal amount, @NotNull Optional<Locale> locale);
+    String format(@NotNull BigDecimal amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
@@ -165,13 +165,13 @@ public interface Currency {
      *
      * @param amount    The amount to format.
      * @param locale The locale to use for formatting the balance. This value may be
-     *               {@link Optional#empty()} if the provider should provide their 'default' Locale.
+     *               {@code null} if the provider should provide their 'default' Locale.
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
      * @author creatorfromhell
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
     @NotNull
-    String format(@NotNull BigDecimal amount, @NotNull Optional<Locale> locale, int precision);
+    String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);
 
 }

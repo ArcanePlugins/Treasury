@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 public interface PlayerAccount extends Account {
 
     /**
-     * Returns a map fulfilled with all {@link AccountPermission} with {@link Boolean} values of
+     * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
      * {@link TriState#TRUE}.
      */
     Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
@@ -71,7 +70,9 @@ public interface PlayerAccount extends Account {
      */
     @Override
     default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
-        subscription.succeed(player.equals(getUniqueId()));
+        Objects.requireNonNull(player, "player");
+        Objects.requireNonNull(subscription, "subscription");
+        subscription.succeed(getUniqueId().equals(player));
     }
 
     /**
@@ -79,6 +80,7 @@ public interface PlayerAccount extends Account {
      */
     @Override
     default void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
+        Objects.requireNonNull(subscription, "subscription");
         subscription.succeed(Collections.singletonList(getUniqueId()));
     }
 
@@ -109,11 +111,7 @@ public interface PlayerAccount extends Account {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(subscription, "subscription");
 
-        if(player.equals(getUniqueId())) {
-            subscription.succeed(ALL_PERMISSIONS_MAP);
-        } else {
-            subscription.succeed(Collections.emptyMap());
-        }
+        subscription.succeed(player.equals(getUniqueId()) ? ALL_PERMISSIONS_MAP : Collections.emptyMap());
     }
 
     /**
@@ -155,7 +153,7 @@ public interface PlayerAccount extends Account {
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(subscription, "subscription");
 
-        final BigDecimal newBalance = currency.getStartingBalance(Optional.of(getUniqueId()));
+        final BigDecimal newBalance = currency.getStartingBalance(getUniqueId());
         setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override
             public void succeed(@NotNull BigDecimal value) {
