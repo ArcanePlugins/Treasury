@@ -9,6 +9,7 @@ import com.mrivanplays.annotationconfig.core.annotations.ConfigObject;
 import com.mrivanplays.annotationconfig.core.annotations.Ignore;
 import com.mrivanplays.annotationconfig.core.annotations.Key;
 import com.mrivanplays.annotationconfig.core.annotations.comment.Comment;
+import com.mrivanplays.annotationconfig.core.serialization.AdvancedEnumSerializer;
 import com.mrivanplays.annotationconfig.core.serialization.SerializerRegistry;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.List;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 import me.lokka30.treasury.plugin.core.debug.DebugCategoryMode;
+import me.lokka30.treasury.plugin.core.utils.downloader.DownloadPlatform;
 
 /**
  * Represents the settings file of treasury.
@@ -51,6 +53,11 @@ public class Settings {
                     DebugCategorySerializer.INSTANCE
             );
         }
+        if (!SerializerRegistry.INSTANCE.hasSerializer(DownloadPlatform.class)) {
+            SerializerRegistry.INSTANCE.registerSerializer(DownloadPlatform.class,
+                    AdvancedEnumSerializer.forEnum(DownloadPlatform.class)
+            );
+        }
         Settings settings = new Settings();
         YamlConfig.getConfigResolver().loadOrDump(settings, file);
         return settings;
@@ -78,6 +85,14 @@ public class Settings {
         }
 
     }
+
+    @Comment("## Where to download latest Treasury version from")
+    @Comment("This is for /treasury downloadLatest command")
+    @Comment("Available options:")
+    @Comment(" - mrivanplays: specifies to download from ci.mrivanplays.com")
+    @Comment(" - codemc: specifies to download from ci.codemc.io")
+    @Key("download-platform")
+    private DownloadPlatform downloadPlatform = DownloadPlatform.MRIVANPLAYS;
 
     @ConfigObject
     private DebugSettings debug = new DebugSettings();
@@ -134,6 +149,10 @@ public class Settings {
 
     public boolean checkForUpdates() {
         return updateChecker.isEnabled();
+    }
+
+    public DownloadPlatform getDownloadPlatform() {
+        return downloadPlatform;
     }
 
     @Ignore

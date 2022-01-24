@@ -72,7 +72,7 @@ public abstract class TreasuryPlugin {
      * @return platform
      */
     @NotNull
-    public abstract Platform getPlatform();
+    public abstract Platform platform();
 
     /**
      * Returns the path to the platform we're running onto - plugin directory.
@@ -80,7 +80,7 @@ public abstract class TreasuryPlugin {
      * @return plugins folder
      */
     @NotNull
-    public abstract Path getPluginsFolder();
+    public abstract Path pluginsFolder();
 
     /**
      * Returns the first {@link ProviderEconomy}

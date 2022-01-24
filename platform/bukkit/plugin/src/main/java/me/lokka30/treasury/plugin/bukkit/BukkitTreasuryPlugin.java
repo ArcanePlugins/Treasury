@@ -61,12 +61,12 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
-    public @NotNull  Platform getPlatform() {
+    public @NotNull Platform platform() {
         return Platform.BUKKIT;
     }
 
     @Override
-    public @NotNull Path getPluginsFolder() {
+    public @NotNull Path pluginsFolder() {
         return plugin.getDataFolder().getParentFile().toPath();
     }
 
@@ -205,8 +205,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
-            matcher.appendReplacement(
-                    buffer,
+            matcher.appendReplacement(buffer,
                     ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(
                             1) + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(
                             3) + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(

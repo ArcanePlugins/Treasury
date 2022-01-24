@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.plugin.core.command.subcommand.DownloadLatestSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.HelpSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.InfoSubcommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.ReloadSubcommand;
@@ -38,6 +39,7 @@ public final class TreasuryBaseCommand {
         registerSubcommand("help", new HelpSubcommand());
         registerSubcommand("info", new InfoSubcommand());
         registerSubcommand("reload", new ReloadSubcommand());
+        registerSubcommand("downloadLatest", new DownloadLatestSubcommand());
         registerSubcommand("economy", new EconomySubcommand());
     }
 

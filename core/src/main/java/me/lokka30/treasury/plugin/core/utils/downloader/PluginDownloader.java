@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.core.utils;
+package me.lokka30.treasury.plugin.core.utils.downloader;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,12 +15,19 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
+import me.lokka30.treasury.plugin.core.config.messaging.Message;
+import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
+import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
+import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -30,20 +37,45 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class PluginDownloader {
 
-    private static final String LATEST_BUILD = "https://ci.mrivanplays.com/job/Treasury/api/json?tree=builds%5Bnumber,url,result,artifacts%5BrelativePath%5D,changeSet%5Bitems%5BcommitId,date%5D%5D%5D%7B,1%7D";
-    private static final String DOWNLOAD_URL = "https://ci.mrivanplays.com/job/Treasury/%number%/artifact/";
-
-    public static void downloadLatest(@Nullable CommandSource source) {
+    public static boolean downloadLatest(@Nullable CommandSource source) {
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
-        String platformName = plugin.getPlatform().name().toLowerCase(Locale.ROOT);
+        if (source == null) {
+            plugin.logger().info("A latest Treasury plugin download has been triggered.");
+        }
+        DownloadPlatform downloadPlatform = plugin
+                .configAdapter()
+                .getSettings()
+                .getDownloadPlatform();
+        String platformName = plugin.platform().name().toLowerCase(Locale.ROOT);
         try {
             // first get the latest build
-            URL latestBuild = new URL(LATEST_BUILD);
+            URL latestBuild = new URL(downloadPlatform.buildUrl());
             try (Reader in = new InputStreamReader(latestBuild.openStream())) {
                 JsonObject object = Utils.GSON.fromJson(in, JsonObject.class);
                 JsonObject build = object.getAsJsonArray("builds").get(0).getAsJsonObject();
-                String downloadUrlCopy = DOWNLOAD_URL;
-                downloadUrlCopy = downloadUrlCopy.replace("%number%",
+
+                // check dates
+                OffsetDateTime currentJarDate = OffsetDateTime.parse(UpdateChecker.class
+                        .getPackage()
+                        .getImplementationVersion());
+                OffsetDateTime buildDate = parseDate(build
+                        .getAsJsonObject("changeSet")
+                        .getAsJsonArray("items")
+                        .get(0)
+                        .getAsJsonObject()
+                        .get("date")
+                        .getAsString());
+                if (currentJarDate.isEqual(buildDate) || currentJarDate.isAfter(buildDate)) {
+                    if (source != null) {
+                        source.sendMessage(Message.of(MessageKey.DOWNLOAD_LATEST_ALREADY_LATEST));
+                    } else {
+                        plugin.logger().warn("Already running latest.");
+                    }
+                    return false;
+                }
+
+                String downloadUrlString = downloadPlatform.downloadBase();
+                downloadUrlString = downloadUrlString.replace("%number%",
                         Integer.toString(build.get("number").getAsInt())
                 );
 
@@ -58,17 +90,20 @@ public final class PluginDownloader {
                 }
                 if (downloadPath == null) {
                     // nag the user to nag us that something went wrong
-                    plugin.logger().warn(
-                            "Something went wrong whilst parsing latest build download data. Please notify a Treasury developer ASAP.");
-                    // and return
-                    return;
+                    if (source != null) {
+                        source.sendMessage(Message.of(MessageKey.DOWNLOAD_LATEST_COULDNT_PARSE));
+                    } else {
+                        plugin.logger().warn(
+                                "Something went wrong whilst parsing latest build download data. Please notify a Treasury developer ASAP.");
+                    }
+                    return false;
                 }
-                downloadUrlCopy = downloadUrlCopy.concat(downloadPath);
+                downloadUrlString = downloadUrlString.concat(downloadPath);
 
                 // find old jar because after we download we may not be able to find it
                 File oldJar = null;
                 for (File file : plugin
-                        .getPluginsFolder()
+                        .pluginsFolder()
                         .toFile()
                         .listFiles((dir, name) -> name.contains("treasury"))) {
                     if (file != null) {
@@ -81,10 +116,10 @@ public final class PluginDownloader {
                 // prepare for a download
                 String[] downloadPathParts = downloadPath.split("/");
                 String fileName = downloadPathParts[downloadPathParts.length - 1];
-                File file = new File(plugin.getPluginsFolder().toFile(), fileName);
+                File file = new File(plugin.pluginsFolder().toFile(), fileName);
 
                 // now download it
-                URL downloadUrl = new URL(URLEncoder.encode(downloadUrlCopy, "UTF-8"));
+                URL downloadUrl = new URL(URLEncoder.encode(downloadUrlString, "UTF-8"));
                 try (InputStream is = downloadUrl.openStream()) {
                     file.createNewFile();
                     try (OutputStream out = new FileOutputStream(file)) {
@@ -97,9 +132,22 @@ public final class PluginDownloader {
                     oldJar.deleteOnExit();
                 }
             }
-        } catch (IOException e) {
+            return true;
+        } catch (Throwable e) {
+            if (source != null) {
+                source.sendMessage(Message.of(MessageKey.DOWNLOAD_LATEST_ERROR));
+            }
             plugin.logger().error("Unable to retrieve latest build information", e);
+            return false;
         }
+    }
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(
+            "yyyy-MM-dd HH:mm:ss Z");
+
+    private static OffsetDateTime parseDate(String date) {
+        OffsetDateTime parsed = OffsetDateTime.parse(date, DATE_TIME_FORMATTER);
+        return parsed.withOffsetSameInstant(ZoneOffset.UTC);
     }
 
     // InputStream#readAllBytes, but ported to java 8
