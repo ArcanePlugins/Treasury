@@ -178,7 +178,16 @@
     <profiles>
         <profile>
             <id>deployToCodeMC</id>
-            <!-- TODO -->
+            <distributionManagement>
+                <repository>
+                    <id>codemc-releases</id>
+                    <url>https://repo.codemc.io/repository/maven-releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>codemc-snapshots</id>
+                    <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
         </profile>
         <profile>
             <id>deployToMrIvanPlays</id>
