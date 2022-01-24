@@ -37,6 +37,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class PluginDownloader {
 
+    /**
+     * Downloads the latest Treasury plugin jar.
+     *
+     * @param source source to send messages to, which could be null, and if null, errors will be
+     *               sent to the console.
+     * @return success state - true if everything gone good, false otherwise
+     */
     public static boolean downloadLatest(@Nullable CommandSource source) {
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
         if (source == null) {
@@ -75,7 +82,8 @@ public final class PluginDownloader {
                 }
 
                 String downloadUrlString = downloadPlatform.downloadBase();
-                downloadUrlString = downloadUrlString.replace("%number%",
+                downloadUrlString = downloadUrlString.replace(
+                        "%number%",
                         Integer.toString(build.get("number").getAsInt())
                 );
 
@@ -131,8 +139,8 @@ public final class PluginDownloader {
                 if (oldJar != null) {
                     oldJar.deleteOnExit();
                 }
+                return true;
             }
-            return true;
         } catch (Throwable e) {
             if (source != null) {
                 source.sendMessage(Message.of(MessageKey.DOWNLOAD_LATEST_ERROR));

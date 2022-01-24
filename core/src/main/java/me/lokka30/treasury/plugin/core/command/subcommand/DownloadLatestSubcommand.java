@@ -10,6 +10,11 @@ import me.lokka30.treasury.plugin.core.utils.Utils;
 import me.lokka30.treasury.plugin.core.utils.downloader.PluginDownloader;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A class, containing the logic of the "/treasury downloadLatest" command.
+ *
+ * @author MrIvanPlays
+ */
 public class DownloadLatestSubcommand implements Subcommand {
 
     @Override
