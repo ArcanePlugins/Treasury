@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.plugin.core;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
@@ -28,10 +29,7 @@ public abstract class TreasuryPlugin {
     /**
      * Description of the plugin.
      */
-    public static final String DESCRIPTION =
-            "Treasury is a modern multi-platform library facilitating " +
-                    "the integration between service providing/consuming " +
-                    "plugins on Minecraft servers. ";
+    public static final String DESCRIPTION = "Treasury is a modern multi-platform library facilitating " + "the integration between service providing/consuming " + "plugins on Minecraft servers. ";
 
     private static TreasuryPlugin instance;
 
@@ -165,5 +163,17 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract List<String> pluginsListRegisteringProvider();
+
+    /**
+     * A method, called on latest Treasury plugin download, which may or may not validate the
+     * current Treasury jar running, whether it is that or not.
+     *
+     * @param file the file to check
+     * @return whether valid or not if implemented by a platform, if not implemented - it assumes
+     *         the file is the correct one
+     */
+    public boolean validatePluginJar(@NotNull File file) {
+        return true;
+    }
 
 }

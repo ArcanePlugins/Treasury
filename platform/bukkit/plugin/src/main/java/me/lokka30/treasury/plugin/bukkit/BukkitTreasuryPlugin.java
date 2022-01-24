@@ -182,6 +182,13 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
+    public boolean validatePluginJar(@NotNull File file) {
+        return plugin.getPluginFile().getAbsoluteFile().getAbsolutePath().equalsIgnoreCase(file
+                .getAbsoluteFile()
+                .getAbsolutePath());
+    }
+
+    @Override
     public @NotNull Messages getMessages() {
         return messages;
     }

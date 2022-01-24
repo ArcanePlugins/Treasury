@@ -106,18 +106,12 @@ public final class PluginDownloader {
                 }
                 downloadUrlString = downloadUrlString.concat(downloadPath);
 
-                // find old jar because after we download we may not be able to find it
-                File oldJar = null;
-                for (File file : plugin
-                        .pluginsFolder()
-                        .toFile()
-                        .listFiles((dir, name) -> name.contains("treasury"))) {
-                    if (file != null) {
-                        // first not null we find should be the jar
-                        oldJar = file;
-                        break;
-                    }
-                }
+                // get old jar before download just in case something goes wrong
+                File oldJar = new File(PluginDownloader.class
+                        .getProtectionDomain()
+                        .getCodeSource()
+                        .getLocation()
+                        .toURI());
 
                 // prepare for a download
                 String[] downloadPathParts = downloadPath.split("/");
@@ -133,8 +127,8 @@ public final class PluginDownloader {
                     }
                 }
 
-                // delete the old jar on exit (if we found it)
-                if (oldJar != null) {
+                // check if the old jar we found is valid and if it is valid - delete it on exit
+                if (plugin.validatePluginJar(oldJar)) {
                     oldJar.deleteOnExit();
                 }
                 return true;
