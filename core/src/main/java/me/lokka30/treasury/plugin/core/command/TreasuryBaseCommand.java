@@ -97,6 +97,7 @@ public final class TreasuryBaseCommand {
     public static final List<String> SUBCOMMAND_COMPLETIONS = Arrays.asList("help",
             "info",
             "reload",
+            "downloadLatest",
             "economy"
     );
 

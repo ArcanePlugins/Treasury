@@ -53,6 +53,12 @@ public class PaperBrigadierEnhancement implements Listener {
                                 .executes(command)
                 )
                 .then(
+                        LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("downloadLatest")
+                                .requires(source -> source.getBukkitSender()
+                                        .hasPermission("treasury.command.treasury.downloadLatest"))
+                                .executes(command)
+                )
+                .then(
                         LiteralArgumentBuilder.<BukkitBrigadierCommandSource>literal("economy")
                                 .requires(source -> source.getBukkitSender().hasPermission("treasury.command.treasury.economy"))
                                 .executes(command)
