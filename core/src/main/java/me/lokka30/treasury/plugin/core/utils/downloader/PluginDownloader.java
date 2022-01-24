@@ -26,7 +26,6 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
-import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import me.lokka30.treasury.plugin.core.utils.Utils;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +61,7 @@ public final class PluginDownloader {
                 JsonObject build = object.getAsJsonArray("builds").get(0).getAsJsonObject();
 
                 // check dates
-                OffsetDateTime currentJarDate = OffsetDateTime.parse(UpdateChecker.class
+                OffsetDateTime currentJarDate = OffsetDateTime.parse(PluginDownloader.class
                         .getPackage()
                         .getImplementationVersion());
                 OffsetDateTime buildDate = parseDate(build
@@ -82,8 +81,7 @@ public final class PluginDownloader {
                 }
 
                 String downloadUrlString = downloadPlatform.downloadBase();
-                downloadUrlString = downloadUrlString.replace(
-                        "%number%",
+                downloadUrlString = downloadUrlString.replace("%number%",
                         Integer.toString(build.get("number").getAsInt())
                 );
 
