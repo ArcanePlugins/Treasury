@@ -51,6 +51,10 @@ permissions:
     description: "Ability to run `/treasury reload`."
     default: op
 
+  treasury.command.treasury.downloadLatest:
+    description: "Ability to run `/treasury downloadLatest`."
+    default: op
+
   treasury.command.treasury.economy:
     description: "Ability to run `/treasury economy`."
     default: true

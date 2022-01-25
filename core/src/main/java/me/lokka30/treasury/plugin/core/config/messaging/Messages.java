@@ -113,6 +113,30 @@ public class Messages {
             );
 
             @Comment("Placeholders: %prefix%, %label%")
+            @Key("subcommands.downloadLatest.invalid-usage")
+            private String downloadLatestInvalidUsage = "%prefix% Invalid usage, try '&b/%label% downloadLatest&7'.";
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.downloadLatest.started")
+            private String downloadLatestDownloadStarted = "%prefix% &7Download process started.";
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.downloadLatest.error-occurred")
+            private String downloadLatestIOException = "%prefix% &7Unable to retrieve information/download jar. See console for more details.";
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.downloadLatest.couldnt-parse")
+            private String downloadLatestCouldntParse = "%prefix% &7Something went wrong whilst parsing latest build download data. Please notify a Treasury developer ASAP!";
+
+            @Comment("Placeholders: %prefix%")
+            @Key("subcommands.downloadLatest.already-latest")
+            private String downloadLatestAlreadyLatest = "%prefix% &7You are already running the latest version of Treasury!";
+
+            @Comment("Placeholders: %prefix%, %time%")
+            @Key("subcommands.downloadLatest.success")
+            private String downloadLatestSuccess = "%prefix% &7Successfully downloaded the latest Treasury jar (took &b%time%ms&7). Please restart your server in order for it to take effect.";
+
+            @Comment("Placeholders: %prefix%, %label%")
             @Key("subcommands.economy.invalid-usage-unspecified")
             private List<String> economyInvalidUsageUnspecified = Arrays.asList(
                     "%prefix% Invalid usage - please specify a subcommand.",
@@ -180,6 +204,7 @@ public class Messages {
                     " &8&m->&b /treasury help &8- &7view a list of Treasury's commands.",
                     " &8&m->&b /treasury info &8- &7view info about Treasury.",
                     " &8&m->&b /treasury reload &8- &7re-load all of Treasury's configuration files.",
+                    " &8&m->&b /treasury downloadLatest &8- &7downloads the latest Treasury plugin jar.",
                     " &8&m->&b /treasury economy &8 - &7economy specific commands"
             );
 

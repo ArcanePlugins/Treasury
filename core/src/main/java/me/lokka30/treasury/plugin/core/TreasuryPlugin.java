@@ -4,6 +4,8 @@
 
 package me.lokka30.treasury.plugin.core;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -64,6 +66,22 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract PluginVersion getVersion();
+
+    /**
+     * Returns the platform on which the treasury plugin is running.
+     *
+     * @return platform
+     */
+    @NotNull
+    public abstract Platform platform();
+
+    /**
+     * Returns the path to the platform we're running onto - plugin directory.
+     *
+     * @return plugins folder
+     */
+    @NotNull
+    public abstract Path pluginsFolder();
 
     /**
      * Returns the first {@link ProviderEconomy}
@@ -148,5 +166,17 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract List<String> pluginsListRegisteringProvider();
+
+    /**
+     * A method, called on latest Treasury plugin download, which may or may not validate the
+     * current Treasury jar running, whether it is that or not.
+     *
+     * @param file the file to check
+     * @return whether valid or not if implemented by a platform, if not implemented - it assumes
+     *         the file is the correct one
+     */
+    public boolean validatePluginJar(@NotNull File file) {
+        return true;
+    }
 
 }

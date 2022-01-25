@@ -54,7 +54,13 @@ public enum MessageKey {
     MIGRATE_FINISHED_MIGRATION("commands.treasury.subcommands.migrate.finished-migration"),
     RELOAD_INVALID_USAGE("commands.treasury.subcommands.reload.invalid-usage"),
     RELOAD_START("commands.treasury.subcommands.reload.reload-start"),
-    RELOAD_COMPLETE("commands.treasury.subcommands.reload.reload-complete");
+    RELOAD_COMPLETE("commands.treasury.subcommands.reload.reload-complete"),
+    DOWNLOAD_LATEST_INVALID_USAGE("commands.treasury.subcommands.downloadLatest.invalid-usage"),
+    DOWNLOAD_LATEST_STARTED("commands.treasury.subcommands.downloadLatest.started"),
+    DOWNLOAD_LATEST_ERROR("commands.treasury.subcommands.downloadLatest.error-occurred"),
+    DOWNLOAD_LATEST_COULDNT_PARSE("commands.treasury.subcommands.downloadLatest.couldnt-parse"),
+    DOWNLOAD_LATEST_ALREADY_LATEST("commands.treasury.subcommands.downloadLatest.already-latest"),
+    DOWNLOAD_LATEST_SUCCESS("commands.treasury.subcommands.downloadLatest.success");
 
     private static Map<String, MessageKey> BY_CONFIG_KEY = new HashMap<>();
 

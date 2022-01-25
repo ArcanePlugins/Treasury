@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.plugin.bukkit;
 
+import java.io.File;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
@@ -144,6 +145,15 @@ public class TreasuryBukkit extends JavaPlugin {
         // Add onDisable code here if required.
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+    }
+
+    /**
+     * Returns the file of the plugin.
+     *
+     * @return plugin file
+     */
+    public File getPluginFile() {
+        return super.getFile();
     }
 
 }
