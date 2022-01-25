@@ -1,3 +1,9 @@
+[![mrivanplays](https://ci.mrivanplays.com/job/Treasury/badge/icon)](https://ci.mrivanplays.com/job/Treasury)
+![license](https://img.shields.io/github/license/lokka30/Treasury.svg)
+![issues](https://img.shields.io/github/issues/lokka30/Treasury.svg)
+![api version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fother-developers%2Fme%2Flokka30%2Ftreasury-api%2Fmaven-metadata.xml)
+[![support](https://img.shields.io/discord/752310043214479462.svg?colorB=Blue&logo=discord&label=support)](https://discord.gg/HqZwdcJ)
+
 ![Treasury Logo](https://i.ibb.co/gPN6x5P/Treasury250.png)
 
 ## ⏬ Click on a banner below for more information:
