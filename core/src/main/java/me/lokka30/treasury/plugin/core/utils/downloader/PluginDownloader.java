@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -119,7 +118,7 @@ public final class PluginDownloader {
                 File file = new File(plugin.pluginsFolder().toFile(), fileName);
 
                 // now download it
-                URL downloadUrl = new URL(URLEncoder.encode(downloadUrlString, "UTF-8"));
+                URL downloadUrl = new URL(downloadUrlString);
                 try (InputStream is = downloadUrl.openStream()) {
                     file.createNewFile();
                     try (OutputStream out = new FileOutputStream(file)) {
