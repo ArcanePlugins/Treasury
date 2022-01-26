@@ -25,7 +25,7 @@
 </a>
 
 # Other Links
-* ~~[SpigotMC Resource Page]()~~ (N/A)
+* [SpigotMC Resource Page](https://www.spigotmc.org/resources/99531/)
 * [ArcanePlugins Discord Server](https://www.discord.io/arcaneplugins)
 
 # Other Information
