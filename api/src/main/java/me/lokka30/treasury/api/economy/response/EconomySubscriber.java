@@ -12,6 +12,53 @@ import org.jetbrains.annotations.NotNull;
  * An interface accepting responses from an economic provider.
  * Used to subscribe to a request that will be completed at
  * some point in the future.
+ * Example usage:
+ * <pre>{@code
+ * public void setBalance(
+ *     @NotNull CommandSender sender,
+ *     @NotNull UUID target,
+ *     @NotNull BigDecimal balance,
+ *     @NotNull Currency currency
+ * ) {
+ *     final EconomyProvider economy = //Obtain provider
+ *
+ *     // Create initiator object: check if CommandSender is a player or not
+ *     final EconomyTransactionInitiator<?> initiator;
+ *     if(sender instanceof Player) {
+ *         initiator = new EconomyTransactionInitiator<>() {
+ *             @Override
+ *             public Object getData() { return ((Player) sender).getUniqueId(); }
+ *
+ *             @Override
+ *             public @NotNull Type getType() { return Type.PLAYER;}
+ *         };
+ *     } else {
+ *         initiator = EconomyTransactionInitiator.SERVER;
+ *     }
+ *
+ *     economy.retrievePlayerAccount(target, new EconomySubscriber<>() {
+ *         @Override
+ *         public void succeed(@NotNull PlayerAccount account) {
+ *             account.setBalance(balance, initiator, currency, new EconomySubscriber<>() {
+ *                 @Override
+ *                 public void succeed(@NotNull BigDecimal newBalance) {
+ *                     sender.sendMessage(String.format("Set balance to %s.", newBalance));
+ *                 }
+ *
+ *                 @Override
+ *                 public void fail(@NotNull EconomyException exception) {
+ *                     sender.sendMessage("Something went wrong!");
+ *                 }
+ *             });
+ *         }
+ *
+ *         @Override
+ *         public void fail(@NotNull EconomyException exception) {
+ *             sender.sendMessage("Something went wrong!");
+ *         }
+ *     });
+ * }
+ * }</pre>
  *
  * @param <T> the type of value expected on success
  * @author Jikoo
@@ -39,30 +86,46 @@ public interface EconomySubscriber<T> {
 
     /**
      * Wrap a method accepting an {@link EconomySubscriber} in a {@link CompletableFuture}.
-     *
-     * <p>This allows easy conversion from the more expressive style used by Treasury
+     * This allows easy conversion from the more expressive style used by Treasury
      * into a quicker to use format. For example, setting a player's balance:
      * <pre>{@code
-     *     public void setBalance(
-     *             @NotNull CommandSender issuer,
-     *             @NotNull UUID target,
-     *             @NotNull BigDecimal balance,
-     *             @NotNull Currency currency) {
-     *         EconomyProvider economy = // Obtain provider
+     * public void setBalance(
+     *     @NotNull CommandSender issuer,
+     *     @NotNull UUID target,
+     *     @NotNull BigDecimal balance,
+     *     @NotNull Currency currency
+     * ) {
+     *     final EconomyProvider economy = // Obtain provider
      *
-     *         // First we need to obtain the account.
-     *         EconomySubscriber.asFuture(subscriber -> economy.retrievePlayerAccount(target, subscriber))
-     *             // Then we set the balance.
-     *             .thenCompose(account -> EconomySubscriber.asFuture(subscriber -> account.setBalance(balance, currency, subscriber)))
-     *             // And then we can use the final value however we like.
-     *             .whenComplete((newBalance, exception) -> {
-     *                 if (exception != null) {
-     *                     sender.sendMessage("Something went wrong!");
-     *                 } else {
-     *                     sender.sendMessage(String.format("Set balance to %s.", newBalance));
-     *                 }
-     *             });
+     *     // Create initiator object: check if CommandSender is a player or not
+     *     final EconomyTransactionInitiator<?> initiator;
+     *     if(sender instanceof Player) {
+     *         initiator = new EconomyTransactionInitiator<>() {
+     *             @Override
+     *             public Object getData() { return ((Player) sender).getUniqueId(); }
+     *
+     *             @Override
+     *             public @NotNull Type getType() { return Type.PLAYER;}
+     *         };
+     *     } else {
+     *         initiator = EconomyTransactionInitiator.SERVER;
      *     }
+     *
+     *     // Then we need to obtain the account.
+     *     EconomySubscriber.asFuture(subscriber -> economy.retrievePlayerAccount(target, subscriber))
+     *
+     *     // Then we set the balance.
+     *     .thenCompose(account -> EconomySubscriber.asFuture(subscriber -> account.setBalance(balance, initiator, currency, subscriber)))
+     *
+     *     // And then we can use the final value however we like.
+     *     .whenComplete((newBalance, exception) -> {
+     *         if (exception != null) {
+     *             ender.sendMessage("Something went wrong!");
+     *         } else {
+     *             sender.sendMessage(String.format("Set balance to %s.", newBalance));
+     *         }
+     *     });
+     * }
      * }</pre>
      * Note that due to the lack of explicit requirement it is far easier to
      * forget exception handling.
