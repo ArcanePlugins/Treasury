@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
  * Used to subscribe to a request that will be completed at
  * some point in the future.
  * Example usage:
- * <pre>{@code
+ * <pre>
  * public void setBalance(
- *     @NotNull CommandSender sender,
- *     @NotNull UUID target,
- *     @NotNull BigDecimal balance,
- *     @NotNull Currency currency
+ *     &#64;NotNull CommandSender sender,
+ *     &#64;NotNull UUID target,
+ *     &#64;NotNull BigDecimal balance,
+ *     &#64;NotNull Currency currency
  * ) {
  *     final EconomyProvider economy = //Obtain provider
  *
@@ -26,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
  *     final EconomyTransactionInitiator<?> initiator;
  *     if(sender instanceof Player) {
  *         initiator = new EconomyTransactionInitiator<>() {
- *             @Override
+ *             &#64;Override
  *             public Object getData() { return ((Player) sender).getUniqueId(); }
  *
- *             @Override
+ *             &#64;Override
  *             public @NotNull Type getType() { return Type.PLAYER;}
  *         };
  *     } else {
@@ -37,28 +37,28 @@ import org.jetbrains.annotations.NotNull;
  *     }
  *
  *     economy.retrievePlayerAccount(target, new EconomySubscriber<>() {
- *         @Override
+ *         &#64;Override
  *         public void succeed(@NotNull PlayerAccount account) {
  *             account.setBalance(balance, initiator, currency, new EconomySubscriber<>() {
- *                 @Override
+ *                 &#64;Override
  *                 public void succeed(@NotNull BigDecimal newBalance) {
  *                     sender.sendMessage(String.format("Set balance to %s.", newBalance));
  *                 }
  *
- *                 @Override
+ *                 &#64;Override
  *                 public void fail(@NotNull EconomyException exception) {
  *                     sender.sendMessage("Something went wrong!");
  *                 }
  *             });
  *         }
  *
- *         @Override
+ *         &#64;Override
  *         public void fail(@NotNull EconomyException exception) {
  *             sender.sendMessage("Something went wrong!");
  *         }
  *     });
  * }
- * }</pre>
+ * </pre>
  *
  * @param <T> the type of value expected on success
  * @author Jikoo
@@ -88,12 +88,12 @@ public interface EconomySubscriber<T> {
      * Wrap a method accepting an {@link EconomySubscriber} in a {@link CompletableFuture}.
      * This allows easy conversion from the more expressive style used by Treasury
      * into a quicker to use format. For example, setting a player's balance:
-     * <pre>{@code
+     * <pre>
      * public void setBalance(
-     *     @NotNull CommandSender issuer,
-     *     @NotNull UUID target,
-     *     @NotNull BigDecimal balance,
-     *     @NotNull Currency currency
+     *     &#64;NotNull CommandSender issuer,
+     *     &#64;NotNull UUID target,
+     *     &#64;NotNull BigDecimal balance,
+     *     &#64;NotNull Currency currency
      * ) {
      *     final EconomyProvider economy = // Obtain provider
      *
@@ -101,10 +101,10 @@ public interface EconomySubscriber<T> {
      *     final EconomyTransactionInitiator<?> initiator;
      *     if(sender instanceof Player) {
      *         initiator = new EconomyTransactionInitiator<>() {
-     *             @Override
+     *             &#64;Override
      *             public Object getData() { return ((Player) sender).getUniqueId(); }
      *
-     *             @Override
+     *             &#64;Override
      *             public @NotNull Type getType() { return Type.PLAYER;}
      *         };
      *     } else {
@@ -126,7 +126,7 @@ public interface EconomySubscriber<T> {
      *         }
      *     });
      * }
-     * }</pre>
+     * </pre>
      * Note that due to the lack of explicit requirement it is far easier to
      * forget exception handling.
      *

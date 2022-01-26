@@ -10,7 +10,7 @@
 
     <groupId>me.lokka30</groupId>
     <artifactId>treasury-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <modules>
         <module>api</module>
         <module>core</module>
@@ -35,8 +35,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Versions for specifying in plugin.yml's -->
-        <plugin.version>1.0.0</plugin.version>
-        <plugin.specificationVersion>RELEASE</plugin.specificationVersion>
+        <plugin.version>1.0.1</plugin.version>
+        <plugin.specificationVersion>SNAPSHOT</plugin.specificationVersion>
 
         <!--
         Maven module API version.
