@@ -33,7 +33,7 @@ jobs:
           echo "M2_HOME=${HOME}/.m2" >> $GITHUB_ENV
           echo "${MAVEN_SETTINGS}" > ~/.m2/settings.xml
       - name: Build
-        run: mvn deploy
+        run: mvn package
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
