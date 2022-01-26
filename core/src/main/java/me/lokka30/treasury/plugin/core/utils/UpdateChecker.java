@@ -16,8 +16,6 @@ import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 
-// TODO: This requires a Spigot Resource ID which can't be obtained before the resource is released.
-
 /**
  * Represents an update checker for spigot.
  *
@@ -26,7 +24,7 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
  */
 public final class UpdateChecker {
 
-    private static final int RESOURCE_ID = 12345;
+    private static final int RESOURCE_ID = 99531;
 
     private static final String SPIGOT_REQUEST_URI = String.format("https://api.spigotmc.org/simple/0.2/index.php?action=getResource&id=%s",
             RESOURCE_ID
@@ -38,10 +36,6 @@ public final class UpdateChecker {
      * Runs an update check.
      */
     public static void checkForUpdates() {
-        //noinspection ConstantConditions
-        if (true) {
-            return;
-        }
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
         if (!plugin.configAdapter().getSettings().checkForUpdates()) {
             return;
