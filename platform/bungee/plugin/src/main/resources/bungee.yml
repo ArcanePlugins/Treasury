@@ -1,0 +1,6 @@
+name: "Treasury"
+version: "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}"
+description: "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server."
+author: "lokka30, Jikoo, MrIvanPlays"
+
+main: "me.lokka30.treasury.plugin.bungee.TreasuryBungee"
