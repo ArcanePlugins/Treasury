@@ -10,7 +10,7 @@
 
     <groupId>me.lokka30</groupId>
     <artifactId>treasury-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <modules>
         <module>api</module>
         <module>core</module>
@@ -36,13 +36,13 @@
 
         <!-- Versions for specifying in plugin.yml's -->
         <plugin.version>1.0.0</plugin.version>
-        <plugin.specificationVersion>SNAPSHOT</plugin.specificationVersion>
+        <plugin.specificationVersion>RELEASE</plugin.specificationVersion>
 
         <!--
         Maven module API version.
         Should be synced with api module and it's delegates (e.g api-bukkit)
          -->
-        <api.version>1.0-SNAPSHOT</api.version>
+        <api.version>1.0</api.version>
 
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
