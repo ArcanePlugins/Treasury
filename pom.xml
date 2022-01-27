@@ -50,7 +50,7 @@
         <junit.version>5.8.2</junit.version>
         <gson.version>2.8.9</gson.version>
         <guava.version>21.0</guava.version>
-        <bstats.version>2.2.1</bstats.version>
+        <bstats.version>3.0.0</bstats.version>
         <annotationconfig.version>2.1.0</annotationconfig.version>
     </properties>
 
