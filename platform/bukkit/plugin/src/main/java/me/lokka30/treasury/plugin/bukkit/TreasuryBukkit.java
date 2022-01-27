@@ -5,6 +5,9 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
+import java.util.Optional;
+import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
@@ -68,17 +71,28 @@ public class TreasuryBukkit extends JavaPlugin {
     private void loadMetrics() {
         Metrics metrics = new Metrics(this, 12927);
 
-        RegisteredServiceProvider<EconomyProvider> serviceProvider = getServer()
-                .getServicesManager()
-                .getRegistration(EconomyProvider.class);
+        Optional<Service<EconomyProvider>> service = ServiceProvider.INSTANCE.serviceFor(
+                EconomyProvider.class);
 
-        EconomyProvider economyProvider = serviceProvider == null
-                ? null
-                : serviceProvider.getProvider();
+        EconomyProvider economyProvider;
+        String pluginName;
+
+        if (!service.isPresent()) {
+            RegisteredServiceProvider<EconomyProvider> serviceProvider = getServer()
+                    .getServicesManager()
+                    .getRegistration(EconomyProvider.class);
+
+            economyProvider = serviceProvider == null ? null : serviceProvider.getProvider();
+            pluginName = serviceProvider == null ? null : serviceProvider.getPlugin().getName();
+        } else {
+            Service<EconomyProvider> serv = service.get();
+            economyProvider = serv.get();
+            pluginName = serv.registrator();
+        }
 
         metrics.addCustomChart(new SimplePie(
                 "economy-provider-name",
-                () -> economyProvider == null ? "None" : serviceProvider.getPlugin().getName()
+                () -> economyProvider == null ? "None" : pluginName
         ));
 
         metrics.addCustomChart(new SimplePie(
