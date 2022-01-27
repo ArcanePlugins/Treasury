@@ -9,6 +9,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
+import me.lokka30.treasury.plugin.bukkit.listener.ServiceMigrator;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -58,6 +59,8 @@ public class TreasuryBukkit extends JavaPlugin {
         UpdateChecker.checkForUpdates();
 
         loadMetrics();
+
+        getServer().getPluginManager().registerEvents(new ServiceMigrator(treasuryPlugin), this);
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
     }
