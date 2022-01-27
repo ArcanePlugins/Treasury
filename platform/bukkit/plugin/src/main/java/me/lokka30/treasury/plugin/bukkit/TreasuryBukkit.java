@@ -52,6 +52,8 @@ public class TreasuryBukkit extends JavaPlugin {
         treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
 
+        getServer().getPluginManager().registerEvents(new ServiceMigrator(treasuryPlugin), this);
+
         if (BukkitVendor.isPaper()) {
             PaperEnhancements.enhance(this);
         }
@@ -59,8 +61,6 @@ public class TreasuryBukkit extends JavaPlugin {
         UpdateChecker.checkForUpdates();
 
         loadMetrics();
-
-        getServer().getPluginManager().registerEvents(new ServiceMigrator(treasuryPlugin), this);
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
     }

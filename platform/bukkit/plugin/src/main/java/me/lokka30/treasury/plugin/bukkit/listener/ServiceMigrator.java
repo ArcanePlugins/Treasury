@@ -9,6 +9,7 @@ import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServiceRegisterEvent;
 import org.bukkit.event.server.ServiceUnregisterEvent;
@@ -32,7 +33,7 @@ public class ServiceMigrator implements Listener {
         this.logger = logger;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onServiceRegister(ServiceRegisterEvent event) {
         RegisteredServiceProvider<?> provider = event.getProvider();
         if (EconomyProvider.class.isAssignableFrom(provider.getService())) {
@@ -60,7 +61,7 @@ public class ServiceMigrator implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onServiceUnregister(ServiceUnregisterEvent event) {
         RegisteredServiceProvider<?> provider = event.getProvider();
         if (EconomyProvider.class.isAssignableFrom(provider.getService())) {
