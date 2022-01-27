@@ -8,14 +8,12 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate.EconomyMigrateSub;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Treasury core implementations must implement this class and set its instance in order for the core
@@ -82,51 +80,6 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public abstract Path pluginsFolder();
-
-    /**
-     * Returns the first {@link ProviderEconomy}
-     *
-     * @return highest priority provider of economy provider
-     */
-    @Nullable
-    public ProviderEconomy economyProviderProvider() {
-        List<ProviderEconomy> allProviders = allProviders();
-        if (allProviders.isEmpty()) {
-            return null;
-        }
-        return allProviders.get(0);
-    }
-
-    /**
-     * Should give all the economy providers registered, ordered by highest priority.
-     *
-     * @return ordered providers list
-     */
-    @NotNull
-    public abstract List<ProviderEconomy> allProviders();
-
-    /**
-     * Should register the specified {@link EconomyProvider} at the highest priority.
-     *
-     * @param newProvider provider to register
-     */
-    public abstract void registerProvider(@NotNull EconomyProvider newProvider);
-
-    /**
-     * Should re register the specified {@link ProviderEconomy} at the priority defined by the {@code lowPriority}
-     * param.
-     *
-     * @param provider    the provider to re register
-     * @param lowPriority should register on low priority
-     */
-    public abstract void reregisterProvider(@NotNull ProviderEconomy provider, boolean lowPriority);
-
-    /**
-     * Should unregister the specified {@link EconomyProvider}
-     *
-     * @param provider provider to unregister
-     */
-    public abstract void unregisterProvider(@NotNull EconomyProvider provider);
 
     /**
      * Returns the logger wrapper.

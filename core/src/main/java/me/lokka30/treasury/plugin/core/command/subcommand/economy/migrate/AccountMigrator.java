@@ -13,13 +13,13 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
 
 interface AccountMigrator<T extends Account> {
@@ -63,15 +63,15 @@ interface AccountMigrator<T extends Account> {
         fromCurrencies.thenAccept(currenciesIDS -> {
 
             Collection<Currency> currencies = currenciesIDS.stream().map(identifier -> {
-                if (TreasuryPlugin.getInstance().economyProviderProvider() == null) {
+                if (ServiceProvider.INSTANCE.hasRegistration(EconomyProvider.class)) {
                     migration.debug(() -> "Economy provider is null.");
                     return null;
                 }
 
-                Optional<Currency> currency = TreasuryPlugin
-                        .getInstance()
-                        .economyProviderProvider()
-                        .provide()
+                Optional<Currency> currency = ServiceProvider.INSTANCE
+                        .serviceFor(EconomyProvider.class)
+                        .get()
+                        .get()
                         .findCurrency(identifier);
 
                 if (currency.isPresent()) {

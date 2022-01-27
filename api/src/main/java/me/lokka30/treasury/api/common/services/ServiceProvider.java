@@ -98,6 +98,17 @@ public enum ServiceProvider {
     }
 
     /**
+     * Returns whether the specified service class has a registration in this service provider.
+     *
+     * @param clazz class to check
+     * @return boolean value
+     */
+    public boolean hasRegistration(@NotNull Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
+        return servicesMap.containsKey(clazz);
+    }
+
+    /**
      * Queries for a service with the specified {@link Class}
      *
      * @param clazz the class to search a service for

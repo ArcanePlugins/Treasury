@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import me.lokka30.treasury.plugin.core.ProviderEconomy;
+import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 import me.lokka30.treasury.plugin.core.debug.DebugHandler;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
@@ -19,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
  */
 class MigrationData {
 
-    private final @NotNull ProviderEconomy from;
-    private final @NotNull ProviderEconomy to;
+    private final @NotNull Service<EconomyProvider> from;
+    private final @NotNull Service<EconomyProvider> to;
     private final boolean debugEnabled;
     private final @NotNull QuickTimer timer = new QuickTimer();
     private final @NotNull Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
@@ -28,7 +29,9 @@ class MigrationData {
     private final @NotNull AtomicInteger nonPlayerAccountsProcessed = new AtomicInteger();
 
     MigrationData(
-            @NotNull ProviderEconomy from, @NotNull ProviderEconomy to, boolean debugEnabled
+            @NotNull Service<EconomyProvider> from,
+            @NotNull Service<EconomyProvider> to,
+            boolean debugEnabled
     ) {
         this.from = from;
         this.to = to;
@@ -41,11 +44,11 @@ class MigrationData {
         }
     }
 
-    @NotNull ProviderEconomy from() {
+    @NotNull Service<EconomyProvider> from() {
         return from;
     }
 
-    @NotNull ProviderEconomy to() {
+    @NotNull Service<EconomyProvider> to() {
         return to;
     }
 
