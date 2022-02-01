@@ -88,7 +88,9 @@ public class TreasuryBukkit extends JavaPlugin {
         ));
 
         metrics.addCustomChart(new SimplePie(
-                "economy-provider-supports-bukkit-transaction-events",
+                // unfortunately bStats truncates the length of the id, so the 's' character
+                // on the end had to be removed.
+                "economy-provider-supports-bukkit-transaction-event",
                 () -> economyProvider == null
                         ? null
                         : Boolean.toString(economyProvider
