@@ -20,6 +20,7 @@ import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -105,7 +106,9 @@ public class TreasuryBukkit extends JavaPlugin {
         ));
 
         metrics.addCustomChart(new SimplePie(
-                "economy-provider-supports-bukkit-transaction-events",
+                // unfortunately bStats truncates the length of the id, so the 's' character
+                // on the end had to be removed.
+                "economy-provider-supports-bukkit-transaction-event",
                 () -> economyProvider == null
                         ? null
                         : Boolean.toString(economyProvider
@@ -159,7 +162,8 @@ public class TreasuryBukkit extends JavaPlugin {
     public void onDisable() {
         final QuickTimer shutdownTimer = new QuickTimer();
 
-        // Add onDisable code here if required.
+        // Unregister all
+        Bukkit.getServicesManager().unregisterAll(this);
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }
