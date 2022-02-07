@@ -12,6 +12,7 @@ import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.event.EventCallerShutdown;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
@@ -147,6 +148,9 @@ public class TreasuryBukkit extends JavaPlugin {
 
         // Unregister all
         Bukkit.getServicesManager().unregisterAll(this);
+
+        // Shutdown events
+        EventCallerShutdown.shutdown();
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }
