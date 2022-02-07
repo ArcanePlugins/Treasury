@@ -17,7 +17,7 @@
     <artifactId>treasury-api-bukkit</artifactId>
 
     <name>Treasury-API-Bukkit</name>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <properties>
         <!-- This stops the updateVersion script from changing the version of the module -->
