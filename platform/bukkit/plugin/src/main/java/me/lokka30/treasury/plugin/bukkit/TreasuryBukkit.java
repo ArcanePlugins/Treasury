@@ -163,6 +163,7 @@ public class TreasuryBukkit extends JavaPlugin {
         final QuickTimer shutdownTimer = new QuickTimer();
 
         // Unregister all
+        ServiceProvider.INSTANCE.unregisterAll("Treasury");
         Bukkit.getServicesManager().unregisterAll(this);
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");

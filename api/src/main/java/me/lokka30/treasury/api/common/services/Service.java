@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.common.services;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> type of the data held
  * @author MrIvanPlays
  */
-public final class Service<T> implements Comparable<Service<?>> {
+public final class Service<T> implements Comparable<Service<?>>, Supplier<T> {
 
     private final String registrator;
     private final ServicePriority priority;
@@ -50,6 +51,7 @@ public final class Service<T> implements Comparable<Service<?>> {
      *
      * @return service
      */
+    @Override
     public @NotNull T get() {
         return service;
     }
