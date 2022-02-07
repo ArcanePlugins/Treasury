@@ -42,7 +42,7 @@
         Maven module API version.
         Should be synced with api module and it's delegates (e.g api-bukkit)
          -->
-        <api.version>1.0</api.version>
+        <api.version>1.1-SNAPSHOT</api.version>
 
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
