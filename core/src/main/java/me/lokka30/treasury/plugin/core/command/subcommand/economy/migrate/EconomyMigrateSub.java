@@ -63,7 +63,7 @@ public class EconomyMigrateSub implements Subcommand {
                                     ? "No providers found "
                                     : Utils.formatListMessage(serviceProviders
                                             .stream()
-                                            .map(Service::registrator)
+                                            .map(Service::registrarName)
                                             .collect(Collectors.toList()))
                     )
             ));
@@ -81,10 +81,10 @@ public class EconomyMigrateSub implements Subcommand {
         final Set<String> serviceProvidersNames = new HashSet<>();
 
         for (Service<EconomyProvider> serviceProvider : serviceProviders) {
-            serviceProvidersNames.add(serviceProvider.registrator());
+            serviceProvidersNames.add(serviceProvider.registrarName());
             if (debugEnabled) {
                 DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
-                        "Found service provider: " + serviceProvider.registrator()
+                        "Found service provider: " + serviceProvider.registrarName()
                 );
             }
         }
@@ -97,7 +97,7 @@ public class EconomyMigrateSub implements Subcommand {
         }
 
         for (Service<EconomyProvider> serviceProvider : serviceProviders) {
-            final String serviceProviderPluginName = serviceProvider.registrator();
+            final String serviceProviderPluginName = serviceProvider.registrarName();
 
             if (args[0].equalsIgnoreCase(serviceProviderPluginName)) {
                 from = serviceProvider;
@@ -122,7 +122,7 @@ public class EconomyMigrateSub implements Subcommand {
 
         if (debugEnabled) {
             DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
-                    "Migrating from '&b" + from.registrator() + "&7' to '&b" + to.registrator() + "&7'."
+                    "Migrating from '&b" + from.registrarName() + "&7' to '&b" + to.registrarName() + "&7'."
             );
         }
 
@@ -140,13 +140,13 @@ public class EconomyMigrateSub implements Subcommand {
         ServiceProvider.INSTANCE.unregister(EconomyProvider.class, from.get());
         ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
                 from.get(),
-                from.registrator(),
+                from.registrarName(),
                 ServicePriority.LOW
         );
         ServiceProvider.INSTANCE.unregister(EconomyProvider.class, to.get());
         ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
                 to.get(),
-                to.registrator(),
+                to.registrarName(),
                 ServicePriority.HIGH
         );
 

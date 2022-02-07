@@ -16,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class Service<T> implements Comparable<Service<?>>, Supplier<T> {
 
-    private final String registrator;
+    private final String registrarName;
     private final ServicePriority priority;
     private final T service;
 
     public Service(
-            @NotNull String registrator, @NotNull ServicePriority priority, @NotNull T service
+            @NotNull String registrarName, @NotNull ServicePriority priority, @NotNull T service
     ) {
-        this.registrator = Objects.requireNonNull(registrator, "registrator");
+        this.registrarName = Objects.requireNonNull(registrarName, "registrarName");
         this.priority = Objects.requireNonNull(priority, "priority");
         this.service = Objects.requireNonNull(service, "service");
     }
@@ -33,8 +33,8 @@ public final class Service<T> implements Comparable<Service<?>>, Supplier<T> {
      *
      * @return registrator
      */
-    public @NotNull String registrator() {
-        return registrator;
+    public @NotNull String registrarName() {
+        return registrarName;
     }
 
     /**
@@ -58,7 +58,7 @@ public final class Service<T> implements Comparable<Service<?>>, Supplier<T> {
 
     @Override
     public String toString() {
-        return "Service{" + "registrator='" + registrator + '\'' + ", priority=" + priority + ", service=" + service + '}';
+        return "Service{" + "registrarName='" + registrarName + '\'' + ", priority=" + priority + ", service=" + service + '}';
     }
 
     /**

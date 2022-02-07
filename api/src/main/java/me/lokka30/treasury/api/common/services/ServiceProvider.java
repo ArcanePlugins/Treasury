@@ -64,7 +64,7 @@ public enum ServiceProvider {
         while (iterator.hasNext()) {
             Map.Entry<Class<?>, Set<Service<?>>> entry = iterator.next();
             entry.getValue().removeIf(service -> service
-                    .registrator()
+                    .registrarName()
                     .equalsIgnoreCase(registrator));
 
             if (entry.getValue().isEmpty()) {

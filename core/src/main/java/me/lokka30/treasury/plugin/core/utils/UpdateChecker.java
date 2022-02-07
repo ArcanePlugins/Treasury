@@ -143,7 +143,7 @@ public final class UpdateChecker {
 
             handleAPIVersioning(providerVersion,
                     latestVersion,
-                    service.registrator(),
+                    service.registrarName(),
                     comparisonResult,
                     currentVersion.isDevelopmentVersion()
             );
@@ -180,7 +180,7 @@ public final class UpdateChecker {
 
             handleAPIVersioning(providerVersion,
                     latestVersion,
-                    service.registrator(),
+                    service.registrarName(),
                     comparisonResult,
                     plugin.getVersion().isDevelopmentVersion()
             );

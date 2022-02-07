@@ -88,7 +88,7 @@ public class TreasuryBukkit extends JavaPlugin {
         } else {
             Service<EconomyProvider> serv = service.get();
             economyProvider = serv.get();
-            pluginName = serv.registrator();
+            pluginName = serv.registrarName();
         }
 
         metrics.addCustomChart(new SimplePie(

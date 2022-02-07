@@ -57,7 +57,7 @@ public class EconomyInfoSub implements Subcommand {
             EconomyProvider provider = service.get();
             sender.sendMessage(Message.of(
                     MessageKey.ECONOMY_INFO_ECONOMY_PROVIDER_AVAILABLE,
-                    placeholder("name", service.registrator()),
+                    placeholder("name", service.registrarName()),
                     placeholder("priority", service.priority().name().toLowerCase(Locale.ROOT)),
                     placeholder("api-version", provider.getSupportedAPIVersion()),
                     placeholder(
