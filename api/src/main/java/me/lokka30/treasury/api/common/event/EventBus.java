@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public enum EventBus {
@@ -29,7 +30,7 @@ public enum EventBus {
     }
 
     @NotNull
-    public <T> EventSubscriberBuilder<T> subscriptionFor(Class<T> eventClass) {
+    public <T> EventSubscriberBuilder<T> subscriptionFor(@NotNull Class<T> eventClass) {
         return new EventSubscriberBuilder<>(eventClass);
     }
 
@@ -37,12 +38,23 @@ public enum EventBus {
     public <T> Completion fire(@NotNull T event) {
         Objects.requireNonNull(event, "event");
         List<Class<?>> friends = eventTypes.getFriendsOf(event.getClass());
-        List<Completion> completions = new ArrayList<>();
-        completions.add(events.get(event.getClass()).call(event));
-        for (Class<?> friend : friends) {
-            completions.add(events.get(friend).call(event));
-        }
-        return Completion.join(completions.toArray(new Completion[0]));
+        EventCaller caller = events.get(event.getClass());
+        Completion ret = new Completion();
+        caller.eventCallThreads().submit(() -> {
+            List<Completion> completions = new ArrayList<>();
+            completions.add(events.get(event.getClass()).call(event));
+            for (Class<?> friend : friends) {
+                completions.add(events.get(friend).call(event));
+            }
+            Completion.join(completions.toArray(new Completion[0])).whenComplete(errors -> {
+                if (errors != null) {
+                    ret.completeExceptionally(errors);
+                } else {
+                    ret.complete();
+                }
+            });
+        });
+        return ret;
     }
 
     public static final class EventSubscriberBuilder<T> {
@@ -56,21 +68,25 @@ public enum EventBus {
             this.eventClass = Objects.requireNonNull(eventClass, "eventClass");
         }
 
+        @Contract("_ -> this")
         public EventSubscriberBuilder<T> withPriority(@NotNull EventPriority priority) {
             this.priority = Objects.requireNonNull(priority, "priority");
             return this;
         }
 
+        @Contract("_ -> this")
         public EventSubscriberBuilder<T> whenCalled(@NotNull Consumer<T> eventConsumer) {
             this.eventConsumer = Objects.requireNonNull(eventConsumer, "eventConsumer");
             return this;
         }
 
+        @Contract("_ -> this")
         public EventSubscriberBuilder<T> whenCalled(@NotNull Function<T, Completion> withCompletion) {
             this.completions = Objects.requireNonNull(withCompletion, "withCompletion");
             return this;
         }
 
+        @NotNull
         public EventSubscriber<T> completeSubscription() {
             if (priority == null) {
                 priority = EventPriority.NORMAL;

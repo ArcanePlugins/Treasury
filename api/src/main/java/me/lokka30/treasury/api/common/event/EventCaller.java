@@ -49,6 +49,10 @@ class EventCaller<T> {
         return completion;
     }
 
+    public ExecutorService eventCallThreads() {
+        return eventCallThreads;
+    }
+
     public void shutdown() {
         eventCallThreads.shutdown();
     }
