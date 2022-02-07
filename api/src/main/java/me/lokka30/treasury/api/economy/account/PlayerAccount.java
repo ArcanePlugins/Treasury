@@ -12,14 +12,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.api.common.misc.TriState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A PlayerAccount is an Account owned by a Player.
@@ -53,6 +54,16 @@ public interface PlayerAccount extends Account {
     @Override
     default @NotNull String getIdentifier() {
         return getUniqueId().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void setName(
+            @Nullable String name, @NotNull EconomySubscriber<Boolean> subscription
+    ) {
+        subscription.succeed(false);
     }
 
     /**
