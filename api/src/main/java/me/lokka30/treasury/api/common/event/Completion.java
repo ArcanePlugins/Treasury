@@ -123,6 +123,7 @@ public final class Completion {
                 completedTask.accept(errors);
             } else {
                 try {
+                    // todo: this blocks the thread this is called on. shall fix this!!!
                     latch.await();
                     completedTask.accept(errors);
                 } catch (InterruptedException e) {
