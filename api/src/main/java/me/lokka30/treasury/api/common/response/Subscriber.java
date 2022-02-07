@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type of value expected on success
  * @author Jikoo
- * @since v1.1
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
  */
 public interface Subscriber<T, E extends TreasuryException> {
 
@@ -22,7 +22,7 @@ public interface Subscriber<T, E extends TreasuryException> {
      *
      * @param t the value of the successful invocation
      * @author Jikoo
-     * @since v1.1
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
      */
     void succeed(@NotNull T t);
 
@@ -31,7 +31,7 @@ public interface Subscriber<T, E extends TreasuryException> {
      *
      * @param exception an {@link E} detailing the reason for failure
      * @author Jikoo
-     * @since v1.1
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
      */
     void fail(@NotNull E exception);
 
@@ -85,7 +85,7 @@ public interface Subscriber<T, E extends TreasuryException> {
      * @param <T>                the type of value expected by the {@code Subscriber}
      * @return a future awaiting subscriber completion
      * @author Jikoo
-     * @since v1.1
+     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
      */
     static <T, E extends TreasuryException> @NotNull CompletableFuture<T> asFuture(@NotNull Consumer<?
             super Subscriber<T,E>> subscriberConsumer) {

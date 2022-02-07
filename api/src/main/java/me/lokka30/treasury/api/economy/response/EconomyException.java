@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class EconomyException extends TreasuryException {
 
-    private final @NotNull FailureReason reason;
-
     /**
      * Construct a new {@code EconomyException}.
      *
@@ -67,29 +65,7 @@ public class EconomyException extends TreasuryException {
     public EconomyException(
             @NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause
     ) {
-        super(message, cause, true, false);
-        this.reason = reason;
-    }
-
-    /**
-     * Get a {@link FailureReason} representing why the failure occurred.
-     *
-     * @return the reason for failure
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    public @NotNull FailureReason getReason() {
-        return this.reason;
-    }
-
-    /**
-     * Get a more detailed description of the reason for failure.
-     *
-     * @return a more detailed description of the problem
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    @Override
-    public @NotNull String getMessage() {
-        return super.getMessage();
+        super(reason, message, cause);
     }
 
 }
