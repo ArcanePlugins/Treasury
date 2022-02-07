@@ -33,10 +33,10 @@ class EventPriorityTest {
                 })
                 .completeSubscription());
 
-        bus.fire(new Event());
-
-        Assertions.assertEquals("LOW", log.logs.get(0));
-        Assertions.assertEquals("HIGH", log.logs.get(1));
+        bus.fire(new Event()).whenComplete(errors -> {
+            Assertions.assertEquals("LOW", log.logs.get(0));
+            Assertions.assertEquals("HIGH", log.logs.get(1));
+        });
     }
 
 }

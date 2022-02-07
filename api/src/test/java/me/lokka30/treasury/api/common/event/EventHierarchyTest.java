@@ -33,9 +33,11 @@ class EventHierarchyTest {
             countdown.decrementAndGet();
         }).completeSubscription());
 
-        bus
-                .fire(new SecondEvent())
-                .whenComplete(errors -> System.out.println("Called SecondEvent"));
+        bus.fire(new SecondEvent()).whenComplete(errors -> {
+            // todo: this is getting printed twice: figure out is this the correct behaviour in
+            //  Bukkit
+            System.out.println("Called SecondEvent");
+        });
 
         Assertions.assertEquals(0, countdown.get());
         Assertions.assertEquals("SecondEvent", log.logs.get(0));
