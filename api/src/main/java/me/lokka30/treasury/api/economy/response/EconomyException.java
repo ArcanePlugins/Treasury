@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.economy.response;
 
 import me.lokka30.treasury.api.common.response.FailureReason;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,9 +16,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public class EconomyException extends Exception {
-
-    private final @NotNull FailureReason reason;
+public class EconomyException extends TreasuryException {
 
     /**
      * Construct a new {@code EconomyException}.
@@ -66,29 +65,7 @@ public class EconomyException extends Exception {
     public EconomyException(
             @NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause
     ) {
-        super(message, cause, true, false);
-        this.reason = reason;
-    }
-
-    /**
-     * Get a {@link FailureReason} representing why the failure occurred.
-     *
-     * @return the reason for failure
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    public @NotNull FailureReason getReason() {
-        return this.reason;
-    }
-
-    /**
-     * Get a more detailed description of the reason for failure.
-     *
-     * @return a more detailed description of the problem
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    @Override
-    public @NotNull String getMessage() {
-        return super.getMessage();
+        super(reason, message, cause);
     }
 
 }
