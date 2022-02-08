@@ -4,6 +4,8 @@
 
 package me.lokka30.treasury.api.common.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -28,13 +30,19 @@ class EventCaller {
         }
         Completion completion = new Completion();
         EventExecutorTracker.INSTANCE.getExecutor(eventClass).submit(() -> {
-            call(event, this.subscriptions);
-            completion.complete();
+            List<Throwable> errors = call(event, this.subscriptions, new ArrayList<>());
+            if (!errors.isEmpty()) {
+                completion.completeExceptionally(errors);
+            } else {
+                completion.complete();
+            }
         });
         return completion;
     }
 
-    private void call(Object event, Set<EventSubscriber> subscribers) {
+    private List<Throwable> call(
+            Object event, Set<EventSubscriber> subscribers, List<Throwable> errorsToThrow
+    ) {
         Set<EventSubscriber> copy = new TreeSet<>(subscribers);
         for (EventSubscriber subscriber : subscribers) {
             copy.remove(subscriber);
@@ -45,21 +53,15 @@ class EventCaller {
             }
             subscriber.onEvent(event).whenComplete(errors -> {
                 if (!errors.isEmpty()) {
-                    for (Throwable e : errors) {
-                        new TreasuryEventException(
-                                "Could not call " + event
-                                        .getClass()
-                                        .getSimpleName() + " due to an exception caused by an event subscriber",
-                                e
-                        ).printStackTrace();
-                    }
+                    errorsToThrow.addAll(errors);
                     return;
                 }
 
-                call(event, copy);
+                call(event, copy, errorsToThrow);
             });
             break;
         }
+        return errorsToThrow;
     }
 
 }
