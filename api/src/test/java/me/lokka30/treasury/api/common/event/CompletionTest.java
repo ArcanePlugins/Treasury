@@ -42,6 +42,7 @@ class CompletionTest {
             Thread.currentThread().interrupt();
         }
 
+        Assertions.assertEquals(1, log.logs.size());
         Assertions.assertEquals("this should've been logged after 2 seconds", log.logs.get(0));
     }
 
