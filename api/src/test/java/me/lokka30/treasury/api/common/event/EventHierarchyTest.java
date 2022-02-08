@@ -33,13 +33,14 @@ class EventHierarchyTest {
             countdown.decrementAndGet();
         }).completeSubscription());
 
-        bus.fire(new SecondEvent()).whenComplete(errors -> log.log("Called SecondEvent"));
-
-        Assertions.assertEquals(0, countdown.get());
-        Assertions.assertEquals(3, log.logs.size());
-        Assertions.assertEquals("SecondEvent", log.logs.get(0));
-        Assertions.assertEquals("FirstEvent", log.logs.get(1));
-        Assertions.assertEquals("Called SecondEvent", log.logs.get(2));
+        bus.fire(new SecondEvent()).whenCompleteAsync(errors -> {
+            log.log("Called SecondEvent");
+            Assertions.assertEquals(0, countdown.get());
+            Assertions.assertEquals(3, log.logs.size());
+            Assertions.assertEquals("SecondEvent", log.logs.get(0));
+            Assertions.assertEquals("FirstEvent", log.logs.get(1));
+            Assertions.assertEquals("Called SecondEvent", log.logs.get(2));
+        });
     }
 
 }

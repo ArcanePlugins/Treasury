@@ -41,7 +41,7 @@ class EventCaller {
         if (subscriptions.isEmpty()) {
             return Completion.completed();
         }
-        Completion completion = new Completion();
+        Completion completion = new Completion(eventCallThreads);
         eventCallThreads.submit(() -> {
             call(event, this.subscriptions);
             completion.complete();
@@ -61,7 +61,7 @@ class EventCaller {
         Set<EventSubscriber> copy = new TreeSet<>(subscribers);
         for (EventSubscriber subscriber : subscribers) {
             copy.remove(subscriber);
-            subscriber.onEvent(event).whenComplete(errors -> {
+            subscriber.onEvent(event).whenCompleteBlocking(errors -> {
                 if (!errors.isEmpty()) {
                     for (Throwable e : errors) {
                         new TreasuryEventException(

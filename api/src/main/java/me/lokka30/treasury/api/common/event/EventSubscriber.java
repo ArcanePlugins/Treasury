@@ -12,6 +12,10 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
     private final Class<T> eventClass;
     private final EventPriority priority;
 
+    public EventSubscriber(@NotNull Class<T> eventClass) {
+        this(eventClass, EventPriority.NORMAL);
+    }
+
     public EventSubscriber(@NotNull Class<T> eventClass, @NotNull EventPriority priority) {
         this.eventClass = Objects.requireNonNull(eventClass, "eventClass");
         this.priority = Objects.requireNonNull(priority, "priority");
@@ -27,6 +31,11 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
         return priority;
     }
 
+    @NotNull
+    public Completion createCompletion() {
+        return EventBus.INSTANCE.createCompletion(eventClass);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -40,6 +49,7 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
         return "EventSubscriber{eventClass=" + eventClass + ", priority=" + priority + '}';
     }
 
+    @NotNull
     public abstract Completion onEvent(@NotNull T event);
 
 }

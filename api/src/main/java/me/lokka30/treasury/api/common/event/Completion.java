@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,10 +43,11 @@ public final class Completion {
     }
 
     private CountDownLatch latch = new CountDownLatch(1);
+    private Executor async;
     private Collection<Throwable> errors;
 
-    public Completion() {
-
+    Completion(Executor async) {
+        this.async = async;
     }
 
     private Completion(boolean completed) {
@@ -101,19 +103,35 @@ public final class Completion {
         return errors == null ? Collections.emptyList() : errors;
     }
 
-    public void whenComplete(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
+    public void whenCompleteBlocking(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
         if (completedTask != null) {
             if (latch.getCount() == 0) {
                 completedTask.accept(getErrors());
             } else {
                 try {
-                    // todo: this blocks the thread this is called on. shall fix this!!!
                     latch.await();
                     completedTask.accept(getErrors());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
+        }
+    }
+
+    public void whenCompleteAsync(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
+        if (completedTask != null) {
+            async.execute(() -> {
+                if (latch.getCount() == 0) {
+                    completedTask.accept(getErrors());
+                } else {
+                    try {
+                        latch.await();
+                        completedTask.accept(getErrors());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
         }
     }
 

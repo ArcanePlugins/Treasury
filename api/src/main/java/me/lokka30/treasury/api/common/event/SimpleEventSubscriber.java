@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
 
+    public SimpleEventSubscriber(@NotNull Class<T> eventClass) {
+        super(eventClass);
+    }
+
     public SimpleEventSubscriber(
             @NotNull Class<T> eventClass, @NotNull EventPriority priority
     ) {
@@ -17,6 +21,7 @@ public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
     public abstract void subscribe(@NotNull T event);
 
     @Override
+    @NotNull
     public Completion onEvent(@NotNull T event) {
         try {
             subscribe(event);

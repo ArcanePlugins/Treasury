@@ -39,14 +39,14 @@ public enum EventBus {
         Objects.requireNonNull(event, "event");
         List<Class<?>> friends = eventTypes.getFriendsOf(event.getClass());
         EventCaller caller = events.get(event.getClass());
-        Completion ret = new Completion();
+        Completion ret = new Completion(caller.eventCallThreads());
         caller.eventCallThreads().submit(() -> {
             List<Completion> completions = new ArrayList<>();
             completions.add(events.get(event.getClass()).call(event));
             for (Class<?> friend : friends) {
                 completions.add(events.get(friend).call(event));
             }
-            Completion.join(completions.toArray(new Completion[0])).whenComplete(errors -> {
+            Completion.join(completions.toArray(new Completion[0])).whenCompleteBlocking(errors -> {
                 if (!errors.isEmpty()) {
                     ret.completeExceptionally(errors);
                 } else {
@@ -55,6 +55,13 @@ public enum EventBus {
             });
         });
         return ret;
+    }
+
+    @NotNull
+    public <T> Completion createCompletion(@NotNull Class<T> eventClass) {
+        Objects.requireNonNull(eventClass, "eventClass");
+        EventCaller caller = events.computeIfAbsent(eventClass, k -> new EventCaller(eventClass));
+        return new Completion(caller.eventCallThreads());
     }
 
     public static final class EventSubscriberBuilder<T> {
@@ -102,6 +109,7 @@ public enum EventBus {
                 Objects.requireNonNull(completions, "completions");
                 return new EventSubscriber<T>(eventClass, priority) {
                     @Override
+                    @NotNull
                     public Completion onEvent(@NotNull final T event) {
                         return completions.apply(event);
                     }
