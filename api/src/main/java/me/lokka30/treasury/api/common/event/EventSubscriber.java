@@ -47,11 +47,6 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
         return ignoreCancelled;
     }
 
-    @NotNull
-    public Completion createCompletion() {
-        return EventBus.INSTANCE.createCompletion(eventClass);
-    }
-
     /**
      * {@inheritDoc}
      */

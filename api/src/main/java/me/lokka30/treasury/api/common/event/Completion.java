@@ -17,10 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Completion {
 
-    static Completion completed(@NotNull Executor async) {
-        return new Completion(true, async);
-    }
-
     @NotNull
     public static Completion completed(@NotNull Class<?> eventClass) {
         return new Completion(true, eventClass);
@@ -63,15 +59,10 @@ public final class Completion {
     private final Executor async;
     private Collection<Throwable> errors;
 
-    Completion(@NotNull Executor async) {
-        this.async = Objects.requireNonNull(async, "async");
-    }
-
-    private Completion(boolean completed, @NotNull Executor async) {
-        this.async = Objects.requireNonNull(async, "async");
-        if (completed) {
-            this.latch.countDown();
-        }
+    public Completion(@NotNull Class<?> eventClass) {
+        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(eventClass,
+                "eventClass"
+        ));
     }
 
     private Completion(boolean completed, @NotNull Class<?> eventClass) {

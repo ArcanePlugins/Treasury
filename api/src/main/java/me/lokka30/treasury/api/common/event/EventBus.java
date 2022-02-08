@@ -40,7 +40,7 @@ public enum EventBus {
         Objects.requireNonNull(event, "event");
         List<Class<?>> friends = eventTypes.getFriendsOf(event.getClass());
         ExecutorService async = EventExecutorTracker.INSTANCE.getExecutor(event.getClass());
-        Completion ret = new Completion(async);
+        Completion ret = new Completion(event.getClass());
         async.submit(() -> {
             List<Completion> completions = new ArrayList<>();
             EventCaller caller = events.get(event.getClass());
@@ -68,12 +68,6 @@ public enum EventBus {
             }
         });
         return ret;
-    }
-
-    @NotNull
-    public Completion createCompletion(@NotNull Class<?> eventClass) {
-        Objects.requireNonNull(eventClass, "eventClass");
-        return new Completion(EventExecutorTracker.INSTANCE.getExecutor(eventClass));
     }
 
     public static final class EventSubscriberBuilder<T> {

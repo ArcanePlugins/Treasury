@@ -23,7 +23,7 @@ class CompletionTest {
         LogCatcher log = new LogCatcher();
 
         bus.subscribe(bus.subscriptionFor(Event.class).whenCalled(event -> {
-            Completion completion = bus.createCompletion(Event.class);
+            Completion completion = new Completion(Event.class);
             scheduled.schedule(() -> {
                 log.log("this should've been logged after 2 seconds");
                 completion.complete();

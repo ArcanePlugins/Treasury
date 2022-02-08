@@ -14,8 +14,10 @@ class EventCaller {
 
     private Set<EventSubscriber> subscriptions = new TreeSet<>();
     private final ExecutorService eventCallThreads;
+    private final Class<?> eventClass;
 
     EventCaller(Class<?> eventClass) {
+        this.eventClass = eventClass;
         this.eventCallThreads = EventExecutorTracker.INSTANCE.getExecutor(eventClass);
     }
 
@@ -25,9 +27,9 @@ class EventCaller {
 
     public Completion call(Object event) {
         if (subscriptions.isEmpty()) {
-            return Completion.completed(eventCallThreads);
+            return Completion.completed(eventClass);
         }
-        Completion completion = new Completion(eventCallThreads);
+        Completion completion = new Completion(eventClass);
         eventCallThreads.submit(() -> {
             call(event, this.subscriptions);
             completion.complete();
@@ -63,6 +65,7 @@ class EventCaller {
 
                 call(event, copy);
             });
+            break;
         }
     }
 
