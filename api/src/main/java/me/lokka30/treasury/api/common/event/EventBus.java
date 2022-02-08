@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jetbrains.annotations.Contract;
@@ -38,30 +39,31 @@ public enum EventBus {
     public <T> Completion fire(@NotNull T event) {
         Objects.requireNonNull(event, "event");
         List<Class<?>> friends = eventTypes.getFriendsOf(event.getClass());
-        EventCaller caller = events.get(event.getClass());
-        Completion ret = new Completion(caller.eventCallThreads());
-        caller.eventCallThreads().submit(() -> {
+        ExecutorService async = EventExecutorTracker.INSTANCE.getExecutor(event.getClass());
+        Completion ret = new Completion(async);
+        async.submit(() -> {
             List<Completion> completions = new ArrayList<>();
             completions.add(events.get(event.getClass()).call(event));
             for (Class<?> friend : friends) {
                 completions.add(events.get(friend).call(event));
             }
-            Completion.join(completions.toArray(new Completion[0])).whenCompleteBlocking(errors -> {
-                if (!errors.isEmpty()) {
-                    ret.completeExceptionally(errors);
-                } else {
-                    ret.complete();
-                }
-            });
+            Completion
+                    .join(event.getClass(), completions.toArray(new Completion[0]))
+                    .whenCompleteBlocking(errors -> {
+                        if (!errors.isEmpty()) {
+                            ret.completeExceptionally(errors);
+                        } else {
+                            ret.complete();
+                        }
+                    });
         });
         return ret;
     }
 
     @NotNull
-    public <T> Completion createCompletion(@NotNull Class<T> eventClass) {
+    public Completion createCompletion(@NotNull Class<?> eventClass) {
         Objects.requireNonNull(eventClass, "eventClass");
-        EventCaller caller = events.computeIfAbsent(eventClass, k -> new EventCaller(eventClass));
-        return new Completion(caller.eventCallThreads());
+        return new Completion(EventExecutorTracker.INSTANCE.getExecutor(eventClass));
     }
 
     public static final class EventSubscriberBuilder<T> {

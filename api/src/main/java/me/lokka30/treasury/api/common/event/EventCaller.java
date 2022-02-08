@@ -8,9 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
 class EventCaller {
@@ -19,18 +16,7 @@ class EventCaller {
     private final ExecutorService eventCallThreads;
 
     EventCaller(Class<?> eventClass) {
-        this.eventCallThreads = Executors.newCachedThreadPool(new ThreadFactory() {
-
-            private AtomicInteger amountOfThreads = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(@NotNull final Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("Event " + eventClass.getSimpleName() + " caller thread #" + amountOfThreads.get());
-                amountOfThreads.incrementAndGet();
-                return thread;
-            }
-        });
+        this.eventCallThreads = EventExecutorTracker.INSTANCE.getExecutor(eventClass);
     }
 
     public void register(@NotNull EventSubscriber subscriber) {
@@ -39,7 +25,7 @@ class EventCaller {
 
     public Completion call(Object event) {
         if (subscriptions.isEmpty()) {
-            return Completion.completed();
+            return Completion.completed(eventCallThreads);
         }
         Completion completion = new Completion(eventCallThreads);
         eventCallThreads.submit(() -> {
@@ -47,10 +33,6 @@ class EventCaller {
             completion.complete();
         });
         return completion;
-    }
-
-    public ExecutorService eventCallThreads() {
-        return eventCallThreads;
     }
 
     public void shutdown() {

@@ -17,52 +17,75 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Completion {
 
-    public static Completion completed() {
-        return new Completion(true);
+    static Completion completed(@NotNull Executor async) {
+        return new Completion(true, async);
     }
 
-    public static Completion completedExceptionally(@NotNull Throwable error) {
-        return new Completion(error);
+    static Completion completed(@NotNull Class<?> eventClass) {
+        return new Completion(true, eventClass);
     }
 
-    public static Completion completedExceptionally(@NotNull Collection<@NotNull Throwable> errors) {
-        return new Completion(errors);
+    static Completion completedExceptionally(
+            @NotNull Throwable error, @NotNull Class<?> eventClass
+    ) {
+        return new Completion(error, eventClass);
     }
 
-    public static Completion join(Completion... other) {
+    @NotNull
+    static Completion join(
+            @NotNull Class<?> eventClass, @NotNull Completion @NotNull ... other
+    ) {
+        Objects.requireNonNull(eventClass, "eventClass");
+        Objects.requireNonNull(other, "other");
         List<Throwable> errors = new ArrayList<>();
         for (Completion completion : other) {
+            Objects.requireNonNull(completion, "completion");
             completion.waitCompletion();
             if (!completion.getErrors().isEmpty()) {
                 errors.addAll(completion.getErrors());
             }
         }
-        return errors.isEmpty()
-                ? Completion.completed()
-                : Completion.completedExceptionally(errors);
+        return errors.isEmpty() ? Completion.completed(eventClass) : new Completion(errors,
+                eventClass
+        );
     }
 
     private CountDownLatch latch = new CountDownLatch(1);
-    private Executor async;
+    private final Executor async;
     private Collection<Throwable> errors;
 
-    Completion(Executor async) {
-        this.async = async;
+    Completion(@NotNull Executor async) {
+        this.async = Objects.requireNonNull(async, "async");
     }
 
-    private Completion(boolean completed) {
+    private Completion(boolean completed, @NotNull Executor async) {
+        this.async = Objects.requireNonNull(async, "async");
         if (completed) {
             this.latch.countDown();
         }
     }
 
-    private Completion(@NotNull Collection<@NotNull Throwable> errors) {
+    private Completion(boolean completed, @NotNull Class<?> eventClass) {
+        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(eventClass,
+                "eventClass"
+        ));
+        if (completed) {
+            this.latch.countDown();
+        }
+    }
+
+    private Completion(
+            @NotNull Collection<@NotNull Throwable> errors, @NotNull Class<?> eventClass
+    ) {
         this.errors = Objects.requireNonNull(errors, "errors");
+        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(eventClass,
+                "eventClass"
+        ));
         this.latch.countDown();
     }
 
-    private Completion(@NotNull Throwable error) {
-        this(Collections.singletonList(Objects.requireNonNull(error, "error")));
+    private Completion(@NotNull Throwable error, @NotNull Class<?> eventClass) {
+        this(Collections.singletonList(Objects.requireNonNull(error, "error")), eventClass);
     }
 
     public void complete() {
