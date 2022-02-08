@@ -39,4 +39,10 @@ class EventExecutorTracker {
         );
     }
 
+    void shutdown() {
+        for (ExecutorService executor : executors.values()) {
+            executor.shutdown();
+        }
+    }
+
 }

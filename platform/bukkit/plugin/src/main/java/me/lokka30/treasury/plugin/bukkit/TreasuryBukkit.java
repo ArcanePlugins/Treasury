@@ -5,6 +5,7 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
+import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
@@ -12,7 +13,6 @@ import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.event.EventCallerShutdown;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
@@ -150,7 +150,7 @@ public class TreasuryBukkit extends JavaPlugin {
         Bukkit.getServicesManager().unregisterAll(this);
 
         // Shutdown events
-        EventCallerShutdown.shutdown();
+        EventExecutorTrackerShutdown.shutdown();
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }

@@ -7,18 +7,15 @@ package me.lokka30.treasury.api.common.event;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
 import org.jetbrains.annotations.NotNull;
 
 class EventCaller {
 
     private Set<EventSubscriber> subscriptions = new TreeSet<>();
-    private final ExecutorService eventCallThreads;
     private final Class<?> eventClass;
 
     EventCaller(Class<?> eventClass) {
         this.eventClass = eventClass;
-        this.eventCallThreads = EventExecutorTracker.INSTANCE.getExecutor(eventClass);
     }
 
     public void register(@NotNull EventSubscriber subscriber) {
@@ -30,15 +27,11 @@ class EventCaller {
             return Completion.completed(eventClass);
         }
         Completion completion = new Completion(eventClass);
-        eventCallThreads.submit(() -> {
+        EventExecutorTracker.INSTANCE.getExecutor(eventClass).submit(() -> {
             call(event, this.subscriptions);
             completion.complete();
         });
         return completion;
-    }
-
-    public void shutdown() {
-        eventCallThreads.shutdown();
     }
 
     private void call(Object event, Set<EventSubscriber> subscribers) {
