@@ -21,18 +21,27 @@ public final class Completion {
         return new Completion(true, async);
     }
 
-    static Completion completed(@NotNull Class<?> eventClass) {
+    @NotNull
+    public static Completion completed(@NotNull Class<?> eventClass) {
         return new Completion(true, eventClass);
     }
 
-    static Completion completedExceptionally(
-            @NotNull Throwable error, @NotNull Class<?> eventClass
+    @NotNull
+    public static Completion completedExceptionally(
+            @NotNull Class<?> eventClass, @NotNull Throwable error
     ) {
         return new Completion(error, eventClass);
     }
 
     @NotNull
-    static Completion join(
+    public static Completion completedExceptionally(
+            @NotNull Class<?> eventClass, @NotNull Collection<@NotNull Throwable> errors
+    ) {
+        return new Completion(errors, eventClass);
+    }
+
+    @NotNull
+    public static Completion join(
             @NotNull Class<?> eventClass, @NotNull Completion @NotNull ... other
     ) {
         Objects.requireNonNull(eventClass, "eventClass");
@@ -45,9 +54,9 @@ public final class Completion {
                 errors.addAll(completion.getErrors());
             }
         }
-        return errors.isEmpty() ? Completion.completed(eventClass) : new Completion(errors,
-                eventClass
-        );
+        return errors.isEmpty()
+                ? Completion.completed(eventClass)
+                : Completion.completedExceptionally(eventClass, errors);
     }
 
     private CountDownLatch latch = new CountDownLatch(1);

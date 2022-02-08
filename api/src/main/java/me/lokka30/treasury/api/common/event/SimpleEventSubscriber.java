@@ -37,7 +37,7 @@ public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
             subscribe(event);
             return Completion.completed(eventClass());
         } catch (Throwable error) {
-            return Completion.completedExceptionally(error, eventClass());
+            return Completion.completedExceptionally(eventClass(), error);
         }
     }
 
