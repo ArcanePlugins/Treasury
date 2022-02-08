@@ -7,6 +7,56 @@ package me.lokka30.treasury.api.common.event;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a subscriber of an event. This should be used only if you want to block event
+ * execution.
+ *
+ * <p>Examples:
+ * <pre>
+ * EventBus eventBus = EventBus.INSTANCE;
+ * eventBus.subscribe(
+ *   eventBus.subscriptionFor(AnEvent.class)
+ *     .withPriority(EventPriority.HIGH)
+ *     .whenCalled(event -> {
+ *       Completion completion = new Completion();
+ *       doAsync(() -> {
+ *         // do something
+ *         // then you run either completion.complete() or completion.completeWithException(error)
+ *         // if you don't call it the event won't proceed, potentially blocking the transaction so please don't forget to do this before doing a release or sth of your plugin
+ *         completion.complete();
+ *       });
+ *       return completion;
+ *     });
+ *     .completeSubscription()
+ * );
+ *
+ * public class MyEventListener implements EventSubscriber&#60;MyEvent&#62; {
+ *
+ *   public MyEventListener() {
+ *     super(MyEvent.class, EventPriority.NORMAL);
+ *   }
+ *
+ *   &#64;Override
+ *   public Completion onEvent(MyEvent event) {
+ *     Completion completion = new Completion();
+ *     doAsync(() -> {
+ *       // do something
+ *       // then you run either completion.complete() or completion.completeWithException(error)
+ *       // if you don't call it the event won't proceed, potentially blocking the transaction so please don't forget to do this before doing a release or sth of your plugin
+ *       completion.complete();
+ *     });
+ *     return completion;
+ *   }
+ * }
+ *
+ * // then you register
+ * EventBus.INSTANCE.subscribe(new MyEventListener());
+ * </pre>
+ *
+ * @param <T> event type
+ * @author MrIvanPlays
+ * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
+ */
 public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T>> {
 
     private final Class<T> eventClass;
@@ -33,16 +83,31 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
         this.ignoreCancelled = ignoreCancelled;
     }
 
+    /**
+     * Returns the event class this subscriber has a subscription to.
+     *
+     * @return event class
+     */
     @NotNull
     public Class<T> eventClass() {
         return eventClass;
     }
 
+    /**
+     * Returns the {@link EventPriority} of this subscriber.
+     *
+     * @return priority
+     */
     @NotNull
     public EventPriority priority() {
         return priority;
     }
 
+    /**
+     * Returns whether this subscriber is ignoring already cancelled events or not.
+     *
+     * @return true if ignore cancelled
+     */
     public boolean ignoreCancelled() {
         return ignoreCancelled;
     }
@@ -60,6 +125,14 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
         return "EventSubscriber{eventClass=" + eventClass + ", priority=" + priority + '}';
     }
 
+    /**
+     * Treasury's {@link EventBus} calls this method whenever a {@link EventBus#fire(Object)}
+     * occurs with the event this subscription listens for.
+     *
+     * @param event the event
+     * @return completion
+     * @see Completion
+     */
     @NotNull
     public abstract Completion onEvent(@NotNull T event);
 
