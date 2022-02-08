@@ -66,7 +66,7 @@ public final class Completion {
 
     public void complete() {
         if (latch.getCount() == 0) {
-            throw new IllegalArgumentException("Completion already completed");
+            throw new IllegalStateException("Completion already completed");
         }
         if (completedTask != null) {
             completedTask.accept(Collections.emptyList());
@@ -76,30 +76,28 @@ public final class Completion {
 
     public void completeExceptionally(@NotNull Throwable error) {
         if (latch.getCount() == 0) {
-            throw new IllegalArgumentException("Completion already completed");
+            throw new IllegalStateException("Completion already completed");
         }
         Objects.requireNonNull(error, "error");
         if (completedTask != null) {
             completedTask.accept(Collections.singletonList(error));
-            latch.countDown();
         } else {
             this.errors = Collections.singletonList(error);
-            latch.countDown();
         }
+        latch.countDown();
     }
 
     public void completeExceptionally(@NotNull Collection<@NotNull Throwable> errors) {
         if (latch.getCount() == 0) {
-            throw new IllegalArgumentException("Completion already completed");
+            throw new IllegalStateException("Completion already completed");
         }
         Objects.requireNonNull(errors, "errors");
         if (completedTask != null) {
             completedTask.accept(errors);
-            latch.countDown();
         } else {
             this.errors = errors;
-            latch.countDown();
         }
+        latch.countDown();
     }
 
     public void waitCompletion() {
@@ -119,12 +117,12 @@ public final class Completion {
         this.completedTask = completedTask;
         if (completedTask != null) {
             if (latch.getCount() == 0) {
-                completedTask.accept(errors);
+                completedTask.accept(getErrors());
             } else {
                 try {
                     // todo: this blocks the thread this is called on. shall fix this!!!
                     latch.await();
-                    completedTask.accept(errors);
+                    completedTask.accept(getErrors());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
