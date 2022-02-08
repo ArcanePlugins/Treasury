@@ -24,9 +24,9 @@ class EventCaller {
 
     public Completion call(Object event) {
         if (subscriptions.isEmpty()) {
-            return Completion.completed(eventClass);
+            return Completion.completed();
         }
-        Completion completion = new Completion(eventClass);
+        Completion completion = new Completion();
         EventExecutorTracker.INSTANCE.getExecutor(eventClass).submit(() -> {
             call(event, this.subscriptions);
             completion.complete();
@@ -43,7 +43,7 @@ class EventCaller {
                     continue;
                 }
             }
-            subscriber.onEvent(event).whenCompleteBlocking(errors -> {
+            subscriber.onEvent(event).whenComplete(errors -> {
                 if (!errors.isEmpty()) {
                     for (Throwable e : errors) {
                         new TreasuryEventException(

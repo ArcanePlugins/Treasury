@@ -20,7 +20,7 @@ class AsyncCompletionTest {
                 .whenCalled((Consumer<Event>) event -> log.log("whenCalled"))
                 .completeSubscription());
 
-        bus.fire(new Event()).whenCompleteAsync(errors -> log.log("whenCompleteAsync"));
+        bus.fire(new Event()).whenCompleteAsync((event, errors) -> log.log("whenCompleteAsync"));
 
         log.log("direct");
 

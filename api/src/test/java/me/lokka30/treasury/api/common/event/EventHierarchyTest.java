@@ -30,7 +30,7 @@ class EventHierarchyTest {
             countdown.decrementAndGet();
         }).completeSubscription());
 
-        bus.fire(new SecondEvent()).whenCompleteBlocking(errors -> Assertions.assertEquals(0,
+        bus.fire(new SecondEvent()).whenCompleteBlocking((event, errors) -> Assertions.assertEquals(0,
                 countdown.get()
         ));
     }

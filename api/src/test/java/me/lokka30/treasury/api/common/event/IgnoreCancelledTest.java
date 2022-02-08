@@ -52,7 +52,7 @@ class IgnoreCancelledTest {
                 })
                 .completeSubscription());
 
-        bus.fire(new Event()).whenCompleteBlocking(error -> Assertions.assertEquals(1,
+        bus.fire(new Event()).whenCompleteBlocking((event, errors) -> Assertions.assertEquals(1,
                 latch.get()
         ));
     }

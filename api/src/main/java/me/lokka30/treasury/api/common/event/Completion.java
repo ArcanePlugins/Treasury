@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,29 +17,22 @@ import org.jetbrains.annotations.Nullable;
 public final class Completion {
 
     @NotNull
-    public static Completion completed(@NotNull Class<?> eventClass) {
-        return new Completion(true, eventClass);
+    public static Completion completed() {
+        return new Completion(true);
     }
 
     @NotNull
-    public static Completion completedExceptionally(
-            @NotNull Class<?> eventClass, @NotNull Throwable error
-    ) {
-        return new Completion(error, eventClass);
+    public static Completion completedExceptionally(@NotNull Throwable error) {
+        return new Completion(error);
     }
 
     @NotNull
-    public static Completion completedExceptionally(
-            @NotNull Class<?> eventClass, @NotNull Collection<@NotNull Throwable> errors
-    ) {
-        return new Completion(errors, eventClass);
+    public static Completion completedExceptionally(@NotNull Collection<@NotNull Throwable> errors) {
+        return new Completion(errors);
     }
 
     @NotNull
-    public static Completion join(
-            @NotNull Class<?> eventClass, @NotNull Completion @NotNull ... other
-    ) {
-        Objects.requireNonNull(eventClass, "eventClass");
+    public static Completion join(@NotNull Completion @NotNull ... other) {
         Objects.requireNonNull(other, "other");
         List<Throwable> errors = new ArrayList<>();
         for (Completion completion : other) {
@@ -51,41 +43,30 @@ public final class Completion {
             }
         }
         return errors.isEmpty()
-                ? Completion.completed(eventClass)
-                : Completion.completedExceptionally(eventClass, errors);
+                ? Completion.completed()
+                : Completion.completedExceptionally(errors);
     }
 
     private CountDownLatch latch = new CountDownLatch(1);
-    private final Executor async;
     private Collection<Throwable> errors;
 
-    public Completion(@NotNull Class<?> eventClass) {
-        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(eventClass,
-                "eventClass"
-        ));
+    public Completion() {
+
     }
 
-    private Completion(boolean completed, @NotNull Class<?> eventClass) {
-        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(eventClass,
-                "eventClass"
-        ));
+    private Completion(boolean completed) {
         if (completed) {
             this.latch.countDown();
         }
     }
 
-    private Completion(
-            @NotNull Collection<@NotNull Throwable> errors, @NotNull Class<?> eventClass
-    ) {
+    private Completion(@NotNull Collection<@NotNull Throwable> errors) {
         this.errors = Objects.requireNonNull(errors, "errors");
-        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(eventClass,
-                "eventClass"
-        ));
         this.latch.countDown();
     }
 
-    private Completion(@NotNull Throwable error, @NotNull Class<?> eventClass) {
-        this(Collections.singletonList(Objects.requireNonNull(error, "error")), eventClass);
+    private Completion(@NotNull Throwable error) {
+        this(Collections.singletonList(Objects.requireNonNull(error, "error")));
     }
 
     public void complete() {
@@ -126,7 +107,7 @@ public final class Completion {
         return errors == null ? Collections.emptyList() : errors;
     }
 
-    public void whenCompleteBlocking(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
+    public void whenComplete(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
         if (completedTask != null) {
             if (latch.getCount() == 0) {
                 completedTask.accept(getErrors());
@@ -138,23 +119,6 @@ public final class Completion {
                     Thread.currentThread().interrupt();
                 }
             }
-        }
-    }
-
-    public void whenCompleteAsync(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
-        if (completedTask != null) {
-            async.execute(() -> {
-                if (latch.getCount() == 0) {
-                    completedTask.accept(getErrors());
-                } else {
-                    try {
-                        latch.await();
-                        completedTask.accept(getErrors());
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
         }
     }
 

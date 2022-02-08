@@ -36,11 +36,11 @@ public enum EventBus {
     }
 
     @NotNull
-    public <T> Completion fire(@NotNull T event) {
+    public <T> FireCompletion<T> fire(@NotNull T event) {
         Objects.requireNonNull(event, "event");
         List<Class<?>> friends = eventTypes.getFriendsOf(event.getClass());
         ExecutorService async = EventExecutorTracker.INSTANCE.getExecutor(event.getClass());
-        Completion ret = new Completion(event.getClass());
+        FireCompletion<T> ret = new FireCompletion<>(event.getClass());
         async.submit(() -> {
             List<Completion> completions = new ArrayList<>();
             EventCaller caller = events.get(event.getClass());
@@ -54,17 +54,15 @@ public enum EventBus {
                 }
             }
             if (!completions.isEmpty()) {
-                Completion
-                        .join(event.getClass(), completions.toArray(new Completion[0]))
-                        .whenCompleteBlocking(errors -> {
-                            if (!errors.isEmpty()) {
-                                ret.completeExceptionally(errors);
-                            } else {
-                                ret.complete();
-                            }
-                        });
+                Completion.join(completions.toArray(new Completion[0])).whenComplete(errors -> {
+                    if (!errors.isEmpty()) {
+                        ret.completeExceptionally(errors);
+                    } else {
+                        ret.complete(event);
+                    }
+                });
             } else {
-                ret.complete();
+                ret.complete(event);
             }
         });
         return ret;
