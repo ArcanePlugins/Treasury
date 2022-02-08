@@ -6,6 +6,8 @@ package me.lokka30.treasury.api.economy.response;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import me.lokka30.treasury.api.common.response.Subscriber;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -64,25 +66,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Jikoo
  * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
  */
-public interface EconomySubscriber<T> {
-
-    /**
-     * Respond to the subscriber with a successful invocation.
-     *
-     * @param t the value of the successful invocation
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void succeed(@NotNull T t);
-
-    /**
-     * Respond to the subscriber with an invocation failure.
-     *
-     * @param exception an {@link EconomyException} detailing the reason for failure
-     * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
-     */
-    void fail(@NotNull EconomyException exception);
+public interface EconomySubscriber<T> extends Subscriber<T, EconomyException> {
 
     /**
      * Wrap a method accepting an {@link EconomySubscriber} in a {@link CompletableFuture}.
@@ -136,23 +120,21 @@ public interface EconomySubscriber<T> {
      * @author Jikoo
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
      */
-    static <T> @NotNull CompletableFuture<T> asFuture(@NotNull Consumer<EconomySubscriber<T>> subscriberConsumer) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-        EconomySubscriber<T> subscriber = new EconomySubscriber<T>() {
-            @Override
-            public void succeed(@NotNull T t) {
-                future.complete(t);
-            }
+    static <T> @NotNull CompletableFuture<T> asFuture(
+            @NotNull Consumer<EconomySubscriber<T>>
+                    subscriberConsumer
+    ) {
+        return Subscriber.asFuture((Subscriber<T, TreasuryException> subscriber) ->
+                subscriberConsumer.accept(new EconomySubscriber<T>() {
+                    @Override
+                    public void succeed(@NotNull final T t) {
+                        subscriber.succeed(t);
+                    }
 
-            @Override
-            public void fail(@NotNull EconomyException exception) {
-                future.completeExceptionally(exception);
-            }
-        };
-
-        subscriberConsumer.accept(subscriber);
-
-        return future;
+                    @Override
+                    public void fail(@NotNull final EconomyException exception) {
+                        subscriber.fail(exception);
+                    }
+                }));
     }
-
 }
