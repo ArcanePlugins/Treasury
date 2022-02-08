@@ -43,7 +43,6 @@ public final class Completion {
 
     private CountDownLatch latch = new CountDownLatch(1);
     private Collection<Throwable> errors;
-    private Consumer<@NotNull Collection<@NotNull Throwable>> completedTask;
 
     public Completion() {
 
@@ -68,9 +67,6 @@ public final class Completion {
         if (latch.getCount() == 0) {
             throw new IllegalStateException("Completion already completed");
         }
-        if (completedTask != null) {
-            completedTask.accept(Collections.emptyList());
-        }
         latch.countDown();
     }
 
@@ -79,11 +75,7 @@ public final class Completion {
             throw new IllegalStateException("Completion already completed");
         }
         Objects.requireNonNull(error, "error");
-        if (completedTask != null) {
-            completedTask.accept(Collections.singletonList(error));
-        } else {
-            this.errors = Collections.singletonList(error);
-        }
+        this.errors = Collections.singletonList(error);
         latch.countDown();
     }
 
@@ -92,11 +84,7 @@ public final class Completion {
             throw new IllegalStateException("Completion already completed");
         }
         Objects.requireNonNull(errors, "errors");
-        if (completedTask != null) {
-            completedTask.accept(errors);
-        } else {
-            this.errors = errors;
-        }
+        this.errors = errors;
         latch.countDown();
     }
 
@@ -114,7 +102,6 @@ public final class Completion {
     }
 
     public void whenComplete(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
-        this.completedTask = completedTask;
         if (completedTask != null) {
             if (latch.getCount() == 0) {
                 completedTask.accept(getErrors());
