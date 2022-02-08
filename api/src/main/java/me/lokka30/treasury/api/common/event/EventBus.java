@@ -68,6 +68,7 @@ public enum EventBus {
 
         private final Class<T> eventClass;
         private EventPriority priority;
+        private boolean ignoreCancelled = false;
         private Consumer<T> eventConsumer;
         private Function<T, Completion> completions;
 
@@ -78,6 +79,12 @@ public enum EventBus {
         @Contract("_ -> this")
         public EventSubscriberBuilder<T> withPriority(@NotNull EventPriority priority) {
             this.priority = Objects.requireNonNull(priority, "priority");
+            return this;
+        }
+
+        @Contract("_ -> this")
+        public EventSubscriberBuilder<T> ignoreCancelled(boolean ignoreCancelled) {
+            this.ignoreCancelled = ignoreCancelled;
             return this;
         }
 
@@ -99,7 +106,7 @@ public enum EventBus {
                 priority = EventPriority.NORMAL;
             }
             if (eventConsumer != null) {
-                return new SimpleEventSubscriber<T>(eventClass, priority) {
+                return new SimpleEventSubscriber<T>(eventClass, priority, ignoreCancelled) {
                     @Override
                     public void subscribe(@NotNull final T event) {
                         eventConsumer.accept(event);
@@ -107,7 +114,7 @@ public enum EventBus {
                 };
             } else {
                 Objects.requireNonNull(completions, "completions");
-                return new EventSubscriber<T>(eventClass, priority) {
+                return new EventSubscriber<T>(eventClass, priority, ignoreCancelled) {
                     @Override
                     @NotNull
                     public Completion onEvent(@NotNull final T event) {

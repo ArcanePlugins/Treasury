@@ -12,10 +12,20 @@ public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
         super(eventClass);
     }
 
+    public SimpleEventSubscriber(@NotNull Class<T> eventClass, boolean ignoreCancelled) {
+        super(eventClass, ignoreCancelled);
+    }
+
     public SimpleEventSubscriber(
             @NotNull Class<T> eventClass, @NotNull EventPriority priority
     ) {
         super(eventClass, priority);
+    }
+
+    public SimpleEventSubscriber(
+            @NotNull Class<T> eventClass, @NotNull EventPriority priority, boolean ignoreCancelled
+    ) {
+        super(eventClass, priority, ignoreCancelled);
     }
 
     public abstract void subscribe(@NotNull T event);

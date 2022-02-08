@@ -61,6 +61,11 @@ class EventCaller {
         Set<EventSubscriber> copy = new TreeSet<>(subscribers);
         for (EventSubscriber subscriber : subscribers) {
             copy.remove(subscriber);
+            if (event instanceof Cancellable) {
+                if (((Cancellable) event).isCancelled() && subscriber.ignoreCancelled()) {
+                    continue;
+                }
+            }
             subscriber.onEvent(event).whenCompleteBlocking(errors -> {
                 if (!errors.isEmpty()) {
                     for (Throwable e : errors) {

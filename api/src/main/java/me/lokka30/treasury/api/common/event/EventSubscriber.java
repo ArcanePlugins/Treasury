@@ -11,14 +11,26 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
 
     private final Class<T> eventClass;
     private final EventPriority priority;
+    private final boolean ignoreCancelled;
 
     public EventSubscriber(@NotNull Class<T> eventClass) {
         this(eventClass, EventPriority.NORMAL);
     }
 
+    public EventSubscriber(@NotNull Class<T> eventClass, boolean ignoreCancelled) {
+        this(eventClass, EventPriority.NORMAL, ignoreCancelled);
+    }
+
     public EventSubscriber(@NotNull Class<T> eventClass, @NotNull EventPriority priority) {
+        this(eventClass, priority, false);
+    }
+
+    public EventSubscriber(
+            @NotNull Class<T> eventClass, @NotNull EventPriority priority, boolean ignoreCancelled
+    ) {
         this.eventClass = Objects.requireNonNull(eventClass, "eventClass");
         this.priority = Objects.requireNonNull(priority, "priority");
+        this.ignoreCancelled = ignoreCancelled;
     }
 
     @NotNull
@@ -29,6 +41,10 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
     @NotNull
     public EventPriority priority() {
         return priority;
+    }
+
+    public boolean ignoreCancelled() {
+        return ignoreCancelled;
     }
 
     @NotNull
