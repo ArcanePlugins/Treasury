@@ -21,8 +21,19 @@ public enum OptionalEconomyApiFeature {
      *
      * @see me.lokka30.treasury.api.economy.event
      * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @deprecated use {@link #TRANSACTION_EVENTS}
      */
+    @Deprecated
     BUKKIT_TRANSACTION_EVENTS,
+
+    /**
+     * Represents that the Economy Provider calls Treasury's
+     * AccountTransaction events when transactions occur.
+     *
+     * @see me.lokka30.treasury.api.economy.events
+     * @since {@link EconomyAPIVersion#V1_1 v1.1}
+     */
+    TRANSACTION_EVENTS,
 
     /**
      * Represents that the Economy Provider supports managing

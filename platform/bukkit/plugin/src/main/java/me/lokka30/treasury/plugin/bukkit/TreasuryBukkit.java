@@ -97,7 +97,9 @@ public class TreasuryBukkit extends JavaPlugin {
                         ? null
                         : Boolean.toString(economyProvider
                                 .getSupportedOptionalEconomyApiFeatures()
-                                .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS))
+                                .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS) || economyProvider
+                                .getSupportedOptionalEconomyApiFeatures()
+                                .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
         ));
 
         metrics.addCustomChart(new SimplePie("economy-treasury-api-version", () -> {
