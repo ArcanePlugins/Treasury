@@ -70,7 +70,9 @@ public class EconomyInfoSub implements Subcommand {
                             "supports-transaction-events",
                             Utils.getYesNoStateMessage(provider
                                     .getSupportedOptionalEconomyApiFeatures()
-                                    .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS))
+                                    .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS) || provider
+                                    .getSupportedOptionalEconomyApiFeatures()
+                                    .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
                     ),
                     placeholder("primary-currency", provider.getPrimaryCurrency().getIdentifier())
             ));

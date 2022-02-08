@@ -6,12 +6,15 @@ package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
 import java.util.Optional;
+import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.services.Service;
 import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
+import me.lokka30.treasury.plugin.bukkit.event.bukkit2treasury.B2TEventMigrator;
+import me.lokka30.treasury.plugin.bukkit.event.treasury2bukkit.T2BEventMigrator;
 import me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury.ServiceMigrator;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
@@ -61,6 +64,9 @@ public class TreasuryBukkit extends JavaPlugin {
         if (BukkitVendor.isPaper()) {
             PaperEnhancements.enhance(this);
         }
+
+        getServer().getPluginManager().registerEvents(new B2TEventMigrator(), this);
+        T2BEventMigrator.registerListener();
 
         UpdateChecker.checkForUpdates();
 
@@ -113,7 +119,9 @@ public class TreasuryBukkit extends JavaPlugin {
                         ? null
                         : Boolean.toString(economyProvider
                                 .getSupportedOptionalEconomyApiFeatures()
-                                .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS))
+                                .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS) || economyProvider
+                                .getSupportedOptionalEconomyApiFeatures()
+                                .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
         ));
 
         metrics.addCustomChart(new SimplePie("economy-treasury-api-version", () -> {
@@ -165,6 +173,9 @@ public class TreasuryBukkit extends JavaPlugin {
         // Unregister all
         ServiceProvider.INSTANCE.unregisterAll("Treasury");
         Bukkit.getServicesManager().unregisterAll(this);
+
+        // Shutdown events
+        EventExecutorTrackerShutdown.shutdown();
 
         treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
     }
