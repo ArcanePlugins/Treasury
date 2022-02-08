@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.common.event;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,7 @@ public final class Completion {
         return new Completion(error);
     }
 
-    public static Completion completedExceptionally(@NotNull List<@NotNull Throwable> errors) {
+    public static Completion completedExceptionally(@NotNull Collection<@NotNull Throwable> errors) {
         return new Completion(errors);
     }
 
@@ -31,7 +32,7 @@ public final class Completion {
         List<Throwable> errors = new ArrayList<>();
         for (Completion completion : other) {
             completion.waitCompletion();
-            if (completion.getErrors() != null) {
+            if (!completion.getErrors().isEmpty()) {
                 errors.addAll(completion.getErrors());
             }
         }
@@ -41,8 +42,8 @@ public final class Completion {
     }
 
     private CountDownLatch latch = new CountDownLatch(1);
-    private List<Throwable> errors;
-    private Consumer<@Nullable List<@NotNull Throwable>> completedTask;
+    private Collection<Throwable> errors;
+    private Consumer<@NotNull Collection<@NotNull Throwable>> completedTask;
 
     public Completion() {
 
@@ -54,7 +55,7 @@ public final class Completion {
         }
     }
 
-    private Completion(@NotNull List<@NotNull Throwable> errors) {
+    private Completion(@NotNull Collection<@NotNull Throwable> errors) {
         this.errors = Objects.requireNonNull(errors, "errors");
         this.latch.countDown();
     }
@@ -68,11 +69,9 @@ public final class Completion {
             throw new IllegalArgumentException("Completion already completed");
         }
         if (completedTask != null) {
-            completedTask.accept(null);
-            latch.countDown();
-        } else {
-            latch.countDown();
+            completedTask.accept(Collections.emptyList());
         }
+        latch.countDown();
     }
 
     public void completeExceptionally(@NotNull Throwable error) {
@@ -89,7 +88,7 @@ public final class Completion {
         }
     }
 
-    public void completeExceptionally(@NotNull List<@NotNull Throwable> errors) {
+    public void completeExceptionally(@NotNull Collection<@NotNull Throwable> errors) {
         if (latch.getCount() == 0) {
             throw new IllegalArgumentException("Completion already completed");
         }
@@ -111,12 +110,12 @@ public final class Completion {
         }
     }
 
-    @Nullable
-    public List<@NotNull Throwable> getErrors() {
-        return errors;
+    @NotNull
+    public Collection<@NotNull Throwable> getErrors() {
+        return errors == null ? Collections.emptyList() : errors;
     }
 
-    public void whenComplete(@Nullable Consumer<@Nullable List<@NotNull Throwable>> completedTask) {
+    public void whenComplete(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
         this.completedTask = completedTask;
         if (completedTask != null) {
             if (latch.getCount() == 0) {

@@ -24,7 +24,7 @@ public enum EventBus {
         Objects.requireNonNull(subscription, "subscription");
         events
                 .computeIfAbsent(subscription.eventClass(),
-                        k -> new EventCaller<>(subscription.eventClass())
+                        k -> new EventCaller(subscription.eventClass())
                 )
                 .register(subscription);
     }
@@ -47,7 +47,7 @@ public enum EventBus {
                 completions.add(events.get(friend).call(event));
             }
             Completion.join(completions.toArray(new Completion[0])).whenComplete(errors -> {
-                if (errors != null) {
+                if (!errors.isEmpty()) {
                     ret.completeExceptionally(errors);
                 } else {
                     ret.complete();

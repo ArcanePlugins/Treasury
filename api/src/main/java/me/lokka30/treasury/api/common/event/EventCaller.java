@@ -13,31 +13,31 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
-class EventCaller<T> {
+class EventCaller {
 
-    private Set<EventSubscriber<T>> subscriptions = new TreeSet<>();
+    private Set<EventSubscriber> subscriptions = new TreeSet<>();
     private final ExecutorService eventCallThreads;
 
-    EventCaller(Class<T> eventClass) {
+    EventCaller(Class<?> eventClass) {
         this.eventCallThreads = Executors.newCachedThreadPool(new ThreadFactory() {
 
-            private AtomicInteger number = new AtomicInteger(0);
+            private AtomicInteger amountOfThreads = new AtomicInteger(0);
 
             @Override
             public Thread newThread(@NotNull final Runnable r) {
                 Thread thread = new Thread(r);
-                thread.setName("Event " + eventClass.getSimpleName() + " caller thread #" + number.get());
-                number.incrementAndGet();
+                thread.setName("Event " + eventClass.getSimpleName() + " caller thread #" + amountOfThreads.get());
+                amountOfThreads.incrementAndGet();
                 return thread;
             }
         });
     }
 
-    public void register(@NotNull EventSubscriber<T> subscriber) {
+    public void register(@NotNull EventSubscriber subscriber) {
         subscriptions.add(Objects.requireNonNull(subscriber, "subscriber"));
     }
 
-    public Completion call(T event) {
+    public Completion call(Object event) {
         if (subscriptions.isEmpty()) {
             return Completion.completed();
         }
@@ -57,12 +57,12 @@ class EventCaller<T> {
         eventCallThreads.shutdown();
     }
 
-    private void call(T event, Set<EventSubscriber<T>> subscribers) {
-        Set<EventSubscriber<T>> copy = new TreeSet<>(subscribers);
-        for (EventSubscriber<T> subscriber : subscribers) {
+    private void call(Object event, Set<EventSubscriber> subscribers) {
+        Set<EventSubscriber> copy = new TreeSet<>(subscribers);
+        for (EventSubscriber subscriber : subscribers) {
             copy.remove(subscriber);
             subscriber.onEvent(event).whenComplete(errors -> {
-                if (errors != null) {
+                if (!errors.isEmpty()) {
                     for (Throwable e : errors) {
                         new TreasuryEventException(
                                 "Could not call " + event
