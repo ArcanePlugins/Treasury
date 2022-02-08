@@ -43,19 +43,29 @@ public enum EventBus {
         Completion ret = new Completion(async);
         async.submit(() -> {
             List<Completion> completions = new ArrayList<>();
-            completions.add(events.get(event.getClass()).call(event));
-            for (Class<?> friend : friends) {
-                completions.add(events.get(friend).call(event));
+            EventCaller caller = events.get(event.getClass());
+            if (caller != null) {
+                completions.add(caller.call(event));
             }
-            Completion
-                    .join(event.getClass(), completions.toArray(new Completion[0]))
-                    .whenCompleteBlocking(errors -> {
-                        if (!errors.isEmpty()) {
-                            ret.completeExceptionally(errors);
-                        } else {
-                            ret.complete();
-                        }
-                    });
+            for (Class<?> friend : friends) {
+                EventCaller friendCaller = events.get(friend);
+                if (friendCaller != null) {
+                    completions.add(friendCaller.call(event));
+                }
+            }
+            if (!completions.isEmpty()) {
+                Completion
+                        .join(event.getClass(), completions.toArray(new Completion[0]))
+                        .whenCompleteBlocking(errors -> {
+                            if (!errors.isEmpty()) {
+                                ret.completeExceptionally(errors);
+                            } else {
+                                ret.complete();
+                            }
+                        });
+            } else {
+                ret.complete();
+            }
         });
         return ret;
     }
