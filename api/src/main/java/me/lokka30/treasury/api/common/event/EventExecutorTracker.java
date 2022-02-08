@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 class EventExecutorTracker {
 
-    public static EventExecutorTracker INSTANCE = new EventExecutorTracker();
+    public static final EventExecutorTracker INSTANCE = new EventExecutorTracker();
 
     private EventExecutorTracker() {
 

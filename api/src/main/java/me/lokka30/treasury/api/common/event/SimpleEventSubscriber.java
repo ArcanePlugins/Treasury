@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  *     .completeSubscription()
  * );
  *
- * public class MyEventListener implements SimpleEventSubscriber&#60;MyEvent&#62; {
+ * public class MyEventListener extends SimpleEventSubscriber&#60;MyEvent&#62; {
  *
  *   public MyEventListener() {
  *     super(MyEvent.class, EventPriority.NORMAL);
