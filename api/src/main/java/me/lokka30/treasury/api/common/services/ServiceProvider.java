@@ -4,15 +4,20 @@
 
 package me.lokka30.treasury.api.common.services;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import me.lokka30.treasury.api.common.event.EventBus;
+import me.lokka30.treasury.api.common.services.event.ServiceRegisteredEvent;
+import me.lokka30.treasury.api.common.services.event.ServiceUnregisteredEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -47,11 +52,9 @@ public enum ServiceProvider {
         Objects.requireNonNull(service, "service");
         Objects.requireNonNull(registrator, "registrator");
         Objects.requireNonNull(priority, "priority");
-        servicesMap.computeIfAbsent(clazz, k -> new TreeSet<>()).add(new Service<>(registrator,
-                priority,
-                service
-        ));
-
+        Service<T> serviceObj = new Service<>(registrator, priority, service);
+        servicesMap.computeIfAbsent(clazz, k -> new TreeSet<>()).add(serviceObj);
+        EventBus.INSTANCE.fire(new ServiceRegisteredEvent(serviceObj));
     }
 
     /**
@@ -61,15 +64,26 @@ public enum ServiceProvider {
      */
     public void unregisterAll(@NotNull String registrator) {
         Objects.requireNonNull(registrator, "registrator");
+        List<Service<?>> removed = new ArrayList<>();
         Iterator<Map.Entry<Class<?>, Set<Service<?>>>> iterator = servicesMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Class<?>, Set<Service<?>>> entry = iterator.next();
-            entry.getValue().removeIf(service -> service
-                    .registrarName()
-                    .equalsIgnoreCase(registrator));
+            entry.getValue().removeIf(service -> {
+                if (service.registrarName().equalsIgnoreCase(registrator)) {
+                    removed.add(service);
+                    return true;
+                }
+                return false;
+            });
 
             if (entry.getValue().isEmpty()) {
                 iterator.remove();
+            }
+        }
+
+        if (!removed.isEmpty()) {
+            while (!removed.isEmpty()) {
+                EventBus.INSTANCE.fire(new ServiceUnregisteredEvent(removed.remove(0)));
             }
         }
     }
@@ -84,6 +98,7 @@ public enum ServiceProvider {
         Objects.requireNonNull(clazz, "clazz");
         Objects.requireNonNull(service, "service");
 
+        List<Service<?>> removed = new ArrayList<>();
         Iterator<Map.Entry<Class<?>, Set<Service<?>>>> iterator = servicesMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Class<?>, Set<Service<?>>> entry = iterator.next();
@@ -91,9 +106,21 @@ public enum ServiceProvider {
                 continue;
             }
 
-            entry.getValue().removeIf(s -> Objects.equals(s.get(), service));
+            entry.getValue().removeIf(s -> {
+                if (Objects.equals(s.get(), service)) {
+                    removed.add(s);
+                    return true;
+                }
+                return false;
+            });
             if (entry.getValue().isEmpty()) {
                 iterator.remove();
+            }
+        }
+
+        if (!removed.isEmpty()) {
+            while (!removed.isEmpty()) {
+                EventBus.INSTANCE.fire(new ServiceUnregisteredEvent(removed.remove(0)));
             }
         }
     }

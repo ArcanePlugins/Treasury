@@ -15,7 +15,9 @@ import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.event.bukkit2treasury.B2TEventMigrator;
 import me.lokka30.treasury.plugin.bukkit.event.treasury2bukkit.T2BEventMigrator;
-import me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury.ServiceMigrator;
+import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
+import me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury.B2TServiceMigrator;
+import me.lokka30.treasury.plugin.bukkit.services.treasury2bukkit.T2BServiceMigrator;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -59,7 +61,8 @@ public class TreasuryBukkit extends JavaPlugin {
         treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
 
-        getServer().getPluginManager().registerEvents(new ServiceMigrator(), this);
+        getServer().getPluginManager().registerEvents(new B2TServiceMigrator(), this);
+        new T2BServiceMigrator(this).registerListeners();
 
         if (BukkitVendor.isPaper()) {
             PaperEnhancements.enhance(this);
@@ -172,6 +175,7 @@ public class TreasuryBukkit extends JavaPlugin {
 
         // Unregister all
         ServiceProvider.INSTANCE.unregisterAll("Treasury");
+        ServiceMigrationManager.INSTANCE.shutdown();
         Bukkit.getServicesManager().unregisterAll(this);
 
         // Shutdown events

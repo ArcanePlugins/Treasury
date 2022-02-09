@@ -8,7 +8,6 @@ import me.lokka30.treasury.api.common.services.ServicePriority;
 import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
-import me.lokka30.treasury.plugin.core.logging.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,25 +22,24 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  *
  * @author MrIvanPlays
  */
-public class ServiceMigrator implements Listener {
-
-    // TODO: This shall be removed in something like version 1.5 of the API or version 1.1.0 of
-    //  the plugin
+public class B2TServiceMigrator implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onServiceRegister(ServiceRegisterEvent event) {
         RegisteredServiceProvider<?> provider = event.getProvider();
         if (EconomyProvider.class.isAssignableFrom(provider.getService())) {
             EconomyProvider economy = (EconomyProvider) provider.getProvider();
+            if (ServiceMigrationManager.INSTANCE.hasBeenMigratedFromTreasury(economy)) {
+                return;
+            }
             Plugin registrator = provider.getPlugin();
+            ServiceMigrationManager.INSTANCE.registerBukkit2TreasuryMigration(registrator.getName());
             ServiceProvider.INSTANCE.registerService(
                     EconomyProvider.class,
                     economy,
                     registrator.getName(),
                     migratePriority(provider.getPriority())
             );
-
-            ServiceMigrationManager.INSTANCE.registerBukkit2TreasuryMigration(registrator.getName());
         }
     }
 
@@ -50,10 +48,12 @@ public class ServiceMigrator implements Listener {
         RegisteredServiceProvider<?> provider = event.getProvider();
         if (EconomyProvider.class.isAssignableFrom(provider.getService())) {
             EconomyProvider economy = (EconomyProvider) provider.getProvider();
+            if (!ServiceMigrationManager.INSTANCE.hasBeenMigratedFromTreasury(economy)) {
+                return;
+            }
             Plugin registrator = provider.getPlugin();
-            ServiceProvider.INSTANCE.unregister(EconomyProvider.class, economy);
-
             ServiceMigrationManager.INSTANCE.unregisterBukkit2TreasuryMigration(registrator.getName());
+            ServiceProvider.INSTANCE.unregister(EconomyProvider.class, economy);
         }
     }
 
