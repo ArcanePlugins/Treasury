@@ -11,9 +11,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.time.OffsetDateTime;
+import java.util.Optional;
+import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 
 /**
@@ -131,15 +133,17 @@ public final class UpdateChecker {
                     "You are running a newer version of Treasury than known. How did we get here?");
         }
 
-        ProviderEconomy providerEconomyProvider = plugin.economyProviderProvider();
-        if (providerEconomyProvider != null) {
-            EconomyProvider provider = providerEconomyProvider.provide();
+        Optional<Service<EconomyProvider>> providerEconomyProvider = ServiceProvider.INSTANCE.serviceFor(
+                EconomyProvider.class);
+        if (providerEconomyProvider.isPresent()) {
+            Service<EconomyProvider> service = providerEconomyProvider.get();
+            EconomyProvider provider = service.get();
             EconomyAPIVersion providerVersion = provider.getSupportedAPIVersion();
             EconomyAPIVersion latestVersion = EconomyAPIVersion.getCurrentAPIVersion();
 
             handleAPIVersioning(providerVersion,
                     latestVersion,
-                    providerEconomyProvider,
+                    service.registrarName(),
                     comparisonResult,
                     currentVersion.isDevelopmentVersion()
             );
@@ -166,15 +170,17 @@ public final class UpdateChecker {
                     "Couldn't check for a development version update. You are running a development version. Please check for updates and stay updated :).");
         }
 
-        ProviderEconomy providerEconomyProvider = plugin.economyProviderProvider();
-        if (providerEconomyProvider != null) {
-            EconomyProvider provider = providerEconomyProvider.provide();
+        Optional<Service<EconomyProvider>> providerEconomyProvider = ServiceProvider.INSTANCE.serviceFor(
+                EconomyProvider.class);
+        if (providerEconomyProvider.isPresent()) {
+            Service<EconomyProvider> service = providerEconomyProvider.get();
+            EconomyProvider provider = service.get();
             EconomyAPIVersion providerVersion = provider.getSupportedAPIVersion();
             EconomyAPIVersion latestVersion = EconomyAPIVersion.getCurrentAPIVersion();
 
             handleAPIVersioning(providerVersion,
                     latestVersion,
-                    providerEconomyProvider,
+                    service.registrarName(),
                     comparisonResult,
                     plugin.getVersion().isDevelopmentVersion()
             );
@@ -184,7 +190,7 @@ public final class UpdateChecker {
     private static void handleAPIVersioning(
             EconomyAPIVersion providerVersion,
             EconomyAPIVersion latestVersion,
-            ProviderEconomy providerEconomyProvider,
+            String registrar,
             PluginVersion.ComparisonResult comparisonResult,
             boolean currentVersionDevelopment
     ) {
@@ -196,9 +202,7 @@ public final class UpdateChecker {
             // this means that "providerVersion" is older than the latest version
             plugin
                     .logger()
-                    .error("Economy provider going by the plugin name '" + providerEconomyProvider
-                            .registrar()
-                            .getName() + "'" + "is utilising an older version of the Treasury Economy API");
+                    .error("Economy provider going by the plugin name '" + registrar + "'is utilising an older version of the Treasury Economy API");
             plugin.logger().error(
                     "than what your current version of Treasury provides. You should inform the author(s)");
             plugin.logger().error(
@@ -218,9 +222,7 @@ public final class UpdateChecker {
             // this means that "providerVersion" is newer than the latest version
             plugin
                     .logger()
-                    .error("Economy provider going by the plugin name '" + providerEconomyProvider
-                            .registrar()
-                            .getName() + "'" + "is utilising a newer version of the Treasury Economy API");
+                    .error("Economy provider going by the plugin name '" + registrar + "'is utilising a newer version of the Treasury Economy API");
             plugin.logger().error("than what your current version of Treasury provides.");
             plugin.logger().error(" ");
             if (comparisonResult == PluginVersion.ComparisonResult.EQUAL) {

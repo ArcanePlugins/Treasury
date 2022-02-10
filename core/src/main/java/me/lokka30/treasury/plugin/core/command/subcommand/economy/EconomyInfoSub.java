@@ -4,9 +4,12 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy;
 
+import java.util.Locale;
+import java.util.Optional;
+import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
-import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
@@ -45,15 +48,17 @@ public class EconomyInfoSub implements Subcommand {
             return;
         }
 
-        ProviderEconomy providerProvider = main.economyProviderProvider();
-        if (providerProvider == null) {
+        Optional<Service<EconomyProvider>> economyProvider = ServiceProvider.INSTANCE.serviceFor(
+                EconomyProvider.class);
+        if (!economyProvider.isPresent()) {
             sender.sendMessage(Message.of(MessageKey.ECONOMY_INFO_ECONOMY_PROVIDER_UNAVAILABLE));
         } else {
-            EconomyProvider provider = providerProvider.provide();
+            Service<EconomyProvider> service = economyProvider.get();
+            EconomyProvider provider = service.get();
             sender.sendMessage(Message.of(
                     MessageKey.ECONOMY_INFO_ECONOMY_PROVIDER_AVAILABLE,
-                    placeholder("name", providerProvider.registrar().getName()),
-                    placeholder("priority", providerProvider.getPriority()),
+                    placeholder("name", service.registrarName()),
+                    placeholder("priority", service.priority().name().toLowerCase(Locale.ROOT)),
                     placeholder("api-version", provider.getSupportedAPIVersion()),
                     placeholder(
                             "supports-negative-balances",

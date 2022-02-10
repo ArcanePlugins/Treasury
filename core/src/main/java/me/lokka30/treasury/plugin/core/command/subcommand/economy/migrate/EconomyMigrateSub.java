@@ -15,10 +15,13 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.common.services.ServicePriority;
+import me.lokka30.treasury.api.common.services.ServiceProvider;
+import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.plugin.core.ProviderEconomy;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
@@ -49,7 +52,8 @@ public class EconomyMigrateSub implements Subcommand {
             return;
         }
 
-        List<ProviderEconomy> serviceProviders = TreasuryPlugin.getInstance().allProviders();
+        Set<Service<EconomyProvider>> serviceProviders = ServiceProvider.INSTANCE.allServicesFor(
+                EconomyProvider.class);
 
         if (args.length != 2) {
             sender.sendMessage(Message.of(MessageKey.MIGRATE_INVALID_USAGE,
@@ -59,15 +63,15 @@ public class EconomyMigrateSub implements Subcommand {
                                     ? "No providers found "
                                     : Utils.formatListMessage(serviceProviders
                                             .stream()
-                                            .map(provider -> provider.registrar().getName())
+                                            .map(Service::registrarName)
                                             .collect(Collectors.toList()))
                     )
             ));
             return;
         }
 
-        ProviderEconomy from = null;
-        ProviderEconomy to = null;
+        Service<EconomyProvider> from = null;
+        Service<EconomyProvider> to = null;
 
         if (serviceProviders.size() < 2) {
             sender.sendMessage(Message.of(MessageKey.MIGRATE_REQUIRES_TWO_PROVIDERS));
@@ -76,11 +80,11 @@ public class EconomyMigrateSub implements Subcommand {
 
         final Set<String> serviceProvidersNames = new HashSet<>();
 
-        for (ProviderEconomy serviceProvider : serviceProviders) {
-            serviceProvidersNames.add(serviceProvider.registrar().getName());
+        for (Service<EconomyProvider> serviceProvider : serviceProviders) {
+            serviceProvidersNames.add(serviceProvider.registrarName());
             if (debugEnabled) {
                 DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
-                        "Found service provider: " + serviceProvider.registrar().getName()
+                        "Found service provider: " + serviceProvider.registrarName()
                 );
             }
         }
@@ -92,8 +96,8 @@ public class EconomyMigrateSub implements Subcommand {
             return;
         }
 
-        for (ProviderEconomy serviceProvider : serviceProviders) {
-            final String serviceProviderPluginName = serviceProvider.registrar().getName();
+        for (Service<EconomyProvider> serviceProvider : serviceProviders) {
+            final String serviceProviderPluginName = serviceProvider.registrarName();
 
             if (args[0].equalsIgnoreCase(serviceProviderPluginName)) {
                 from = serviceProvider;
@@ -118,9 +122,7 @@ public class EconomyMigrateSub implements Subcommand {
 
         if (debugEnabled) {
             DebugHandler.log(DebugCategory.MIGRATE_SUBCOMMAND,
-                    "Migrating from '&b" + from.registrar().getName() + "&7' to '&b" + to
-                            .registrar()
-                            .getName() + "&7'."
+                    "Migrating from '&b" + from.registrarName() + "&7' to '&b" + to.registrarName() + "&7'."
             );
         }
 
@@ -128,11 +130,25 @@ public class EconomyMigrateSub implements Subcommand {
 
         // Override economies with dummy economy that doesn't support any operations.
         MigrationEconomy dummyEconomy = new MigrationEconomy();
-        TreasuryPlugin.getInstance().registerProvider(dummyEconomy);
+        ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
+                dummyEconomy,
+                "Treasury",
+                ServicePriority.HIGH
+        );
 
         // Re-register economies to ensure target economy will override migrated economy.
-        TreasuryPlugin.getInstance().reregisterProvider(from, true);
-        TreasuryPlugin.getInstance().reregisterProvider(to, false);
+        ServiceProvider.INSTANCE.unregister(EconomyProvider.class, from.get());
+        ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
+                from.get(),
+                from.registrarName(),
+                ServicePriority.LOW
+        );
+        ServiceProvider.INSTANCE.unregister(EconomyProvider.class, to.get());
+        ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
+                to.get(),
+                to.registrarName(),
+                ServicePriority.HIGH
+        );
 
         MigrationData migration = new MigrationData(from, to, debugEnabled);
 
@@ -153,7 +169,7 @@ public class EconomyMigrateSub implements Subcommand {
             playerMigration.arriveAndAwaitAdvance();
 
             // Unregister economy override.
-            TreasuryPlugin.getInstance().unregisterProvider(dummyEconomy);
+            ServiceProvider.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
 
             sendMigrationMessage(sender, migration);
         });
@@ -203,7 +219,7 @@ public class EconomyMigrateSub implements Subcommand {
         // Initialize phaser with a single party: migration completion.
         Phaser phaser = new Phaser(1);
 
-        migrator.requestAccountIds().accept(migration.from().provide(),
+        migrator.requestAccountIds().accept(migration.from().get(),
                 new PhasedSubscriber<Collection<String>>(phaser) {
                     @Override
                     public void phaseAccept(@NotNull Collection<String> identifiers) {
@@ -241,14 +257,14 @@ public class EconomyMigrateSub implements Subcommand {
         };
 
         CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
-        migrator.requestAccount().accept(migration.from().provide(),
+        migrator.requestAccount().accept(migration.from().get(),
                 identifier,
                 new PhasedFutureSubscriber<>(phaser, fromAccountFuture)
         );
         fromAccountFuture.whenComplete(failureConsumer);
 
         CompletableFuture<T> toAccountFuture = new CompletableFuture<>();
-        migrator.checkAccountExistence().accept(migration.to().provide(),
+        migrator.checkAccountExistence().accept(migration.to().get(),
                 identifier,
                 new PhasedSubscriber<Boolean>(phaser) {
                     @Override
@@ -257,12 +273,12 @@ public class EconomyMigrateSub implements Subcommand {
                                 toAccountFuture
                         );
                         if (hasAccount) {
-                            migrator.requestAccount().accept(migration.to().provide(),
+                            migrator.requestAccount().accept(migration.to().get(),
                                     identifier,
                                     subscription
                             );
                         } else {
-                            migrator.createAccount().accept(migration.to().provide(),
+                            migrator.createAccount().accept(migration.to().get(),
                                     identifier,
                                     subscription
                             );
