@@ -61,4 +61,9 @@ public class AccountTransactionEvent extends AccountEvent implements Cancellable
         return HANDLERS;
     }
 
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
 }

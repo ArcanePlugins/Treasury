@@ -43,4 +43,9 @@ public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
         return HANDLERS;
     }
 
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
 }
