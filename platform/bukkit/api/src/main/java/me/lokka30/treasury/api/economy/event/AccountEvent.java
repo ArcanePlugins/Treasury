@@ -46,4 +46,9 @@ public class AccountEvent extends Event {
         return HANDLERS;
     }
 
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
 }
