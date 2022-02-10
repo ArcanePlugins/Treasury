@@ -35,17 +35,4 @@ public class NonPlayerAccountTransactionEvent extends AccountTransactionEvent {
         return (NonPlayerAccount) super.getAccount();
     }
 
-    public static HandlerList HANDLERS = new HandlerList();
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
 }
