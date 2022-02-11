@@ -5,7 +5,10 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.logging.Filter;
 import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.services.Service;
 import me.lokka30.treasury.api.common.services.ServiceProvider;
@@ -41,6 +44,13 @@ public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
 
+    private static final List<String> ownDeprecatedEventNames = Arrays.asList(
+            me.lokka30.treasury.api.economy.event.AccountEvent.class.getName(),
+            me.lokka30.treasury.api.economy.event.AccountTransactionEvent.class.getName(),
+            me.lokka30.treasury.api.economy.event.NonPlayerAccountTransactionEvent.class.getName(),
+            me.lokka30.treasury.api.economy.event.PlayerAccountTransactionEvent.class.getName()
+    );
+
     /**
      * Run the start-up procedure for the plugin.
      * This is called by Bukkit's plugin manager.
@@ -50,6 +60,20 @@ public class TreasuryBukkit extends JavaPlugin {
      */
     @Override
     public void onEnable() {
+        // get rid of this warning: https://img.mrivanplays.com/jaqzdjmvpz.png .We register a
+        // listener for our events for backwards compatibility. Couldn't bukkit be smarter and not
+        // print it for events which are created by the plugin which is listening??
+        Filter oldFilter = getLogger().getFilter();
+        getLogger().setFilter(record -> {
+            if (record.getMessage().contains("but the event is Deprecated")) {
+                for (String ownDeprecatedEventName : ownDeprecatedEventNames) {
+                    if (record.getMessage().contains(ownDeprecatedEventName)) {
+                        return false;
+                    }
+                }
+            }
+            return oldFilter == null || oldFilter.isLoggable(record);
+        });
         final QuickTimer startupTimer = new QuickTimer();
 
         if (!getDataFolder().exists()) {
