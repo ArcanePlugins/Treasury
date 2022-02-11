@@ -1,4 +1,10 @@
 /*
+ * Source:      <https://stackoverflow.com/a/4903775>
+ * Author:      <https://stackoverflow.com/users/554431/bestsss>
+ * License:     Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) license: <https://creativecommons.org/licenses/by-sa/4.0/legalcode>
+ * Alterations:
+ *  - Implemented into a LinkedList (by: MrIvanPlays)
+ *
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
@@ -12,7 +18,7 @@ import java.util.ListIterator;
  * O(n) moves. Not the fastest implementation, but it suits our needs.
  *
  * @param <T> type
- * @author MrIvanPlays
+ * @author bestsss, MrIvanPlays
  */
 public class SortedList<T extends Comparable<T>> extends LinkedList<T> {
 
