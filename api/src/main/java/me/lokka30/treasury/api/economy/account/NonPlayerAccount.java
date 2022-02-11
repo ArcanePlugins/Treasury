@@ -10,7 +10,7 @@ package me.lokka30.treasury.api.economy.account;
  *
  * @author lokka30, MrNemo64
  * @see Account
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public interface NonPlayerAccount extends Account {
 

@@ -8,7 +8,7 @@ package me.lokka30.treasury.api.economy.transaction;
  * installed that frequently send low-importance transactions.
  *
  * @author Nemo_64, lokka30
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public enum EconomyTransactionImportance {
 
@@ -19,7 +19,7 @@ public enum EconomyTransactionImportance {
      * Example transaction: {@code Notch} earns {@code $0.23} from mining a {@code Diamond Ore}
      * block.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     LOW,
 
@@ -28,7 +28,7 @@ public enum EconomyTransactionImportance {
      * Most transactions shall fall under this importance.
      * Example transaction: {@code Dinnerbone} earns {@code $30} from completing a farming quest.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     NORMAL,
 
@@ -37,7 +37,7 @@ public enum EconomyTransactionImportance {
      * It is suggested that the economy provider stores these transactions for as long as feasible.
      * Example transaction: {@code jeb_} earns {@code $50} from a payment sent by {@code Notch}.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     HIGH
 }

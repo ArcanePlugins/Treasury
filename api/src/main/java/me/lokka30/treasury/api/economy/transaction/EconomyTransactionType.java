@@ -9,21 +9,21 @@ package me.lokka30.treasury.api.economy.transaction;
  *
  * @author lokka30
  * @see EconomyTransaction
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public enum EconomyTransactionType {
 
     /**
      * The Account's new balance is greater than their previous balance.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     DEPOSIT,
 
     /**
      * The Account's new balance is less than their previous balance.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     WITHDRAWAL
 

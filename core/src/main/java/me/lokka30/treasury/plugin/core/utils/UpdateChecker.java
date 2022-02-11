@@ -11,11 +11,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.time.OffsetDateTime;
-import java.util.Optional;
-import me.lokka30.treasury.api.common.services.Service;
-import me.lokka30.treasury.api.common.services.ServiceProvider;
-import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 
 /**
@@ -132,22 +127,6 @@ public final class UpdateChecker {
             plugin.logger().warn(
                     "You are running a newer version of Treasury than known. How did we get here?");
         }
-
-        Optional<Service<EconomyProvider>> providerEconomyProvider = ServiceProvider.INSTANCE.serviceFor(
-                EconomyProvider.class);
-        if (providerEconomyProvider.isPresent()) {
-            Service<EconomyProvider> service = providerEconomyProvider.get();
-            EconomyProvider provider = service.get();
-            EconomyAPIVersion providerVersion = provider.getSupportedAPIVersion();
-            EconomyAPIVersion latestVersion = EconomyAPIVersion.getCurrentAPIVersion();
-
-            handleAPIVersioning(providerVersion,
-                    latestVersion,
-                    service.registrarName(),
-                    comparisonResult,
-                    currentVersion.isDevelopmentVersion()
-            );
-        }
     }
 
     private static void handleGitHubVersioning(PluginVersion.ComparisonResult comparisonResult) {
@@ -168,86 +147,6 @@ public final class UpdateChecker {
         } else if (comparisonResult == PluginVersion.ComparisonResult.UNKNOWN) {
             plugin.logger().warn(
                     "Couldn't check for a development version update. You are running a development version. Please check for updates and stay updated :).");
-        }
-
-        Optional<Service<EconomyProvider>> providerEconomyProvider = ServiceProvider.INSTANCE.serviceFor(
-                EconomyProvider.class);
-        if (providerEconomyProvider.isPresent()) {
-            Service<EconomyProvider> service = providerEconomyProvider.get();
-            EconomyProvider provider = service.get();
-            EconomyAPIVersion providerVersion = provider.getSupportedAPIVersion();
-            EconomyAPIVersion latestVersion = EconomyAPIVersion.getCurrentAPIVersion();
-
-            handleAPIVersioning(providerVersion,
-                    latestVersion,
-                    service.registrarName(),
-                    comparisonResult,
-                    plugin.getVersion().isDevelopmentVersion()
-            );
-        }
-    }
-
-    private static void handleAPIVersioning(
-            EconomyAPIVersion providerVersion,
-            EconomyAPIVersion latestVersion,
-            String registrar,
-            PluginVersion.ComparisonResult comparisonResult,
-            boolean currentVersionDevelopment
-    ) {
-        TreasuryPlugin plugin = TreasuryPlugin.getInstance();
-        PluginVersion.ComparisonResult apiComparisonResult = Utils.compareAPIVersions(providerVersion,
-                latestVersion
-        );
-        if (apiComparisonResult == PluginVersion.ComparisonResult.OLDER) {
-            // this means that "providerVersion" is older than the latest version
-            plugin
-                    .logger()
-                    .error("Economy provider going by the plugin name '" + registrar + "'is utilising an older version of the Treasury Economy API");
-            plugin.logger().error(
-                    "than what your current version of Treasury provides. You should inform the author(s)");
-            plugin.logger().error(
-                    "of that plugin that they should update their resource to use the newer Treasury Economy API");
-            plugin.logger().error(" ");
-            if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
-                plugin.logger().warn(
-                        "Before updating Treasury, ensure that your Economy Provider utilizes");
-                plugin.logger().warn("the latest version of the Treasury Economy API.");
-                plugin.logger().warn(" ");
-            }
-            plugin.logger().error(
-                    "You must resolve this issue as soon as possible. Leaving this issue unresolved can");
-            plugin.logger().error(
-                    "cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
-        } else if (apiComparisonResult == PluginVersion.ComparisonResult.NEWER) {
-            // this means that "providerVersion" is newer than the latest version
-            plugin
-                    .logger()
-                    .error("Economy provider going by the plugin name '" + registrar + "'is utilising a newer version of the Treasury Economy API");
-            plugin.logger().error("than what your current version of Treasury provides.");
-            plugin.logger().error(" ");
-            if (comparisonResult == PluginVersion.ComparisonResult.EQUAL) {
-                if (!currentVersionDevelopment) {
-                    plugin.logger().warn(
-                            "Since you seem to be running the latest version of Treasury, please check if your");
-                    plugin.logger().warn(
-                            "Economy Provider expects you to run a development build of Treasury instead of a release build.");
-                } else {
-                    plugin.logger().warn(
-                            "Check if there are any newer development builds available which have a newer Economy API version.");
-                }
-            } else if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
-                plugin.logger().warn(
-                        "As mentioned up, a Treasury plugin update is available for download - this may resolve");
-                plugin.logger().warn("the mismatching API versions.");
-            } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
-                plugin.logger().warn(
-                        "Check if there are any newer development builds available which have a newer Economy API version.");
-            }
-            plugin.logger().error(" ");
-            plugin.logger().error(
-                    "You must resolve this issue as soon as possible. Leaving this issue unresolved can");
-            plugin.logger().error(
-                    "cause errors with your Economy Provider, and therefore, have the potential to severely harm your server's economy");
         }
     }
 

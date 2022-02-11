@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> type of the data held
  * @author MrIvanPlays
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1}
+ * @since v1.1.0
  */
 public final class Service<T> implements Comparable<Service<?>>, Supplier<T> {
 

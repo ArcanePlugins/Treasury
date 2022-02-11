@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author MrIvanPlays
  * @see EventSubscriber
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
+ * @since v1.1.0
  */
 public final class Completion {
 

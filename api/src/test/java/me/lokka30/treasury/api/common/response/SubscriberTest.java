@@ -1,14 +1,10 @@
 package me.lokka30.treasury.api.common.response;
 
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-
-import static org.junit.jupiter.api.Assertions.*;
+import me.lokka30.treasury.api.economy.response.EconomyException;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class SubscriberTest {
 

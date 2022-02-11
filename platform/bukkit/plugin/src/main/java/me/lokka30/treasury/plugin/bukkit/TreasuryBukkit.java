@@ -13,7 +13,6 @@ import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.services.Service;
 import me.lokka30.treasury.api.common.services.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.event.bukkit2treasury.B2TEventMigrator;
@@ -149,18 +148,6 @@ public class TreasuryBukkit extends JavaPlugin {
                                 .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS) || economyProvider
                                 .getSupportedOptionalEconomyApiFeatures()
                                 .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
-        ));
-
-        metrics.addCustomChart(new SimplePie("economy-treasury-api-version", () -> {
-            //noinspection deprecation
-            return EconomyAPIVersion.getCurrentAPIVersion().toString();
-        }));
-
-        metrics.addCustomChart(new SimplePie(
-                "economy-provider-api-version",
-                () -> economyProvider == null
-                        ? null
-                        : economyProvider.getSupportedAPIVersion().toString()
         ));
 
         metrics.addCustomChart(new SimplePie(

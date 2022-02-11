@@ -65,6 +65,13 @@ public class Utils {
         return String.join(delimiter, list);
     }
 
+    /**
+     * Compare two API versions to see if the first version is older/newer.
+     * @param version1 first version to compare
+     * @param version2 second version to compare
+     * @return API versions are no longer used as of Treasury v1.1.0.
+     */
+    @Deprecated
     public static PluginVersion.ComparisonResult compareAPIVersions(
             EconomyAPIVersion version1, EconomyAPIVersion version2
     ) {

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link EconomyTransactionType#WITHDRAWAL}.
  *
  * @author lokka30, MrIvanPlays
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public class EconomyTransaction {
 
@@ -50,7 +50,7 @@ public class EconomyTransaction {
      * @param economyTransactionType the transaction type
      * @param reason                 optional specification of a string message reason
      * @param transactionAmount      the amount which to deposit/withdraw
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     public EconomyTransaction(
             @NotNull String currencyID,
@@ -78,7 +78,7 @@ public class EconomyTransaction {
      * Get the transaction amount.
      *
      * @return transaction amount
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     public BigDecimal getTransactionAmount() {
         return transactionAmount;
@@ -88,7 +88,7 @@ public class EconomyTransaction {
      * Returns the transaction type.
      *
      * @return transaction type
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull
     public EconomyTransactionType getTransactionType() {
@@ -103,7 +103,7 @@ public class EconomyTransaction {
      * you need such.
      *
      * @return The currency {@link Currency#getIdentifier() identifier}.
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull
     public String getCurrencyID() {

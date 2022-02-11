@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * A class that represents a description for a fail-case scenario when an action is attempted.
  *
  * @author creatorfromhell
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public interface FailureReason {
 
@@ -21,7 +21,7 @@ public interface FailureReason {
      * @param description the description behind this {@link FailureReason fail case}
      * @return new failure reason
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     static FailureReason of(@NotNull String description) {
         Objects.requireNonNull(description, "description");
@@ -33,7 +33,7 @@ public interface FailureReason {
      *
      * @return The description behind this {@link FailureReason fail case}.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String getDescription();
 

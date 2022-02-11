@@ -8,7 +8,7 @@ package me.lokka30.treasury.api.common.event;
  * Represents a priority of an {@link EventSubscriber}.
  *
  * @author MrIvanPlays
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
+ * @since v1.1.0
  */
 public enum EventPriority {
 

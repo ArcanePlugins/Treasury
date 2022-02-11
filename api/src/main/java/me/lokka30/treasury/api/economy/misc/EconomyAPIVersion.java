@@ -8,8 +8,10 @@ package me.lokka30.treasury.api.economy.misc;
  * Represents the current API version.
  *
  * @author lokka30, MrIvanPlays
- * @since v1.0
+ * @since v1.0.0
+ * @deprecated API versions are no longer used as of Treasury v1.1.0.
  */
+@Deprecated
 public enum EconomyAPIVersion {
     v1_0(new short[]{1, 0}),
     V1_1(new short[]{1, 1});

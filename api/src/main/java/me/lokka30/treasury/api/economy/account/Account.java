@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
@@ -19,7 +20,6 @@ import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
-import me.lokka30.treasury.api.common.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * @see EconomyProvider
  * @see PlayerAccount
  * @see NonPlayerAccount
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public interface Account {
 
@@ -41,7 +41,7 @@ public interface Account {
      *
      * @return The String unique identifier for this account.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String getIdentifier();
 
@@ -52,7 +52,7 @@ public interface Account {
      *
      * @return an optional fulfilled with a name or an empty optional
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     Optional<String> getName();
 
@@ -62,7 +62,7 @@ public interface Account {
      * @param name         the new name for this account.
      * @param subscription the {@link EconomySubscriber} accepting whether name change was successful
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -73,7 +73,7 @@ public interface Account {
      * @param subscription the {@link EconomySubscriber} accepting the amount
      * @author lokka30, Geolykt, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void retrieveBalance(
             @NotNull Currency currency, @NotNull EconomySubscriber<BigDecimal> subscription
@@ -88,7 +88,7 @@ public interface Account {
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void setBalance(
             @NotNull BigDecimal amount,
@@ -107,7 +107,7 @@ public interface Account {
      * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void withdrawBalance(
             @NotNull BigDecimal amount,
@@ -136,7 +136,7 @@ public interface Account {
      * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void withdrawBalance(
             @NotNull BigDecimal amount,
@@ -160,7 +160,7 @@ public interface Account {
      * @author MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void withdrawBalance(
             @NotNull BigDecimal amount,
@@ -191,7 +191,7 @@ public interface Account {
      * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void depositBalance(
             @NotNull BigDecimal amount,
@@ -220,7 +220,7 @@ public interface Account {
      * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void depositBalance(
             @NotNull BigDecimal amount,
@@ -244,7 +244,7 @@ public interface Account {
      * @author MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void depositBalance(
             @NotNull BigDecimal amount,
@@ -272,7 +272,7 @@ public interface Account {
      * @param subscription       the {@link EconomySubscriber} accepting the new balance
      * @author MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void doTransaction(
             @NotNull EconomyTransaction economyTransaction,
@@ -290,7 +290,7 @@ public interface Account {
      * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -318,7 +318,7 @@ public interface Account {
      * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
      * @author lokka30, Geolykt
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void canAfford(
             @NotNull BigDecimal amount,
@@ -345,7 +345,7 @@ public interface Account {
      *
      * @param subscription the {@link EconomySubscriber} accepting whether deletion occurred successfully
      * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
 
@@ -354,7 +354,7 @@ public interface Account {
      *
      * @param subscription the {@link EconomySubscriber} accepting the currencies
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<String>> subscription);
 
@@ -372,7 +372,7 @@ public interface Account {
      * @param to               the timestamp to get the transactions to
      * @param subscription     the {@link EconomySubscriber} accepting the transaction history
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void retrieveTransactionHistory(
             int transactionCount,
@@ -390,7 +390,7 @@ public interface Account {
      * @param transactionCount the count of the transactions wanted
      * @param subscription     the {@link EconomySubscriber} accepting the transaction history
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     default void retrieveTransactionHistory(
             int transactionCount,
@@ -404,7 +404,7 @@ public interface Account {
      *
      * @param subscription the {@link EconomySubscriber} accepting the members
      * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
 
@@ -416,7 +416,7 @@ public interface Account {
      * @param player       the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
      * @author lokka30
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
@@ -433,7 +433,7 @@ public interface Account {
      *                        member were adjusted.
      * @param permissions     the permissions to modify
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void setPermission(
             @NotNull UUID player,
@@ -449,7 +449,7 @@ public interface Account {
      * @param player       the player {@link UUID} to get the permissions for
      * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
      * @author MrIvanPlays
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void retrievePermissions(
             @NotNull UUID player,
@@ -466,7 +466,7 @@ public interface Account {
      * @param permissions  the permissions to check
      * @author MrNemo64, MrIvanPlays
      * @see AccountPermission
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void hasPermission(
             @NotNull UUID player,

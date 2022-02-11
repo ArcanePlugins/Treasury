@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T> event type
  * @author MrIvanPlays
+ * @since v1.1.0
  */
 public final class FireCompletion<T> {
 
