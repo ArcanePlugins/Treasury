@@ -64,7 +64,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type of value expected on success
  * @author Jikoo
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public interface EconomySubscriber<T> extends Subscriber<T, EconomyException> {
 
@@ -118,7 +118,7 @@ public interface EconomySubscriber<T> extends Subscriber<T, EconomyException> {
      * @param <T>                the type of value expected by the {@code EconomySubscriber}
      * @return a future awaiting subscriber completion
      * @author Jikoo
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     static <T> @NotNull CompletableFuture<T> asFuture(
             @NotNull Consumer<EconomySubscriber<T>>

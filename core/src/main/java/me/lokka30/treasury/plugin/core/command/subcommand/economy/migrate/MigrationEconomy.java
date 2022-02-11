@@ -16,7 +16,6 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
@@ -120,12 +119,6 @@ class MigrationEconomy implements EconomyProvider {
                 "Economy unavailable during migration process."
         );
 
-    }
-
-    @Override
-    public @NotNull EconomyAPIVersion getSupportedAPIVersion() {
-        //noinspection deprecation
-        return EconomyAPIVersion.getCurrentAPIVersion();
     }
 
     @Override

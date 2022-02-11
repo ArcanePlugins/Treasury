@@ -8,7 +8,7 @@ package me.lokka30.treasury.api.common.event;
  * An interface, which can be implemented by events which should be cancellable.
  *
  * @author MrIvanPlays
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
+ * @since v1.1.0
  */
 public interface Cancellable {
 

@@ -2,13 +2,13 @@ package me.lokka30.treasury.api.economy.response;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.api.common.misc.TriState;
 import org.jetbrains.annotations.NotNull;
 
 public enum EconomyFailureReason implements FailureReason {
@@ -22,7 +22,7 @@ public enum EconomyFailureReason implements FailureReason {
      * inside the set obtained from
      * {@link EconomyProvider#getSupportedOptionalEconomyApiFeatures()}.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     FEATURE_NOT_SUPPORTED {
         /**
@@ -40,7 +40,7 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, the server owner should suspend any activities whilst migrating
      * between economy providers.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     MIGRATION {
         /**
@@ -58,7 +58,7 @@ public enum EconomyFailureReason implements FailureReason {
      * "Request cancellation" could be anything that results in a request being cancelled, server
      * shutdown, thread interruption, etc.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     REQUEST_CANCELLED {
         /**
@@ -80,7 +80,7 @@ public enum EconomyFailureReason implements FailureReason {
      * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
      * @see EconomyProvider#retrieveAccount(String, EconomySubscriber)
      * @see EconomyProvider#retrievePlayerAccount(UUID, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     ACCOUNT_NOT_FOUND {
         /**
@@ -104,7 +104,7 @@ public enum EconomyFailureReason implements FailureReason {
      * @see EconomyProvider#createAccount(String, EconomySubscriber)
      * @see EconomyProvider#createAccount(String, String, EconomySubscriber)
      * @see EconomyProvider#createPlayerAccount(UUID, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     ACCOUNT_ALREADY_EXISTS {
         /**
@@ -123,7 +123,7 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, do not try to set permissions on player accounts.
      *
      * @see PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED {
         /**
@@ -144,7 +144,7 @@ public enum EconomyFailureReason implements FailureReason {
      *
      * @see EconomyProvider#getSupportedOptionalEconomyApiFeatures()
      * @see me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature#NEGATIVE_BALANCES
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     NEGATIVE_BALANCES_NOT_SUPPORTED {
         /**
@@ -164,7 +164,7 @@ public enum EconomyFailureReason implements FailureReason {
      *
      * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     NEGATIVE_AMOUNT_SPECIFIED {
         /**
@@ -180,7 +180,7 @@ public enum EconomyFailureReason implements FailureReason {
      * A constant representing failure due to the inability to locate a {@link Currency Currency}.
      * To avoid this failure, check if a currency exists before attempting to use it.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     CURRENCY_NOT_FOUND {
         /**
@@ -198,7 +198,7 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if a currency exists before attempting to register it.
      *
      * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     CURRENCY_ALREADY_REGISTERED {
         /**
@@ -214,7 +214,7 @@ public enum EconomyFailureReason implements FailureReason {
      * A constant representing failure due to a null parameter
      * being specified when a null parameter was not expected.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     NULL_PARAMETER {
         /**
@@ -232,7 +232,7 @@ public enum EconomyFailureReason implements FailureReason {
      * to parse it into a number type such as {@link BigDecimal}.
      *
      * @see Currency#parse(String, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     NUMBER_PARSING_ERROR {
         /**
@@ -251,7 +251,7 @@ public enum EconomyFailureReason implements FailureReason {
      * submit a pull request or issue so that a future Treasury version
      * can accommodate for this issue.
      *
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     OTHER_FAILURE {
         /**

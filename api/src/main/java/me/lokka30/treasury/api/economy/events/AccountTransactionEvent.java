@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents an event, called when an account does a {@link EconomyTransaction}
  *
  * @author lokka30, MrNemo64, MrIvanPlays
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#V1_1 v1.1}
+ * @since v1.1.0
  */
 public class AccountTransactionEvent implements Cancellable {
 

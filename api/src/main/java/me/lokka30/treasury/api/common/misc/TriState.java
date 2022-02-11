@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * Represents an enum, containing 3 enum values, representing states, hence the name "TriState".
  *
  * @author MrIvanPlays
- * @since v1.0
+ * @since v1.0.0
  */
 public enum TriState {
     TRUE(true),

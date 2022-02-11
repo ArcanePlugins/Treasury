@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents an event, holding a {@link Account} of some type.
  *
  * @author MrNemo64
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  * @deprecated use {@link me.lokka30.treasury.api.economy.events.AccountTransactionEvent}
  */
 @Deprecated
@@ -31,7 +31,7 @@ public class AccountEvent extends Event {
      * Returns the {@link Account} for this account event.
      *
      * @return account
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull
     public Account getAccount() {

@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
@@ -32,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author lokka30, Geolykt, creatorfromhell
  * @see Account
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public interface PlayerAccount extends Account {
 
@@ -49,7 +48,7 @@ public interface PlayerAccount extends Account {
      *
      * @return The String unique identifier for this account.
      * @author creatorfromhell
-     * @since {@link EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @Override
     default @NotNull String getIdentifier() {
@@ -72,7 +71,7 @@ public interface PlayerAccount extends Account {
      * @return uuid of the Account.
      * @author lokka30
      * @see UUID
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull UUID getUniqueId();
 
@@ -153,7 +152,7 @@ public interface PlayerAccount extends Account {
      * @param subscription the {@link EconomySubscriber} accepting the new balance
      * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @Override
     default void resetBalance(

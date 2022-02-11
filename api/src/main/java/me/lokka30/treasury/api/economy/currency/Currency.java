@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * economy.
  *
  * @author creatorfromhell, lokka30
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public interface Currency {
 
@@ -30,7 +30,7 @@ public interface Currency {
      *
      * @return A unique non-user friendly identifier for the currency.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String getIdentifier();
 
@@ -39,7 +39,7 @@ public interface Currency {
      *
      * @return The currency's symbol.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String getSymbol();
 
@@ -48,7 +48,7 @@ public interface Currency {
      *
      * @return The currency's decimal character.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     char getDecimal();
 
@@ -58,7 +58,7 @@ public interface Currency {
      *
      * @return The currency's user-friendly display name.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String getDisplayNameSingular();
 
@@ -70,7 +70,7 @@ public interface Currency {
      *
      * @return The plural form of the currency's user-friendly display name.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String getDisplayNamePlural();
 
@@ -79,7 +79,7 @@ public interface Currency {
      *
      * @return The currency's default number of decimal digits when formatting this currency.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     int getPrecision();
 
@@ -90,7 +90,7 @@ public interface Currency {
      *         context if multi-world support is not present, otherwise it should use the default world
      *         for this check.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     boolean isPrimary();
 
@@ -103,7 +103,7 @@ public interface Currency {
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the converted amount of the specified {@link Currency}.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void to(
             @NotNull Currency currency,
@@ -123,7 +123,7 @@ public interface Currency {
      *                     represents the deformatted amount of the formatted String.
      * @author creatorfromhell
      * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     void parse(@NotNull String formatted, @NotNull EconomySubscriber<BigDecimal> subscription);
 
@@ -136,7 +136,7 @@ public interface Currency {
      *                 player), then specify {@code null} for this parameter.
      * @return The starting balance of the player for this currency.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID);
 
@@ -149,7 +149,7 @@ public interface Currency {
      *               {@code null} if the provider should provide their 'default' Locale.
      * @return The formatted text.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale);
 
@@ -163,7 +163,7 @@ public interface Currency {
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
      * @author creatorfromhell
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);
 

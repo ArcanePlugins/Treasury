@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>For performance reasons, this exception does not fill in the stack trace.
  *
- * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+ * @since v1.0.0
  */
 public class EconomyException extends TreasuryException {
 
@@ -22,7 +22,7 @@ public class EconomyException extends TreasuryException {
      * Construct a new {@code EconomyException}.
      *
      * @param reason the {@link FailureReason} representing the reason for failure
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     public EconomyException(@NotNull FailureReason reason) {
         this(reason, reason.getDescription(), null);
@@ -33,7 +33,7 @@ public class EconomyException extends TreasuryException {
      *
      * @param reason  the {@link FailureReason} representing the reason for failure
      * @param message a more detailed description of the problem
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     public EconomyException(@NotNull FailureReason reason, @NotNull String message) {
         this(reason, message, null);
@@ -44,7 +44,7 @@ public class EconomyException extends TreasuryException {
      *
      * @param reason the {@link FailureReason} representing the reason for failure
      * @param cause  the {@link Throwable} representing or causing the problem
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     public EconomyException(@NotNull FailureReason reason, @NotNull Throwable cause) {
         this(
@@ -60,7 +60,7 @@ public class EconomyException extends TreasuryException {
      * @param reason  the {@link FailureReason} representing the reason for failure
      * @param message a more detailed description of the problem
      * @param cause   the {@link Throwable} representing or causing the problem
-     * @since {@link me.lokka30.treasury.api.economy.misc.EconomyAPIVersion#v1_0 v1.0}
+     * @since v1.0.0
      */
     public EconomyException(
             @NotNull FailureReason reason, @NotNull String message, @Nullable Throwable cause
