@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>com.mrivanplays</groupId>
-            <artifactId>annotationconfg-yaml</artifactId>
+            <artifactId>annotationconfig-yaml</artifactId>
             <version>${annotationconfig.version}</version>
         </dependency>
     </dependencies>
