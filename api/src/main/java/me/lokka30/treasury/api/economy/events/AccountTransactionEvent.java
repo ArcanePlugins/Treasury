@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.api.economy.events;
 
-import me.lokka30.treasury.api.common.event.Cancellable;
+import me.lokka30.treasury.api.event.Cancellable;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import org.jetbrains.annotations.NotNull;

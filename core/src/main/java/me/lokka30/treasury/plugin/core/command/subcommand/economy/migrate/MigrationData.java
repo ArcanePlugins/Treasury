@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.service.Service;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.debug.DebugCategory;
 import me.lokka30.treasury.plugin.core.debug.DebugHandler;

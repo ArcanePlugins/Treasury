@@ -4,8 +4,8 @@
 
 package me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury;
 
-import me.lokka30.treasury.api.common.services.ServicePriority;
-import me.lokka30.treasury.api.common.services.ServiceProvider;
+import me.lokka30.treasury.api.service.ServicePriority;
+import me.lokka30.treasury.api.service.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
 import org.bukkit.event.EventHandler;

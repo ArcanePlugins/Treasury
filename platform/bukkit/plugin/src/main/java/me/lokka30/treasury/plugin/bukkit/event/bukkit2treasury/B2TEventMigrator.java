@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.plugin.bukkit.event.bukkit2treasury;
 
-import me.lokka30.treasury.api.common.event.EventBus;
+import me.lokka30.treasury.api.event.EventBus;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;

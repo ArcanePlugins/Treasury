@@ -4,11 +4,11 @@
 
 package me.lokka30.treasury.plugin.bukkit.services.treasury2bukkit;
 
-import me.lokka30.treasury.api.common.event.EventBus;
-import me.lokka30.treasury.api.common.event.EventPriority;
-import me.lokka30.treasury.api.common.services.Service;
-import me.lokka30.treasury.api.common.services.event.ServiceRegisteredEvent;
-import me.lokka30.treasury.api.common.services.event.ServiceUnregisteredEvent;
+import me.lokka30.treasury.api.event.EventBus;
+import me.lokka30.treasury.api.event.EventPriority;
+import me.lokka30.treasury.api.service.Service;
+import me.lokka30.treasury.api.service.event.ServiceRegisteredEvent;
+import me.lokka30.treasury.api.service.event.ServiceUnregisteredEvent;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
@@ -70,7 +70,8 @@ public class T2BServiceMigrator {
                 .completeSubscription());
     }
 
-    private ServicePriority migratePriority(me.lokka30.treasury.api.common.services.ServicePriority priority) {
+    private ServicePriority migratePriority(
+        me.lokka30.treasury.api.service.ServicePriority priority) {
         switch (priority) {
             case LOW:
                 return ServicePriority.Low;

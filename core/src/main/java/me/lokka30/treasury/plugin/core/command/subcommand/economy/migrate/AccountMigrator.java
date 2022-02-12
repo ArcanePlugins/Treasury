@@ -13,7 +13,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import me.lokka30.treasury.api.common.services.ServiceProvider;
+import me.lokka30.treasury.api.service.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
