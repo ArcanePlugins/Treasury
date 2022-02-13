@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.api.common.services;
+package me.lokka30.treasury.api.common.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +16,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import me.lokka30.treasury.api.common.event.EventBus;
-import me.lokka30.treasury.api.common.services.event.ServiceRegisteredEvent;
-import me.lokka30.treasury.api.common.services.event.ServiceUnregisteredEvent;
+import me.lokka30.treasury.api.common.service.event.ServiceRegisteredEvent;
+import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

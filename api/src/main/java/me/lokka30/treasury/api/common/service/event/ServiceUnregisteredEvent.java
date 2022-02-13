@@ -2,10 +2,10 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.api.common.services.event;
+package me.lokka30.treasury.api.common.service.event;
 
 import java.util.Objects;
-import me.lokka30.treasury.api.common.services.Service;
+import me.lokka30.treasury.api.common.service.Service;
 import org.jetbrains.annotations.NotNull;
 
 /**

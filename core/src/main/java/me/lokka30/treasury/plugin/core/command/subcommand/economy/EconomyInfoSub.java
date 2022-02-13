@@ -6,8 +6,8 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy;
 
 import java.util.Locale;
 import java.util.Optional;
-import me.lokka30.treasury.api.common.services.Service;
-import me.lokka30.treasury.api.common.services.ServiceProvider;
+import me.lokka30.treasury.api.common.service.Service;
+import me.lokka30.treasury.api.common.service.ServiceProvider;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
