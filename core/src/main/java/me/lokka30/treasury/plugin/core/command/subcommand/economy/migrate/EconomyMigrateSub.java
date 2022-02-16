@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
-import me.lokka30.treasury.api.common.service.ServiceProvider;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.response.EconomyException;
@@ -52,7 +52,7 @@ public class EconomyMigrateSub implements Subcommand {
             return;
         }
 
-        Set<Service<EconomyProvider>> serviceProviders = ServiceProvider.INSTANCE.allServicesFor(
+        Set<Service<EconomyProvider>> serviceProviders = ServiceRegistry.INSTANCE.allServicesFor(
                 EconomyProvider.class);
 
         if (args.length != 2) {
@@ -130,21 +130,21 @@ public class EconomyMigrateSub implements Subcommand {
 
         // Override economies with dummy economy that doesn't support any operations.
         MigrationEconomy dummyEconomy = new MigrationEconomy();
-        ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
+        ServiceRegistry.INSTANCE.registerService(EconomyProvider.class,
                 dummyEconomy,
                 "Treasury",
                 ServicePriority.HIGH
         );
 
         // Re-register economies to ensure target economy will override migrated economy.
-        ServiceProvider.INSTANCE.unregister(EconomyProvider.class, from.get());
-        ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
+        ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, from.get());
+        ServiceRegistry.INSTANCE.registerService(EconomyProvider.class,
                 from.get(),
                 from.registrarName(),
                 ServicePriority.LOW
         );
-        ServiceProvider.INSTANCE.unregister(EconomyProvider.class, to.get());
-        ServiceProvider.INSTANCE.registerService(EconomyProvider.class,
+        ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, to.get());
+        ServiceRegistry.INSTANCE.registerService(EconomyProvider.class,
                 to.get(),
                 to.registrarName(),
                 ServicePriority.HIGH
@@ -169,7 +169,7 @@ public class EconomyMigrateSub implements Subcommand {
             playerMigration.arriveAndAwaitAdvance();
 
             // Unregister economy override.
-            ServiceProvider.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
+            ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
 
             sendMigrationMessage(sender, migration);
         });

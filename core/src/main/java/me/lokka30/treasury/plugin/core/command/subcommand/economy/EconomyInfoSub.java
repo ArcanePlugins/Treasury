@@ -7,7 +7,7 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy;
 import java.util.Locale;
 import java.util.Optional;
 import me.lokka30.treasury.api.common.service.Service;
-import me.lokka30.treasury.api.common.service.ServiceProvider;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -48,7 +48,7 @@ public class EconomyInfoSub implements Subcommand {
             return;
         }
 
-        Optional<Service<EconomyProvider>> economyProvider = ServiceProvider.INSTANCE.serviceFor(
+        Optional<Service<EconomyProvider>> economyProvider = ServiceRegistry.INSTANCE.serviceFor(
                 EconomyProvider.class);
         if (!economyProvider.isPresent()) {
             sender.sendMessage(Message.of(MessageKey.ECONOMY_INFO_ECONOMY_PROVIDER_UNAVAILABLE));

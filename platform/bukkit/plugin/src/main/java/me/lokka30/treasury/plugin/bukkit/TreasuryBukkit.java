@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.logging.Filter;
 import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.service.Service;
-import me.lokka30.treasury.api.common.service.ServiceProvider;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
@@ -104,7 +104,7 @@ public class TreasuryBukkit extends JavaPlugin {
     private void loadMetrics() {
         Metrics metrics = new Metrics(this, 12927);
 
-        Optional<Service<EconomyProvider>> service = ServiceProvider.INSTANCE.serviceFor(
+        Optional<Service<EconomyProvider>> service = ServiceRegistry.INSTANCE.serviceFor(
                 EconomyProvider.class);
 
         EconomyProvider economyProvider;
@@ -185,7 +185,7 @@ public class TreasuryBukkit extends JavaPlugin {
         final QuickTimer shutdownTimer = new QuickTimer();
 
         // Unregister all
-        ServiceProvider.INSTANCE.unregisterAll("Treasury");
+        ServiceRegistry.INSTANCE.unregisterAll("Treasury");
         ServiceMigrationManager.INSTANCE.shutdown();
         Bukkit.getServicesManager().unregisterAll(this);
 

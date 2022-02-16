@@ -5,7 +5,7 @@
 package me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury;
 
 import me.lokka30.treasury.api.common.service.ServicePriority;
-import me.lokka30.treasury.api.common.service.ServiceProvider;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
 import org.bukkit.event.EventHandler;
@@ -34,7 +34,7 @@ public class B2TServiceMigrator implements Listener {
             }
             Plugin registrator = provider.getPlugin();
             ServiceMigrationManager.INSTANCE.registerBukkit2TreasuryMigration(registrator.getName());
-            ServiceProvider.INSTANCE.registerService(
+            ServiceRegistry.INSTANCE.registerService(
                     EconomyProvider.class,
                     economy,
                     registrator.getName(),
@@ -53,7 +53,7 @@ public class B2TServiceMigrator implements Listener {
             }
             Plugin registrator = provider.getPlugin();
             ServiceMigrationManager.INSTANCE.unregisterBukkit2TreasuryMigration(registrator.getName());
-            ServiceProvider.INSTANCE.unregister(EconomyProvider.class, economy);
+            ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, economy);
         }
     }
 
