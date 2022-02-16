@@ -63,8 +63,6 @@ public abstract class TreasuryPlugin {
         instance = newInstance;
     }
 
-    private List<String> economyProviderRegistrators = null;
-
     /**
      * Returns the version of the treasury plugin.
      *
@@ -118,6 +116,8 @@ public abstract class TreasuryPlugin {
      */
     public abstract void reload();
 
+    private List<String> economyProviderRegistrars = null;
+
     /**
      * Returns the plugins' names, which are registering an economy provider,
      * as a list with {@link String strings}, as this is being used in
@@ -127,19 +127,19 @@ public abstract class TreasuryPlugin {
      */
     @NotNull
     public List<String> pluginsListRegisteringEconomyProvider() {
-        if (economyProviderRegistrators != null) {
-            return economyProviderRegistrators;
+        if (economyProviderRegistrars != null) {
+            return economyProviderRegistrars;
         }
         Set<Service<EconomyProvider>> services =
                 ServiceRegistry.INSTANCE.allServicesFor(EconomyProvider.class);
         if (services.isEmpty()) {
-            economyProviderRegistrators = Collections.emptyList();
+            economyProviderRegistrars = Collections.emptyList();
         } else {
-            economyProviderRegistrators = services.stream()
+            economyProviderRegistrars = services.stream()
                     .map(Service::registrarName)
                     .collect(Collectors.toList());
         }
-        return economyProviderRegistrators;
+        return economyProviderRegistrars;
     }
 
     /**
