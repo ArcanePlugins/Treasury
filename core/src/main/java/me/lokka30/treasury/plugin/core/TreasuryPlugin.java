@@ -6,8 +6,14 @@ package me.lokka30.treasury.plugin.core;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.service.Service;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
+import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate.EconomyMigrateSub;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
@@ -56,6 +62,8 @@ public abstract class TreasuryPlugin {
         }
         instance = newInstance;
     }
+
+    private List<String> economyProviderRegistrators = null;
 
     /**
      * Returns the version of the treasury plugin.
@@ -118,7 +126,21 @@ public abstract class TreasuryPlugin {
      * @return plugins' names
      */
     @NotNull
-    public abstract List<String> pluginsListRegisteringProvider();
+    public List<String> pluginsListRegisteringEconomyProvider() {
+        if (economyProviderRegistrators != null) {
+            return economyProviderRegistrators;
+        }
+        Set<Service<EconomyProvider>> services =
+                ServiceRegistry.INSTANCE.allServicesFor(EconomyProvider.class);
+        if (services.isEmpty()) {
+            economyProviderRegistrators = Collections.emptyList();
+        } else {
+            economyProviderRegistrators = services.stream()
+                    .map(Service::registrarName)
+                    .collect(Collectors.toList());
+        }
+        return economyProviderRegistrators;
+    }
 
     /**
      * A method, called on latest Treasury plugin download, which may or may not validate the

@@ -63,7 +63,7 @@ public class PaperAsyncTabEnhancement implements Listener {
     private List<String> getCompletions(String lastArg) {
         return TreasuryPlugin
                 .getInstance()
-                .pluginsListRegisteringProvider()
+                .pluginsListRegisteringEconomyProvider()
                 .stream()
                 .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                 .collect(Collectors.toList());

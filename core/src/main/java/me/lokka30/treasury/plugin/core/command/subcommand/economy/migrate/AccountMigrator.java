@@ -13,7 +13,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import me.lokka30.treasury.api.common.service.ServiceProvider;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -63,12 +63,12 @@ interface AccountMigrator<T extends Account> {
         fromCurrencies.thenAccept(currenciesIDS -> {
 
             Collection<Currency> currencies = currenciesIDS.stream().map(identifier -> {
-                if (ServiceProvider.INSTANCE.hasRegistration(EconomyProvider.class)) {
+                if (ServiceRegistry.INSTANCE.hasRegistration(EconomyProvider.class)) {
                     migration.debug(() -> "Economy provider is null.");
                     return null;
                 }
 
-                Optional<Currency> currency = ServiceProvider.INSTANCE
+                Optional<Currency> currency = ServiceRegistry.INSTANCE
                         .serviceFor(EconomyProvider.class)
                         .get()
                         .get()

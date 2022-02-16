@@ -21,14 +21,16 @@ import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a service provider.
- * <p>A service provider is a provider of services. A service is something like the
- * {@link me.lokka30.treasury.api.economy.EconomyProvider}
+ * Represents the place where {@link Service services}
+ * are registered and unregistered.
+ * <p>
+ * An example service would be that for a
+ * {@link me.lokka30.treasury.api.economy.EconomyProvider EconomyProvider}.
  *
  * @author MrIvanPlays
  * @since v1.1.0
  */
-public enum ServiceProvider {
+public enum ServiceRegistry {
     INSTANCE;
 
     private Map<Class<?>, Set<Service<?>>> servicesMap = new ConcurrentHashMap<>();
@@ -58,18 +60,18 @@ public enum ServiceProvider {
     }
 
     /**
-     * Unregister all the providers registered by a particular registrator
+     * Unregister all services from a particular registrar.
      *
-     * @param registrator the registrator
+     * @param registrar the registrar
      */
-    public void unregisterAll(@NotNull String registrator) {
-        Objects.requireNonNull(registrator, "registrator");
+    public void unregisterAll(@NotNull String registrar) {
+        Objects.requireNonNull(registrar, "registrar");
         List<Service<?>> removed = new ArrayList<>();
         Iterator<Map.Entry<Class<?>, Set<Service<?>>>> iterator = servicesMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Class<?>, Set<Service<?>>> entry = iterator.next();
             entry.getValue().removeIf(service -> {
-                if (service.registrarName().equalsIgnoreCase(registrator)) {
+                if (service.registrarName().equalsIgnoreCase(registrar)) {
                     removed.add(service);
                     return true;
                 }
@@ -91,7 +93,7 @@ public enum ServiceProvider {
     /**
      * Unregister a particular service.
      *
-     * @param clazz   service clazz
+     * @param clazz   service class
      * @param service service
      */
     public void unregister(@NotNull Class<?> clazz, @NotNull Object service) {
@@ -126,7 +128,7 @@ public enum ServiceProvider {
     }
 
     /**
-     * Returns whether the specified service class has a registration in this service provider.
+     * Returns whether the specified service class has a registration.
      *
      * @param clazz class to check
      * @return boolean value
@@ -137,7 +139,7 @@ public enum ServiceProvider {
     }
 
     /**
-     * Queries for a service with the specified {@link Class}
+     * Queries for a service with the specified {@link Class}.
      *
      * @param clazz the class to search a service for
      * @param <T>   service type
