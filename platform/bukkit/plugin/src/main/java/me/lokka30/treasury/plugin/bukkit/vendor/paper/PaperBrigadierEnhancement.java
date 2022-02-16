@@ -112,7 +112,7 @@ public class PaperBrigadierEnhancement implements Listener {
 
             for (String pluginRegistering : TreasuryPlugin
                     .getInstance()
-                    .pluginsListRegisteringProvider()) {
+                    .pluginsListRegisteringEconomyProvider()) {
                 if (pluginRegistering.toLowerCase(Locale.ROOT).startsWith(lastArg)) {
                     builder.suggest(pluginRegistering);
                 }

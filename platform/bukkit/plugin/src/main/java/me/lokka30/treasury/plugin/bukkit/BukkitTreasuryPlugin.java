@@ -6,14 +6,10 @@ package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -25,8 +21,6 @@ import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Scheduler,
@@ -39,8 +33,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     private final File messagesFile;
     private final File settingsFile;
-
-    private List<String> cachedPluginList = null;
 
     public BukkitTreasuryPlugin(@NotNull TreasuryBukkit plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
@@ -91,34 +83,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     public void loadSettings() {
         settings = Settings.load(settingsFile);
-    }
-
-    @Override
-    public @NotNull List<String> pluginsListRegisteringProvider() {
-        if (cachedPluginList != null) {
-            return cachedPluginList;
-        }
-        cachedPluginList = Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(pl -> {
-            List<RegisteredServiceProvider<?>> registrations = Bukkit
-                    .getServicesManager()
-                    .getRegistrations(pl);
-            if (registrations.isEmpty()) {
-                return false;
-            }
-            if (registrations.size() == 1) {
-                return registrations.get(0).getProvider().getClass().isAssignableFrom(
-                        EconomyProvider.class);
-            }
-            boolean hasRegistration = false;
-            for (RegisteredServiceProvider<?> provider : registrations) {
-                if (provider.getProvider().getClass().isAssignableFrom(EconomyProvider.class)) {
-                    hasRegistration = true;
-                    break;
-                }
-            }
-            return hasRegistration;
-        }).map(Plugin::getName).collect(Collectors.toList());
-        return cachedPluginList;
     }
 
     @Override

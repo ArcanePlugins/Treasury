@@ -188,7 +188,7 @@ public class EconomyMigrateSub implements Subcommand {
             String lastArg = args[args.length - 1].toLowerCase(Locale.ROOT);
             return TreasuryPlugin
                     .getInstance()
-                    .pluginsListRegisteringProvider()
+                    .pluginsListRegisteringEconomyProvider()
                     .stream()
                     .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(lastArg))
                     .collect(Collectors.toList());
