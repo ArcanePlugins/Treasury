@@ -47,7 +47,6 @@ public interface PlayerAccount extends Account {
      * Gets the string-based unique identifier for this account.
      *
      * @return The String unique identifier for this account.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @Override
@@ -69,7 +68,6 @@ public interface PlayerAccount extends Account {
      * Get the {@link UUID} of the {@code Account}.
      *
      * @return uuid of the Account.
-     * @author lokka30
      * @see UUID
      * @since v1.0.0
      */
@@ -150,7 +148,6 @@ public interface PlayerAccount extends Account {
      * @param initiator    the one who initiated this transaction
      * @param currency     of the balance being reset
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since v1.0.0
      */

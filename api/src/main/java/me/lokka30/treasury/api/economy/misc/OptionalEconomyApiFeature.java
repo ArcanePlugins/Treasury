@@ -14,14 +14,15 @@ public enum OptionalEconomyApiFeature {
 
     /**
      * Represents that the Economy Provider calls Treasury's
-     * AccountTransactionEvents when transactions occur.
+     * AccountTransactionEvents when transactions occur, however,
+     * the economy provider is using Treasury's deprecated Bukkit
+     * events (at {@code me.lokka30.treasury.api.economy.event}).
      *
      * <p>Economy Providers which do not operate on the Bukkit
      * platform should not support this feature.
      *
-     * @see me.lokka30.treasury.api.economy.event
      * @since v1.0.0
-     * @deprecated use {@link #TRANSACTION_EVENTS}
+     * @deprecated use {@link #TRANSACTION_EVENTS} instead
      */
     @Deprecated
     BUKKIT_TRANSACTION_EVENTS,

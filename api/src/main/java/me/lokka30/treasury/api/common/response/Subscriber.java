@@ -21,7 +21,6 @@ public interface Subscriber<T, E extends TreasuryException> {
      * Respond to the subscriber with a successful invocation.
      *
      * @param t the value of the successful invocation
-     * @author Jikoo
      * @since v1.1.0
      */
     void succeed(@NotNull T t);
@@ -30,7 +29,6 @@ public interface Subscriber<T, E extends TreasuryException> {
      * Respond to the subscriber with an invocation failure.
      *
      * @param exception an {@link E} detailing the reason for failure
-     * @author Jikoo
      * @since v1.1.0
      */
     void fail(@NotNull E exception);
@@ -49,9 +47,9 @@ public interface Subscriber<T, E extends TreasuryException> {
      *     final EconomyProvider economy = // Obtain provider
      *
      *     // Create initiator object: check if CommandSender is a player or not
-     *     final EconomyTransactionInitiator<?> initiator;
+     *     final EconomyTransactionInitiator&#60;&#62; initiator;
      *     if(sender instanceof Player) {
-     *         initiator = new EconomyTransactionInitiator<>() {
+     *         initiator = new EconomyTransactionInitiator&#60;&#62;() {
      *             &#64;Override
      *             public Object getData() { return ((Player) sender).getUniqueId(); }
      *
@@ -84,7 +82,6 @@ public interface Subscriber<T, E extends TreasuryException> {
      * @param subscriberConsumer a {@link Consumer} accepting an {@code Subscriber}
      * @param <T>                the type of value expected by the {@code Subscriber}
      * @return a future awaiting subscriber completion
-     * @author Jikoo
      * @since v1.1.0
      */
     static <T, E extends TreasuryException> @NotNull CompletableFuture<T> asFuture(@NotNull Consumer<?

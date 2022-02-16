@@ -29,7 +29,6 @@ public interface Currency {
      * Gets the unique non-user friendly identifier for the currency.
      *
      * @return A unique non-user friendly identifier for the currency.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String getIdentifier();
@@ -38,7 +37,6 @@ public interface Currency {
      * Gets the currency's symbol. This could be something as simple as a dollar sign '$'.
      *
      * @return The currency's symbol.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String getSymbol();
@@ -47,7 +45,6 @@ public interface Currency {
      * Get's the currency's decimal character to be used for formatting purposes.
      *
      * @return The currency's decimal character.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     char getDecimal();
@@ -57,7 +54,6 @@ public interface Currency {
      * The singular form is used when the amount is exactly {@code 1.00}.
      *
      * @return The currency's user-friendly display name.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String getDisplayNameSingular();
@@ -69,7 +65,6 @@ public interface Currency {
      * {@link Currency#getDisplayNameSingular()} should be returned.
      *
      * @return The plural form of the currency's user-friendly display name.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String getDisplayNamePlural();
@@ -78,7 +73,6 @@ public interface Currency {
      * Gets the currency's default number of decimal digits when formatting this currency.
      *
      * @return The currency's default number of decimal digits when formatting this currency.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     int getPrecision();
@@ -89,7 +83,6 @@ public interface Currency {
      * @return True if this currency is the primary currency. This method should use a global
      *         context if multi-world support is not present, otherwise it should use the default world
      *         for this check.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     boolean isPrimary();
@@ -102,7 +95,6 @@ public interface Currency {
      * @param amount       The amount to be converted to the specified {@link Currency}
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the converted amount of the specified {@link Currency}.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     void to(
@@ -121,7 +113,6 @@ public interface Currency {
      * @param formatted    The formatted string to be converted to BigDecimal form.
      * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
      *                     represents the deformatted amount of the formatted String.
-     * @author creatorfromhell
      * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
      * @since v1.0.0
      */
@@ -135,7 +126,6 @@ public interface Currency {
      *                 'general' starting balance of a currency is desired (not for a specific
      *                 player), then specify {@code null} for this parameter.
      * @return The starting balance of the player for this currency.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID);
@@ -148,7 +138,6 @@ public interface Currency {
      * @param locale The locale to use for formatting the balance. This value may be
      *               {@code null} if the provider should provide their 'default' Locale.
      * @return The formatted text.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale);
@@ -162,7 +151,6 @@ public interface Currency {
      *                  {@code null} if the provider should provide their 'default' Locale.
      * @param precision The amount of decimal digits to use when formatting.
      * @return The formatted text.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale, int precision);

@@ -42,7 +42,6 @@ public enum EconomyAPIVersion {
      * Returns the major api version as a short value for this {@link EconomyAPIVersion}
      *
      * @return major api version
-     * @author MrIvanPlays
      * @since v1.0
      */
     public short getMajorRevision() {
@@ -53,7 +52,6 @@ public enum EconomyAPIVersion {
      * Returns the minor api version as a short value for this {@link EconomyAPIVersion}
      *
      * @return minor api version
-     * @author MrIvanPlays
      * @since v1.0
      */
     public short getMinorRevision() {

@@ -40,7 +40,6 @@ public interface Account {
      * Gets the string-based unique identifier for this account.
      *
      * @return The String unique identifier for this account.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String getIdentifier();
@@ -51,7 +50,6 @@ public interface Account {
      * <p>A economy provider may choose not to provide a name.
      *
      * @return an optional fulfilled with a name or an empty optional
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     Optional<String> getName();
@@ -61,7 +59,6 @@ public interface Account {
      *
      * @param name         the new name for this account.
      * @param subscription the {@link EconomySubscriber} accepting whether name change was successful
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
@@ -71,7 +68,6 @@ public interface Account {
      *
      * @param currency     the {@link Currency} of the balance being requested
      * @param subscription the {@link EconomySubscriber} accepting the amount
-     * @author lokka30, Geolykt, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since v1.0.0
      */
@@ -86,7 +82,6 @@ public interface Account {
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being set
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since v1.0.0
      */
@@ -104,7 +99,6 @@ public interface Account {
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
@@ -133,7 +127,6 @@ public interface Account {
      * @param currency     the {@link Currency} of the balance being modified
      * @param importance   how important is the transaction
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
@@ -157,7 +150,6 @@ public interface Account {
      * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
@@ -188,7 +180,6 @@ public interface Account {
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
@@ -217,7 +208,6 @@ public interface Account {
      * @param currency     the {@link Currency} of the balance being modified
      * @param importance   how important is the transaction
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
@@ -241,7 +231,6 @@ public interface Account {
      * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
@@ -270,7 +259,6 @@ public interface Account {
      *
      * @param economyTransaction the transaction that should be done
      * @param subscription       the {@link EconomySubscriber} accepting the new balance
-     * @author MrIvanPlays, creatorfromhell
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since v1.0.0
      */
@@ -287,7 +275,6 @@ public interface Account {
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being reset
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @author lokka30, Geolykt, MrIvanPlays, creatorfromhell
      * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since v1.0.0
@@ -316,7 +303,6 @@ public interface Account {
      * @param amount       the amount the balance must meet or exceed
      * @param currency     the {@link Currency} of the balance being queried
      * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
-     * @author lokka30, Geolykt
      * @see Account#retrieveBalance(Currency, EconomySubscriber)
      * @since v1.0.0
      */
@@ -344,7 +330,6 @@ public interface Account {
      * <p>Providers should consider storing backups of deleted accounts.
      *
      * @param subscription the {@link EconomySubscriber} accepting whether deletion occurred successfully
-     * @author lokka30
      * @since v1.0.0
      */
     void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
@@ -353,7 +338,6 @@ public interface Account {
      * Returns the {@link Currency#getIdentifier()  Currencies} this {@code Account} holds balance for.
      *
      * @param subscription the {@link EconomySubscriber} accepting the currencies
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<String>> subscription);
@@ -371,7 +355,6 @@ public interface Account {
      * @param from             the timestamp to get the transactions from
      * @param to               the timestamp to get the transactions to
      * @param subscription     the {@link EconomySubscriber} accepting the transaction history
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     void retrieveTransactionHistory(
@@ -389,7 +372,6 @@ public interface Account {
      *
      * @param transactionCount the count of the transactions wanted
      * @param subscription     the {@link EconomySubscriber} accepting the transaction history
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     default void retrieveTransactionHistory(
@@ -403,7 +385,6 @@ public interface Account {
      * Request a listing of all member players of the account.
      *
      * @param subscription the {@link EconomySubscriber} accepting the members
-     * @author lokka30
      * @since v1.0.0
      */
     void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
@@ -415,7 +396,6 @@ public interface Account {
      *
      * @param player       the {@link UUID} of the potential member
      * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
-     * @author lokka30
      * @since v1.0.0
      */
     void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
@@ -432,7 +412,6 @@ public interface Account {
      * @param subscription    the {@link EconomySubscriber} accepting if the permissions of the
      *                        member were adjusted.
      * @param permissions     the permissions to modify
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     void setPermission(
@@ -448,7 +427,6 @@ public interface Account {
      *
      * @param player       the player {@link UUID} to get the permissions for
      * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     void retrievePermissions(
@@ -464,7 +442,6 @@ public interface Account {
      * @param player       the {@link UUID} of the player to check if they have the permission
      * @param subscription the {@link EconomySubscriber} accepting whether the player has all the specified permissions
      * @param permissions  the permissions to check
-     * @author MrNemo64, MrIvanPlays
      * @see AccountPermission
      * @since v1.0.0
      */

@@ -47,7 +47,6 @@ public interface EconomyProvider {
      * <b>You must only use the constants provided.</b>
      *
      * @return the API version
-     * @author lokka30, MrIvanPlays
      * @since v1.0.0
      * @deprecated API versions are no longer used as of Treasury v1.1.0.
      */
@@ -71,7 +70,6 @@ public interface EconomyProvider {
      * Economy Provider.
      *
      * @return the set of optional supported features from the economy provider/
-     * @author lokka30
      * @see OptionalEconomyApiFeature
      * @since v1.0.0
      */
@@ -82,7 +80,6 @@ public interface EconomyProvider {
      *
      * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void hasPlayerAccount(
@@ -94,7 +91,6 @@ public interface EconomyProvider {
      *
      * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void retrievePlayerAccount(
@@ -106,7 +102,6 @@ public interface EconomyProvider {
      *
      * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void createPlayerAccount(
@@ -117,7 +112,6 @@ public interface EconomyProvider {
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
@@ -131,7 +125,6 @@ public interface EconomyProvider {
      *
      * @param identifier   the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void hasAccount(@NotNull String identifier, @NotNull EconomySubscriber<Boolean> subscription);
@@ -145,7 +138,6 @@ public interface EconomyProvider {
      *
      * @param identifier   the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void retrieveAccount(
@@ -161,7 +153,6 @@ public interface EconomyProvider {
      *
      * @param identifier   the identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     default void createAccount(
@@ -181,7 +172,6 @@ public interface EconomyProvider {
      * @param name         the human-readable name of the account
      * @param identifier   the unique identifier of the account
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author MrIvanPlays, Jikoo
      * @since v1.0.0
      */
     void createAccount(
@@ -194,7 +184,6 @@ public interface EconomyProvider {
      * Request all identifiers with associated {@link Account Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
@@ -203,7 +192,6 @@ public interface EconomyProvider {
      * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
      *
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author Jikoo
      * @since v1.0.0
      */
     void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
@@ -213,7 +201,6 @@ public interface EconomyProvider {
      *
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @author MrNemo64, MrIvanPlays
      * @since v1.0.0
      */
     default void retrieveAllAccountsPlayerIsMemberOf(
@@ -276,7 +263,6 @@ public interface EconomyProvider {
      * @param playerId     the player
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
      * @param permissions  the permissions that the given player has to have on the {@link NonPlayerAccount account}
-     * @author MrNemo64, MrIvanPlays
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
      * @since v1.0.0
      */
@@ -351,7 +337,6 @@ public interface EconomyProvider {
      * Get the primary or main {@link Currency} of the economy.
      *
      * @return the primary currency
-     * @author Jikoo
      * @since v1.0.0
      */
     @NotNull Currency getPrimaryCurrency();
@@ -362,7 +347,6 @@ public interface EconomyProvider {
      * @param identifier The {@link Currency#getIdentifier()} of the {@link Currency} we are searching for.
      * @return The {@link Optional} containing the search result. This will contain the
      *         resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     Optional<Currency> findCurrency(@NotNull String identifier);
@@ -371,7 +355,6 @@ public interface EconomyProvider {
      * Used to get a set of every  {@link Currency} object for the server.
      *
      * @return A set of every {@link Currency} object that is available for the server.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     Set<Currency> getCurrencies();
@@ -380,7 +363,6 @@ public interface EconomyProvider {
      * Get the String identifier of the primary or main {@link Currency} of the economy.
      *
      * @return the String identifier identifying the primary currency
-     * @author lokka30
      * @since v1.0.0
      */
     @NotNull
@@ -397,7 +379,6 @@ public interface EconomyProvider {
      *                     attempted {@link Currency} registration with an {@link Boolean}.
      *                     This will be {@link Boolean#TRUE} if it was registered, otherwise
      *                     it'll be {@link Boolean#FALSE}.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     void registerCurrency(

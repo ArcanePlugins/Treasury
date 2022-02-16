@@ -20,7 +20,6 @@ public interface FailureReason {
      *
      * @param description the description behind this {@link FailureReason fail case}
      * @return new failure reason
-     * @author MrIvanPlays
      * @since v1.0.0
      */
     static FailureReason of(@NotNull String description) {
@@ -32,7 +31,6 @@ public interface FailureReason {
      * Gets the description behind this {@link FailureReason fail case}.
      *
      * @return The description behind this {@link FailureReason fail case}.
-     * @author creatorfromhell
      * @since v1.0.0
      */
     @NotNull String getDescription();

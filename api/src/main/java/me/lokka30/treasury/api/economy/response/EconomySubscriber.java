@@ -25,23 +25,23 @@ import org.jetbrains.annotations.NotNull;
  *     final EconomyProvider economy = //Obtain provider
  *
  *     // Create initiator object: check if CommandSender is a player or not
- *     final EconomyTransactionInitiator<?> initiator;
+ *     final EconomyTransactionInitiator&#60;?&#62; initiator;
  *     if(sender instanceof Player) {
- *         initiator = new EconomyTransactionInitiator<>() {
+ *         initiator = new EconomyTransactionInitiator&#60;&#62;() {
  *             &#64;Override
  *             public Object getData() { return ((Player) sender).getUniqueId(); }
  *
  *             &#64;Override
- *             public @NotNull Type getType() { return Type.PLAYER;}
+ *             public &#64;NotNull Type getType() { return Type.PLAYER;}
  *         };
  *     } else {
  *         initiator = EconomyTransactionInitiator.SERVER;
  *     }
  *
- *     economy.retrievePlayerAccount(target, new EconomySubscriber<>() {
+ *     economy.retrievePlayerAccount(target, new EconomySubscriber&#60;&#62;() {
  *         &#64;Override
  *         public void succeed(@NotNull PlayerAccount account) {
- *             account.setBalance(balance, initiator, currency, new EconomySubscriber<>() {
+ *             account.setBalance(balance, initiator, currency, new EconomySubscriber&#60;&#62;() {
  *                 &#64;Override
  *                 public void succeed(@NotNull BigDecimal newBalance) {
  *                     sender.sendMessage(String.format("Set balance to %s.", newBalance));
@@ -82,27 +82,27 @@ public interface EconomySubscriber<T> extends Subscriber<T, EconomyException> {
      *     final EconomyProvider economy = // Obtain provider
      *
      *     // Create initiator object: check if CommandSender is a player or not
-     *     final EconomyTransactionInitiator<?> initiator;
+     *     final EconomyTransactionInitiator&#60;?&#62; initiator;
      *     if(sender instanceof Player) {
-     *         initiator = new EconomyTransactionInitiator<>() {
+     *         initiator = new EconomyTransactionInitiator&#60;&#62;() {
      *             &#64;Override
      *             public Object getData() { return ((Player) sender).getUniqueId(); }
      *
      *             &#64;Override
-     *             public @NotNull Type getType() { return Type.PLAYER;}
+     *             public &#64;NotNull Type getType() { return Type.PLAYER;}
      *         };
      *     } else {
      *         initiator = EconomyTransactionInitiator.SERVER;
      *     }
      *
      *     // Then we need to obtain the account.
-     *     EconomySubscriber.asFuture(subscriber -> economy.retrievePlayerAccount(target, subscriber))
+     *     EconomySubscriber.asFuture(subscriber -&#62; economy.retrievePlayerAccount(target, subscriber))
      *
      *     // Then we set the balance.
-     *     .thenCompose(account -> EconomySubscriber.asFuture(subscriber -> account.setBalance(balance, initiator, currency, subscriber)))
+     *     .thenCompose(account -&#62; EconomySubscriber.asFuture(subscriber -&#62; account.setBalance(balance, initiator, currency, subscriber)))
      *
      *     // And then we can use the final value however we like.
-     *     .whenComplete((newBalance, exception) -> {
+     *     .whenComplete((newBalance, exception) -&#62; {
      *         if (exception != null) {
      *             ender.sendMessage("Something went wrong!");
      *         } else {
@@ -117,7 +117,6 @@ public interface EconomySubscriber<T> extends Subscriber<T, EconomyException> {
      * @param subscriberConsumer a {@link Consumer} accepting an {@code EconomySubscriber}
      * @param <T>                the type of value expected by the {@code EconomySubscriber}
      * @return a future awaiting subscriber completion
-     * @author Jikoo
      * @since v1.0.0
      */
     static <T> @NotNull CompletableFuture<T> asFuture(
