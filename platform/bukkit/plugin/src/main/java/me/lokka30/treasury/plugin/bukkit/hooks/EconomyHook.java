@@ -14,6 +14,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,15 +23,14 @@ public class EconomyHook implements TreasuryPAPIHook {
 
     private EconomyProvider provider;
     private final DecimalFormat format = new DecimalFormat("#,###");
+    private final PAPIExpansion expansion;
+    private final TreasuryBukkit plugin;
     private final String k, m, b, t, q;
-    private final Baltop baltop;
+    private Baltop baltop;
 
-    public EconomyHook(PAPIExpansion expansion) {
-        this.baltop = new Baltop(
-                expansion.getBoolean("baltop.enabled", false),
-                expansion.getInt("baltop.cache_size", 100),
-                expansion.getInt("baltop.cache_delay", 30)
-        );
+    public EconomyHook(PAPIExpansion expansion, TreasuryBukkit plugin) {
+        this.expansion = expansion;
+        this.plugin = plugin;
         this.k = expansion.getString("formatting.thousands", "k");
         this.m = expansion.getString("formatting.millions", "m");
         this.b = expansion.getString("formatting.billions", "b");
@@ -44,6 +44,13 @@ public class EconomyHook implements TreasuryPAPIHook {
                 EconomyProvider.class);
         if (serviceOpt.isPresent()) {
             provider = serviceOpt.get().get();
+            this.baltop = new Baltop(
+                    expansion.getBoolean("baltop.enabled", false),
+                    expansion.getInt("baltop.cache_size", 100),
+                    expansion.getInt("baltop.cache_delay", 60),
+                    provider
+            );
+            this.baltop.start(plugin);
             return true;
         } else {
             return false;
@@ -59,11 +66,19 @@ public class EconomyHook implements TreasuryPAPIHook {
     public @Nullable String onRequest(
             @Nullable OfflinePlayer player, @NotNull String param
     ) {
-        // todo: put baltop here
-        if (player == null) {
-            return "";
-        }
         if (provider != null) {
+            // todo: put baltop here
+            if (player == null) {
+                return "";
+            }
+            if (param.startsWith("top_rank_")) {
+                return baltop.getPositionAsString(param.replace("top_rank_", ""), player.getName());
+            } else if (param.equalsIgnoreCase("top_rank")) {
+                return baltop.getPositionAsString(
+                        provider.getPrimaryCurrencyId(),
+                        player.getName()
+                );
+            }
             if (param.contains("balance")) {
                 String currencyId;
                 if (param.startsWith("balance_") && (!param.contains("fixed") && !param.contains(

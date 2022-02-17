@@ -20,7 +20,7 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable 
 
     public PAPIExpansion(TreasuryBukkit plugin) {
         this.author = String.join(", ", plugin.getDescription().getAuthors());
-        this.economy = new EconomyHook(this);
+        this.economy = new EconomyHook(this, plugin);
     }
 
     @Override
