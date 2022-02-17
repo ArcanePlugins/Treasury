@@ -47,6 +47,7 @@
         <bstats.version>3.0.0</bstats.version>
         <annotationconfig.version>2.1.1-SNAPSHOT</annotationconfig.version>
         <mockito.version>4.3.1</mockito.version>
+        <placeholderapi.version>2.11.1</placeholderapi.version>
     </properties>
 
     <licenses>
