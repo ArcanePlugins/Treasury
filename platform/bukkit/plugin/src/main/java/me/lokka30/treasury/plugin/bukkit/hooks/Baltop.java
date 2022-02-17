@@ -108,7 +108,7 @@ public class Baltop extends BukkitRunnable {
         }
         for (String key : baltop.keys()) {
             Collection<TopPlayer> currentPlayers = baltop.get(key);
-            if (currentPlayers.isEmpty()) {
+            if (currentPlayers.isEmpty() || currentPlayers.size() <= topSize) {
                 continue;
             }
             List<TopPlayer> newPlayers = new ArrayList<>();
