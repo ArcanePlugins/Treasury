@@ -120,7 +120,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                         )))
                         .join();
 
-                if (param.equalsIgnoreCase("balance")) {
+                if (param.equalsIgnoreCase("balance") || param.equalsIgnoreCase("balance_commas")) {
                     return format.format(balance);
                 }
                 if (param.equalsIgnoreCase("balance_fixed")) {
@@ -128,9 +128,6 @@ public class EconomyHook implements TreasuryPAPIHook {
                 }
                 if (param.equalsIgnoreCase("balance_formatted")) {
                     return fixMoney(balance, currency, locale, precision);
-                }
-                if (param.equalsIgnoreCase("balance_commas")) {
-                    return format.format(balance);
                 }
             }
         }
@@ -143,23 +140,56 @@ public class EconomyHook implements TreasuryPAPIHook {
             return currency.format(decimal, locale, precision);
         }
         if (val < 1000000) {
-            return currency.format(BigDecimal.valueOf(val / 1000), locale, precision) + k;
+            String format = currency.format(BigDecimal.valueOf(val / 1000), locale, precision);
+            if (format.endsWith(k) || format.endsWith("k")) {
+                return format;
+            } else {
+                return format + k;
+            }
         }
         if (val < 1000000000) {
-            return currency.format(BigDecimal.valueOf(val / 1000000), locale, precision) + m;
+            String format = currency.format(BigDecimal.valueOf(val / 1000000), locale, precision);
+            if (format.endsWith(m) || format.endsWith("M")) {
+                return format;
+            } else {
+                return format + m;
+            }
         }
         if (val < 1000000000000L) {
-            return currency.format(BigDecimal.valueOf(val / 1000000000L), locale, precision) + b;
+            String format = currency.format(
+                    BigDecimal.valueOf(val / 1000000000L),
+                    locale,
+                    precision
+            );
+            if (format.endsWith(b) || format.endsWith("B")) {
+                return format;
+            } else {
+                return format + b;
+            }
         }
         if (val < 1000000000000000L) {
-            return currency.format(BigDecimal.valueOf(val / 1000000000000L), locale, precision) + t;
+            String format = currency.format(
+                    BigDecimal.valueOf(val / 1000000000000L),
+                    locale,
+                    precision
+            );
+            if (format.endsWith(t) || format.endsWith("T")) {
+                return format;
+            } else {
+                return format + t;
+            }
         }
         if (val < 1000000000000000000L) {
-            return currency.format(
+            String format = currency.format(
                     BigDecimal.valueOf(val / 1000000000000000L),
                     locale,
                     precision
-            ) + q;
+            );
+            if (format.endsWith(q) || format.endsWith("Q")) {
+                return format;
+            } else {
+                return format + q;
+            }
         }
 
         return String.valueOf((long) val);
