@@ -163,7 +163,7 @@ public class Messages {
                     " "
             );
 
-            @Comment("Placeholders: %prefix, %name%, %priority%, %api-version%")
+            @Comment("Placeholders: %prefix, %name%, %priority%")
             @Comment("              %supports-nonplayer-accounts%, %primary-currency%,")
             @Comment("              %supports-transaction-events%")
             @Key("subcommands.economy.info.economy-provider-available")
@@ -171,7 +171,6 @@ public class Messages {
                     "&f&nEconomy Provider",
                     "&8 &m->&7 Name: &b%name%",
                     "&8 &m->&7 Priority: &b%priority%",
-                    "&8 &m->&7 API Version: &b%api-version%",
                     "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
                     "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
                     "&8 &m->&7 Primary currency: &b%primary-currency%",
@@ -213,15 +212,14 @@ public class Messages {
             private List<String> infoInvalidUsage = Collections.singletonList(
                     "%prefix% Invalid usage, try '&b/%label% info&7'.");
 
-            @Comment("Placeholders: %prefix%, %version%, %description%, %credits%,")
-            @Comment("              %latest-api-version%, %repository%")
+            @Comment("Placeholders: %prefix%, %version%, %description%,")
+            @Comment("              %credits%, %repository%")
             @Key("subcommands.info.treasury")
             private List<String> infoTreasury = Arrays.asList(
                     "&f&nAbout Treasury",
                     "&8 &m->&7 Running &bTreasury v%version%",
                     "&8 &m->&7 Description: &b%description%",
                     "&8 &m->&7 Made possible by: &bSee &n%credits%",
-                    "&8 &m->&7 API Version: &b%current-api-version%",
                     "&8 &m->&7 Learn more at: &b&n%repository%",
                     " "
             );
