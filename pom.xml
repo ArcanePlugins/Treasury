@@ -10,7 +10,7 @@
 
     <groupId>me.lokka30</groupId>
     <artifactId>treasury-parent</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
     <modules>
         <module>api</module>
         <module>core</module>
@@ -36,7 +36,7 @@
 
         <!-- Versions for specifying in plugin.yml's -->
         <plugin.version>1.1.1</plugin.version>
-        <plugin.specificationVersion>SNAPSHOT</plugin.specificationVersion>
+        <plugin.specificationVersion>RELEASE</plugin.specificationVersion>
 
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
