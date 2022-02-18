@@ -194,8 +194,7 @@ public class EconomyHook implements TreasuryPAPIHook {
 
             if (param.contains("balance")) {
                 String currencyId;
-                if (param.startsWith("balance_") && (!param.contains("fixed") && !param.contains(
-                        "formatted") && !param.contains("commas"))) {
+                if (param.startsWith("balance_")) {
                     currencyId = param.replace("balance_", "");
                 } else {
                     currencyId = null;
