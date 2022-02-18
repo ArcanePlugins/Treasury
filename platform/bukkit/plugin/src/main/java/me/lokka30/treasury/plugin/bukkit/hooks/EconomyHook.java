@@ -89,6 +89,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                     if (player != null && player.isOnline()) {
                         locale = Locale.forLanguageTag(player.getPlayer().getLocale());
                     }
+                    // todo: more stuff
                 }
             }
 
