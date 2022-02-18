@@ -82,17 +82,12 @@ public class Baltop extends BukkitRunnable {
         }
     }
 
-    public BigDecimal getTopBalance(String currencyId, int position) {
-        int positionInt = 0;
-        BigDecimal balance = null;
-        for (TopPlayer player : baltop.get(currencyId)) {
-            positionInt++;
-            if (positionInt == position) {
-                balance = player.getBalance();
-                break;
-            }
+    public BigDecimal getTopBalance(String currencyId) {
+        Collection<TopPlayer> topPlayers = baltop.get(currencyId);
+        if (topPlayers.isEmpty()) {
+            return null;
         }
-        return balance;
+        return topPlayers.stream().findFirst().map(TopPlayer::getBalance).orElse(null);
     }
 
     @Override

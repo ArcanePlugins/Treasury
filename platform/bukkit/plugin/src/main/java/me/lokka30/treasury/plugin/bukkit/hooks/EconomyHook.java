@@ -77,7 +77,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                     if (currencyId.isEmpty()) {
                         currencyId = provider.getPrimaryCurrencyId();
                     }
-                    BigDecimal topBalanceFixed = baltop.getTopBalance(currencyId, 1);
+                    BigDecimal topBalanceFixed = baltop.getTopBalance(currencyId);
                     if (topBalanceFixed == null) {
                         return "0";
                     } else {
@@ -115,7 +115,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                             }
                         }
                     }
-                    BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId, 1);
+                    BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId);
                     if (topBalanceFormatted == null) {
                         return "0";
                     } else {
@@ -127,7 +127,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                     if (currencyId.isEmpty()) {
                         currencyId = provider.getPrimaryCurrencyId();
                     }
-                    BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId, 1);
+                    BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId);
                     if (topBalanceCommas == null) {
                         return "0";
                     } else {
@@ -139,7 +139,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                 if (currencyId.isEmpty()) {
                     currencyId = provider.getPrimaryCurrencyId();
                 }
-                BigDecimal topBalance = baltop.getTopBalance(currencyId, 1);
+                BigDecimal topBalance = baltop.getTopBalance(currencyId);
                 if (topBalance == null) {
                     return "0";
                 } else {
