@@ -89,13 +89,70 @@ public class EconomyHook implements TreasuryPAPIHook {
                     if (player != null && player.isOnline()) {
                         locale = Locale.forLanguageTag(player.getPlayer().getLocale());
                     }
-                    // todo: more stuff
+                    int precision;
+                    Currency currency;
+                    String currencyId = param.replace("top_balance_formatted_", "");
+                    if (currencyId.isEmpty()) {
+                        currencyId = provider.getPrimaryCurrencyId();
+                        currency = provider.getPrimaryCurrency();
+                        precision = 2;
+                    } else {
+                        Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
+                        if (currencyOpt.isPresent()) {
+                            currency = currencyOpt.get();
+                            precision = 2;
+                        } else {
+                            currency = provider.getPrimaryCurrency();
+                            currencyId = provider.getPrimaryCurrencyId();
+                            if (currencyId.endsWith("ds")) {
+                                try {
+                                    precision = Integer.parseInt(currencyId.replace("ds", ""));
+                                } catch (NumberFormatException e) {
+                                    precision = 2;
+                                }
+                            } else {
+                                precision = 2;
+                            }
+                        }
+                    }
+                    BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId, 1);
+                    if (topBalanceFormatted == null) {
+                        return "0";
+                    } else {
+                        return fixMoney(topBalanceFormatted, currency, locale, precision);
+                    }
+                }
+                if (param.startsWith("top_balance_commas")) {
+                    String currencyId = param.replace("top_balance_commas_", "");
+                    if (currencyId.isEmpty()) {
+                        currencyId = provider.getPrimaryCurrencyId();
+                    }
+                    BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId, 1);
+                    if (topBalanceCommas == null) {
+                        return "0";
+                    } else {
+                        return format.format(topBalanceCommas);
+                    }
+                }
+
+                String currencyId = param.replace("top_balance_", "");
+                if (currencyId.isEmpty()) {
+                    currencyId = provider.getPrimaryCurrencyId();
+                }
+                BigDecimal topBalance = baltop.getTopBalance(currencyId, 1);
+                if (topBalance == null) {
+                    return "0";
+                } else {
+                    return String.valueOf(topBalance.doubleValue());
                 }
             }
+
+            // todo: top player
 
             if (player == null) {
                 return "";
             }
+
             if (param.startsWith("top_rank_")) {
                 return baltop.getPositionAsString(param.replace("top_rank_", ""), player.getName());
             } else if (param.equalsIgnoreCase("top_rank")) {
@@ -104,6 +161,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                         player.getName()
                 );
             }
+
             if (param.contains("balance")) {
                 String currencyId;
                 if (param.startsWith("balance_") && (!param.contains("fixed") && !param.contains(
