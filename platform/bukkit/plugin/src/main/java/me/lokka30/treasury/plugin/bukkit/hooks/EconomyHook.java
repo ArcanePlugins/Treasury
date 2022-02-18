@@ -147,7 +147,37 @@ public class EconomyHook implements TreasuryPAPIHook {
                 }
             }
 
-            // todo: top player
+            if (param.startsWith("top_player_")) {
+                String contestant = param.replace("top_player_", "0");
+                String currencyId;
+                int position;
+                if (contestant.isEmpty()) {
+                    currencyId = provider.getPrimaryCurrencyId();
+                    position = 1;
+                } else {
+                    if (contestant.indexOf('_') == -1) {
+                        currencyId = contestant;
+                        position = 1;
+                    } else {
+                        String[] split = contestant.split("_");
+                        if (split.length == 1) {
+                            currencyId = contestant;
+                            position = 1;
+                        } else if (split.length != 0) {
+                            currencyId = split[0];
+                            try {
+                                position = Integer.parseInt(split[1]);
+                            } catch (NumberFormatException e) {
+                                position = 1;
+                            }
+                        } else {
+                            currencyId = provider.getPrimaryCurrencyId();
+                            position = 1;
+                        }
+                    }
+                }
+                return baltop.getTopPlayer(currencyId, position);
+            }
 
             if (player == null) {
                 return "";
