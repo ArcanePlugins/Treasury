@@ -67,7 +67,31 @@ public class EconomyHook implements TreasuryPAPIHook {
             @Nullable OfflinePlayer player, @NotNull String param
     ) {
         if (provider != null) {
-            // todo: put baltop here
+            if (!baltop.isEnabled() && param.startsWith("top_")) {
+                return (param.startsWith("top_balance")) ? "0" : "";
+            }
+
+            if (param.contains("top_balance")) {
+                if (param.startsWith("top_balance_fixed")) {
+                    String currencyId = param.replace("top_balance_fixed_", "");
+                    if (currencyId.isEmpty()) {
+                        currencyId = provider.getPrimaryCurrencyId();
+                    }
+                    BigDecimal topBalanceFixed = baltop.getTopBalance(currencyId, 1);
+                    if (topBalanceFixed == null) {
+                        return "0";
+                    } else {
+                        return String.valueOf(topBalanceFixed.longValue());
+                    }
+                }
+                if (param.startsWith("top_balance_formatted")) {
+                    Locale locale = Locale.ENGLISH;
+                    if (player != null && player.isOnline()) {
+                        locale = Locale.forLanguageTag(player.getPlayer().getLocale());
+                    }
+                }
+            }
+
             if (player == null) {
                 return "";
             }
@@ -89,6 +113,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                 }
                 Currency currency;
                 int precision;
+                boolean precisionSetByPlaceholder = false;
                 if (currencyId != null) {
                     Optional<Currency> currencyOpt = EconomySubscriber.<Optional<Currency>>asFuture(
                             s -> provider.findCurrency(currencyId)).join();
@@ -100,6 +125,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                         if (currencyId.endsWith("dp")) {
                             try {
                                 precision = Integer.parseInt(currencyId.replace("dp", ""));
+                                precisionSetByPlaceholder = true;
                             } catch (NumberFormatException e) {
                                 precision = 2;
                             }
@@ -134,6 +160,10 @@ public class EconomyHook implements TreasuryPAPIHook {
                                 s
                         )))
                         .join();
+
+                if (precisionSetByPlaceholder) {
+                    return currency.format(balance, locale, precision);
+                }
 
                 if (param.equalsIgnoreCase("balance") || param.equalsIgnoreCase("balance_commas")) {
                     return format.format(balance);

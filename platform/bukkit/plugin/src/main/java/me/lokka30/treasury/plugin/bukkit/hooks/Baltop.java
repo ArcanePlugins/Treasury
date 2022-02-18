@@ -44,6 +44,10 @@ public class Baltop extends BukkitRunnable {
         runTaskTimerAsynchronously(plugin, 20, taskDelay * 20L);
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public String getPositionAsString(String currencyId, String playerName) {
         int positionInt = 0;
         boolean found = false;
