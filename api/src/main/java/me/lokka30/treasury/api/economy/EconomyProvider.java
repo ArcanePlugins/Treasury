@@ -88,6 +88,17 @@ public interface EconomyProvider {
 
     /**
      * Request an existing {@link PlayerAccount} for a user.
+     * <p>
+     * If the account of the specified {@code accountId} does not exist,
+     * then the economy provider should fail the {@code subscription}
+     * (via {@link EconomySubscriber#fail}) with an {@link EconomyException}
+     * containing the {@code reason} of {@link EconomyFailureReason#ACCOUNT_NOT_FOUND}.
+     * It is highly recommended that developers ensure the account exists (via
+     * {@link EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)} on the
+     * associated {@code accountId}), prior to any attempt of retrieving it.
+     * <p>
+     * If the account does not exist for a valid player on the server, attempt to create
+     * it using {@link EconomyProvider#createPlayerAccount(UUID, EconomySubscriber)}.
      *
      * @param accountId    the {@link UUID} of the account owner
      * @param subscription the {@link EconomySubscriber} accepting the resulting value
