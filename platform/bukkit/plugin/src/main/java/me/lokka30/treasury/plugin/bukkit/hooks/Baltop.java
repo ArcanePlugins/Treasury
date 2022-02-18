@@ -99,7 +99,7 @@ public class Baltop extends BukkitRunnable {
         List<Throwable> errors = handlePlayers(0, 0, new ArrayList<>());
         if (!errors.isEmpty()) {
             Logger logger = TreasuryPlugin.getInstance().logger();
-            logger.error("A few errors encountered whilst retreiving baltop");
+            logger.error("A few errors encountered whilst retrieving baltop");
             for (Throwable e : errors) {
                 logger.error(e.getMessage(), e);
             }
