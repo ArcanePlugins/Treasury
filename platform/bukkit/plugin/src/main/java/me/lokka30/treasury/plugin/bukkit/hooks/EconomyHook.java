@@ -104,9 +104,9 @@ public class EconomyHook implements TreasuryPAPIHook {
                         } else {
                             currency = provider.getPrimaryCurrency();
                             currencyId = provider.getPrimaryCurrencyId();
-                            if (currencyId.endsWith("ds")) {
+                            if (currencyId.endsWith("dp")) {
                                 try {
-                                    precision = Integer.parseInt(currencyId.replace("ds", ""));
+                                    precision = Integer.parseInt(currencyId.replace("dp", ""));
                                 } catch (NumberFormatException e) {
                                     precision = 2;
                                 }
