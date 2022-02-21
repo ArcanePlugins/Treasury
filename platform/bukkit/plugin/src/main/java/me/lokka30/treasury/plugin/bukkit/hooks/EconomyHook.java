@@ -94,80 +94,9 @@ public class EconomyHook implements TreasuryPAPIHook {
             return (param.startsWith("top_balance")) ? "0" : "";
         }
 
-        if (param.contains("top_balance")) {
-            if (param.startsWith("top_balance_fixed")) {
-                String currencyId = param.replace("top_balance_fixed_", "");
-                if (currencyId.isEmpty()) {
-                    currencyId = provider.getPrimaryCurrencyId();
-                }
-                BigDecimal topBalanceFixed = baltop.getTopBalance(currencyId);
-                if (topBalanceFixed == null) {
-                    return "0";
-                } else {
-                    return String.valueOf(topBalanceFixed.longValue());
-                }
-            }
-            if (param.startsWith("top_balance_formatted")) {
-                Locale locale = Locale.ENGLISH;
-                if (player != null && player.isOnline()) {
-                    locale = Locale.forLanguageTag(player.getPlayer().getLocale());
-                }
-                int precision;
-                Currency currency;
-                String currencyId = param.replace("top_balance_formatted_", "");
-                if (currencyId.isEmpty()) {
-                    currencyId = provider.getPrimaryCurrencyId();
-                    currency = provider.getPrimaryCurrency();
-                    precision = 2;
-                } else {
-                    Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
-                    if (currencyOpt.isPresent()) {
-                        currency = currencyOpt.get();
-                        precision = 2;
-                    } else {
-                        currency = provider.getPrimaryCurrency();
-                        currencyId = provider.getPrimaryCurrencyId();
-                        if (currencyId.endsWith("dp")) {
-                            try {
-                                precision = Integer.parseInt(currencyId.replace("dp", ""));
-                            } catch (NumberFormatException e) {
-                                precision = 2;
-                            }
-                        } else {
-                            precision = 2;
-                        }
-                    }
-                }
-                BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId);
-                if (topBalanceFormatted == null) {
-                    return "0";
-                } else {
-                    return fixMoney(topBalanceFormatted, currency, locale, precision);
-                }
-            }
-            if (param.startsWith("top_balance_commas")) {
-                String currencyId = param.replace("top_balance_commas_", "");
-                if (currencyId.isEmpty()) {
-                    currencyId = provider.getPrimaryCurrencyId();
-                }
-                BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId);
-                if (topBalanceCommas == null) {
-                    return "0";
-                } else {
-                    return format.format(topBalanceCommas);
-                }
-            }
-
-            String currencyId = param.replace("top_balance_", "");
-            if (currencyId.isEmpty()) {
-                currencyId = provider.getPrimaryCurrencyId();
-            }
-            BigDecimal topBalance = baltop.getTopBalance(currencyId);
-            if (topBalance == null) {
-                return "0";
-            } else {
-                return String.valueOf(topBalance.doubleValue());
-            }
+        // Delegate top balance request.
+        if (param.startsWith("top_balance")) {
+            return requestTopBalance(player, param);
         }
 
         if (param.startsWith("top_player_")) {
@@ -287,6 +216,82 @@ public class EconomyHook implements TreasuryPAPIHook {
             }
         }
         return null;
+    }
+
+    private String requestTopBalance(@Nullable OfflinePlayer player, @NotNull String param) {
+        if (param.startsWith("top_balance_fixed")) {
+            String currencyId = param.replace("top_balance_fixed_", "");
+            if (currencyId.isEmpty()) {
+                currencyId = provider.getPrimaryCurrencyId();
+            }
+            BigDecimal topBalanceFixed = baltop.getTopBalance(currencyId);
+            if (topBalanceFixed == null) {
+                return "0";
+            } else {
+                return String.valueOf(topBalanceFixed.longValue());
+            }
+        }
+        if (param.startsWith("top_balance_formatted")) {
+            Locale locale = Locale.ENGLISH;
+            if (player != null && player.isOnline()) {
+                locale = Locale.forLanguageTag(player.getPlayer().getLocale());
+            }
+            int precision;
+            Currency currency;
+            String currencyId = param.replace("top_balance_formatted_", "");
+            if (currencyId.isEmpty()) {
+                currencyId = provider.getPrimaryCurrencyId();
+                currency = provider.getPrimaryCurrency();
+                precision = 2;
+            } else {
+                Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
+                if (currencyOpt.isPresent()) {
+                    currency = currencyOpt.get();
+                    precision = 2;
+                } else {
+                    currency = provider.getPrimaryCurrency();
+                    currencyId = provider.getPrimaryCurrencyId();
+                    if (currencyId.endsWith("dp")) {
+                        try {
+                            precision = Integer.parseInt(currencyId.replace("dp", ""));
+                        } catch (NumberFormatException e) {
+                            precision = 2;
+                        }
+                    } else {
+                        precision = 2;
+                    }
+                }
+            }
+            BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId);
+            if (topBalanceFormatted == null) {
+                return "0";
+            } else {
+                return fixMoney(topBalanceFormatted, currency, locale, precision);
+            }
+        }
+        if (param.startsWith("top_balance_commas")) {
+            String currencyId = param.replace("top_balance_commas_", "");
+            if (currencyId.isEmpty()) {
+                currencyId = provider.getPrimaryCurrencyId();
+            }
+            BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId);
+            if (topBalanceCommas == null) {
+                return "0";
+            } else {
+                return format.format(topBalanceCommas);
+            }
+        }
+
+        String currencyId = param.replace("top_balance_", "");
+        if (currencyId.isEmpty()) {
+            currencyId = provider.getPrimaryCurrencyId();
+        }
+        BigDecimal topBalance = baltop.getTopBalance(currencyId);
+        if (topBalance == null) {
+            return "0";
+        } else {
+            return String.valueOf(topBalance.doubleValue());
+        }
     }
 
     private String fixMoney(BigDecimal decimal, Currency currency, Locale locale, int precision) {
