@@ -25,7 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Baltop extends BukkitRunnable {
+public class BalTop extends BukkitRunnable {
 
     private final boolean enabled;
     private final int topSize;
@@ -34,7 +34,7 @@ public class Baltop extends BukkitRunnable {
 
     private final Multimap<String, TopPlayer> baltop;
 
-    public Baltop(
+    public BalTop(
             boolean enabled, int topSize, int taskDelay, EconomyProvider provider
     ) {
         this.enabled = enabled;
@@ -72,28 +72,11 @@ public class Baltop extends BukkitRunnable {
     }
 
     public String getTopPlayer(String currencyId, int position) {
-        int positionInt = 0;
-        String name = null;
-        for (TopPlayer player : baltop.get(currencyId)) {
-            positionInt++;
-            if (positionInt == position) {
-                name = player.getName();
-                break;
-            }
-        }
-        if (name != null) {
-            return name;
-        } else {
-            return "";
-        }
+        return baltop.get(currencyId).stream().skip(position).findFirst().map(TopPlayer::getName).orElse("");
     }
 
-    public @Nullable BigDecimal getTopBalance(String currencyId) {
-        Collection<TopPlayer> topPlayers = baltop.get(currencyId);
-        if (topPlayers.isEmpty()) {
-            return null;
-        }
-        return topPlayers.stream().findFirst().map(TopPlayer::getBalance).orElse(null);
+    public @Nullable BigDecimal getTopBalance(String currencyId, int position) {
+        return baltop.get(currencyId).stream().skip(position).findFirst().map(TopPlayer::getBalance).orElse(null);
     }
 
     @Override
@@ -200,7 +183,7 @@ public class Baltop extends BukkitRunnable {
         }
 
         @Override
-        public int compareTo(@NotNull Baltop.TopPlayer o) {
+        public int compareTo(@NotNull BalTop.TopPlayer o) {
             return balance.compareTo(o.getBalance());
         }
 

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface TreasuryPAPIHook {
 
-    String prefix();
+    String getPrefix();
 
     boolean setup();
 

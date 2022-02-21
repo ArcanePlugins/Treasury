@@ -14,6 +14,7 @@ import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PAPIExpansion extends PlaceholderExpansion implements Configurable {
 
@@ -74,11 +75,11 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable 
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, @NotNull String param) {
+    public String onRequest(@Nullable OfflinePlayer player, @NotNull String param) {
         for (TreasuryPAPIHook hook : hooks) {
-            if (param.startsWith(hook.prefix())) {
+            if (param.startsWith(hook.getPrefix())) {
                 // Pass request to specified hook sans prefix.
-                return hook.onRequest(player, param.replace(hook.prefix(), ""));
+                return hook.onRequest(player, param.replace(hook.getPrefix(), ""));
             }
         }
 

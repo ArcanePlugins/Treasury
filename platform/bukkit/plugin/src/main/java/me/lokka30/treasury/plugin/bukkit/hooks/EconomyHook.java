@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -21,6 +23,36 @@ import org.jetbrains.annotations.Nullable;
 
 public class EconomyHook implements TreasuryPAPIHook {
 
+    /*
+     * Pattern matching various top balance formats.
+     *
+     * For specific formatting types, the named group "type" defines expected behavior.
+     * For specific rank positions, the named group "rank" defines the 0-indexed ranking from
+     * most to least.
+     * For specific currencies, the named group "currency" defines the currency ID.
+     *
+     * Valid format examples:
+     * "top_balance": balance of 1st ranked player for default currency
+     * "top_balance_3_dollars": balance of 4th ranked player for dollars
+     * "top_balance_formatted_2dp_0_euros": balance of 1st ranked player for euros formatted with
+     * 2 decimal place precision
+     */
+    // TODO needs testing, specifically lookaheads. Lookaheads not strictly necessary but prevent
+    //  bad formats falling through.
+    private static final Pattern TOP_BALANCE = Pattern.compile(
+            // All top balances start with "top balance"
+            "^top_balance"
+                    // Optional group "type": top balance formatting type
+                    + "(_(?<type>[a-z]+)(?=(_|$))?"
+                    // Optional group "precision": number of decimal places
+                    // Currently only used by type "formatted"
+                    + "(_(?<precision>\\d+)dp(?=(_|$))?"
+                    // Optional group "rank": top balance ranking
+                    + "(_(?<rank>\\d+)(?=(_|$))?"
+                    // Optional group "currency": currency ID
+                    + "(_(?<currency>.*))?");
+    // TODO player stuff
+
     private EconomyProvider provider;
     private final DecimalFormat format = new DecimalFormat("#,###");
     private final PAPIExpansion expansion;
@@ -30,7 +62,7 @@ public class EconomyHook implements TreasuryPAPIHook {
     private final String b;
     private final String t;
     private final String q;
-    private Baltop baltop;
+    private BalTop baltop;
 
     public EconomyHook(@NotNull PAPIExpansion expansion, @NotNull TreasuryBukkit plugin) {
         this.expansion = expansion;
@@ -43,7 +75,7 @@ public class EconomyHook implements TreasuryPAPIHook {
     }
 
     @Override
-    public String prefix() {
+    public String getPrefix() {
         return "eco_";
     }
 
@@ -62,7 +94,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                 EconomyProvider.class);
         if (serviceOpt.isPresent()) {
             provider = serviceOpt.get().get();
-            this.baltop = new Baltop(
+            this.baltop = new BalTop(
                     expansion.getBoolean("baltop.enabled", false),
                     expansion.getInt("baltop.cache_size", 100),
                     expansion.getInt("baltop.cache_delay", 60),
@@ -218,63 +250,71 @@ public class EconomyHook implements TreasuryPAPIHook {
         return null;
     }
 
-    private String requestTopBalance(@Nullable OfflinePlayer player, @NotNull String param) {
-        if (param.startsWith("top_balance_fixed")) {
-            String currencyId = param.replace("top_balance_fixed_", "");
-            if (currencyId.isEmpty()) {
-                currencyId = provider.getPrimaryCurrencyId();
-            }
-            BigDecimal topBalanceFixed = baltop.getTopBalance(currencyId);
-            if (topBalanceFixed == null) {
+    // TODO maybe break up into smaller helper methods per-type
+    private @Nullable String requestTopBalance(@Nullable OfflinePlayer player, @NotNull String param) {
+        // Exactly "top_balance" - no parsing required.
+        if (param.length() == 11) {
+            BigDecimal topBalance = baltop.getTopBalance(provider.getPrimaryCurrencyId(), 0);
+            if (topBalance == null) {
                 return "0";
-            } else {
-                return String.valueOf(topBalanceFixed.longValue());
             }
+            return topBalance.toString();
         }
-        if (param.startsWith("top_balance_formatted")) {
+
+
+        Matcher matcher = TOP_BALANCE.matcher(param);
+        if (!matcher.matches()) {
+            // Invalid format
+            return null;
+        }
+
+        String type = matcher.group("type");
+        int rank = parseInt(matcher.group("rank"), 0);
+        String currencyId = getCurrencyId(matcher.group("currency"));
+        BigDecimal balance = baltop.getTopBalance(currencyId, rank);
+
+        // Formatting mode "fixed" yields a raw number with no decimal places.
+        if ("fixed".equals(type)) {
+            if (balance == null) {
+                return "0";
+            }
+            return String.valueOf(balance.longValue());
+        }
+
+        // Formatting mode "formatted" yields a number using localizable multiples of 1000.
+        if ("formatted".equals(type)) {
+            if (balance == null) {
+                return "0";
+            }
             Locale locale = Locale.ENGLISH;
             if (player != null && player.isOnline()) {
-                locale = Locale.forLanguageTag(player.getPlayer().getLocale());
+                locale = Locale.forLanguageTag(player.getPlayer().getLocale().replace('_', '-'));
             }
-            int precision;
+            int precision = parseInt(matcher.group("precision"), -1);
             Currency currency;
-            String currencyId = param.replace("top_balance_formatted_", "");
-            if (currencyId.isEmpty()) {
+            String specifiedCurrency = matcher.group("currency");
+            if (specifiedCurrency == null || specifiedCurrency.isEmpty()) {
                 currencyId = provider.getPrimaryCurrencyId();
                 currency = provider.getPrimaryCurrency();
-                precision = 2;
             } else {
                 Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
                 if (currencyOpt.isPresent()) {
                     currency = currencyOpt.get();
-                    precision = 2;
                 } else {
                     currency = provider.getPrimaryCurrency();
                     currencyId = provider.getPrimaryCurrencyId();
-                    if (currencyId.endsWith("dp")) {
-                        try {
-                            precision = Integer.parseInt(currencyId.replace("dp", ""));
-                        } catch (NumberFormatException e) {
-                            precision = 2;
-                        }
-                    } else {
-                        precision = 2;
-                    }
                 }
             }
-            BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId);
+            BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId, rank);
             if (topBalanceFormatted == null) {
                 return "0";
             } else {
                 return fixMoney(topBalanceFormatted, currency, locale, precision);
             }
         }
-        if (param.startsWith("top_balance_commas")) {
-            String currencyId = param.replace("top_balance_commas_", "");
-            if (currencyId.isEmpty()) {
-                currencyId = provider.getPrimaryCurrencyId();
-            }
-            BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId);
+
+        if ("commas".equals(type)) {
+            BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId, rank);
             if (topBalanceCommas == null) {
                 return "0";
             } else {
@@ -282,11 +322,12 @@ public class EconomyHook implements TreasuryPAPIHook {
             }
         }
 
-        String currencyId = param.replace("top_balance_", "");
-        if (currencyId.isEmpty()) {
-            currencyId = provider.getPrimaryCurrencyId();
+        // Unsupported type argument, don't fall through silently.
+        if (type != null && !type.isEmpty()) {
+            return null;
         }
-        BigDecimal topBalance = baltop.getTopBalance(currencyId);
+
+        BigDecimal topBalance = baltop.getTopBalance(currencyId, rank);
         if (topBalance == null) {
             return "0";
         } else {
@@ -294,7 +335,32 @@ public class EconomyHook implements TreasuryPAPIHook {
         }
     }
 
+    private @NotNull String getCurrencyId(@Nullable String currencyId) {
+        if (currencyId ==  null || currencyId.isEmpty()) {
+            return provider.getPrimaryCurrencyId();
+        }
+
+        return currencyId;
+    }
+
+    private int parseInt(@Nullable String string, int defaultVal) {
+        if (string == null || string.isEmpty()) {
+            return defaultVal;
+        }
+
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException exception) {
+            return defaultVal;
+        }
+    }
+
+    // TODO: support more multiples? Treasury does use BD, numbers go up.
     private String fixMoney(BigDecimal decimal, Currency currency, Locale locale, int precision) {
+        if (precision < 0) {
+            precision = currency.getPrecision();
+        }
+
         double val = decimal.doubleValue();
         if (val < 1000) {
             return currency.format(decimal, locale, precision);
