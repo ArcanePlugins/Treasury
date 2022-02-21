@@ -43,12 +43,12 @@ public class EconomyHook implements TreasuryPAPIHook {
             // All top balances start with "top balance"
             "^top_balance"
                     // Optional group "type": top balance formatting type
-                    + "(_(?<type>[a-z]+)(?=(_|$))?"
+                    + "(_(?<type>[a-z]+)(?=(_|$)))?"
                     // Optional group "precision": number of decimal places
                     // Currently only used by type "formatted"
-                    + "(_(?<precision>\\d+)dp(?=(_|$))?"
+                    + "(_(?<precision>\\d+)dp(?=(_|$)))?"
                     // Optional group "rank": top balance ranking
-                    + "(_(?<rank>\\d+)(?=(_|$))?"
+                    + "(_(?<rank>\\d+)(?=(_|$)))?"
                     // Optional group "currency": currency ID
                     + "(_(?<currency>.*))?");
     // TODO player stuff
