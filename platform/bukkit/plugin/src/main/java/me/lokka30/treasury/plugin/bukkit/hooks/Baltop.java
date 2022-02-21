@@ -5,11 +5,13 @@
 package me.lokka30.treasury.plugin.bukkit.hooks;
 
 import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -21,14 +23,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Baltop extends BukkitRunnable {
 
     private final boolean enabled;
-    private final int topSize, taskDelay;
+    private final int topSize;
+    private final int taskDelay;
     private final EconomyProvider provider;
 
-    private Multimap<String, TopPlayer> baltop;
+    private final Multimap<String, TopPlayer> baltop;
 
     public Baltop(
             boolean enabled, int topSize, int taskDelay, EconomyProvider provider
@@ -37,7 +41,9 @@ public class Baltop extends BukkitRunnable {
         this.topSize = topSize;
         this.taskDelay = taskDelay;
         this.provider = provider;
-        this.baltop = MultimapBuilder.hashKeys().treeSetValues(TopPlayer::compareTo).build();
+        this.baltop = Multimaps.newSortedSetMultimap(
+                new HashMap<>(),
+                () -> new TreeSet<>(TopPlayer::compareTo));
     }
 
     public void start(TreasuryBukkit plugin) {
@@ -82,7 +88,7 @@ public class Baltop extends BukkitRunnable {
         }
     }
 
-    public BigDecimal getTopBalance(String currencyId) {
+    public @Nullable BigDecimal getTopBalance(String currencyId) {
         Collection<TopPlayer> topPlayers = baltop.get(currencyId);
         if (topPlayers.isEmpty()) {
             return null;

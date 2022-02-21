@@ -12,20 +12,21 @@ import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PAPIExpansion extends PlaceholderExpansion implements Configurable {
 
     private final String author;
-    private TreasuryPAPIHook economy;
+    private @Nullable TreasuryPAPIHook economy;
 
-    public PAPIExpansion(TreasuryBukkit plugin) {
+    public PAPIExpansion(@NotNull TreasuryBukkit plugin) {
         this.author = String.join(", ", plugin.getDescription().getAuthors());
         this.economy = new EconomyHook(this, plugin);
     }
 
     @Override
     public boolean register() {
-        if (!economy.setup()) {
+        if (economy != null && !economy.setup()) {
             economy = null;
         }
         if (economy != null) {

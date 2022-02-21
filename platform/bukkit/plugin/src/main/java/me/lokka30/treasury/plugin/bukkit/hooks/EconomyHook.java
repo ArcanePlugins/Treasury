@@ -25,17 +25,21 @@ public class EconomyHook implements TreasuryPAPIHook {
     private final DecimalFormat format = new DecimalFormat("#,###");
     private final PAPIExpansion expansion;
     private final TreasuryBukkit plugin;
-    private final String k, m, b, t, q;
+    private final String k;
+    private final String m;
+    private final String b;
+    private final String t;
+    private final String q;
     private Baltop baltop;
 
-    public EconomyHook(PAPIExpansion expansion, TreasuryBukkit plugin) {
+    public EconomyHook(@NotNull PAPIExpansion expansion, @NotNull TreasuryBukkit plugin) {
         this.expansion = expansion;
         this.plugin = plugin;
         this.k = expansion.getString("formatting.thousands", "k");
-        this.m = expansion.getString("formatting.millions", "m");
-        this.b = expansion.getString("formatting.billions", "b");
-        this.t = expansion.getString("formatting.trillions", "t");
-        this.q = expansion.getString("formatting.quadrillions", "q");
+        this.m = expansion.getString("formatting.millions", "M");
+        this.b = expansion.getString("formatting.billions", "B");
+        this.t = expansion.getString("formatting.trillions", "T");
+        this.q = expansion.getString("formatting.quadrillions", "Q");
     }
 
     @Override
