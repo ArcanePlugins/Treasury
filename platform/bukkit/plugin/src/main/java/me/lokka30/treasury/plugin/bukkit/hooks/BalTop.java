@@ -72,11 +72,20 @@ public class BalTop extends BukkitRunnable {
     }
 
     public String getTopPlayer(String currencyId, int position) {
+        position = normalizePosition(position);
         return baltop.get(currencyId).stream().skip(position).findFirst().map(TopPlayer::getName).orElse("");
     }
 
     public @Nullable BigDecimal getTopBalance(String currencyId, int position) {
+        position = normalizePosition(position);
         return baltop.get(currencyId).stream().skip(position).findFirst().map(TopPlayer::getBalance).orElse(null);
+    }
+
+    private int normalizePosition(int position) {
+        if (position == 0) {
+            return position;
+        }
+        return position - 1;
     }
 
     @Override

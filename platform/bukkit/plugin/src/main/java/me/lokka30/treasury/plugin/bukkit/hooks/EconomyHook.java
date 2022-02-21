@@ -27,19 +27,19 @@ public class EconomyHook implements TreasuryPAPIHook {
      * Pattern matching various top balance formats.
      *
      * For specific formatting types, the named group "type" defines expected behavior.
-     * For specific rank positions, the named group "rank" defines the 0-indexed ranking from
+     * For specific rank positions, the named group "rank" defines the 1-indexed ranking from
      * most to least.
      * For specific currencies, the named group "currency" defines the currency ID.
      *
      * Valid format examples:
      * "top_balance": balance of 1st ranked player for default currency
-     * "top_balance_3_dollars": balance of 4th ranked player for dollars
-     * "top_balance_formatted_2dp_0_euros": balance of 1st ranked player for euros formatted with
+     * "top_balance_4_dollars": balance of 4th ranked player for dollars
+     * "top_balance_formatted_2dp_1_euros": balance of 1st ranked player for euros formatted with
      * 2 decimal place precision
      */
     // TODO needs testing, specifically lookaheads. Lookaheads not strictly necessary but prevent
     //  bad formats falling through.
-    private static final Pattern TOP_BALANCE = Pattern.compile(
+    static final Pattern TOP_BALANCE = Pattern.compile(
             // All top balances start with "top balance"
             "^top_balance"
                     // Optional group "type": top balance formatting type
