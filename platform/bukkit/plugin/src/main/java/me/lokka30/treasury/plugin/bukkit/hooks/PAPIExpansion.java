@@ -4,7 +4,9 @@
 
 package me.lokka30.treasury.plugin.bukkit.hooks;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -12,26 +14,28 @@ import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PAPIExpansion extends PlaceholderExpansion implements Configurable {
 
     private final String author;
-    private @Nullable TreasuryPAPIHook economy;
+    private final Collection<TreasuryPAPIHook> hooks = new HashSet<>();
 
     public PAPIExpansion(@NotNull TreasuryBukkit plugin) {
         this.author = String.join(", ", plugin.getDescription().getAuthors());
-        this.economy = new EconomyHook(this, plugin);
+        this.hooks.add(new EconomyHook(this, plugin));
     }
 
     @Override
     public boolean register() {
-        if (economy != null && !economy.setup()) {
-            economy = null;
-        }
-        if (economy != null) {
+        // Remove all failing hooks.
+        hooks.removeIf(hook -> !hook.setup());
+
+        // If any hooks are active, register.
+        if (!hooks.isEmpty()) {
             return super.register();
         }
+
+        // Otherwise, do not enable the expansion.
         return false;
     }
 
@@ -66,13 +70,16 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable 
 
     @Override
     public boolean canRegister() {
-        return economy != null && economy.canRegister();
+        return hooks.stream().anyMatch(TreasuryPAPIHook::canRegister);
     }
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String param) {
-        if (economy != null && param.startsWith("eco_")) {
-            return economy.onRequest(player, param.replace("eco_", ""));
+        for (TreasuryPAPIHook hook : hooks) {
+            if (param.startsWith(hook.prefix())) {
+                // Pass request to specified hook sans prefix.
+                return hook.onRequest(player, param.replace(hook.prefix(), ""));
+            }
         }
 
         return null;

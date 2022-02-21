@@ -43,6 +43,11 @@ public class EconomyHook implements TreasuryPAPIHook {
     }
 
     @Override
+    public String prefix() {
+        return "eco_";
+    }
+
+    @Override
     public boolean setup() {
         Optional<Service<EconomyProvider>> serviceOpt = ServiceRegistry.INSTANCE.serviceFor(
                 EconomyProvider.class);

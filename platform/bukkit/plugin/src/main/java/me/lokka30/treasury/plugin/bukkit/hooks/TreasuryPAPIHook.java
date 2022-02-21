@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface TreasuryPAPIHook {
 
+    String prefix();
+
     boolean setup();
 
     boolean canRegister();
