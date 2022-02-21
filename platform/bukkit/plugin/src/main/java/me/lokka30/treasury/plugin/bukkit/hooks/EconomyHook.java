@@ -39,6 +39,9 @@ public class EconomyHook implements TreasuryPAPIHook {
      */
     // TODO needs testing, specifically lookaheads. Lookaheads not strictly necessary but prevent
     //  bad formats falling through.
+    //  also needs fixing. <precision> and <rank> fall through the <currency> group, probably
+    //  because of the optionals. may need simpler regex for top balance. or another idea -
+    //  perhaps add a contract to currency ids - [a-zA-Z] only???
     static final Pattern TOP_BALANCE = Pattern.compile(
             // All top balances start with "top balance"
             "^top_balance"
@@ -51,7 +54,13 @@ public class EconomyHook implements TreasuryPAPIHook {
                     + "(_(?<rank>\\d+)(?=(_|$)))?"
                     // Optional group "currency": currency ID
                     + "(_(?<currency>.*))?");
-    // TODO player stuff
+
+    // TODO this is also a brainfuck. <rank> gets captured in <currency> just as in top balance,
+    //  but not as cursed.
+    static final Pattern TOP_PLAYER = Pattern.compile(
+            "^top_player(_(?<rank>\\d+)(?=(_|$)))?(_(?<currency>.*))?");
+
+    // TODO: specific player related patterns
 
     private EconomyProvider provider;
     private final DecimalFormat format = new DecimalFormat("#,###");
@@ -131,36 +140,9 @@ public class EconomyHook implements TreasuryPAPIHook {
             return requestTopBalance(player, param);
         }
 
-        if (param.startsWith("top_player_")) {
-            String contestant = param.replace("top_player_", "0");
-            String currencyId;
-            int position;
-            if (contestant.isEmpty()) {
-                currencyId = provider.getPrimaryCurrencyId();
-                position = 1;
-            } else {
-                if (contestant.indexOf('_') == -1) {
-                    currencyId = contestant;
-                    position = 1;
-                } else {
-                    String[] split = contestant.split("_");
-                    if (split.length == 1) {
-                        currencyId = contestant;
-                        position = 1;
-                    } else if (split.length != 0) {
-                        currencyId = split[0];
-                        try {
-                            position = Integer.parseInt(split[1]);
-                        } catch (NumberFormatException e) {
-                            position = 1;
-                        }
-                    } else {
-                        currencyId = provider.getPrimaryCurrencyId();
-                        position = 1;
-                    }
-                }
-            }
-            return baltop.getTopPlayer(currencyId, position);
+        // Delegate top player request.
+        if (param.startsWith("top_player")) {
+            return requestTopPlayer(param);
         }
 
         if (player == null) {
@@ -269,7 +251,7 @@ public class EconomyHook implements TreasuryPAPIHook {
         }
 
         String type = matcher.group("type");
-        int rank = parseInt(matcher.group("rank"), 0);
+        int rank = parseInt(matcher.group("rank"), 1);
         String currencyId = getCurrencyId(matcher.group("currency"));
         BigDecimal balance = baltop.getTopBalance(currencyId, rank);
 
@@ -333,6 +315,22 @@ public class EconomyHook implements TreasuryPAPIHook {
         } else {
             return String.valueOf(topBalance.doubleValue());
         }
+    }
+
+    private @Nullable String requestTopPlayer(@NotNull String param) {
+        // Exactly "top_player" - no need for parsing
+        if (param.length() == 9) {
+            return baltop.getTopPlayer(provider.getPrimaryCurrencyId(), 1);
+        }
+
+        Matcher matcher = TOP_PLAYER.matcher(param);
+        if (!matcher.matches()) {
+            // Invalid format
+            return null;
+        }
+        int rank = parseInt(matcher.group("rank"), 1);
+        String currencyId = getCurrencyId(matcher.group("currency"));
+        return baltop.getTopPlayer(currencyId, rank);
     }
 
     private @NotNull String getCurrencyId(@Nullable String currencyId) {
