@@ -51,10 +51,8 @@ public class EconomyHook implements TreasuryPAPIHook {
                     // Optional group "currency": currency ID
                     + "(_(?<currency>.*?))?");
 
-    // TODO this is also a brainfuck. <rank> gets captured in <currency> just as in top balance,
-    //  but not as cursed.
     static final Pattern TOP_PLAYER = Pattern.compile(
-            "^top_player(_(?<rank>\\d+)(?=(_|$)))?(_(?<currency>.*?))?");
+            "^top_player(_(?<rank>[0-9]+)(?=(_|$)))?(_(?<currency>.*))?");
 
     // TODO: specific player related patterns
 
