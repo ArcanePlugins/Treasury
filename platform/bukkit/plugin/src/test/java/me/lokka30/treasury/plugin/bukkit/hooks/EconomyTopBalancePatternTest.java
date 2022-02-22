@@ -4,47 +4,116 @@
 
 package me.lokka30.treasury.plugin.bukkit.hooks;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
+import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-// todo: more and better tests
 class EconomyTopBalancePatternTest {
 
     // ================================
     // basic
     @Test
-    void testTopBalanceValid1() {
-        Assertions.assertTrue(EconomyHook.TOP_BALANCE.matcher("top_balance_3_dollars").matches());
+    void testBase() {
+        testMatcherGroups("top_balance", null, null, null, null);
     }
 
     @Test
-    void testTopBalanceValid2() {
-        Assertions.assertTrue(EconomyHook.TOP_BALANCE.matcher("top_balance_formatted_2dp_0_dollars").matches());
+    void testType() {
+        testMatcherGroups("top_balance_fixed", "fixed", null, null, null);
     }
 
-    // stop gh from complaining
-    //@Test
-    void testTopBalanceFail1() {
-        Assertions.assertFalse(EconomyHook.TOP_BALANCE.matcher("top_balance_formatted_1dpapa_foo").matches());
+    @Test
+    void testPrecision() {
+        testMatcherGroups("top_balance_5dp", null, "5", null, null);
     }
 
-    // stop gh from complaining
-    //@Test
-    void testTopBalanceFail2() {
-        Assertions.assertFalse(EconomyHook.TOP_BALANCE.matcher("top_balance_formatted_2dp_weeb").matches());
+    @Test
+    void testRank() {
+        testMatcherGroups("top_balance_3", null, null, "3", null);
     }
+
+    @Test
+    void testCurrency() {
+        testMatcherGroups("top_balance_lira", null, null, null, "lira");
+    }
+
     // ================================
-    // lookahead
+    // Combination forms
+    @ParameterizedTest
+    @MethodSource("getCombineGroups")
+    void testCombine(
+            @Nullable String type,
+            @Nullable String precision,
+            @Nullable String rank,
+            @Nullable String currency) {
+        StringBuilder builder = new StringBuilder("top_balance");
+        if (type != null) {
+            builder.append('_').append(type);
+        }
+        if (precision != null) {
+            builder.append('_').append(precision).append("dp");
+        }
+        if (rank != null) {
+            builder.append('_').append(rank);
+        }
+        if (currency != null) {
+            builder.append('_').append(currency);
+        }
 
-    @Test
-    void testTopBalanceLookaheadValid1() {
-        Assertions.assertTrue(EconomyHook.TOP_BALANCE.matcher("top_balance").matches());
+        testMatcherGroups(builder.toString(), type, precision, rank, currency);
     }
 
-    @Test
-    void testTopBalanceLookaheadValid2() {
-        Assertions.assertTrue(EconomyHook.TOP_BALANCE.matcher("top_balance_").matches());
+    public static Stream<Arguments> getCombineGroups() {
+        String[] types = new String[] { null, "formatted", "fixed", "commas" };
+        String[] precision = new String[] { null, "0", "10", "5" };
+        String[] rank = new String[] { null, "10", "1", "2" };
+        String[] currency = new String[]
+                { null, "", "euro", "@%#(*^&", ";drop table users;", "5dpapa_dollar" };
+
+        int maxIndex = types.length * precision.length * rank.length * currency.length;
+        int typeIndexBase = precision.length * rank.length * currency.length;
+        int precisionIndexBase = rank.length * currency.length;
+        int rankIndexBase = currency.length;
+        AtomicInteger index = new AtomicInteger();
+
+        return Stream.generate(() -> {
+            int currentIndex = index.getAndIncrement();
+            return Arguments.of(
+                    types[currentIndex / typeIndexBase],
+                    precision[(currentIndex / precisionIndexBase) % precision.length],
+                    rank[(currentIndex / rankIndexBase) % rank.length],
+                    currency[currentIndex % currency.length]
+            );
+        }).limit(maxIndex);
+    }
+
+    private void testMatcherGroups(
+            @NotNull String input,
+            @Nullable String type,
+            @Nullable String precision,
+            @Nullable String rank,
+            @Nullable String currency) {
+        Matcher matcher = EconomyHook.TOP_BALANCE.matcher(input);
+        Assertions.assertTrue(matcher.matches(), "Matcher must match input");
+        Assertions.assertEquals(matcher.group("type"), type,
+                () -> String.format("Incorrect type parsing: Got %s but expected %s",
+                        matcher.group("type"), type));
+        Assertions.assertEquals(matcher.group("precision"), precision,
+                () -> String.format("Incorrect precision parsing: Got %s but expected %s",
+                        matcher.group("precision"), precision));
+        Assertions.assertEquals(matcher.group("rank"), rank,
+                () -> String.format("Incorrect rank parsing: Got %s but expected %s",
+                        matcher.group("rank"), rank));
+        Assertions.assertEquals(matcher.group("currency"), currency,
+                () -> String.format("Incorrect currency parsing: Got %s but expected %s",
+                        matcher.group("currency"), currency));
     }
 
 }

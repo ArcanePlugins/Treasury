@@ -37,28 +37,24 @@ public class EconomyHook implements TreasuryPAPIHook {
      * "top_balance_formatted_2dp_1_euros": balance of 1st ranked player for euros formatted with
      * 2 decimal place precision
      */
-    // TODO needs testing, specifically lookaheads. Lookaheads not strictly necessary but prevent
-    //  bad formats falling through.
-    //  also needs fixing. <precision> and <rank> fall through the <currency> group, probably
-    //  because of the optionals. may need simpler regex for top balance. or another idea -
-    //  perhaps add a contract to currency ids - [a-zA-Z] only???
     static final Pattern TOP_BALANCE = Pattern.compile(
             // All top balances start with "top balance"
             "^top_balance"
                     // Optional group "type": top balance formatting type
-                    + "(_(?<type>[a-z]+)(?=(_|$)))?"
+                    // This is always "fixed" "formatted" or "commas" - other words are a currency
+                    + "(_(?<type>(fixed|formatted|commas))(?=(_|$)))?"
                     // Optional group "precision": number of decimal places
                     // Currently only used by type "formatted"
                     + "(_(?<precision>\\d+)dp(?=(_|$)))?"
                     // Optional group "rank": top balance ranking
                     + "(_(?<rank>\\d+)(?=(_|$)))?"
                     // Optional group "currency": currency ID
-                    + "(_(?<currency>.*))?");
+                    + "(_(?<currency>.*?))?");
 
     // TODO this is also a brainfuck. <rank> gets captured in <currency> just as in top balance,
     //  but not as cursed.
     static final Pattern TOP_PLAYER = Pattern.compile(
-            "^top_player(_(?<rank>\\d+)(?=(_|$)))?(_(?<currency>.*))?");
+            "^top_player(_(?<rank>\\d+)(?=(_|$)))?(_(?<currency>.*?))?");
 
     // TODO: specific player related patterns
 
