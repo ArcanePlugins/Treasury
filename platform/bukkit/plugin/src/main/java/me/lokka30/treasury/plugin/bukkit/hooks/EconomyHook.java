@@ -51,10 +51,43 @@ public class EconomyHook implements TreasuryPAPIHook {
                     // Optional group "currency": currency ID
                     + "(_(?<currency>.*?))?");
 
+    /*
+     * Pattern matching the top player formats.
+     *
+     * For specific rank positions, the named group "rank" defines the 1-indexed ranking from
+     * 1st to last.
+     * For specific currencies, the named group "currency" defines the currency ID.
+     *
+     * Valid format examples:
+     * "top_player": the 1st top player in the primary currency.
+     * "top_player_4_dollars": 4th top player in the currency dollars.
+     */
     static final Pattern TOP_PLAYER = Pattern.compile(
             "^top_player(_(?<rank>[0-9]+)(?=(_|$)))?(_(?<currency>.*))?");
 
-    // TODO: specific player related patterns
+    /*
+     * Pattern matching various balance formats.
+     * The balance placeholder is always bound to a player.
+     *
+     * For specific formatting types, the named group "type" defines expected behavior.
+     * For specific currencies, the named group "currency" defines the currency ID.
+     *
+     * Valid format examples:
+     * "balance": balance of the player in the primary currency
+     * "balance_formatted_dollars": formatted balance of the player for dollars
+     * "balance_formatted_1dp_libra": formatted balance of the player for libra formatted with
+     * 1 decimal pace precision
+     */
+    static final Pattern BALANCE = Pattern.compile(
+            // All balances start with "balance"
+            "^balance"
+                    // Optional group "type": balance formatting type
+                    // This is always "fixed" "formatted" or "commas" - other words are a currency
+                    + "(_(?<type>(fixed|formatted|commas))(?=(_|$)))?"
+                    // Optional group "precision": number of decimal places
+                    + "(_(?<precision>[0-9]+)dp(?=(_|$)))?"
+                    // Optional group "currency": currency ID
+                    + "(_(?<currency>.*?))?");
 
     private EconomyProvider provider;
     private final DecimalFormat format = new DecimalFormat("#,###");
@@ -97,8 +130,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                 EconomyProvider.class);
         if (serviceOpt.isPresent()) {
             provider = serviceOpt.get().get();
-            this.baltop = new BalTop(
-                    expansion.getBoolean("baltop.enabled", false),
+            this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
                     expansion.getInt("baltop.cache_size", 100),
                     expansion.getInt("baltop.cache_delay", 60),
                     provider
@@ -140,94 +172,26 @@ public class EconomyHook implements TreasuryPAPIHook {
         }
 
         if (player == null) {
-            return "";
+            return null;
         }
 
         if (param.startsWith("top_rank_")) {
             return baltop.getPositionAsString(param.replace("top_rank_", ""), player.getName());
         } else if (param.equalsIgnoreCase("top_rank")) {
-            return baltop.getPositionAsString(
-                    provider.getPrimaryCurrencyId(),
-                    player.getName()
-            );
+            return baltop.getPositionAsString(provider.getPrimaryCurrencyId(), player.getName());
         }
 
-        if (param.contains("balance")) {
-            String currencyId;
-            if (param.startsWith("balance_")) {
-                currencyId = param.replace("balance_", "");
-            } else {
-                currencyId = null;
-            }
-            Currency currency;
-            int precision;
-            boolean precisionSetByPlaceholder = false;
-            if (currencyId != null) {
-                Optional<Currency> currencyOpt = EconomySubscriber.<Optional<Currency>>asFuture(
-                        s -> provider.findCurrency(currencyId)).join();
-                if (currencyOpt.isPresent()) {
-                    currency = currencyOpt.get();
-                    precision = 2;
-                } else {
-                    currency = provider.getPrimaryCurrency();
-                    if (currencyId.endsWith("dp")) {
-                        try {
-                            precision = Integer.parseInt(currencyId.replace("dp", ""));
-                            precisionSetByPlaceholder = true;
-                        } catch (NumberFormatException e) {
-                            precision = 2;
-                        }
-                    } else {
-                        precision = 2;
-                    }
-                }
-            } else {
-                currency = provider.getPrimaryCurrency();
-                precision = 2;
-            }
-            Locale locale = player.isOnline() ? Locale.forLanguageTag(player
-                    .getPlayer()
-                    .getLocale()) : Locale.ENGLISH;
-            BigDecimal balance = EconomySubscriber
-                    .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
-                    .thenCompose(val -> {
-                        if (val) {
-                            return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(
-                                    player.getUniqueId(),
-                                    s
-                            ));
-                        } else {
-                            return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.createPlayerAccount(
-                                    player.getUniqueId(),
-                                    s
-                            ));
-                        }
-                    })
-                    .thenCompose(account -> EconomySubscriber.<BigDecimal>asFuture(s -> account.retrieveBalance(
-                            currency,
-                            s
-                    )))
-                    .join();
-
-            if (precisionSetByPlaceholder) {
-                return currency.format(balance, locale, precision);
-            }
-
-            if (param.equalsIgnoreCase("balance") || param.equalsIgnoreCase("balance_commas")) {
-                return format.format(balance);
-            }
-            if (param.equalsIgnoreCase("balance_fixed")) {
-                return String.valueOf(balance.longValue());
-            }
-            if (param.equalsIgnoreCase("balance_formatted")) {
-                return fixMoney(balance, currency, locale, precision);
-            }
+        // Delegate balance request.
+        if (param.startsWith("balance")) {
+            return requestBalance(player, param);
         }
         return null;
     }
 
     // TODO maybe break up into smaller helper methods per-type
-    private @Nullable String requestTopBalance(@Nullable OfflinePlayer player, @NotNull String param) {
+    private @Nullable String requestTopBalance(
+            @Nullable OfflinePlayer player, @NotNull String param
+    ) {
         // Exactly "top_balance" - no parsing required.
         if (param.length() == 11) {
             BigDecimal topBalance = baltop.getTopBalance(provider.getPrimaryCurrencyId(), 0);
@@ -327,8 +291,57 @@ public class EconomyHook implements TreasuryPAPIHook {
         return baltop.getTopPlayer(currencyId, rank);
     }
 
+    private @Nullable String requestBalance(@NotNull OfflinePlayer player, @NotNull String param) {
+        Matcher matcher = BALANCE.matcher(param);
+        if (!matcher.matches()) {
+            // Invalid format
+            return null;
+        }
+        String type = matcher.group("type");
+        Currency currency = provider.findCurrency(getCurrencyId(matcher.group("currency"))).orElse(
+                provider.getPrimaryCurrency());
+        BigDecimal balance = EconomySubscriber
+                .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
+                .thenCompose(val -> {
+                    if (val) {
+                        return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(
+                                player.getUniqueId(),
+                                s
+                        ));
+                    } else {
+                        return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.createPlayerAccount(
+                                player.getUniqueId(),
+                                s
+                        ));
+                    }
+                })
+                .thenCompose(account -> EconomySubscriber.<BigDecimal>asFuture(s -> account.retrieveBalance(currency,
+                        s
+                )))
+                .join();
+
+        if (type == null || type.equalsIgnoreCase("commas")) {
+            return format.format(balance);
+        }
+
+        if (type.equalsIgnoreCase("fixed")) {
+            return String.valueOf(balance.longValue());
+        }
+
+        if (type.equalsIgnoreCase("formatted")) {
+            int precision = parseInt(matcher.group("precision"), -1);
+            Locale locale = player.isOnline() ? Locale.forLanguageTag(player
+                    .getPlayer()
+                    .getLocale()
+                    .replace('_', '-')) : Locale.ENGLISH;
+            return fixMoney(balance, currency, locale, precision);
+        }
+
+        return null;
+    }
+
     private @NotNull String getCurrencyId(@Nullable String currencyId) {
-        if (currencyId ==  null || currencyId.isEmpty()) {
+        if (currencyId == null || currencyId.isEmpty()) {
             return provider.getPrimaryCurrencyId();
         }
 
@@ -374,8 +387,7 @@ public class EconomyHook implements TreasuryPAPIHook {
             }
         }
         if (val < 1000000000000L) {
-            String format = currency.format(
-                    BigDecimal.valueOf(val / 1000000000L),
+            String format = currency.format(BigDecimal.valueOf(val / 1000000000L),
                     locale,
                     precision
             );
@@ -386,8 +398,7 @@ public class EconomyHook implements TreasuryPAPIHook {
             }
         }
         if (val < 1000000000000000L) {
-            String format = currency.format(
-                    BigDecimal.valueOf(val / 1000000000000L),
+            String format = currency.format(BigDecimal.valueOf(val / 1000000000000L),
                     locale,
                     precision
             );
@@ -398,8 +409,7 @@ public class EconomyHook implements TreasuryPAPIHook {
             }
         }
         if (val < 1000000000000000000L) {
-            String format = currency.format(
-                    BigDecimal.valueOf(val / 1000000000000000L),
+            String format = currency.format(BigDecimal.valueOf(val / 1000000000000000L),
                     locale,
                     precision
             );
