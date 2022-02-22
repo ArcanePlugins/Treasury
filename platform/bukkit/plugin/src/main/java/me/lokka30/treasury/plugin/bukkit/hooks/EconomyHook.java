@@ -188,7 +188,6 @@ public class EconomyHook implements TreasuryPAPIHook {
         return null;
     }
 
-    // TODO maybe break up into smaller helper methods per-type
     private @Nullable String requestTopBalance(
             @Nullable OfflinePlayer player, @NotNull String param
     ) {
@@ -223,34 +222,9 @@ public class EconomyHook implements TreasuryPAPIHook {
 
         // Formatting mode "formatted" yields a number using localizable multiples of 1000.
         if ("formatted".equals(type)) {
-            if (balance == null) {
-                return "0";
-            }
-            Locale locale = Locale.ENGLISH;
-            if (player != null && player.isOnline()) {
-                locale = Locale.forLanguageTag(player.getPlayer().getLocale().replace('_', '-'));
-            }
-            int precision = parseInt(matcher.group("precision"), -1);
-            Currency currency;
-            String specifiedCurrency = matcher.group("currency");
-            if (specifiedCurrency == null || specifiedCurrency.isEmpty()) {
-                currencyId = provider.getPrimaryCurrencyId();
-                currency = provider.getPrimaryCurrency();
-            } else {
-                Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
-                if (currencyOpt.isPresent()) {
-                    currency = currencyOpt.get();
-                } else {
-                    currency = provider.getPrimaryCurrency();
-                    currencyId = provider.getPrimaryCurrencyId();
-                }
-            }
-            BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId, rank);
-            if (topBalanceFormatted == null) {
-                return "0";
-            } else {
-                return fixMoney(topBalanceFormatted, currency, locale, precision);
-            }
+            // delegate "formatted" handling to it's own method since it's not of a small chunk
+            // of code too look at.
+            return requestFormattedTopBalance(player, matcher, currencyId, balance, rank);
         }
 
         if ("commas".equals(type)) {
@@ -272,6 +246,43 @@ public class EconomyHook implements TreasuryPAPIHook {
             return "0";
         } else {
             return String.valueOf(topBalance.doubleValue());
+        }
+    }
+
+    private @Nullable String requestFormattedTopBalance(
+            @Nullable OfflinePlayer player,
+            @NotNull Matcher matcher,
+            @NotNull String currencyId,
+            @Nullable BigDecimal balance,
+            int rank
+    ) {
+        if (balance == null) {
+            return "0";
+        }
+        Locale locale = Locale.ENGLISH;
+        if (player != null && player.isOnline()) {
+            locale = Locale.forLanguageTag(player.getPlayer().getLocale().replace('_', '-'));
+        }
+        int precision = parseInt(matcher.group("precision"), -1);
+        Currency currency;
+        String specifiedCurrency = matcher.group("currency");
+        if (specifiedCurrency == null || specifiedCurrency.isEmpty()) {
+            currencyId = provider.getPrimaryCurrencyId();
+            currency = provider.getPrimaryCurrency();
+        } else {
+            Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
+            if (currencyOpt.isPresent()) {
+                currency = currencyOpt.get();
+            } else {
+                currency = provider.getPrimaryCurrency();
+                currencyId = provider.getPrimaryCurrencyId();
+            }
+        }
+        BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId, rank);
+        if (topBalanceFormatted == null) {
+            return "0";
+        } else {
+            return fixMoney(topBalanceFormatted, currency, locale, precision);
         }
     }
 
@@ -301,7 +312,10 @@ public class EconomyHook implements TreasuryPAPIHook {
         Currency currency = provider.findCurrency(getCurrencyId(matcher.group("currency"))).orElse(
                 provider.getPrimaryCurrency());
         BigDecimal balance = EconomySubscriber
-                .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
+                .<Boolean>asFuture(s -> provider.hasPlayerAccount(
+                        player.getUniqueId(),
+                        s
+                ))
                 .thenCompose(val -> {
                     if (val) {
                         return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(
