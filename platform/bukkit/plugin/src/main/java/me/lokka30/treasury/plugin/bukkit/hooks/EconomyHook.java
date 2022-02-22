@@ -212,28 +212,28 @@ public class EconomyHook implements TreasuryPAPIHook {
         String currencyId = getCurrencyId(matcher.group("currency"));
         BigDecimal balance = baltop.getTopBalance(currencyId, rank);
 
+        if (balance == null) {
+            return "0";
+        }
+
         // Formatting mode "fixed" yields a raw number with no decimal places.
         if ("fixed".equals(type)) {
-            if (balance == null) {
-                return "0";
-            }
             return String.valueOf(balance.longValue());
         }
 
         // Formatting mode "formatted" yields a number using localizable multiples of 1000.
         if ("formatted".equals(type)) {
-            // delegate "formatted" handling to it's own method since it's not of a small chunk
-            // of code too look at.
-            return requestFormattedTopBalance(player, matcher, currencyId, balance, rank);
+            Locale locale = Locale.ENGLISH;
+            if (player != null && player.isOnline()) {
+                locale = Locale.forLanguageTag(player.getPlayer().getLocale().replace('_', '-'));
+            }
+            int precision = parseInt(matcher.group("precision"), -1);
+            Currency currency = provider.findCurrency(currencyId).orElse(provider.getPrimaryCurrency());
+            return fixMoney(balance, currency, locale, precision);
         }
 
         if ("commas".equals(type)) {
-            BigDecimal topBalanceCommas = baltop.getTopBalance(currencyId, rank);
-            if (topBalanceCommas == null) {
-                return "0";
-            } else {
-                return format.format(topBalanceCommas);
-            }
+            return format.format(balance);
         }
 
         // Unsupported type argument, don't fall through silently.
@@ -241,49 +241,7 @@ public class EconomyHook implements TreasuryPAPIHook {
             return null;
         }
 
-        BigDecimal topBalance = baltop.getTopBalance(currencyId, rank);
-        if (topBalance == null) {
-            return "0";
-        } else {
-            return String.valueOf(topBalance.doubleValue());
-        }
-    }
-
-    private @Nullable String requestFormattedTopBalance(
-            @Nullable OfflinePlayer player,
-            @NotNull Matcher matcher,
-            @NotNull String currencyId,
-            @Nullable BigDecimal balance,
-            int rank
-    ) {
-        if (balance == null) {
-            return "0";
-        }
-        Locale locale = Locale.ENGLISH;
-        if (player != null && player.isOnline()) {
-            locale = Locale.forLanguageTag(player.getPlayer().getLocale().replace('_', '-'));
-        }
-        int precision = parseInt(matcher.group("precision"), -1);
-        Currency currency;
-        String specifiedCurrency = matcher.group("currency");
-        if (specifiedCurrency == null || specifiedCurrency.isEmpty()) {
-            currencyId = provider.getPrimaryCurrencyId();
-            currency = provider.getPrimaryCurrency();
-        } else {
-            Optional<Currency> currencyOpt = provider.findCurrency(currencyId);
-            if (currencyOpt.isPresent()) {
-                currency = currencyOpt.get();
-            } else {
-                currency = provider.getPrimaryCurrency();
-                currencyId = provider.getPrimaryCurrencyId();
-            }
-        }
-        BigDecimal topBalanceFormatted = baltop.getTopBalance(currencyId, rank);
-        if (topBalanceFormatted == null) {
-            return "0";
-        } else {
-            return fixMoney(topBalanceFormatted, currency, locale, precision);
-        }
+        return String.valueOf(balance.longValue());
     }
 
     private @Nullable String requestTopPlayer(@NotNull String param) {
