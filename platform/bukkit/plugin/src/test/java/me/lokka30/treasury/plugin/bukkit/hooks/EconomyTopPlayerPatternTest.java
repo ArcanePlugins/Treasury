@@ -54,7 +54,7 @@ class EconomyTopPlayerPatternTest {
     }
 
     public static Stream<Arguments> getCombineGroups() {
-        String[] rank = new String[]{null, "1", "2", "4"};
+        String[] rank = new String[]{null, "1", "2", "4", "10", "225"};
         String[] currency = new String[]{null, "", "euro", "@%#(*^&", ";drop table users;", "5dpapa_dollar"};
 
         int maxIndex = rank.length * currency.length;
