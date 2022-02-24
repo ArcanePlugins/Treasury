@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.bukkit.hooks;
+package me.lokka30.treasury.plugin.bukkit.hooks.papi;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,17 +12,18 @@ import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
+import me.lokka30.treasury.plugin.bukkit.hooks.papi.economy.EconomyHook;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PAPIExpansion extends PlaceholderExpansion implements Configurable, Cacheable {
+public class TreasuryPapiExpansion extends PlaceholderExpansion implements Configurable, Cacheable {
 
     private final String author;
-    private final Collection<TreasuryPAPIHook> hooks = new HashSet<>();
+    private final Collection<TreasuryPapiHook> hooks = new HashSet<>();
 
-    public PAPIExpansion(@NotNull TreasuryBukkit plugin) {
+    public TreasuryPapiExpansion(@NotNull TreasuryBukkit plugin) {
         this.author = String.join(", ", plugin.getDescription().getAuthors());
         this.hooks.add(new EconomyHook(this, plugin));
     }
@@ -77,7 +78,7 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable,
 
     @Override
     public String onRequest(@Nullable OfflinePlayer player, @NotNull String param) {
-        for (TreasuryPAPIHook hook : hooks) {
+        for (TreasuryPapiHook hook : hooks) {
             if (param.startsWith(hook.getPrefix())) {
                 // Pass request to specified hook sans prefix.
                 return hook.onRequest(player, param.replace(hook.getPrefix(), ""));
@@ -89,7 +90,7 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable,
 
     @Override
     public void clear() {
-        hooks.forEach(TreasuryPAPIHook::clear);
+        hooks.forEach(TreasuryPapiHook::clear);
     }
 
 }

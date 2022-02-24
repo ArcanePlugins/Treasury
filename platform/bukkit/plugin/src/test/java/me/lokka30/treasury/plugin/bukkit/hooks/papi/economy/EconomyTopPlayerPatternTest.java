@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.bukkit.hooks;
+package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
