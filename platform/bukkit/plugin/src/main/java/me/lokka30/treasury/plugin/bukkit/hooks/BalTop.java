@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -30,17 +31,17 @@ public class BalTop extends BukkitRunnable {
     private final boolean enabled;
     private final int topSize;
     private final int taskDelay;
-    private final EconomyProvider provider;
+    private final AtomicReference<EconomyProvider> providerRef;
 
     private final Multimap<String, TopPlayer> baltop;
 
     public BalTop(
-            boolean enabled, int topSize, int taskDelay, EconomyProvider provider
+            boolean enabled, int topSize, int taskDelay, AtomicReference<EconomyProvider> provider
     ) {
         this.enabled = enabled;
         this.topSize = topSize;
         this.taskDelay = taskDelay;
-        this.provider = provider;
+        this.providerRef = provider;
         this.baltop = Multimaps.newSortedSetMultimap(
                 new HashMap<>(),
                 () -> new TreeSet<>(TopPlayer::compareTo));
@@ -94,7 +95,11 @@ public class BalTop extends BukkitRunnable {
             cancel();
             return;
         }
-        List<Throwable> errors = handlePlayers(0, 0, new ArrayList<>());
+        EconomyProvider provider = providerRef.get();
+        if (provider == null) {
+            return;
+        }
+        List<Throwable> errors = handlePlayers(provider, 0, 0, new ArrayList<>());
         if (!errors.isEmpty()) {
             Logger logger = TreasuryPlugin.getInstance().logger();
             logger.error("A few errors encountered whilst retrieving baltop");
@@ -121,7 +126,9 @@ public class BalTop extends BukkitRunnable {
         }
     }
 
-    private List<Throwable> handlePlayers(int index, int posIndex, List<Throwable> errorsToThrow) {
+    private List<Throwable> handlePlayers(
+            EconomyProvider provider, int index, int posIndex, List<Throwable> errorsToThrow
+    ) {
         OfflinePlayer[] players = Bukkit.getOfflinePlayers();
         for (int i = index; i < players.length; i++) {
             OfflinePlayer player = players[i];
@@ -161,11 +168,11 @@ public class BalTop extends BukkitRunnable {
                                         );
                                     }
 
-                                    handlePlayers(nextIndex, posIndex + 1, errorsToThrow);
+                                    handlePlayers(provider, nextIndex, posIndex + 1, errorsToThrow);
                                 });
                     }
                 } else {
-                    handlePlayers(nextIndex, posIndex + 1, errorsToThrow);
+                    handlePlayers(provider, nextIndex, posIndex + 1, errorsToThrow);
                 }
             });
             break;

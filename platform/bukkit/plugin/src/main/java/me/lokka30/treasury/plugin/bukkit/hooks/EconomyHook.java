@@ -8,10 +8,15 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import me.lokka30.treasury.api.common.event.EventBus;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
+import me.lokka30.treasury.api.common.service.event.ServiceRegisteredEvent;
+import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -89,7 +94,7 @@ public class EconomyHook implements TreasuryPAPIHook {
                     // Optional group "currency": currency ID
                     + "(_(?<currency>.*?))?");
 
-    private EconomyProvider provider;
+    private final AtomicReference<EconomyProvider> providerRef;
     private final DecimalFormat format = new DecimalFormat("#,###");
     private final PAPIExpansion expansion;
     private final TreasuryBukkit plugin;
@@ -101,6 +106,7 @@ public class EconomyHook implements TreasuryPAPIHook {
     private BalTop baltop;
 
     public EconomyHook(@NotNull PAPIExpansion expansion, @NotNull TreasuryBukkit plugin) {
+        this.providerRef = new AtomicReference<>();
         this.expansion = expansion;
         this.plugin = plugin;
         this.k = expansion.getString("formatting.thousands", "k");
@@ -117,7 +123,40 @@ public class EconomyHook implements TreasuryPAPIHook {
 
     @Override
     public boolean setup() {
-        // Cancel existing baltop task.
+        clear();
+
+        EventBus.INSTANCE.subscriptionFor(ServiceRegisteredEvent.class)
+                .whenCalled(event -> {
+                    handleServiceChange(event::getService);
+                });
+        EventBus.INSTANCE.subscriptionFor(ServiceUnregisteredEvent.class)
+                .whenCalled(event -> {
+                    handleServiceChange(event::getService);
+                });
+
+        this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
+                expansion.getInt("baltop.cache_size", 100),
+                expansion.getInt("baltop.cache_delay", 60),
+                providerRef
+        );
+
+        this.baltop.start(plugin);
+        return true;
+    }
+
+    private void handleServiceChange(Supplier<Service<?>> supplier) {
+        if (!(supplier.get().get() instanceof EconomyProvider)) {
+            return;
+        }
+
+        Optional<Service<EconomyProvider>> serviceOpt = ServiceRegistry.INSTANCE
+                .serviceFor(EconomyProvider.class);
+        serviceOpt.ifPresent(econService -> providerRef.set(econService.get()));
+    }
+
+    @Override
+    public void clear() {
+        // Cancel baltop task.
         if (this.baltop != null) {
             try {
                 this.baltop.cancel();
@@ -125,33 +164,15 @@ public class EconomyHook implements TreasuryPAPIHook {
                 // Ignore scheduler having failed to start task.
             }
         }
-
-        Optional<Service<EconomyProvider>> serviceOpt = ServiceRegistry.INSTANCE.serviceFor(
-                EconomyProvider.class);
-        if (serviceOpt.isPresent()) {
-            provider = serviceOpt.get().get();
-            this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
-                    expansion.getInt("baltop.cache_size", 100),
-                    expansion.getInt("baltop.cache_delay", 60),
-                    provider
-            );
-            this.baltop.start(plugin);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean canRegister() {
-        return provider != null;
     }
 
     @Override
     public @Nullable String onRequest(
-            @Nullable OfflinePlayer player, @NotNull String param
+            @Nullable OfflinePlayer player,
+            @NotNull String param
     ) {
         // If provider is not present, return quickly.
+        EconomyProvider provider = providerRef.get();
         if (provider == null) {
             return null;
         }
@@ -163,12 +184,12 @@ public class EconomyHook implements TreasuryPAPIHook {
 
         // Delegate top balance request.
         if (param.startsWith("top_balance")) {
-            return requestTopBalance(player, param);
+            return requestTopBalance(provider, player, param);
         }
 
         // Delegate top player request.
         if (param.startsWith("top_player")) {
-            return requestTopPlayer(param);
+            return requestTopPlayer(provider, param);
         }
 
         if (player == null) {
@@ -183,13 +204,15 @@ public class EconomyHook implements TreasuryPAPIHook {
 
         // Delegate balance request.
         if (param.startsWith("balance")) {
-            return requestBalance(player, param);
+            return requestBalance(provider, player, param);
         }
         return null;
     }
 
     private @Nullable String requestTopBalance(
-            @Nullable OfflinePlayer player, @NotNull String param
+            @NotNull EconomyProvider provider,
+            @Nullable OfflinePlayer player,
+            @NotNull String param
     ) {
         // Exactly "top_balance" - no parsing required.
         if (param.length() == 11) {
@@ -209,7 +232,7 @@ public class EconomyHook implements TreasuryPAPIHook {
 
         String type = matcher.group("type");
         int rank = parseInt(matcher.group("rank"), 1);
-        String currencyId = getCurrencyId(matcher.group("currency"));
+        String currencyId = getCurrencyId(provider, matcher.group("currency"));
         BigDecimal balance = baltop.getTopBalance(currencyId, rank);
 
         if (balance == null) {
@@ -244,7 +267,10 @@ public class EconomyHook implements TreasuryPAPIHook {
         return String.valueOf(balance.longValue());
     }
 
-    private @Nullable String requestTopPlayer(@NotNull String param) {
+    private @Nullable String requestTopPlayer(
+            @NotNull EconomyProvider provider,
+            @NotNull String param
+    ) {
         // Exactly "top_player" - no need for parsing
         if (param.length() == 9) {
             return baltop.getTopPlayer(provider.getPrimaryCurrencyId(), 1);
@@ -256,19 +282,24 @@ public class EconomyHook implements TreasuryPAPIHook {
             return null;
         }
         int rank = parseInt(matcher.group("rank"), 1);
-        String currencyId = getCurrencyId(matcher.group("currency"));
+        String currencyId = getCurrencyId(provider, matcher.group("currency"));
         return baltop.getTopPlayer(currencyId, rank);
     }
 
-    private @Nullable String requestBalance(@NotNull OfflinePlayer player, @NotNull String param) {
+    private @Nullable String requestBalance(
+            @NotNull EconomyProvider provider,
+            @NotNull OfflinePlayer player,
+            @NotNull String param
+    ) {
         Matcher matcher = BALANCE.matcher(param);
         if (!matcher.matches()) {
             // Invalid format
             return null;
         }
         String type = matcher.group("type");
-        Currency currency = provider.findCurrency(getCurrencyId(matcher.group("currency"))).orElse(
-                provider.getPrimaryCurrency());
+        Currency currency = provider
+                .findCurrency(getCurrencyId(provider, matcher.group("currency")))
+                .orElse(provider.getPrimaryCurrency());
         BigDecimal balance = EconomySubscriber
                 .<Boolean>asFuture(s -> provider.hasPlayerAccount(
                         player.getUniqueId(),
@@ -312,7 +343,10 @@ public class EconomyHook implements TreasuryPAPIHook {
         return null;
     }
 
-    private @NotNull String getCurrencyId(@Nullable String currencyId) {
+    private @NotNull String getCurrencyId(
+            @NotNull EconomyProvider provider,
+            @Nullable String currencyId
+    ) {
         if (currencyId == null || currencyId.isEmpty()) {
             return provider.getPrimaryCurrencyId();
         }
@@ -332,7 +366,6 @@ public class EconomyHook implements TreasuryPAPIHook {
         }
     }
 
-    // TODO: support more multiples? Treasury does use BD, numbers go up.
     private String fixMoney(BigDecimal decimal, Currency currency, Locale locale, int precision) {
         if (precision < 0) {
             precision = currency.getPrecision();

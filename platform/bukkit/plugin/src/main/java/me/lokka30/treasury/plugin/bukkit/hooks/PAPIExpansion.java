@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
@@ -16,7 +17,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PAPIExpansion extends PlaceholderExpansion implements Configurable {
+public class PAPIExpansion extends PlaceholderExpansion implements Configurable, Cacheable {
 
     private final String author;
     private final Collection<TreasuryPAPIHook> hooks = new HashSet<>();
@@ -71,7 +72,7 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable 
 
     @Override
     public boolean canRegister() {
-        return hooks.stream().anyMatch(TreasuryPAPIHook::canRegister);
+        return true;
     }
 
     @Override
@@ -84,6 +85,11 @@ public class PAPIExpansion extends PlaceholderExpansion implements Configurable 
         }
 
         return null;
+    }
+
+    @Override
+    public void clear() {
+        hooks.forEach(TreasuryPAPIHook::clear);
     }
 
 }

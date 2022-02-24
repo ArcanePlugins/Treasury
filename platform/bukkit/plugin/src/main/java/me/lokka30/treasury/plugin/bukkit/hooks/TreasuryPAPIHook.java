@@ -14,8 +14,9 @@ public interface TreasuryPAPIHook {
 
     boolean setup();
 
-    boolean canRegister();
+    void clear();
 
     @Nullable
     String onRequest(@Nullable OfflinePlayer player, @NotNull String param);
+
 }
