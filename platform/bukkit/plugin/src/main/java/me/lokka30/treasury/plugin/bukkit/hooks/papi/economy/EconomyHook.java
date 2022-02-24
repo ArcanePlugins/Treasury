@@ -158,7 +158,11 @@ public class EconomyHook implements TreasuryPapiHook {
 
         Optional<Service<EconomyProvider>> serviceOpt = ServiceRegistry.INSTANCE.serviceFor(
                 EconomyProvider.class);
-        serviceOpt.ifPresent(econService -> providerRef.set(econService.get()));
+        if (serviceOpt.isPresent()) {
+            providerRef.set(serviceOpt.get().get());
+        } else {
+            providerRef.set(null);
+        }
     }
 
     @Override
