@@ -48,6 +48,7 @@ public class TreasuryPapiExpansion extends PlaceholderExpansion implements Confi
         defaults.put("baltop.enabled", false);
         defaults.put("baltop.cache_size", 100);
         defaults.put("baltop.check_delay", 30);
+        defaults.put("balance.cache_check_delay", 60);
         defaults.put("formatting.thousands", "k");
         defaults.put("formatting.millions", "M");
         defaults.put("formatting.billions", "B");

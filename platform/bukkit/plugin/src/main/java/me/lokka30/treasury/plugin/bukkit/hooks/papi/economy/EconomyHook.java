@@ -18,9 +18,7 @@ import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.common.service.event.ServiceRegisteredEvent;
 import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiExpansion;
 import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHook;
@@ -106,6 +104,7 @@ public class EconomyHook implements TreasuryPapiHook {
     private final String t;
     private final String q;
     private BalTop baltop;
+    private BalanceCache balanceCache;
 
     public EconomyHook(@NotNull TreasuryPapiExpansion expansion, @NotNull TreasuryBukkit plugin) {
         this.providerRef = new AtomicReference<>();
@@ -143,11 +142,17 @@ public class EconomyHook implements TreasuryPapiHook {
 
         this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
                 expansion.getInt("baltop.cache_size", 100),
-                expansion.getInt("baltop.cache_delay", 60),
+                expansion.getInt("baltop.cache_delay", 30),
                 providerRef
         );
 
         this.baltop.start(plugin);
+
+        this.balanceCache = new BalanceCache(expansion.getInt("balance.cache_check_delay", 60),
+                providerRef
+        );
+
+        this.balanceCache.start(plugin);
         return true;
     }
 
@@ -307,25 +312,13 @@ public class EconomyHook implements TreasuryPapiHook {
         Currency currency = provider.findCurrency(getCurrencyId(provider,
                 matcher.group("currency")
         )).orElse(provider.getPrimaryCurrency());
-        BigDecimal balance = EconomySubscriber
-                .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
-                .thenCompose(val -> {
-                    if (val) {
-                        return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(
-                                player.getUniqueId(),
-                                s
-                        ));
-                    } else {
-                        return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.createPlayerAccount(
-                                player.getUniqueId(),
-                                s
-                        ));
-                    }
-                })
-                .thenCompose(account -> EconomySubscriber.<BigDecimal>asFuture(s -> account.retrieveBalance(currency,
-                        s
-                )))
-                .join();
+
+        BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
+                currency.getIdentifier()
+        );
+        if (balance == null) {
+            return "0";
+        }
 
         if (type == null || type.equalsIgnoreCase("commas")) {
             return format.format(balance);
@@ -344,7 +337,7 @@ public class EconomyHook implements TreasuryPapiHook {
             return fixMoney(balance, currency, locale, precision);
         }
 
-        return null;
+        return format.format(balance);
     }
 
     private @NotNull String getCurrencyId(

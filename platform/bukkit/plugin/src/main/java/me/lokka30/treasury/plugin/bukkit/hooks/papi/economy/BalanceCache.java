@@ -7,8 +7,8 @@ package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.math.BigDecimal;
+import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,7 +34,7 @@ public class BalanceCache extends BukkitRunnable {
     }
 
     public void start(TreasuryBukkit plugin) {
-        runTaskTimerAsynchronously(plugin, 1, delay * 20L);
+        runTaskTimerAsynchronously(plugin, 20, delay * 20L);
     }
 
     public @Nullable BigDecimal getBalance(UUID uuid, String currencyId) {
@@ -58,7 +58,34 @@ public class BalanceCache extends BukkitRunnable {
             return;
         }
         balances.clear();
-        // TODO WIP
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            PlayerAccount account = EconomySubscriber
+                    .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
+                    .thenCompose(val -> {
+                        if (val) {
+                            return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(player.getUniqueId(),
+                                    s
+                            ));
+                        } else {
+                            return null;
+                        }
+                    })
+                    .join();
+            if (account == null) {
+                continue;
+            }
+            for (Currency currency : provider.getCurrencies()) {
+                BigDecimal balance = EconomySubscriber
+                        .<BigDecimal>asFuture(s -> account.retrieveBalance(currency, s))
+                        .join();
+                if (balance == null || balance.equals(BigDecimal.ZERO)) {
+                    continue;
+                }
+                balances.put(player.getUniqueId(),
+                        new AbstractMap.SimpleEntry<>(currency.getIdentifier(), balance)
+                );
+            }
+        }
     }
 
 }
