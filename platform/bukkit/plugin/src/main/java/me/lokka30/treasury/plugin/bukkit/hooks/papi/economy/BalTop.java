@@ -18,8 +18,6 @@ import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -42,9 +40,9 @@ public class BalTop extends BukkitRunnable {
         this.topSize = topSize;
         this.taskDelay = taskDelay;
         this.providerRef = provider;
-        this.baltop = Multimaps.newSortedSetMultimap(
-                new HashMap<>(),
-                () -> new TreeSet<>(TopPlayer::compareTo));
+        this.baltop = Multimaps.newSortedSetMultimap(new HashMap<>(),
+                () -> new TreeSet<>(TopPlayer::compareTo)
+        );
     }
 
     public void start(TreasuryBukkit plugin) {
@@ -74,12 +72,24 @@ public class BalTop extends BukkitRunnable {
 
     public String getTopPlayer(String currencyId, int position) {
         position = normalizePosition(position);
-        return baltop.get(currencyId).stream().skip(position).findFirst().map(TopPlayer::getName).orElse("");
+        return baltop
+                .get(currencyId)
+                .stream()
+                .skip(position)
+                .findFirst()
+                .map(TopPlayer::getName)
+                .orElse("");
     }
 
     public @Nullable BigDecimal getTopBalance(String currencyId, int position) {
         position = normalizePosition(position);
-        return baltop.get(currencyId).stream().skip(position).findFirst().map(TopPlayer::getBalance).orElse(null);
+        return baltop
+                .get(currencyId)
+                .stream()
+                .skip(position)
+                .findFirst()
+                .map(TopPlayer::getBalance)
+                .orElse(null);
     }
 
     private int normalizePosition(int position) {
@@ -99,15 +109,8 @@ public class BalTop extends BukkitRunnable {
         if (provider == null) {
             return;
         }
-        List<Throwable> errors = handlePlayers(provider, 0, 0, new ArrayList<>());
-        if (!errors.isEmpty()) {
-            Logger logger = TreasuryPlugin.getInstance().logger();
-            logger.error("A few errors encountered whilst retrieving baltop");
-            for (Throwable e : errors) {
-                logger.error(e.getMessage(), e);
-            }
-            return;
-        }
+        baltop.clear();
+        handlePlayers(provider);
         for (String key : baltop.keys()) {
             Collection<TopPlayer> currentPlayers = baltop.get(key);
             if (currentPlayers.isEmpty() || currentPlayers.size() <= topSize) {
@@ -126,58 +129,37 @@ public class BalTop extends BukkitRunnable {
         }
     }
 
-    private List<Throwable> handlePlayers(
-            EconomyProvider provider, int index, int posIndex, List<Throwable> errorsToThrow
-    ) {
-        OfflinePlayer[] players = Bukkit.getOfflinePlayers();
-        for (int i = index; i < players.length; i++) {
-            OfflinePlayer player = players[i];
-            if (player == null || player.getName() == null) {
+    private void handlePlayers(EconomyProvider provider) {
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            if (player.getName() == null) {
                 continue;
             }
 
-            final int nextIndex = i + 1;
-            EconomySubscriber.<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(),
-                    s
-            )).thenCompose(val -> {
-                if (val) {
-                    return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(player.getUniqueId(),
-                            s
-                    ));
-                } else {
-                    return null;
+            PlayerAccount account = EconomySubscriber
+                    .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
+                    .thenCompose(val -> {
+                        if (val) {
+                            return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(player.getUniqueId(),
+                                    s
+                            ));
+                        } else {
+                            return null;
+                        }
+                    })
+                    .join();
+            if (account == null) {
+                continue;
+            }
+            for (Currency currency : provider.getCurrencies()) {
+                BigDecimal balance = EconomySubscriber
+                        .<BigDecimal>asFuture(s -> account.retrieveBalance(currency, s))
+                        .join();
+                if (balance == null || balance.equals(BigDecimal.ZERO)) {
+                    continue;
                 }
-            }).whenComplete((account, errors) -> {
-                if (errors != null) {
-                    errorsToThrow.add(errors);
-                    return;
-                }
-                if (account != null) {
-                    for (Currency currency : provider.getCurrencies()) {
-                        EconomySubscriber
-                                .<BigDecimal>asFuture(s -> account.retrieveBalance(currency, s))
-                                .whenComplete((bal, error) -> {
-                                    if (error != null) {
-                                        errorsToThrow.add(error);
-                                        return;
-                                    }
-
-                                    if (bal != null && !bal.equals(BigDecimal.ZERO)) {
-                                        baltop.put(currency.getIdentifier(),
-                                                new TopPlayer(player.getName(), bal)
-                                        );
-                                    }
-
-                                    handlePlayers(provider, nextIndex, posIndex + 1, errorsToThrow);
-                                });
-                    }
-                } else {
-                    handlePlayers(provider, nextIndex, posIndex + 1, errorsToThrow);
-                }
-            });
-            break;
+                baltop.put(currency.getIdentifier(), new TopPlayer(player.getName(), balance));
+            }
         }
-        return errorsToThrow;
     }
 
     public static class TopPlayer implements Comparable<TopPlayer> {
