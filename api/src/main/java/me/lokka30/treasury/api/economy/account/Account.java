@@ -264,7 +264,7 @@ public interface Account {
      */
     void doTransaction(
             @NotNull EconomyTransaction economyTransaction,
-            EconomySubscriber<BigDecimal> subscription
+            @NotNull EconomySubscriber<BigDecimal> subscription
     );
 
     /**
