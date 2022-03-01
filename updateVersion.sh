@@ -5,8 +5,6 @@
 # This updates the "version" tag in the parent pom, and updates the
 # plugin.version and plugin.specificationVersion properties , also cleaning up the
 # "pom.xml.versionsBackup" files leftover the maven commands
-# WARNING: THIS DOES NOT UPDATE THE VERSIONS OF THE API MODULES. YOU HAVE TO DO THAT BY HAND IF
-# NEEDED.
 # ================================================================================================
 # How to use: if you just want to change the version, plainly run "./updateVersion.sh" in the
 # terminal and it will tell you to specify a new version.
@@ -39,7 +37,7 @@ function commit {
     fi
 }
 
-read -p "Enter new version:" input
+read -p "Enter new version: " input
 IFS='-'
 
 read -a array <<<"$input"
