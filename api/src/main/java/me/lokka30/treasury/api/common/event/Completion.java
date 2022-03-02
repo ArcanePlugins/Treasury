@@ -72,7 +72,9 @@ public final class Completion {
         List<Throwable> errors = new ArrayList<>();
         for (Completion completion : other) {
             Objects.requireNonNull(completion, "completion");
-            completion.waitCompletion();
+            if (!completion.isCompleted()) {
+                completion.waitCompletion();
+            }
             if (!completion.getErrors().isEmpty()) {
                 errors.addAll(completion.getErrors());
             }
@@ -105,6 +107,16 @@ public final class Completion {
 
     private Completion(@NotNull Throwable error) {
         this(Collections.singletonList(Objects.requireNonNull(error, "error")));
+    }
+
+    /**
+     * Returns whether this {@code Completion} is completed.
+     *
+     * @return completed or not
+     * @since v1.1.2
+     */
+    public boolean isCompleted() {
+        return latch.getCount() == 0;
     }
 
     /**

@@ -7,7 +7,7 @@
 tag=$1
 
 if [ -z "$tag" ]; then
-    echo "Invalid input. Usage: ./createTag.sh <branch> <tag> . Try again"
+    echo "Invalid input. Usage: ./createTag.sh <tag> . Try again"
     exit 1
 fi
 
