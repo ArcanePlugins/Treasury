@@ -126,10 +126,17 @@ public class EconomyHook implements TreasuryPapiHook {
     public boolean setup() {
         clear();
 
+        // TODO: This doesn't work for getting the provider.
+        // I (MrIvanPlays) used BetterEconomy which uses bukkit to register the provider.
+        // /treasury economy info confirms that bukkit2treasury migration works fine. The print
+        // inside the listener doesn't get printed. I tested whether it registers and it does. No
+        // need for call test because the bukkit2treasury migration works fine. I'm out of ideas
+        // on how to solve this.
         EventBus eventBus = EventBus.INSTANCE;
         eventBus.subscribe(eventBus
                 .subscriptionFor(ServiceRegisteredEvent.class)
                 .whenCalled(event -> {
+                    System.out.println("service registered event called");
                     handleServiceChange(event::getService);
                 })
                 .completeSubscription());
@@ -157,6 +164,7 @@ public class EconomyHook implements TreasuryPapiHook {
     }
 
     private void handleServiceChange(Supplier<Service<?>> supplier) {
+        // TODO: See L129
         if (!(supplier.get().get() instanceof EconomyProvider)) {
             return;
         }
@@ -164,6 +172,7 @@ public class EconomyHook implements TreasuryPapiHook {
         Optional<Service<EconomyProvider>> serviceOpt = ServiceRegistry.INSTANCE.serviceFor(
                 EconomyProvider.class);
         if (serviceOpt.isPresent()) {
+            System.out.println("service is present");
             providerRef.set(serviceOpt.get().get());
         } else {
             providerRef.set(null);
@@ -189,6 +198,7 @@ public class EconomyHook implements TreasuryPapiHook {
         // If provider is not present, return quickly.
         EconomyProvider provider = providerRef.get();
         if (provider == null) {
+            System.out.println("Null provider");
             return null;
         }
 
