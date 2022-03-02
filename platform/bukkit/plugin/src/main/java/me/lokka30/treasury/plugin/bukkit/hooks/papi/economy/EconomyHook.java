@@ -9,7 +9,6 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.lokka30.treasury.api.common.event.EventBus;
@@ -126,21 +125,28 @@ public class EconomyHook implements TreasuryPapiHook {
     public boolean setup() {
         clear();
 
-        // TODO: This doesn't work for getting the provider.
-        // Tests conclude that event calling does work. 
+        // call a service change because there are economy providers that register to the service
+        // manager in onLoad. that's earlier than when treasury and papi start and in that time
+        // we can't capture any ServiceRegisteredEvent occurring.
+        handleServiceChange();
+
         EventBus eventBus = EventBus.INSTANCE;
         eventBus.subscribe(eventBus
                 .subscriptionFor(ServiceRegisteredEvent.class)
                 .whenCalled(event -> {
-                    plugin.getLogger().info("service registered event called");
-                    handleServiceChange(event::getService);
+                    if (!(event.getService().get() instanceof EconomyProvider)) {
+                        return;
+                    }
+                    handleServiceChange();
                 })
                 .completeSubscription());
         eventBus.subscribe(eventBus
                 .subscriptionFor(ServiceUnregisteredEvent.class)
                 .whenCalled(event -> {
-                    plugin.getLogger().info("service unregistered event called");
-                    handleServiceChange(event::getService);
+                    if (!(event.getService().get() instanceof EconomyProvider)) {
+                        return;
+                    }
+                    handleServiceChange();
                 })
                 .completeSubscription());
 
@@ -160,17 +166,10 @@ public class EconomyHook implements TreasuryPapiHook {
         return true;
     }
 
-    private void handleServiceChange(Supplier<Service<?>> supplier) {
-        // TODO: See L129
-        plugin.getLogger().info("handleServiceChange");
-        if (!(supplier.get().get() instanceof EconomyProvider)) {
-            return;
-        }
-
+    private void handleServiceChange() {
         Optional<Service<EconomyProvider>> serviceOpt = ServiceRegistry.INSTANCE.serviceFor(
                 EconomyProvider.class);
         if (serviceOpt.isPresent()) {
-            System.out.println("service is present");
             providerRef.set(serviceOpt.get().get());
         } else {
             providerRef.set(null);
@@ -196,7 +195,6 @@ public class EconomyHook implements TreasuryPapiHook {
         // If provider is not present, return quickly.
         EconomyProvider provider = providerRef.get();
         if (provider == null) {
-            plugin.getLogger().info("Null provider");
             return null;
         }
 
