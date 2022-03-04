@@ -1,4 +1,4 @@
-package me.lokka30.treasury.api.economy.events;
+package me.lokka30.treasury.api.economy.events.account;
 
 import me.lokka30.treasury.api.common.event.EventBus;
 import me.lokka30.treasury.api.common.misc.TriState;
@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Decorating class for event calling account
+ */
 public class EventCallingAccount<T extends Account> implements Account {
 
     private final T originalAccount;

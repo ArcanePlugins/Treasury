@@ -1,11 +1,15 @@
 package me.lokka30.treasury.api.economy.events;
 
+import me.lokka30.treasury.api.common.event.EventBus;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
+import me.lokka30.treasury.api.economy.events.account.EventCallingAccount;
+import me.lokka30.treasury.api.economy.events.account.EventCallingPlayerAccount;
 import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
+import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,9 +21,11 @@ import java.util.UUID;
 public class EventEconomyProvider implements EconomyProvider {
 
     private final EconomyProvider originalProvider;
+    private final EventBus eventBus;
 
-    public EventEconomyProvider(final EconomyProvider originalProvider) {
+    public EventEconomyProvider(final EconomyProvider originalProvider, EventBus eventBus) {
         this.originalProvider = originalProvider;
+        this.eventBus = eventBus;
     }
 
 
@@ -46,8 +52,7 @@ public class EventEconomyProvider implements EconomyProvider {
             @NotNull final UUID accountId,
             @NotNull final EconomySubscriber<PlayerAccount> subscription
     ) {
-        // todo return wrapped
-        originalProvider.retrievePlayerAccount(accountId, subscription);
+        originalProvider.retrievePlayerAccount(accountId, wrapPlayerAccount(subscription));
     }
 
     @Override
@@ -55,8 +60,7 @@ public class EventEconomyProvider implements EconomyProvider {
             @NotNull final UUID accountId,
             @NotNull final EconomySubscriber<PlayerAccount> subscription
     ) {
-        // todo return wrapped
-        originalProvider.createPlayerAccount(accountId, subscription);
+        originalProvider.createPlayerAccount(accountId, wrapPlayerAccount(subscription));
     }
 
     @Override
@@ -77,8 +81,7 @@ public class EventEconomyProvider implements EconomyProvider {
             @NotNull final String identifier,
             @NotNull final EconomySubscriber<Account> subscription
     ) {
-        // todo return wrapped
-        originalProvider.retrieveAccount(identifier, subscription);
+        originalProvider.retrieveAccount(identifier, wrapAccount(subscription));
     }
 
     @Override
@@ -87,8 +90,7 @@ public class EventEconomyProvider implements EconomyProvider {
             @NotNull final String identifier,
             @NotNull final EconomySubscriber<Account> subscription
     ) {
-        // todo return wrapped
-        originalProvider.createAccount(identifier, subscription);
+        originalProvider.createAccount(identifier, wrapAccount(subscription));
     }
 
     @Override
@@ -122,6 +124,34 @@ public class EventEconomyProvider implements EconomyProvider {
             @NotNull final EconomySubscriber<Boolean> subscription
     ) {
         originalProvider.registerCurrency(currency, subscription);
+    }
+
+    private EconomySubscriber<PlayerAccount> wrapPlayerAccount(EconomySubscriber<PlayerAccount> original) {
+        return new EconomySubscriber<PlayerAccount>() {
+            @Override
+            public void succeed(@NotNull final PlayerAccount playerAccount) {
+                original.succeed(new EventCallingPlayerAccount(playerAccount, eventBus));
+            }
+
+            @Override
+            public void fail(@NotNull final EconomyException exception) {
+                original.fail(exception);
+            }
+        };
+    }
+
+    private EconomySubscriber<Account> wrapAccount(EconomySubscriber<Account> original) {
+        return new EconomySubscriber<Account>() {
+            @Override
+            public void succeed(@NotNull final Account account) {
+                original.succeed(new EventCallingAccount<>(account, eventBus));
+            }
+
+            @Override
+            public void fail(@NotNull final EconomyException exception) {
+                original.fail(exception);
+            }
+        };
     }
 
 }
