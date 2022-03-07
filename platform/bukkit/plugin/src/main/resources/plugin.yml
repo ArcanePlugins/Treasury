@@ -19,7 +19,7 @@ authors: [ "lokka30", "Jikoo" , "MrIvanPlays" ]
 
 # Dependencies
 depend: [ ]
-softdepend: [ ]
+softdepend: [ "PlaceholderAPI" ]
 
 # General info for the plugin loader
 main: "me.lokka30.treasury.plugin.bukkit.TreasuryBukkit"
