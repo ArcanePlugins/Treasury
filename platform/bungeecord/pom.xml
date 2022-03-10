@@ -40,6 +40,7 @@
                             <pattern>com.mrivanplays.annotationconfig</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.shade.annotationconfig</shadedPattern>
                         </relocation>
+                        <!-- TODO: Shall we relocate org.jetbrains.annotations?? -->
                     </relocations>
                 </configuration>
                 <executions>
@@ -70,14 +71,10 @@
     <dependencies>
         <dependency>
             <groupId>me.lokka30</groupId>
-            <artifactId>treasury-api-bukkit</artifactId>
+            <artifactId>treasury-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>org.jetbrains</groupId>
-                    <artifactId>annotations</artifactId>
-                </exclusion>
                 <exclusion>
                     <!-- Stop maven from crying as we already have the API in the core module -->
                     <groupId>me.lokka30</groupId>
@@ -102,13 +99,6 @@
             <artifactId>bungeecord-api</artifactId>
             <version>${bungeecord.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>${jetbrains.annotations.version}</version>
-            <!-- Bukkit compiles them, BungeeCord does not, that's why we have to compile them -->
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
