@@ -1,0 +1,25 @@
+### Treasury
+# Treasury is a modern code library for minecraft plugins.
+# GitHub Repository: <https://github.com/lokka30/Treasury/>
+#
+### About this File
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!! This is NOT a configuration file for server owners. !!!
+# !!!     Server owners are NOT to modify this file.      !!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# This file is read by your server software to determine
+# various information about this plugin, so it can be loaded
+# properly, and register its commands and permissions.
+
+# Main plugin information
+name: "Treasury"
+version: "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}"
+description: "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server."
+author: "lokka30, Jikoo and MrIvanPlays"
+
+# Dependencies
+depends: [ ]
+softdepends: [ ]
+
+# General info for the plugin loader
+main: "me.lokka30.treasury.plugin.bungeecord.TreasuryBungee"
