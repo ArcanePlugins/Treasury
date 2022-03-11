@@ -40,14 +40,6 @@
                             <pattern>com.mrivanplays.annotationconfig</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.shade.annotationconfig</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>org.jetbrains</pattern>
-                            <shadedPattern>me.lokka30.treasury.plugin.bungeecord.shade.jetbrains</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.intellij.lang</pattern>
-                            <shadedPattern>me.lokka30.treasury.plugin.bungeecord.shade.intellij</shadedPattern>
-                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -86,12 +78,22 @@
                     <groupId>org.yaml</groupId>
                     <artifactId>snakeyaml</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jetbrains</groupId>
+                    <artifactId>annotations</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>${bungeecord.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${jetbrains.annotations.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
