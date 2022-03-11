@@ -40,7 +40,14 @@
                             <pattern>com.mrivanplays.annotationconfig</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.shade.annotationconfig</shadedPattern>
                         </relocation>
-                        <!-- TODO: Shall we relocate org.jetbrains.annotations?? -->
+                        <relocation>
+                            <pattern>org.jetbrains</pattern>
+                            <shadedPattern>me.lokka30.treasury.plugin.bungeecord.shade.jetbrains</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.intellij.lang</pattern>
+                            <shadedPattern>me.lokka30.treasury.plugin.bungeecord.shade.intellij</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>

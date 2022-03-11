@@ -104,8 +104,7 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     public String colorize(@NotNull String message) {
-        message = colorizeHex(message);
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return ChatColor.translateAlternateColorCodes('&', this.colorizeHex(message));
     }
 
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-f0-9]{6})");
