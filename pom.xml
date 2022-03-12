@@ -16,6 +16,7 @@
         <module>core</module>
         <module>platform/bukkit/api</module>
         <module>platform/bukkit/plugin</module>
+        <module>platform/bungeecord</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -48,6 +49,7 @@
         <annotationconfig.version>2.1.1</annotationconfig.version>
         <mockito.version>4.4.0</mockito.version>
         <placeholderapi.version>2.11.1</placeholderapi.version>
+        <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
     </properties>
 
     <licenses>

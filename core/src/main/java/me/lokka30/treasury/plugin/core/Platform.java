@@ -10,5 +10,6 @@ package me.lokka30.treasury.plugin.core;
  * @author MrIvanPlays
  */
 public enum Platform {
-    BUKKIT
+    BUKKIT,
+    BUNGEECORD
 }

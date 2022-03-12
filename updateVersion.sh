@@ -23,6 +23,10 @@ function commit {
     SCRIPT_DIR=$(dirname $0)
 
     for PLATFORM in $SCRIPT_DIR/platform/*/; do
+        pom_in_dir=${PLATFORM}pom.xml
+        if [ -f $pom_in_dir ]; then
+            git add $pom_in_dir
+        fi
         for MODULE in ${PLATFORM}*/; do
             POM_FILE=${MODULE}pom.xml
 
