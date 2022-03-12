@@ -72,8 +72,6 @@ public class TreasuryBungee extends Plugin {
                         ? null
                         : Boolean.toString(economyProvider
                                 .getSupportedOptionalEconomyApiFeatures()
-                                .contains(OptionalEconomyApiFeature.BUKKIT_TRANSACTION_EVENTS) || economyProvider
-                                .getSupportedOptionalEconomyApiFeatures()
                                 .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
         ));
 
