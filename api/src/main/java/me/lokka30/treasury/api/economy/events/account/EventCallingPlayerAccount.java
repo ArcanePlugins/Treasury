@@ -37,7 +37,6 @@ public class EventCallingPlayerAccount extends EventCallingAccount<PlayerAccount
             @NotNull final Currency currency,
             @NotNull final EconomySubscriber<BigDecimal> subscription
     ) {
-        // todo wrap subscription for event
         getHandle().resetBalance(initiator, currency, new EconomySubscriber<BigDecimal>() {
             @Override
             public void succeed(@NotNull final BigDecimal bigDecimal) {
@@ -51,12 +50,11 @@ public class EventCallingPlayerAccount extends EventCallingAccount<PlayerAccount
                         bigDecimal,
                         EconomyTransactionImportance.HIGH
                 ), EventCallingPlayerAccount.this));
-
             }
 
             @Override
             public void fail(@NotNull final EconomyException exception) {
-
+                subscription.fail(exception);
             }
         });
     }
