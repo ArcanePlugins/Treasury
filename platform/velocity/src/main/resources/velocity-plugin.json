@@ -1,0 +1,13 @@
+{
+    "id": "treasury",
+    "name": "Treasury",
+    "version": "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}",
+    "description": "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server.",
+    "url": "https://github.com/lokka30/Treasury",
+    "authors": [
+        "lokka30",
+        "Jikoo",
+        "MrIvanPlays"
+    ],
+    "main": "me.lokka30.treasury.plugin.velocity.TreasuryVelocity"
+}
