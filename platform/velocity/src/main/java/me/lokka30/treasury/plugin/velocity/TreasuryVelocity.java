@@ -15,10 +15,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
+import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
+import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
+import org.bstats.charts.SimplePie;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 public class TreasuryVelocity {
@@ -26,12 +31,19 @@ public class TreasuryVelocity {
     private final ProxyServer proxy;
     private final Logger logger;
     private final Path dataDirectory;
+    private final Metrics.Factory metricsFactory;
 
     @Inject
-    public TreasuryVelocity(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
+    public TreasuryVelocity(
+            ProxyServer proxy,
+            Logger logger,
+            @DataDirectory Path dataDirectory,
+            Metrics.Factory metricsFactory
+    ) {
         this.proxy = proxy;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
+        this.metricsFactory = metricsFactory;
     }
 
     private VelocityTreasuryPlugin treasuryPlugin;
@@ -57,6 +69,64 @@ public class TreasuryVelocity {
         // todo: we need a metrics page so metrics are implemented. lokka30!!!!
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f)");
+    }
+
+    private void loadMetrics() {
+        Metrics metrics = metricsFactory.make(this, 14651);
+
+        Service<EconomyProvider> service = ServiceRegistry.INSTANCE
+                .serviceFor(EconomyProvider.class)
+                .orElse(null);
+
+        EconomyProvider economyProvider = service == null ? null : service.get();
+        String pluginName = service == null ? null : service.registrarName();
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-name",
+                () -> economyProvider == null ? "None" : pluginName
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-supports-negative-balances",
+                () -> economyProvider == null
+                        ? null
+                        : Boolean.toString(economyProvider
+                                .getSupportedOptionalEconomyApiFeatures()
+                                .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES))
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                // unfortunately bStats truncates the length of the id, so the 's' character
+                // on the end had to be removed.
+                "economy-provider-supports-transaction-events",
+                () -> economyProvider == null
+                        ? null
+                        : Boolean.toString(economyProvider
+                                .getSupportedOptionalEconomyApiFeatures()
+                                .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                "plugin-update-checking-enabled",
+                () -> Boolean.toString(treasuryPlugin
+                        .configAdapter()
+                        .getSettings()
+                        .checkForUpdates())
+        ));
+
+        metrics.addCustomChart(new SimplePie("economy-provider-currencies", () -> {
+            if (economyProvider == null) {
+                return null;
+            }
+
+            final int size = economyProvider.getCurrencies().size();
+
+            if (size >= 10) {
+                return "10+";
+            } else {
+                return Integer.toString(size);
+            }
+        }));
     }
 
     @Subscribe
