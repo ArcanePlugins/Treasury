@@ -66,7 +66,7 @@ public class TreasuryVelocity {
         TreasuryCommand.register(this);
 
         UpdateChecker.checkForUpdates();
-        // todo: we need a metrics page so metrics are implemented. lokka30!!!!
+        loadMetrics();
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f)");
     }
