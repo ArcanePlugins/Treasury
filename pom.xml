@@ -17,6 +17,7 @@
         <module>platform/bukkit/api</module>
         <module>platform/bukkit/plugin</module>
         <module>platform/bungeecord</module>
+        <module>platform/velocity</module>
     </modules>
 
     <packaging>pom</packaging>
