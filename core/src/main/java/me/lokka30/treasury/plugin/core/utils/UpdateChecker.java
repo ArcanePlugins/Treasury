@@ -5,6 +5,7 @@
 package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,13 +62,36 @@ public final class UpdateChecker {
                 try {
                     URL commits = new URL(GITHUB_COMMITS_URI);
                     try (Reader commitsIn = new InputStreamReader(commits.openStream())) {
-                        JsonObject first = Utils.GSON
-                                .fromJson(commitsIn, JsonArray.class)
-                                .get(0)
-                                .getAsJsonObject();
+                        JsonObject commitToCompare = null;
+                        for (JsonElement element : Utils.GSON.fromJson(
+                                commitsIn,
+                                JsonArray.class
+                        )) {
+                            if (!element.isJsonObject()) {
+                                continue;
+                            }
+                            JsonObject commitObj = element.getAsJsonObject();
+                            String message = commitObj
+                                    .get("commit")
+                                    .getAsJsonObject()
+                                    .get("message")
+                                    .getAsString();
+                            if (!message.contains("[ci skip]")) {
+                                commitToCompare = commitObj;
+                                break;
+                            }
+                        }
+                        if (commitToCompare == null) {
+                            // fail safely
+                            plugin.logger().warn(
+                                    "Couldn't perform update check on development version; " +
+                                            "couldn't retrieve the last non SCM skipped commit. " +
+                                            "Please do an update check yourself. There may be important changes!");
+                            return;
+                        }
                         // we can't really compare SHA's as we have an abbreviated SHA rather
                         // than the full commit SHA, that's why we're comparing dates
-                        OffsetDateTime latestTime = OffsetDateTime.parse(first
+                        OffsetDateTime latestTime = OffsetDateTime.parse(commitToCompare
                                 .get("commit")
                                 .getAsJsonObject()
                                 .get("author")
