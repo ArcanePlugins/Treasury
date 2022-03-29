@@ -32,7 +32,7 @@ public final class Service<T> implements Comparable<Service<?>>, Supplier<T> {
     /**
      * Returns a {@link String} identifier of who registered this service.
      *
-     * @return registrator
+     * @return registrar
      */
     public @NotNull String registrarName() {
         return registrarName;

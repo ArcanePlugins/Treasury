@@ -8,7 +8,7 @@ import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.bukkit.hooks.Hook;
 import org.jetbrains.annotations.NotNull;
 
-public class TreasuryPapiHookRegistrator implements Hook {
+public class TreasuryPapiHookRegistrar implements Hook {
 
     @Override
     public @NotNull String getPlugin() {

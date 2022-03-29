@@ -7,20 +7,20 @@ package me.lokka30.treasury.plugin.bukkit.hooks;
 import java.util.HashMap;
 import java.util.Map;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHookRegistrator;
+import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHookRegistrar;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
-public class HookRegistrator implements Listener {
+public class HookRegistrar implements Listener {
 
     private final Map<String, Hook> hooks = new HashMap<>();
     private final TreasuryBukkit treasuryBukkit;
 
-    public HookRegistrator(TreasuryBukkit plugin) {
+    public HookRegistrar(TreasuryBukkit plugin) {
         this.treasuryBukkit = plugin;
-        registerHook(new TreasuryPapiHookRegistrator());
+        registerHook(new TreasuryPapiHookRegistrar());
     }
 
     void registerHook(Hook hook) {

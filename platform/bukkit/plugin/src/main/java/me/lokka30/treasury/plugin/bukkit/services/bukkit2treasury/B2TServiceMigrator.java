@@ -32,12 +32,12 @@ public class B2TServiceMigrator implements Listener {
             if (ServiceMigrationManager.INSTANCE.hasBeenMigratedFromTreasury(economy)) {
                 return;
             }
-            Plugin registrator = provider.getPlugin();
-            ServiceMigrationManager.INSTANCE.registerBukkit2TreasuryMigration(registrator.getName());
+            Plugin registrar = provider.getPlugin();
+            ServiceMigrationManager.INSTANCE.registerBukkit2TreasuryMigration(registrar.getName());
             ServiceRegistry.INSTANCE.registerService(
                     EconomyProvider.class,
                     economy,
-                    registrator.getName(),
+                    registrar.getName(),
                     migratePriority(provider.getPriority())
             );
         }
@@ -51,8 +51,8 @@ public class B2TServiceMigrator implements Listener {
             if (!ServiceMigrationManager.INSTANCE.hasBeenMigratedFromTreasury(economy)) {
                 return;
             }
-            Plugin registrator = provider.getPlugin();
-            ServiceMigrationManager.INSTANCE.unregisterBukkit2TreasuryMigration(registrator.getName());
+            Plugin registrar = provider.getPlugin();
+            ServiceMigrationManager.INSTANCE.unregisterBukkit2TreasuryMigration(registrar.getName());
             ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, economy);
         }
     }

@@ -17,7 +17,7 @@ import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.event.bukkit2treasury.B2TEventMigrator;
 import me.lokka30.treasury.plugin.bukkit.event.treasury2bukkit.T2BEventMigrator;
-import me.lokka30.treasury.plugin.bukkit.hooks.HookRegistrator;
+import me.lokka30.treasury.plugin.bukkit.hooks.HookRegistrar;
 import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
 import me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury.B2TServiceMigrator;
 import me.lokka30.treasury.plugin.bukkit.services.treasury2bukkit.T2BServiceMigrator;
@@ -88,7 +88,7 @@ public class TreasuryBukkit extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new B2TServiceMigrator(), this);
         new T2BServiceMigrator(this).registerListeners();
 
-        getServer().getPluginManager().registerEvents(new HookRegistrator(this), this);
+        getServer().getPluginManager().registerEvents(new HookRegistrar(this), this);
 
         if (BukkitVendor.isPaper()) {
             PaperEnhancements.enhance(this);

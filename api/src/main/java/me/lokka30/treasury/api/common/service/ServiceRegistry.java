@@ -40,21 +40,21 @@ public enum ServiceRegistry {
      *
      * @param clazz       service class
      * @param service     service to register
-     * @param registrator who registers this provider
+     * @param registrar who registers this provider
      * @param priority    priority of the service
      * @param <T>         provider
      */
     public <T> void registerService(
             @NotNull Class<T> clazz,
             @NotNull T service,
-            @NotNull String registrator,
+            @NotNull String registrar,
             @NotNull ServicePriority priority
     ) {
         Objects.requireNonNull(clazz, "clazz");
         Objects.requireNonNull(service, "service");
-        Objects.requireNonNull(registrator, "registrator");
+        Objects.requireNonNull(registrar, "registrar");
         Objects.requireNonNull(priority, "priority");
-        Service<T> serviceObj = new Service<>(registrator, priority, service);
+        Service<T> serviceObj = new Service<>(registrar, priority, service);
         servicesMap.computeIfAbsent(clazz, k -> new TreeSet<>()).add(serviceObj);
         EventBus.INSTANCE.fire(new ServiceRegisteredEvent(serviceObj));
     }
