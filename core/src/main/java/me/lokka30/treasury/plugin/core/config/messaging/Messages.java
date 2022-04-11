@@ -7,18 +7,17 @@ package me.lokka30.treasury.plugin.core.config.messaging;
 import com.mrivanplays.annotationconfig.core.annotations.ConfigObject;
 import com.mrivanplays.annotationconfig.core.annotations.Ignore;
 import com.mrivanplays.annotationconfig.core.annotations.Key;
+import com.mrivanplays.annotationconfig.core.annotations.RawConfig;
 import com.mrivanplays.annotationconfig.core.annotations.comment.Comment;
-import com.mrivanplays.annotationconfig.core.utils.AnnotationUtils;
+import com.mrivanplays.annotationconfig.core.serialization.DataObject;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -336,6 +335,9 @@ public class Messages {
     @Ignore
     private Map<MessageKey, MessageHolder> messagesMap = new HashMap<>();
 
+    @RawConfig
+    private DataObject raw;
+
     /**
      * Returns the messages held by the specified {@link MessageKey} {@code key}
      *
@@ -370,85 +372,28 @@ public class Messages {
      * Inits the messages map. The messages map is the easier way of accessing all the messages.
      */
     public void initMessagesMap() {
-        for (Field field : this.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            if (AnnotationUtils.isIgnored(field)) {
-                continue;
+        for (MessageKey key : MessageKey.values()) {
+            String[] parts = key.asConfigKey().split("\\.");
+            DataObject dataObject = parts.length == 1
+                    ? this.raw.get(parts[0])
+                    : getDataObject(parts);
+            Object object = dataObject.getAsObject();
+            MessageHolder holder;
+            if (String.class.isAssignableFrom(object.getClass())) {
+                holder = new MessageHolder((String) object);
+            } else {
+                holder = new MessageHolder((List<String>) object);
             }
-            if (AnnotationUtils.isConfigObject(field)) {
-                try {
-                    Map<String, MessageHolder> deep = getDeepMessages(field, null);
-                    for (Map.Entry<String, MessageHolder> entry : deep.entrySet()) {
-                        MessageKey key = MessageKey.getByConfigKey(entry.getKey());
-                        if (key == null) {
-                            TreasuryPlugin
-                                    .getInstance()
-                                    .logger()
-                                    .error("The key '" + entry.getKey() + "' has not been registered " + "into MessageKey - please inform a Treasury developer ASAP.");
-                            continue;
-                        }
-                        messagesMap.put(key, entry.getValue());
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException("A field became inaccessible.");
-                }
-                continue;
-            }
-            String configKey = AnnotationUtils.getKey(field);
-            MessageKey key = MessageKey.getByConfigKey(configKey);
-            if (key == null) {
-                TreasuryPlugin
-                        .getInstance()
-                        .logger()
-                        .error("The key '" + configKey + "' has not been registered " + "into MessageKey - please inform a Treasury developer ASAP.");
-                continue;
-            }
-            messagesMap.put(key, getMessageHolder(field, null));
+            this.messagesMap.put(key, holder);
         }
     }
 
-    private Map<String, MessageHolder> getDeepMessages(Field field, Object parent) throws
-            IllegalAccessException {
-        String key = AnnotationUtils.getKey(field);
-        Object toAccess = field.get(parent == null ? this : parent);
-        Map<String, MessageHolder> map = new HashMap<>();
-        for (Field fToAccess : toAccess.getClass().getDeclaredFields()) {
-            fToAccess.setAccessible(true);
-            if (AnnotationUtils.isIgnored(fToAccess)) {
-                continue;
-            }
-            if (AnnotationUtils.isConfigObject(fToAccess)) {
-                Map<String, MessageHolder> obj = getDeepMessages(fToAccess, toAccess);
-                for (Map.Entry<String, MessageHolder> entry : obj.entrySet()) {
-                    map.put(key + "." + entry.getKey(), entry.getValue());
-                }
-                continue;
-            }
-            map.put(
-                    key + "." + AnnotationUtils.getKey(fToAccess),
-                    getMessageHolder(fToAccess, toAccess)
-            );
+    private DataObject getDataObject(String[] parts) {
+        DataObject ret = this.raw.get(parts[0]);
+        for (int i = 1; i < parts.length; i++) {
+            ret = ret.get(parts[i]);
         }
-        return map;
-    }
-
-    private MessageHolder getMessageHolder(Field field, Object toAccess) {
-        Object getPass = toAccess == null ? this : toAccess;
-        MessageHolder holder;
-        if (String.class.isAssignableFrom(field.getType())) {
-            try {
-                holder = new MessageHolder(String.class.cast(field.get(getPass)));
-            } catch (IllegalAccessException e) {
-                throw new IllegalArgumentException("Somehow field became inaccessible ; " + field.getName());
-            }
-        } else {
-            try {
-                holder = new MessageHolder((List<String>) field.get(getPass));
-            } catch (IllegalAccessException e) {
-                throw new IllegalArgumentException("Somehow field became inaccessible ; " + field.getName());
-            }
-        }
-        return holder;
+        return ret;
     }
 
 }

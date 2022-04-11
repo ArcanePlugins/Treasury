@@ -4,11 +4,8 @@
 
 package me.lokka30.treasury.plugin.core.config.messaging;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a key of a message.
@@ -61,26 +58,6 @@ public enum MessageKey {
     DOWNLOAD_LATEST_COULDNT_PARSE("commands.treasury.subcommands.downloadLatest.couldnt-parse"),
     DOWNLOAD_LATEST_ALREADY_LATEST("commands.treasury.subcommands.downloadLatest.already-latest"),
     DOWNLOAD_LATEST_SUCCESS("commands.treasury.subcommands.downloadLatest.success");
-
-    private static Map<String, MessageKey> BY_CONFIG_KEY = new HashMap<>();
-
-    static {
-        for (MessageKey key : MessageKey.values()) {
-            BY_CONFIG_KEY.put(key.asConfigKey(), key);
-        }
-    }
-
-    /**
-     * Returns a message key by the specified config {@code key}
-     *
-     * @param key the config key you want a message key for
-     * @return message key or null
-     */
-    @Nullable
-    public static MessageKey getByConfigKey(@NotNull String key) {
-        Objects.requireNonNull(key, "key");
-        return BY_CONFIG_KEY.get(key);
-    }
 
     private final String configKey;
 
