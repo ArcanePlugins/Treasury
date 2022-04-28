@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.common.event;
 
 import java.util.Objects;
+import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -58,6 +59,50 @@ import org.jetbrains.annotations.NotNull;
  * @since v1.1.0
  */
 public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T>> {
+
+    /**
+     * Creates a new {@link EventSubscriber} via a {@link Function}
+     *
+     * @param eventClass event class
+     * @param priority event priority
+     * @param onEventFunc on event handler function
+     * @return event subscriber
+     * @param <T> event type
+     */
+    public static <T> EventSubscriber<T> functional(
+            Class<T> eventClass, EventPriority priority, Function<T, Completion> onEventFunc
+    ) {
+        return new EventSubscriber<T>(eventClass, priority) {
+            @Override
+            public @NotNull Completion onEvent(@NotNull T event) {
+                return onEventFunc.apply(event);
+            }
+        };
+    }
+
+    /**
+     * Creates a new {@link EventSubscriber} via a {@link Function}
+     *
+     * @param eventClass event class
+     * @param priority event priority
+     * @param ignoreCancelled whether to ignore cancelled event object(s)
+     * @param onEventFunc on event handler function
+     * @return event subscriber
+     * @param <T> event type
+     */
+    public static <T> EventSubscriber<T> functional(
+            Class<T> eventClass,
+            EventPriority priority,
+            boolean ignoreCancelled,
+            Function<T, Completion> onEventFunc
+    ) {
+        return new EventSubscriber<T>(eventClass, priority, ignoreCancelled) {
+            @Override
+            public @NotNull Completion onEvent(@NotNull final T event) {
+                return onEventFunc.apply(event);
+            }
+        };
+    }
 
     private final Class<T> eventClass;
     private final EventPriority priority;
