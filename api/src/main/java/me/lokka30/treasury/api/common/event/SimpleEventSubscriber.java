@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.common.event;
 
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,6 +45,50 @@ import org.jetbrains.annotations.NotNull;
  * @since v1.1.0
  */
 public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
+
+    /**
+     * Creates a new {@link SimpleEventSubscriber} via a {@link Consumer} function.
+     *
+     * @param eventClass event class
+     * @param priority event priority
+     * @param subscribeFunc on event handler
+     * @return simple event subscriber
+     * @param <T> event type
+     */
+    public static <T> SimpleEventSubscriber<T> functional(
+            Class<T> eventClass, EventPriority priority, Consumer<T> subscribeFunc
+    ) {
+        return new SimpleEventSubscriber<T>(eventClass, priority) {
+            @Override
+            public void subscribe(@NotNull final T event) {
+                subscribeFunc.accept(event);
+            }
+        };
+    }
+
+    /**
+     * Creates a new {@link SimpleEventSubscriber} via a {@link Consumer} function.
+     *
+     * @param eventClass event class
+     * @param priority event priority
+     * @param ignoreCancelled whether to ignore cancelled event object(s)
+     * @param subscribeFunc on event handler
+     * @return simple event subscriber
+     * @param <T> event type
+     */
+    public static <T> SimpleEventSubscriber<T> functional(
+            Class<T> eventClass,
+            EventPriority priority,
+            boolean ignoreCancelled,
+            Consumer<T> subscribeFunc
+    ) {
+        return new SimpleEventSubscriber<T>(eventClass, priority, ignoreCancelled) {
+            @Override
+            public void subscribe(@NotNull final T event) {
+                subscribeFunc.accept(event);
+            }
+        };
+    }
 
     public SimpleEventSubscriber(@NotNull Class<T> eventClass) {
         super(eventClass);
