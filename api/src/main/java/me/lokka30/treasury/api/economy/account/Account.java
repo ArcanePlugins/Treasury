@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -23,6 +24,7 @@ import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+// todo: there's more
 /**
  * An Account is something that holds a balance and is associated with
  * something bound by a UUID. For example, a PlayerAccount is bound to
@@ -64,6 +66,14 @@ public interface Account {
     void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * {@link #setName(String, EconomySubscriber)}
+     */
+    @NotNull
+    default CompletableFuture<Boolean> setName(@Nullable String name) {
+        return EconomySubscriber.asFuture(s -> setName(name, s));
+    }
+
+    /**
      * Request the balance of the {@code Account}.
      *
      * @param currency     the {@link Currency} of the balance being requested
@@ -74,6 +84,14 @@ public interface Account {
     void retrieveBalance(
             @NotNull Currency currency, @NotNull EconomySubscriber<BigDecimal> subscription
     );
+
+    /**
+     * {@link #retrieveBalance(Currency, EconomySubscriber)}}
+     */
+    @NotNull
+    default CompletableFuture<BigDecimal> retrieveBalance(@NotNull Currency currency) {
+        return EconomySubscriber.asFuture(s -> retrieveBalance(currency, s));
+    }
 
     /**
      * Set the balance of the {@code Account}.
@@ -91,6 +109,18 @@ public interface Account {
             @NotNull Currency currency,
             @NotNull EconomySubscriber<BigDecimal> subscription
     );
+
+    /**
+     * {@link #setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)}
+     */
+    @NotNull
+    default CompletableFuture<BigDecimal> setBalance(
+            @NotNull BigDecimal amount,
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency
+    ) {
+        return EconomySubscriber.asFuture(s -> setBalance(amount, initiator, currency, s));
+    }
 
     /**
      * Withdraw an amount from the {@code Account} balance.
@@ -268,6 +298,14 @@ public interface Account {
     );
 
     /**
+     * {@link #doTransaction(EconomyTransaction, EconomySubscriber)}
+     */
+    @NotNull
+    default CompletableFuture<BigDecimal> doTransaction(@NotNull EconomyTransaction economyTransaction) {
+        return EconomySubscriber.asFuture(s -> doTransaction(economyTransaction, s));
+    }
+
+    /**
      * Reset the {@code Account} balance to its starting amount.
      *
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
@@ -401,6 +439,14 @@ public interface Account {
     void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
 
     /**
+     * {@link #isMember(UUID, EconomySubscriber)}
+     */
+    @NotNull
+    default CompletableFuture<Boolean> isMember(@NotNull UUID player) {
+        return EconomySubscriber.asFuture(s -> isMember(player, s));
+    }
+
+    /**
      * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the
      * specified {@link UUID} {@code player}.
      * The state of the permission is specified via the {@code permissionValue} boolean, where
@@ -450,5 +496,15 @@ public interface Account {
             @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
+
+    /**
+     * {@link #hasPermission(UUID, EconomySubscriber, AccountPermission...)}
+     */
+    @NotNull
+    default CompletableFuture<TriState> hasPermission(
+            @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
+    ) {
+        return EconomySubscriber.asFuture(s -> hasPermission(player, s, permissions));
+    }
 
 }
