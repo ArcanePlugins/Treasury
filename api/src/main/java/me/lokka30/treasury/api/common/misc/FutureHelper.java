@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * A utility class to help with {@link CompletableFuture} stuff
  *
  * @author MrIvanPlays
- * @since TODO
+ * @since 1.2.1
  */
 public class FutureHelper {
 
