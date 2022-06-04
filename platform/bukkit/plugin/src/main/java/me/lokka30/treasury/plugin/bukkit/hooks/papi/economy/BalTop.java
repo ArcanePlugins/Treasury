@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -143,7 +144,7 @@ public class BalTop extends BukkitRunnable {
                                     s
                             ));
                         } else {
-                            return null;
+                            return CompletableFuture.completedFuture(null);
                         }
                     })
                     .join();

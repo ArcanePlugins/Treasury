@@ -11,6 +11,7 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -67,7 +68,7 @@ public class BalanceCache extends BukkitRunnable {
                                     s
                             ));
                         } else {
-                            return null;
+                            return CompletableFuture.completedFuture(null);
                         }
                     })
                     .join();
