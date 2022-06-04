@@ -78,6 +78,11 @@ public class TreasuryPapiExpansion extends PlaceholderExpansion implements Confi
     }
 
     @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
     public String onRequest(@Nullable OfflinePlayer player, @NotNull String param) {
         for (TreasuryPapiHook hook : hooks) {
             if (param.startsWith(hook.getPrefix())) {
