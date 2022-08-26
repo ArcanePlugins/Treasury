@@ -1,12 +1,14 @@
 package me.lokka30.treasury.api.common.misc;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A utility class to help with {@link CompletableFuture} stuff
@@ -17,11 +19,10 @@ import org.jetbrains.annotations.Nullable;
 public class FutureHelper {
 
     /**
-     * Map, join, filter - this is what the name of the method is.
+     * Maps, joins, and filters futures.
      * Maps all the futures holding data type A to return a collection of data type B
      * via the specified {@code mapper} {@link Function} and filters them via the specified
      * filter function.
-     * <br><b>WARNING: This is a thread unsafe method. ASYNCHRONOUS CALL MANDATORY!!!!</b>
      *
      * @param mapper  mapper
      * @param futures futures of data type A
@@ -30,25 +31,37 @@ public class FutureHelper {
      * @return future with collection of data type B
      */
     @NotNull
-    public static <A, B> CompletableFuture<Collection<B>> mjf(
-            @Nullable Function<A, CompletableFuture<Boolean>> filter,
+    public static <A, B> CompletableFuture<Collection<B>> mapJoinFilter(
+            @NotNull Function<A, CompletableFuture<Boolean>> filter,
             @NotNull Function<A, B> mapper,
             @NotNull Collection<CompletableFuture<A>> futures
     ) {
+        Objects.requireNonNull(filter, "filter");
         Objects.requireNonNull(mapper, "mapper");
         Objects.requireNonNull(futures, "futures");
-        Collection<B> ret = new HashSet<>();
+
+        List<CompletableFuture<Map.Entry<A, Boolean>>> filteredFutures =
+                new ArrayList<>(futures.size());
         for (CompletableFuture<A> future : futures) {
-            if (filter != null) {
-                A a = future.join();
-                if (filter.apply(a).join()) {
-                    ret.add(mapper.apply(a));
-                }
-            } else {
-                ret.add(mapper.apply(future.join()));
-            }
+            filteredFutures.add(future.thenCompose((a) -> {
+                return filter.apply(a)
+                        .thenApply((allowed) -> new AbstractMap.SimpleImmutableEntry<>(a, allowed));
+            }));
         }
-        return CompletableFuture.completedFuture(ret);
+        return CompletableFuture.allOf(
+                filteredFutures.toArray(new CompletableFuture[0])
+        ).thenApply((ignore) -> {
+
+            List<B> results = new ArrayList<>(filteredFutures.size());
+            for (CompletableFuture<Map.Entry<A, Boolean>> filteredFuture : filteredFutures) {
+                // By now, all futures are complete -- join() will not block
+                Map.Entry<A, Boolean> entry = filteredFuture.join();
+                if (entry.getValue()) {
+                    results.add(mapper.apply(entry.getKey()));
+                }
+            }
+            return results;
+        });
     }
 
 }

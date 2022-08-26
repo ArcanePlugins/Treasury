@@ -297,7 +297,7 @@ public interface EconomyProvider {
             for (String identifier : identifiers) {
                 futures.add(this.retrieveAccount(identifier));
             }
-            return FutureHelper.mjf(account -> account.isMember(playerId),
+            return FutureHelper.mapJoinFilter(account -> account.isMember(playerId),
                     Account::getIdentifier,
                     futures
             );
@@ -349,7 +349,7 @@ public interface EconomyProvider {
             for (String identifier : identifiers) {
                 accounts.add(this.retrieveAccount(identifier));
             }
-            return FutureHelper.mjf(
+            return FutureHelper.mapJoinFilter(
                     account -> account
                             .hasPermission(playerId, permissions)
                             .thenApply(triState -> triState == TriState.TRUE),
