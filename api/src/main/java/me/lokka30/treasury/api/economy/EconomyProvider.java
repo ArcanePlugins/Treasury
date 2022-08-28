@@ -4,8 +4,11 @@
 
 package me.lokka30.treasury.api.economy;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -222,20 +225,12 @@ public interface EconomyProvider {
                 subscription.succeed(identifiers);
                 return;
             }
-            Set<String> ret = new HashSet<>();
+            Set<String> ret = Collections.synchronizedSet(new HashSet<>());
+            List<CompletableFuture<Void>> futures = new ArrayList<>(identifiers.size());
             for (String identifier : identifiers) {
-                EconomySubscriber.<Account>asFuture(subscriber -> retrieveAccount(identifier,
-                        subscriber
-                )).exceptionally(throwable -> {
-                    if (throwable instanceof EconomyException) {
-                        subscription.fail((EconomyException) throwable);
-                    } else {
-                        subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
-                                throwable
-                        ));
-                    }
-                    return null;
-                }).thenCompose(account -> {
+                futures.add(EconomySubscriber.<Account>asFuture(
+                        subscriber -> retrieveAccount(identifier, subscriber)
+                ).thenCompose(account -> {
                     if (account == null) {
                         return CompletableFuture.completedFuture(false);
                     }
@@ -250,10 +245,22 @@ public interface EconomyProvider {
                     if (val) {
                         ret.add(identifier);
                     }
-                });
-
+                }));
             }
-            subscription.succeed(ret);
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .thenRun(() -> {
+                        subscription.succeed(ret);
+                    })
+                    .exceptionally((throwable) -> {
+                        if (throwable instanceof EconomyException) {
+                            subscription.fail((EconomyException) throwable);
+                        } else {
+                            subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
+                                    throwable
+                            ));
+                        }
+                        return null;
+                    });
         });
     }
 
@@ -288,20 +295,12 @@ public interface EconomyProvider {
                 subscription.succeed(identifiers);
                 return;
             }
-            Set<String> ret = new HashSet<>();
+            Set<String> ret = Collections.synchronizedSet(new HashSet<>());
+            List<CompletableFuture<Void>> futures = new ArrayList<>(identifiers.size());
             for (String identifier : identifiers) {
-                EconomySubscriber.<Account>asFuture(subscriber -> retrieveAccount(identifier,
-                        subscriber
-                )).exceptionally(throwable -> {
-                    if (throwable instanceof EconomyException) {
-                        subscription.fail((EconomyException) throwable);
-                    } else {
-                        subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
-                                throwable
-                        ));
-                    }
-                    return null;
-                }).thenCompose(account -> {
+                futures.add(EconomySubscriber.<Account>asFuture(
+                        subscriber -> retrieveAccount(identifier, subscriber)
+                ).thenCompose(account -> {
                     if (account == null) {
                         return CompletableFuture.completedFuture(false);
                     }
@@ -327,9 +326,22 @@ public interface EconomyProvider {
                     if (val) {
                         ret.add(identifier);
                     }
-                });
+                }));
             }
-            subscription.succeed(ret);
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .thenRun(() -> {
+                        subscription.succeed(ret);
+                    })
+                    .exceptionally((throwable) -> {
+                        if (throwable instanceof EconomyException) {
+                            subscription.fail((EconomyException) throwable);
+                        } else {
+                            subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
+                                    throwable
+                            ));
+                        }
+                        return null;
+                    });
         });
     }
 

@@ -6,37 +6,32 @@ package me.lokka30.treasury.api.common.event;
 
 import com.google.common.reflect.TypeToken;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class EventTypeTracker {
 
-    private Map<Class<?>, List<Class<?>>> friends = new HashMap<>();
+    private final Map<Class<?>, List<Class<?>>> friends = new ConcurrentHashMap<>();
 
-    public List<Class<?>> getFriendsOf(Class<?> eventType) {
-        if (friends.containsKey(eventType)) {
-            return Collections.unmodifiableList(friends.get(eventType));
-        }
-
-        List<Class<?>> types = getEventTypes(eventType);
-        friends.put(
-                eventType,
-                types.stream().filter(type -> type != eventType).collect(Collectors.toList())
-        );
-
-        return friends.get(eventType);
+    public List<Class<?>> getFriendsOf(Class<?> event) {
+        List<Class<?>> computedFriends = friends.computeIfAbsent((event), (eventType) -> {
+            return getEventTypes(eventType)
+                    .filter(type -> type != eventType)
+                    .collect(Collectors.toList());
+        });
+        return Collections.unmodifiableList(computedFriends);
     }
 
-    private static List<Class<?>> getEventTypes(Class<?> eventType) {
+    private static <E> Stream<Class<? super E>> getEventTypes(Class<E> eventType) {
         return TypeToken
                 .of(eventType)
                 .getTypes()
                 .rawTypes()
                 .stream()
-                .filter(type -> type != Object.class && type != Cancellable.class)
-                .collect(Collectors.toList());
+                .filter(type -> type != Object.class && type != Cancellable.class);
     }
 
 }

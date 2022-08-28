@@ -28,7 +28,7 @@ class EventCaller {
             return Completion.completed();
         }
         Completion completion = new Completion();
-        EventExecutorTracker.INSTANCE.getExecutor(eventClass).submit(() -> {
+        EventExecutorTracker.INSTANCE.getExecutor(eventClass).execute(() -> {
             List<Throwable> errors = call(event, new ArrayList<>(), 0);
             if (!errors.isEmpty()) {
                 completion.completeExceptionally(errors);
