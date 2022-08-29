@@ -4,9 +4,9 @@
 
 package me.lokka30.treasury.api.economy;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -289,17 +289,17 @@ public interface EconomyProvider {
     @NotNull
     default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
-        return this.retrieveAccountIds().thenComposeAsync(identifiers -> {
+        return this.retrieveAccountIds().thenCompose(identifiers -> {
             if (identifiers.isEmpty()) {
                 return CompletableFuture.completedFuture(Collections.emptySet());
             }
-            Collection<CompletableFuture<Account>> futures = new HashSet<>();
+            Collection<CompletableFuture<Account>> accounts = new ArrayList<>(identifiers.size());
             for (String identifier : identifiers) {
-                futures.add(this.retrieveAccount(identifier));
+                accounts.add(this.retrieveAccount(identifier));
             }
-            return FutureHelper.mjf(account -> account.isMember(playerId),
+            return FutureHelper.mapJoinFilter(account -> account.isMember(playerId),
                     Account::getIdentifier,
-                    futures
+                    accounts
             );
         });
     }
@@ -341,15 +341,15 @@ public interface EconomyProvider {
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(permissions, "permissions");
-        return this.retrieveAccountIds().thenComposeAsync(identifiers -> {
+        return this.retrieveAccountIds().thenCompose(identifiers -> {
             if (identifiers.isEmpty()) {
                 return CompletableFuture.completedFuture(Collections.emptySet());
             }
-            Collection<CompletableFuture<Account>> accounts = new HashSet<>();
+            Collection<CompletableFuture<Account>> accounts = new ArrayList<>(identifiers.size());
             for (String identifier : identifiers) {
                 accounts.add(this.retrieveAccount(identifier));
             }
-            return FutureHelper.mjf(
+            return FutureHelper.mapJoinFilter(
                     account -> account
                             .hasPermission(playerId, permissions)
                             .thenApply(triState -> triState == TriState.TRUE),
