@@ -162,16 +162,12 @@ public class Messages {
                     " "
             );
 
-            @Comment("Placeholders: %prefix, %name%, %priority%")
-            @Comment("              %supports-nonplayer-accounts%, %primary-currency%,")
-            @Comment("              %supports-transaction-events%")
+            @Comment("Placeholders: %prefix, %name%, %priority%, %primary-currency%")
             @Key("subcommands.economy.info.economy-provider-available")
             private List<String> infoEconomyProviderAvailable = Arrays.asList(
                     "&f&nEconomy Provider",
                     "&8 &m->&7 Name: &b%name%",
                     "&8 &m->&7 Priority: &b%priority%",
-                    "&8 &m->&7 Supports negative balances: &b%supports-negative-balances%",
-                    "&8 &m->&7 Supports transaction events: &b%supports-transaction-events%",
                     "&8 &m->&7 Primary currency: &b%primary-currency%",
                     " "
             );

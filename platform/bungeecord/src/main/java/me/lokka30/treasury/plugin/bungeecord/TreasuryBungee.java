@@ -8,7 +8,6 @@ import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
@@ -54,25 +53,6 @@ public class TreasuryBungee extends Plugin {
 
         metrics.addCustomChart(new SimplePie("economy-provider-name",
                 () -> economyProvider == null ? "None" : pluginName
-        ));
-
-        metrics.addCustomChart(new SimplePie("economy-provider-supports-negative-balances",
-                () -> economyProvider == null
-                        ? null
-                        : Boolean.toString(economyProvider
-                                .getSupportedOptionalEconomyApiFeatures()
-                                .contains(OptionalEconomyApiFeature.NEGATIVE_BALANCES))
-        ));
-
-        metrics.addCustomChart(new SimplePie(
-                // unfortunately bStats truncates the length of the id, so the 's' character
-                // on the end had to be removed.
-                "economy-provider-supports-transaction-events",
-                () -> economyProvider == null
-                        ? null
-                        : Boolean.toString(economyProvider
-                                .getSupportedOptionalEconomyApiFeatures()
-                                .contains(OptionalEconomyApiFeature.TRANSACTION_EVENTS))
         ));
 
         metrics.addCustomChart(new SimplePie("plugin-update-checking-enabled",

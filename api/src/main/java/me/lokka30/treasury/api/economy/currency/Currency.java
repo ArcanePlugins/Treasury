@@ -88,6 +88,16 @@ public interface Currency {
     boolean isPrimary();
 
     /**
+     * Returns whether this {@code Currency} supports negative balances.
+     *
+     * @return boolean value
+     * @since v2.0.0
+     */
+    default boolean supportsNegativeBalances() {
+        return false;
+    }
+
+    /**
      * Used to convert this {@link Currency} to another based on a specified amount of the other
      * currency.
      *

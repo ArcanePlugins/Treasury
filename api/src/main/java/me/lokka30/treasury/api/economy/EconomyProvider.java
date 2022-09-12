@@ -20,8 +20,6 @@ import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
-import me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
@@ -37,46 +35,6 @@ import org.jetbrains.annotations.Nullable;
  * @since v1.0.0
  */
 public interface EconomyProvider {
-
-    /**
-     * WARNING: API versions are no longer used as of Treasury v1.1.0. Ignore this method.
-     * 
-     * Get the version of the Treasury API the {@code EconomyProvider} is based on.
-     *
-     * <p>Warning: The Treasury API version is completely different to any other platform version,
-     * such as the 'api-version' value in the Bukkit implementation's plugin.yml file.
-     * <p>Warning: Do not use {@link EconomyAPIVersion#getCurrentAPIVersion()}, that method is for
-     * internal Treasury use only.
-     * <b>You must only use the constants provided.</b>
-     *
-     * @return the API version
-     * @since v1.0.0
-     * @deprecated API versions are no longer used as of Treasury v1.1.0.
-     */
-    @Deprecated
-    default @NotNull EconomyAPIVersion getSupportedAPIVersion() {
-        return EconomyAPIVersion.getCurrentAPIVersion();
-    }
-
-    /**
-     * Check which optional Treasury Economy API features the Economy Provider supports.
-     *
-     * <p>There are a few features which Treasury allows Economy Providers to support
-     * at their option. This is because certain features within Treasury may not be
-     * suitable or appealing for some Economy Providers to implement. We try to enforce
-     * as much of the API to be implemented as possible, however, few features can be
-     * justified as being optional to implement.
-     *
-     * <p>The Economy Provider should return a Set of constants representing which of
-     * Treasury's optional Economy API features are supported by the Economy Provider.
-     * This set can be empty if none of the optional features are supported by the
-     * Economy Provider.
-     *
-     * @return the set of optional supported features from the economy provider/
-     * @see OptionalEconomyApiFeature
-     * @since v1.0.0
-     */
-    @NotNull Set<OptionalEconomyApiFeature> getSupportedOptionalEconomyApiFeatures();
 
     /**
      * Request whether a user has an associated {@link PlayerAccount}.
