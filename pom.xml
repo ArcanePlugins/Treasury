@@ -14,8 +14,7 @@
     <modules>
         <module>api</module>
         <module>core</module>
-        <module>platform/bukkit/api</module>
-        <module>platform/bukkit/plugin</module>
+        <module>platform/bukkit</module>
         <module>platform/bungeecord</module>
         <module>platform/velocity</module>
     </modules>
