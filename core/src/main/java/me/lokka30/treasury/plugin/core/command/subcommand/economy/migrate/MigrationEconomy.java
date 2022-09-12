@@ -69,6 +69,11 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
+            public boolean supportsNegativeBalances() {
+                return false; // todo: ?????
+            }
+
+            @Override
             public void to(
                     @NotNull final Currency currency,
                     @NotNull final BigDecimal amount,

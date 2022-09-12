@@ -93,9 +93,7 @@ public interface Currency {
      * @return boolean value
      * @since v2.0.0
      */
-    default boolean supportsNegativeBalances() {
-        return false;
-    }
+    boolean supportsNegativeBalances();
 
     /**
      * Used to convert this {@link Currency} to another based on a specified amount of the other
