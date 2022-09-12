@@ -6,7 +6,6 @@ package me.lokka30.treasury.plugin.core.utils;
 
 import com.google.gson.Gson;
 import java.util.Objects;
-import me.lokka30.treasury.api.economy.misc.EconomyAPIVersion;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
@@ -63,31 +62,6 @@ public class Utils {
                 .getSingleMessage(MessageKey.LIST_DELIMITER);
 
         return String.join(delimiter, list);
-    }
-
-    /**
-     * Compare two API versions to see if the first version is older/newer.
-     * @param version1 first version to compare
-     * @param version2 second version to compare
-     * @return API versions are no longer used as of Treasury v1.1.0.
-     */
-    @Deprecated
-    public static PluginVersion.ComparisonResult compareAPIVersions(
-            EconomyAPIVersion version1, EconomyAPIVersion version2
-    ) {
-        if (version1.getMajorRevision() < version2.getMajorRevision()) {
-            return PluginVersion.ComparisonResult.OLDER;
-        } else if (version1.getMajorRevision() > version2.getMajorRevision()) {
-            return PluginVersion.ComparisonResult.NEWER;
-        } else {
-            if (version1.getMinorRevision() < version2.getMinorRevision()) {
-                return PluginVersion.ComparisonResult.OLDER;
-            } else if (version1.getMinorRevision() > version2.getMinorRevision()) {
-                return PluginVersion.ComparisonResult.NEWER;
-            } else {
-                return PluginVersion.ComparisonResult.EQUAL;
-            }
-        }
     }
 
     private Utils() {
