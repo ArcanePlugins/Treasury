@@ -31,15 +31,21 @@ public class BalTop extends BukkitRunnable {
     private final int topSize;
     private final int taskDelay;
     private final AtomicReference<EconomyProvider> providerRef;
+    private final BalanceCache balanceCache;
 
     private final Multimap<String, TopPlayer> baltop;
 
     public BalTop(
-            boolean enabled, int topSize, int taskDelay, AtomicReference<EconomyProvider> provider
+            boolean enabled,
+            int topSize,
+            int taskDelay,
+            BalanceCache balanceCache,
+            AtomicReference<EconomyProvider> provider
     ) {
         this.enabled = enabled;
         this.topSize = topSize;
         this.taskDelay = taskDelay;
+        this.balanceCache = balanceCache;
         this.providerRef = provider;
         this.baltop = Multimaps.newSortedSetMultimap(new HashMap<>(),
                 () -> new TreeSet<>(TopPlayer::compareTo)
@@ -110,8 +116,28 @@ public class BalTop extends BukkitRunnable {
         if (provider == null) {
             return;
         }
+        if (!balanceCache.available()) {
+            // yes I know busy waiting, but I don't know how to integrate it without busy waiting
+            // open on ideas here
+            while (!balanceCache.available()) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
         baltop.clear();
-        handlePlayers(provider);
+
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            for (Currency currency : provider.getCurrencies()) {
+                BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
+                        currency.getIdentifier()
+                );
+                baltop.put(currency.getIdentifier(), new TopPlayer(player.getName(), balance));
+            }
+        }
+
         for (String key : baltop.keys()) {
             Collection<TopPlayer> currentPlayers = baltop.get(key);
             if (currentPlayers.isEmpty() || currentPlayers.size() <= topSize) {
@@ -127,39 +153,6 @@ public class BalTop extends BukkitRunnable {
                 }
             }
             baltop.replaceValues(key, newPlayers);
-        }
-    }
-
-    private void handlePlayers(EconomyProvider provider) {
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            if (player.getName() == null) {
-                continue;
-            }
-
-            PlayerAccount account = EconomySubscriber
-                    .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
-                    .thenCompose(val -> {
-                        if (val) {
-                            return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(player.getUniqueId(),
-                                    s
-                            ));
-                        } else {
-                            return CompletableFuture.completedFuture(null);
-                        }
-                    })
-                    .join();
-            if (account == null) {
-                continue;
-            }
-            for (Currency currency : provider.getCurrencies()) {
-                BigDecimal balance = EconomySubscriber
-                        .<BigDecimal>asFuture(s -> account.retrieveBalance(currency, s))
-                        .join();
-                if (balance == null || balance.equals(BigDecimal.ZERO)) {
-                    continue;
-                }
-                baltop.put(currency.getIdentifier(), new TopPlayer(player.getName(), balance));
-            }
         }
     }
 
