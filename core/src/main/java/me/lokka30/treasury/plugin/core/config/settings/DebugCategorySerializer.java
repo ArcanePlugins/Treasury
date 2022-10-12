@@ -4,9 +4,10 @@
 
 package me.lokka30.treasury.plugin.core.config.settings;
 
+import com.mrivanplays.annotationconfig.core.serialization.AnnotationAccessor;
 import com.mrivanplays.annotationconfig.core.serialization.DataObject;
 import com.mrivanplays.annotationconfig.core.serialization.FieldTypeSerializer;
-import java.lang.reflect.Field;
+import com.mrivanplays.annotationconfig.core.serialization.SerializationContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,7 +28,11 @@ public class DebugCategorySerializer implements FieldTypeSerializer<List<DebugCa
     }
 
     @Override
-    public List<DebugCategory> deserialize(DataObject data, Field field) {
+    public List<DebugCategory> deserialize(
+            DataObject data,
+            SerializationContext<List<DebugCategory>> context,
+            AnnotationAccessor annotations
+    ) {
         List<String> stringList = data.getList(String.class);
         List<DebugCategory> ret = new ArrayList<>();
         for (String val : stringList) {
@@ -44,7 +49,11 @@ public class DebugCategorySerializer implements FieldTypeSerializer<List<DebugCa
     }
 
     @Override
-    public DataObject serialize(List<DebugCategory> value, Field field) {
+    public DataObject serialize(
+            List<DebugCategory> value,
+            SerializationContext<List<DebugCategory>> context,
+            AnnotationAccessor annotations
+    ) {
         List<String> values = new ArrayList<>();
         if (value.isEmpty()) {
             return new DataObject(values);
