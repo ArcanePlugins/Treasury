@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
@@ -34,6 +35,7 @@ public class BalanceCache extends BukkitRunnable {
     private final int delay;
     private final AtomicReference<EconomyProvider> providerRef;
     private AtomicBoolean available;
+    private CountDownLatch doneLatch = new CountDownLatch(1);
 
     public BalanceCache(int delay, AtomicReference<EconomyProvider> providerRef) {
         this.delay = delay;
@@ -63,6 +65,10 @@ public class BalanceCache extends BukkitRunnable {
         return this.available.get();
     }
 
+    public CountDownLatch getDoneLatch() {
+        return this.doneLatch;
+    }
+
     @Override
     public void run() {
         this.available.set(false);
@@ -72,13 +78,26 @@ public class BalanceCache extends BukkitRunnable {
         }
         balances.clear();
         this.proceed(0, Arrays.asList(Bukkit.getOfflinePlayers()), provider);
-        this.available.set(true);
+        if (this.doneLatch.getCount() == 0) {
+            this.available.set(true);
+        } else {
+            try {
+                this.doneLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            this.available.set(true);
+        }
     }
 
     private void proceed(
             int currentIndex, List<OfflinePlayer> players, EconomyProvider provider
     ) {
+        if (doneLatch.getCount() != 1) {
+            doneLatch = new CountDownLatch(1);
+        }
         if (currentIndex == players.size()) {
+            doneLatch.countDown();
             return;
         }
         OfflinePlayer player = players.get(currentIndex);

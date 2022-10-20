@@ -12,13 +12,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -117,14 +115,19 @@ public class BalTop extends BukkitRunnable {
             return;
         }
         if (!balanceCache.available()) {
-            // yes I know busy waiting, but I don't know how to integrate it without busy waiting
-            // open on ideas here
-            while (!balanceCache.available()) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+            try {
+                balanceCache.getDoneLatch().await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            if (!balanceCache.available()) {
+                // We'll just wait for the next cycle to update the baltop
+                // Also print a warning that it failed to update the baltop
+                TreasuryPlugin
+                        .getInstance()
+                        .logger()
+                        .warn("Couldn't update baltop placeholders for PlaceholderAPI!");
+                return;
             }
         }
         baltop.clear();
