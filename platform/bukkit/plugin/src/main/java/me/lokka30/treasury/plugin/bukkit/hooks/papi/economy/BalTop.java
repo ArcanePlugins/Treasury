@@ -116,7 +116,7 @@ public class BalTop extends BukkitRunnable {
         }
         if (!balanceCache.available()) {
             try {
-                balanceCache.getDoneLatch().await();
+                balanceCache.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

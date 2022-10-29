@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -34,13 +33,12 @@ public class BalanceCache extends BukkitRunnable {
     private final Multimap<UUID, Map.Entry<String, BigDecimal>> balances = HashMultimap.create();
     private final int delay;
     private final AtomicReference<EconomyProvider> providerRef;
-    private AtomicBoolean available;
-    private CountDownLatch doneLatch = new CountDownLatch(1);
+    private final AtomicReference<CountDownLatch> doneLatch =
+            new AtomicReference<>(new CountDownLatch(1));
 
     public BalanceCache(int delay, AtomicReference<EconomyProvider> providerRef) {
         this.delay = delay;
         this.providerRef = providerRef;
-        this.available = new AtomicBoolean(false);
     }
 
     public void start(TreasuryBukkit plugin) {
@@ -62,42 +60,41 @@ public class BalanceCache extends BukkitRunnable {
     }
 
     public boolean available() {
-        return this.available.get();
+        return this.doneLatch.get().getCount() == 0;
     }
 
-    public CountDownLatch getDoneLatch() {
-        return this.doneLatch;
+    public void await() throws InterruptedException {
+        this.doneLatch.get().await();
     }
 
     @Override
     public void run() {
-        this.available.set(false);
         EconomyProvider provider = providerRef.get();
         if (provider == null) {
             return;
         }
         balances.clear();
         this.proceed(0, Arrays.asList(Bukkit.getOfflinePlayers()), provider);
-        if (this.doneLatch.getCount() == 0) {
-            this.available.set(true);
-        } else {
+        CountDownLatch latch = this.doneLatch.get();
+        if (latch.getCount() != 0) {
             try {
-                this.doneLatch.await();
+                latch.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            this.available.set(true);
         }
     }
 
     private void proceed(
             int currentIndex, List<OfflinePlayer> players, EconomyProvider provider
     ) {
-        if (doneLatch.getCount() != 1) {
-            doneLatch = new CountDownLatch(1);
+        CountDownLatch latch = doneLatch.get();
+        if (latch.getCount() != 1) {
+            latch = new CountDownLatch(1);
+            doneLatch.set(latch);
         }
         if (currentIndex == players.size()) {
-            doneLatch.countDown();
+            latch.countDown();
             return;
         }
         OfflinePlayer player = players.get(currentIndex);
