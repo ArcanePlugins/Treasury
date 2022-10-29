@@ -133,11 +133,18 @@ public class BalTop extends BukkitRunnable {
         baltop.clear();
 
         for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            String playerName = player.getName();
+            if (playerName == null) {
+                continue;
+            }
             for (Currency currency : provider.getCurrencies()) {
                 BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
                         currency.getIdentifier()
                 );
-                baltop.put(currency.getIdentifier(), new TopPlayer(player.getName(), balance));
+                if (balance == null) {
+                    continue;
+                }
+                baltop.put(currency.getIdentifier(), new TopPlayer(playerName, balance));
             }
         }
 
@@ -161,19 +168,19 @@ public class BalTop extends BukkitRunnable {
 
     public static class TopPlayer implements Comparable<TopPlayer> {
 
-        private final String name;
-        private final BigDecimal balance;
+        private final @NotNull String name;
+        private final @NotNull BigDecimal balance;
 
-        public TopPlayer(String name, BigDecimal balance) {
+        public TopPlayer(@NotNull String name, @NotNull BigDecimal balance) {
             this.name = name;
             this.balance = balance;
         }
 
-        public String getName() {
+        public @NotNull String getName() {
             return name;
         }
 
-        public BigDecimal getBalance() {
+        public @NotNull BigDecimal getBalance() {
             return balance;
         }
 
