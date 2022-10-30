@@ -94,7 +94,8 @@ public class BalanceCache extends BukkitRunnable {
             doneLatch.set(latch);
         }
         if (currentIndex == players.size()) {
-            latch.countDown();
+            // java can be weird sometimes
+            this.doneLatch.get().countDown();
             return;
         }
         OfflinePlayer player = players.get(currentIndex);
