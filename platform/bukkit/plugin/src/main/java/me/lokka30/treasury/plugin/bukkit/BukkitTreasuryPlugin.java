@@ -129,17 +129,19 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void info(String message) {
-        plugin.getLogger().info(colorize(message));
+        plugin.getServer().getConsoleSender().sendMessage("[Treasury] " + colorize(message));
     }
 
     @Override
     public void warn(String message) {
-        plugin.getLogger().warning(colorize(message));
+        plugin.getServer().getConsoleSender().sendMessage(
+                "&e[WARNING] [Treasury] " + colorize(message)
+        );
     }
 
     @Override
     public void error(String message) {
-        plugin.getLogger().severe(colorize(message));
+        plugin.getServer().getConsoleSender().sendMessage("&4[ERROR] [Treasury]" + colorize(message));
     }
 
     @Override
