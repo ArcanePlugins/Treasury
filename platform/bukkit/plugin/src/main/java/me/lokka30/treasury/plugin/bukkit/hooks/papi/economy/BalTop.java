@@ -12,13 +12,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -31,15 +29,21 @@ public class BalTop extends BukkitRunnable {
     private final int topSize;
     private final int taskDelay;
     private final AtomicReference<EconomyProvider> providerRef;
+    private final BalanceCache balanceCache;
 
     private final Multimap<String, TopPlayer> baltop;
 
     public BalTop(
-            boolean enabled, int topSize, int taskDelay, AtomicReference<EconomyProvider> provider
+            boolean enabled,
+            int topSize,
+            int taskDelay,
+            BalanceCache balanceCache,
+            AtomicReference<EconomyProvider> provider
     ) {
         this.enabled = enabled;
         this.topSize = topSize;
         this.taskDelay = taskDelay;
+        this.balanceCache = balanceCache;
         this.providerRef = provider;
         this.baltop = Multimaps.newSortedSetMultimap(new HashMap<>(),
                 () -> new TreeSet<>(TopPlayer::compareTo)
@@ -110,8 +114,40 @@ public class BalTop extends BukkitRunnable {
         if (provider == null) {
             return;
         }
+        if (!balanceCache.available()) {
+            try {
+                balanceCache.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            if (!balanceCache.available()) {
+                // We'll just wait for the next cycle to update the baltop
+                // Also print a warning that it failed to update the baltop
+                TreasuryPlugin
+                        .getInstance()
+                        .logger()
+                        .warn("Couldn't update baltop placeholders for PlaceholderAPI!");
+                return;
+            }
+        }
         baltop.clear();
-        handlePlayers(provider);
+
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            String playerName = player.getName();
+            if (playerName == null) {
+                continue;
+            }
+            for (Currency currency : provider.getCurrencies()) {
+                BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
+                        currency.getIdentifier()
+                );
+                if (balance == null) {
+                    continue;
+                }
+                baltop.put(currency.getIdentifier(), new TopPlayer(playerName, balance));
+            }
+        }
+
         for (String key : baltop.keys()) {
             Collection<TopPlayer> currentPlayers = baltop.get(key);
             if (currentPlayers.isEmpty() || currentPlayers.size() <= topSize) {
@@ -130,54 +166,21 @@ public class BalTop extends BukkitRunnable {
         }
     }
 
-    private void handlePlayers(EconomyProvider provider) {
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            if (player.getName() == null) {
-                continue;
-            }
-
-            PlayerAccount account = EconomySubscriber
-                    .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
-                    .thenCompose(val -> {
-                        if (val) {
-                            return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(player.getUniqueId(),
-                                    s
-                            ));
-                        } else {
-                            return CompletableFuture.completedFuture(null);
-                        }
-                    })
-                    .join();
-            if (account == null) {
-                continue;
-            }
-            for (Currency currency : provider.getCurrencies()) {
-                BigDecimal balance = EconomySubscriber
-                        .<BigDecimal>asFuture(s -> account.retrieveBalance(currency, s))
-                        .join();
-                if (balance == null || balance.equals(BigDecimal.ZERO)) {
-                    continue;
-                }
-                baltop.put(currency.getIdentifier(), new TopPlayer(player.getName(), balance));
-            }
-        }
-    }
-
     public static class TopPlayer implements Comparable<TopPlayer> {
 
-        private final String name;
-        private final BigDecimal balance;
+        private final @NotNull String name;
+        private final @NotNull BigDecimal balance;
 
-        public TopPlayer(String name, BigDecimal balance) {
+        public TopPlayer(@NotNull String name, @NotNull BigDecimal balance) {
             this.name = name;
             this.balance = balance;
         }
 
-        public String getName() {
+        public @NotNull String getName() {
             return name;
         }
 
-        public BigDecimal getBalance() {
+        public @NotNull BigDecimal getBalance() {
             return balance;
         }
 

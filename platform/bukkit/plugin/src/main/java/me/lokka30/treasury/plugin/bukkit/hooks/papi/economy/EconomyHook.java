@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.lokka30.treasury.api.common.event.EventBus;
+import me.lokka30.treasury.api.common.event.EventPriority;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.common.service.event.ServiceRegisteredEvent;
@@ -133,6 +134,7 @@ public class EconomyHook implements TreasuryPapiHook {
         EventBus eventBus = EventBus.INSTANCE;
         eventBus.subscribe(eventBus
                 .subscriptionFor(ServiceRegisteredEvent.class)
+                .withPriority(EventPriority.LOW)
                 .whenCalled(event -> {
                     if (!(event.getService().get() instanceof EconomyProvider)) {
                         return;
@@ -142,6 +144,7 @@ public class EconomyHook implements TreasuryPapiHook {
                 .completeSubscription());
         eventBus.subscribe(eventBus
                 .subscriptionFor(ServiceUnregisteredEvent.class)
+                .withPriority(EventPriority.LOW)
                 .whenCalled(event -> {
                     if (!(event.getService().get() instanceof EconomyProvider)) {
                         return;
@@ -150,19 +153,18 @@ public class EconomyHook implements TreasuryPapiHook {
                 })
                 .completeSubscription());
 
-        this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
-                expansion.getInt("baltop.cache_size", 100),
-                expansion.getInt("baltop.cache_delay", 30),
-                providerRef
-        );
-
-        this.baltop.start(plugin);
-
         this.balanceCache = new BalanceCache(expansion.getInt("balance.cache_check_delay", 60),
                 providerRef
         );
-
         this.balanceCache.start(plugin);
+
+        this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
+                expansion.getInt("baltop.cache_size", 100),
+                expansion.getInt("baltop.cache_delay", 30),
+                balanceCache,
+                providerRef
+        );
+        this.baltop.start(plugin);
         return true;
     }
 
