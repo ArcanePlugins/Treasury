@@ -97,11 +97,11 @@ public enum EconomyFailureReason implements FailureReason {
 
     /**
      * A constant representing failure whenever the default implementation of
-     * {@link PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)}
+     * {@link PlayerAccount#setPermission(UUID, TriState, AccountPermission...)}
      * has been called.
      * To avoid this failure, do not try to set permissions on player accounts.
      *
-     * @see PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
+     * @see PlayerAccount#setPermission(UUID, TriState, AccountPermission...)
      * @since v1.0.0
      */
     PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED {
@@ -120,8 +120,8 @@ public enum EconomyFailureReason implements FailureReason {
      * Note: This does not apply to every method in the Economy API!
      * To avoid this failure, ensure such parameters only receive positive numbers.
      *
-     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency)
+     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency)
      * @since v1.0.0
      */
     NEGATIVE_AMOUNT_SPECIFIED {
@@ -189,7 +189,7 @@ public enum EconomyFailureReason implements FailureReason {
      * following an expected format/pattern when attempting
      * to parse it into a number type such as {@link BigDecimal}.
      *
-     * @see Currency#parse(String, EconomySubscriber)
+     * @see Currency#parse(String)
      * @since v1.0.0
      */
     NUMBER_PARSING_ERROR {

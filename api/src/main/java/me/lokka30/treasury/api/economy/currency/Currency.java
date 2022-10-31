@@ -7,7 +7,8 @@ package me.lokka30.treasury.api.economy.currency;
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.UUID;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.economy.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,32 +100,29 @@ public interface Currency {
      * Used to convert this {@link Currency} to another based on a specified amount of the other
      * currency.
      *
-     * @param currency     The currency we are converting to.
-     * @param amount       The amount to be converted to the specified {@link Currency}
-     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
-     *                     represents the converted amount of the specified {@link Currency}.
+     * @param currency The currency we are converting to.
+     * @param amount   The amount to be converted to the specified {@link Currency}
+     * @return future with {@link Response} which if successful returns the resulting
+     *         {@link BigDecimal} that represents the converted amount of the specified {@link Currency}
      * @since v1.0.0
      */
-    void to(
-            @NotNull Currency currency,
-            @NotNull BigDecimal amount,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+    CompletableFuture<Response<BigDecimal>> to(
+            @NotNull Currency currency, @NotNull BigDecimal amount
     );
 
     /**
      * Used to get the BigDecimal representation of an amount represented by a formatted string.
      * If the {@code formatted} value can't be parsed, then
      * {@link me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR}
-     * should be used as the {@code FailureReason} for the failure reason in the accompanied
-     * {@link me.lokka30.treasury.api.economy.response.EconomyException}.
+     * should be used as the {@code FailureReason} for the failure reason.
      *
-     * @param formatted    The formatted string to be converted to BigDecimal form.
-     * @param subscription The {@link EconomySubscriber} accepting the resulting {@link BigDecimal} that
-     *                     represents the deformatted amount of the formatted String.
+     * @param formatted The formatted string to be converted to BigDecimal form.
+     * @return future with {@link Response} which if successful returns the resulting
+     *         {@link BigDecimal} that represents the deformatted amount of the formatted String.
      * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
      * @since v1.0.0
      */
-    void parse(@NotNull String formatted, @NotNull EconomySubscriber<BigDecimal> subscription);
+    CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted);
 
     /**
      * Gets the starting balance of a specific player account for this currency.
