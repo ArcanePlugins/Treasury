@@ -81,11 +81,6 @@ public class TreasuryBungee extends Plugin {
     public void onDisable() {
         final QuickTimer shutdownTimer = new QuickTimer();
 
-        // make sure to clean up even though we don't have service migration from other service
-        // manager to ours as bukkit impl does. that's not really necessary, but it doesn't hurt
-        // to be here
-        ServiceRegistry.INSTANCE.unregisterAll("Treasury");
-
         // Shutdown events
         EventExecutorTrackerShutdown.shutdown();
 

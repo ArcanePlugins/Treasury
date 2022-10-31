@@ -12,9 +12,7 @@ import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.bukkit.command.TreasuryCommand;
 import me.lokka30.treasury.plugin.bukkit.hooks.HookRegistrar;
-import me.lokka30.treasury.plugin.bukkit.services.ServiceMigrationManager;
-import me.lokka30.treasury.plugin.bukkit.services.bukkit2treasury.B2TServiceMigrator;
-import me.lokka30.treasury.plugin.bukkit.services.treasury2bukkit.T2BServiceMigrator;
+import me.lokka30.treasury.plugin.bukkit.listeners.BukkitServiceRegistrationListener;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
 import me.lokka30.treasury.plugin.bukkit.vendor.paper.PaperEnhancements;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -22,7 +20,6 @@ import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -58,8 +55,7 @@ public class TreasuryBukkit extends JavaPlugin {
         treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
 
-        getServer().getPluginManager().registerEvents(new B2TServiceMigrator(), this);
-        new T2BServiceMigrator(this).registerListeners();
+        getServer().getPluginManager().registerEvents(new BukkitServiceRegistrationListener(getLogger()), this);
 
         getServer().getPluginManager().registerEvents(new HookRegistrar(this), this);
 
@@ -96,13 +92,11 @@ public class TreasuryBukkit extends JavaPlugin {
             pluginName = serv.registrarName();
         }
 
-        metrics.addCustomChart(new SimplePie(
-                "economy-provider-name",
+        metrics.addCustomChart(new SimplePie("economy-provider-name",
                 () -> economyProvider == null ? "None" : pluginName
         ));
 
-        metrics.addCustomChart(new SimplePie(
-                "plugin-update-checking-enabled",
+        metrics.addCustomChart(new SimplePie("plugin-update-checking-enabled",
                 () -> Boolean.toString(treasuryPlugin
                         .configAdapter()
                         .getSettings()
@@ -134,11 +128,6 @@ public class TreasuryBukkit extends JavaPlugin {
     @Override
     public void onDisable() {
         final QuickTimer shutdownTimer = new QuickTimer();
-
-        // Unregister all
-        ServiceRegistry.INSTANCE.unregisterAll("Treasury");
-        ServiceMigrationManager.INSTANCE.shutdown();
-        Bukkit.getServicesManager().unregisterAll(this);
 
         // Shutdown events
         EventExecutorTrackerShutdown.shutdown();
