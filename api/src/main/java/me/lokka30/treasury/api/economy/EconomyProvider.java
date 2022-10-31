@@ -15,14 +15,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.CumulatedFailureReason;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,43 +38,39 @@ public interface EconomyProvider {
     /**
      * Request whether a user has an associated {@link PlayerAccount}.
      *
-     * @param accountId    the {@link UUID} of the account owner
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param accountId the {@link UUID} of the account owner
+     * @return future with {@link Response} which if successful returns the resulting {@link TriState}
      * @since v1.0.0
      */
-    void hasPlayerAccount(
-            @NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription
-    );
+    CompletableFuture<Response<TriState>> hasPlayerAccount(@NotNull UUID accountId);
 
     /**
      * Request an existing {@link PlayerAccount} for a user.
      *
-     * @param accountId    the {@link UUID} of the account owner
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param accountId the {@link UUID} of the account owner
+     * @return future with {@link Response} which if successful returns the resulting
+     *         {@link PlayerAccount}
      * @since v1.0.0
      */
-    void retrievePlayerAccount(
-            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
-    );
+    CompletableFuture<Response<PlayerAccount>> retrievePlayerAccount(@NotNull UUID accountId);
 
     /**
      * Request the creation of a {@link PlayerAccount} for a user.
      *
-     * @param accountId    the {@link UUID} of the account owner
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param accountId the {@link UUID} of the account owner
+     * @return future with {@link Response} which if successful returns the resulting
+     *         {@link PlayerAccount}
      * @since v1.0.0
      */
-    void createPlayerAccount(
-            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
-    );
+    CompletableFuture<Response<PlayerAccount>> createPlayerAccount(@NotNull UUID accountId);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
      *
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
 
     /**
      * Request whether an identifier has an associated {@link Account}.
@@ -84,11 +79,11 @@ public interface EconomyProvider {
      * <p>
      * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param identifier   the identifier of the account
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param identifier the identifier of the account
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    void hasAccount(@NotNull String identifier, @NotNull EconomySubscriber<Boolean> subscription);
+    CompletableFuture<Response<TriState>> hasAccount(@NotNull String identifier);
 
     /**
      * Request an existing {@link Account} for a specific identifier.
@@ -97,13 +92,11 @@ public interface EconomyProvider {
      * <p>
      * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param identifier   the identifier of the account
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param identifier the identifier of the account
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    void retrieveAccount(
-            @NotNull String identifier, @NotNull EconomySubscriber<Account> subscription
-    );
+    CompletableFuture<Response<Account>> retrieveAccount(@NotNull String identifier);
 
     /**
      * Request the creation of a {@link Account} for a specific identifier.
@@ -112,14 +105,12 @@ public interface EconomyProvider {
      * <p>
      * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param identifier   the identifier of the account
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param identifier the identifier of the account
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    default void createAccount(
-            @NotNull String identifier, @NotNull EconomySubscriber<Account> subscription
-    ) {
-        createAccount(null, identifier, subscription);
+    default CompletableFuture<Response<Account>> createAccount(@NotNull String identifier) {
+        return createAccount(null, identifier);
     }
 
     /**
@@ -130,177 +121,134 @@ public interface EconomyProvider {
      * <p>
      * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
      *
-     * @param name         the human-readable name of the account
-     * @param identifier   the unique identifier of the account
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @param name       the human-readable name of the account
+     * @param identifier the unique identifier of the account
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    void createAccount(
-            @Nullable String name,
-            @NotNull String identifier,
-            @NotNull EconomySubscriber<Account> subscription
+    CompletableFuture<Response<Account>> createAccount(
+            @Nullable String name, @NotNull String identifier
     );
 
     /**
      * Request all identifiers with associated {@link Account Accounts}.
      *
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
+    CompletableFuture<Response<Collection<String>>> retrieveAccountIds();
 
     /**
      * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
      *
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription);
+    CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds();
 
     /**
      * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
      * @param playerId     the player
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
+     * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    default void retrieveAllAccountsPlayerIsMemberOf(
-            @NotNull UUID playerId, @NotNull EconomySubscriber<Collection<String>> subscription
-    ) {
+    default CompletableFuture<Response<Collection<String>>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
-        Objects.requireNonNull(subscription, "subscription");
-        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
-            if (throwable instanceof EconomyException) {
-                subscription.fail((EconomyException) throwable);
-            } else {
-                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
-                        throwable
-                ));
-            }
-            return new HashSet<>();
-        }).thenAccept(identifiers -> {
-            if (identifiers.isEmpty()) {
-                subscription.succeed(identifiers);
-                return;
-            }
-            Set<String> ret = Collections.synchronizedSet(new HashSet<>());
-            List<CompletableFuture<Void>> futures = new ArrayList<>(identifiers.size());
-            for (String identifier : identifiers) {
-                futures.add(EconomySubscriber.<Account>asFuture(
-                        subscriber -> retrieveAccount(identifier, subscriber)
-                ).thenCompose(account -> {
-                    if (account == null) {
-                        return CompletableFuture.completedFuture(false);
-                    }
 
-                    if (!(account instanceof NonPlayerAccount)) {
-                        return CompletableFuture.completedFuture(false);
+        return retrieveAccountIds()
+                .thenCompose(result -> {
+                    if (!result.isSuccessful()) {
+                        return CompletableFuture.completedFuture(Response.failure(result.getFailureReason()));
                     }
-                    return EconomySubscriber.asFuture(subscriber -> account.isMember(playerId,
-                            subscriber
-                    ));
-                }).thenAccept(val -> {
-                    if (val) {
-                        ret.add(identifier);
+                    Set<String> ret = Collections.synchronizedSet(new HashSet<>());
+                    CumulatedFailureReason cumulatedFailure = new CumulatedFailureReason();
+                    List<CompletableFuture<Void>> futures = new ArrayList<>();
+                    for (String identifier : result.getResult()) {
+                        futures.add(retrieveAccount(identifier).thenCompose(response -> {
+                            if (!response.isSuccessful()) {
+                                return CompletableFuture.completedFuture(Response.failure(response.getFailureReason()));
+                            }
+                            Account account = response.getResult();
+                            if (!(account instanceof NonPlayerAccount)) {
+                                return CompletableFuture.completedFuture(Response.success(TriState.UNSPECIFIED));
+                            }
+                            return account.isMember(playerId);
+                        }).thenAccept(val -> {
+                            if (!val.isSuccessful()) {
+                                cumulatedFailure.addFailureReason(val.getFailureReason());
+                                return;
+                            }
+                            TriState res = val.getResult();
+                            if (res == TriState.FALSE || res == TriState.UNSPECIFIED) {
+                                return;
+                            }
+                            ret.add(identifier);
+                        }));
                     }
-                }));
-            }
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> {
-                        subscription.succeed(ret);
-                    })
-                    .exceptionally((throwable) -> {
-                        if (throwable instanceof EconomyException) {
-                            subscription.fail((EconomyException) throwable);
-                        } else {
-                            subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
-                                    throwable
-                            ));
-                        }
-                        return null;
-                    });
-        });
+                    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                            .thenApply($ -> {
+                                if (!ret.isEmpty()) {
+                                    return Response.success(ret);
+                                }
+                                return Response.failure(cumulatedFailure);
+                            });
+                });
     }
 
     /**
      * Request all the {@link NonPlayerAccount non-player accounts} where the given player has the given permissions.
      *
-     * @param playerId     the player
-     * @param subscription the {@link EconomySubscriber} accepting the resulting value
-     * @param permissions  the permissions that the given player has to have on the {@link NonPlayerAccount account}
-     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID, EconomySubscriber)
+     * @param playerId    the player
+     * @param permissions the permissions that the given player has to have on the {@link NonPlayerAccount account}
+     * @return future with {@link Response} which if successful returns the resulting value
+     * @see #retrieveAllAccountsPlayerIsMemberOf(UUID)
      * @since v1.0.0
      */
-    default void retrieveAllAccountsPlayerHasPermission(
-            @NotNull UUID playerId,
-            @NotNull EconomySubscriber<Collection<String>> subscription,
-            @NotNull AccountPermission @NotNull ... permissions
+    default CompletableFuture<Response<Collection<String>>> retrieveAllAccountsPlayerHasPermission(
+            @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
-        Objects.requireNonNull(subscription, "subscription");
         Objects.requireNonNull(permissions, "permissions");
-        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
-            if (throwable instanceof EconomyException) {
-                subscription.fail((EconomyException) throwable);
-            } else {
-                subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
-                        throwable
-                ));
-            }
-            return new HashSet<>();
-        }).thenAccept(identifiers -> {
-            if (identifiers.isEmpty()) {
-                subscription.succeed(identifiers);
-                return;
-            }
-            Set<String> ret = Collections.synchronizedSet(new HashSet<>());
-            List<CompletableFuture<Void>> futures = new ArrayList<>(identifiers.size());
-            for (String identifier : identifiers) {
-                futures.add(EconomySubscriber.<Account>asFuture(
-                        subscriber -> retrieveAccount(identifier, subscriber)
-                ).thenCompose(account -> {
-                    if (account == null) {
-                        return CompletableFuture.completedFuture(false);
-                    }
 
-                    if (!(account instanceof NonPlayerAccount)) {
-                        return CompletableFuture.completedFuture(false);
+        return retrieveAccountIds()
+                .thenCompose(result -> {
+                    if (!result.isSuccessful()) {
+                        return CompletableFuture.completedFuture(Response.failure(result.getFailureReason()));
                     }
-
-                    CompletableFuture<Boolean> ret1 = new CompletableFuture<>();
-                    account.hasPermission(playerId, new EconomySubscriber<TriState>() {
-                        @Override
-                        public void succeed(@NotNull final TriState triState) {
-                            ret1.complete(triState == TriState.TRUE);
-                        }
-
-                        @Override
-                        public void fail(@NotNull final EconomyException exception) {
-                            ret1.completeExceptionally(exception);
-                        }
-                    }, permissions);
-                    return ret1;
-                }).thenAccept(val -> {
-                    if (val) {
-                        ret.add(identifier);
+                    Set<String> ret = Collections.synchronizedSet(new HashSet<>());
+                    CumulatedFailureReason cumulatedFailure = new CumulatedFailureReason();
+                    List<CompletableFuture<Void>> futures = new ArrayList<>();
+                    for (String identifier : result.getResult()) {
+                        futures.add(retrieveAccount(identifier).thenCompose(response -> {
+                            if (!response.isSuccessful()) {
+                                return CompletableFuture.completedFuture(Response.failure(response.getFailureReason()));
+                            }
+                            Account account = response.getResult();
+                            if (!(account instanceof NonPlayerAccount)) {
+                                return CompletableFuture.completedFuture(Response.success(TriState.UNSPECIFIED));
+                            }
+                            return account.hasPermission(playerId, permissions);
+                        }).thenAccept(val -> {
+                            if (!val.isSuccessful()) {
+                                cumulatedFailure.addFailureReason(val.getFailureReason());
+                                return;
+                            }
+                            TriState res = val.getResult();
+                            if (res == TriState.FALSE || res == TriState.UNSPECIFIED) {
+                                return;
+                            }
+                            ret.add(identifier);
+                        }));
                     }
-                }));
-            }
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> {
-                        subscription.succeed(ret);
-                    })
-                    .exceptionally((throwable) -> {
-                        if (throwable instanceof EconomyException) {
-                            subscription.fail((EconomyException) throwable);
-                        } else {
-                            subscription.fail(new EconomyException(EconomyFailureReason.OTHER_FAILURE,
-                                    throwable
-                            ));
-                        }
-                        return null;
-                    });
-        });
+                    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                            .thenApply($ -> {
+                                if (!ret.isEmpty()) {
+                                    return Response.success(ret);
+                                }
+                                return Response.failure(cumulatedFailure);
+                            });
+                });
     }
 
     /**
@@ -344,15 +292,13 @@ public interface EconomyProvider {
      * Used to register a currency with the {@link EconomyProvider} to be utilized by
      * other plugins.
      *
-     * @param currency     The currency to register with the {@link EconomyProvider}.
-     * @param subscription The {@link EconomySubscriber} representing the result of the
-     *                     attempted {@link Currency} registration with an {@link Boolean}.
-     *                     This will be {@link Boolean#TRUE} if it was registered, otherwise
-     *                     it'll be {@link Boolean#FALSE}.
+     * @param currency The currency to register with the {@link EconomyProvider}.
+     * @return future with {@link Response} which if successful returns a {@link TriState}
+     *         whether the registration was successful. If the currency was successfully registered, this
+     *         shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that currency is
+     *         already registered, {@link TriState#UNSPECIFIED}
      * @since v1.0.0
      */
-    void registerCurrency(
-            @NotNull Currency currency, @NotNull EconomySubscriber<Boolean> subscription
-    );
+    CompletableFuture<Response<TriState>> registerCurrency(@NotNull Currency currency);
 
 }
