@@ -55,10 +55,10 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if the account exists before attempting to
      * interact with it.
      *
-     * @see EconomyProvider#hasAccount(String, EconomySubscriber)
-     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
-     * @see EconomyProvider#retrieveAccount(String, EconomySubscriber)
-     * @see EconomyProvider#retrievePlayerAccount(UUID, EconomySubscriber)
+     * @see EconomyProvider#hasAccount(String)
+     * @see EconomyProvider#hasPlayerAccount(UUID)
+     * @see EconomyProvider#retrieveAccount(String)
+     * @see EconomyProvider#retrievePlayerAccount(UUID)
      * @since v1.0.0
      */
     ACCOUNT_NOT_FOUND {
@@ -78,11 +78,11 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if an account exists before attempting to create
      * one that uses the same identifier.
      *
-     * @see EconomyProvider#hasAccount(String, EconomySubscriber)
-     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
-     * @see EconomyProvider#createAccount(String, EconomySubscriber)
-     * @see EconomyProvider#createAccount(String, String, EconomySubscriber)
-     * @see EconomyProvider#createPlayerAccount(UUID, EconomySubscriber)
+     * @see EconomyProvider#hasAccount(String)
+     * @see EconomyProvider#hasPlayerAccount(UUID)
+     * @see EconomyProvider#createAccount(String)
+     * @see EconomyProvider#createAccount(String, String)
+     * @see EconomyProvider#createPlayerAccount(UUID)
      * @since v1.0.0
      */
     ACCOUNT_ALREADY_EXISTS {
@@ -155,7 +155,7 @@ public enum EconomyFailureReason implements FailureReason {
      * economy provider.
      * To avoid this failure, check if a currency exists before attempting to register it.
      *
-     * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency)
      * @since v1.0.0
      */
     CURRENCY_ALREADY_REGISTERED {
