@@ -246,21 +246,48 @@ public interface Account {
     /**
      * Reset the {@code Account} balance to its starting amount.
      *
-     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
+     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero
+     * starting balances.
      *
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being reset
+     * @param importance   the reset transaction importance
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @see #resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @since v2.0.0
      */
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    ) {
+        resetBalance(initiator, currency, importance, null, subscription);
+    }
+
+    /**
+     * Reset the {@code Account} balance to its starting amount.
+     *
+     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
+     *
+     * @param initiator    the one who initiated the transaction
+     * @param currency     the {@link Currency} of the balance being reset
+     * @param importance   the reset transaction importance
+     * @param reason       the reset reason
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @since v1.0.0 (modified in 2.0.0)
+     */
+    default void resetBalance(
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
         Objects.requireNonNull(initiator, "initiator");
         Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(importance, "importance");
         Objects.requireNonNull(subscription, "subscription");
 
         doTransaction(EconomyTransaction
@@ -268,8 +295,8 @@ public interface Account {
                 .withCurrency(currency)
                 .withInitiator(initiator)
                 .withTransactionAmount(BigDecimal.ZERO)
-                .withReason("reset")
-                .withImportance(EconomyTransactionImportance.NORMAL)
+                .withReason(reason)
+                .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.SET)
                 .build(), subscription);
     }

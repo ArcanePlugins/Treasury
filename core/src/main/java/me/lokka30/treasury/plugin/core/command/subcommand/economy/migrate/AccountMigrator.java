@@ -19,7 +19,10 @@ import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import org.jetbrains.annotations.NotNull;
 
 interface AccountMigrator<T extends Account> {
@@ -85,9 +88,10 @@ interface AccountMigrator<T extends Account> {
             for (Currency currency : currencies) {
                 CompletableFuture<BigDecimal> balanceFuture = new CompletableFuture<>();
 
-                fromAccount.setBalance(BigDecimal.ZERO,
-                        initiator,
+                fromAccount.resetBalance(initiator,
                         currency,
+                        EconomyTransactionImportance.NORMAL,
+                        "migration",
                         new PhasedSubscriber<BigDecimal>(phaser) {
                             @Override
                             public void phaseAccept(@NotNull final BigDecimal balance) {
@@ -114,9 +118,15 @@ interface AccountMigrator<T extends Account> {
                                 migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
                                         exception
                                 ));
-                                fromAccount.setBalance(balance,
-                                        initiator,
-                                        currency,
+                                fromAccount.doTransaction(EconomyTransaction
+                                                .newBuilder()
+                                                .withTransactionType(EconomyTransactionType.SET)
+                                                .withImportance(EconomyTransactionImportance.NORMAL)
+                                                .withReason("migration")
+                                                .withTransactionAmount(balance)
+                                                .withInitiator(initiator)
+                                                .withCurrency(currency)
+                                                .build(),
                                         new FailureConsumer<>(phaser, exception1 -> {
                                             migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
                                                     exception1

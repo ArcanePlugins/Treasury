@@ -151,17 +151,20 @@ public interface PlayerAccount extends Account {
      * @param initiator    the one who initiated this transaction
      * @param currency     of the balance being reset
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
      * @since v1.0.0
      */
     @Override
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
         Objects.requireNonNull(initiator, "initiator");
         Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(importance, "importance");
         Objects.requireNonNull(subscription, "subscription");
 
         doTransaction(EconomyTransaction
@@ -169,8 +172,8 @@ public interface PlayerAccount extends Account {
                 .withCurrency(currency)
                 .withInitiator(initiator)
                 .withTransactionAmount(currency.getStartingBalance(getUniqueId()))
-                .withReason("reset")
-                .withImportance(EconomyTransactionImportance.NORMAL)
+                .withReason(reason)
+                .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.SET)
                 .build(), subscription);
     }
