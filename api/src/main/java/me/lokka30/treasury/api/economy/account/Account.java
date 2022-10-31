@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.response.Response;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
@@ -58,190 +58,163 @@ public interface Account {
     /**
      * Sets a new name for this {@link Account}, which may be null.
      *
-     * @param name         the new name for this account.
-     * @param subscription the {@link EconomySubscriber} accepting whether name change was successful
+     * @param name the new name for this account.
+     * @return future with a {@link Response} which result's whether name change was successful
      * @since v1.0.0
      */
-    void setName(@Nullable String name, @NotNull EconomySubscriber<Boolean> subscription);
+    CompletableFuture<Response<TriState>> setName(@Nullable String name);
 
     /**
      * Request the balance of the {@code Account}.
      *
-     * @param currency     the {@link Currency} of the balance being requested
-     * @param subscription the {@link EconomySubscriber} accepting the amount
+     * @param currency the {@link Currency} of the balance being requested
+     * @return future with a {@link Response} which result's the balance if successful
      * @since v1.0.0
      */
-    void retrieveBalance(
-            @NotNull Currency currency, @NotNull EconomySubscriber<BigDecimal> subscription
-    );
+    CompletableFuture<Response<BigDecimal>> retrieveBalance(@NotNull Currency currency);
 
     /**
      * Withdraw an amount from the {@code Account} balance.
      *
-     * @param amount       the amount the balance will be reduced by
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being modified
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @param amount    the amount the balance will be reduced by
+     * @param initiator the one who initiated the transaction
+     * @param currency  the {@link Currency} of the balance being modified
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
-    default void withdrawBalance(
+    default CompletableFuture<Response<BigDecimal>> withdrawBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Currency currency,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @NotNull Currency currency
     ) {
-        withdrawBalance(
-                amount,
+        return withdrawBalance(amount,
                 initiator,
                 currency,
                 EconomyTransactionImportance.NORMAL,
-                null,
-                subscription
+                null
         );
     }
 
     /**
      * Withdraw an amount from the {@code Account} balance.
      *
-     * @param amount       the amount the balance will be reduced by
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being modified
-     * @param importance   how important is the transaction
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @param amount     the amount the balance will be reduced by
+     * @param initiator  the one who initiated the transaction
+     * @param currency   the {@link Currency} of the balance being modified
+     * @param importance how important is the transaction
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
-    default void withdrawBalance(
+    default CompletableFuture<Response<BigDecimal>> withdrawBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
-            @NotNull EconomyTransactionImportance importance,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @NotNull EconomyTransactionImportance importance
     ) {
-        withdrawBalance(amount, initiator, currency, importance, null, subscription);
+        return withdrawBalance(amount, initiator, currency, importance, null);
     }
 
     /**
      * Withdraw an amount from the {@code Account} balance.
      *
-     * @param amount       the amount the balance will be reduced by
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being modified
-     * @param importance   how important is the transaction
-     * @param reason       the reason of why the balance is modified
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @param amount     the amount the balance will be reduced by
+     * @param initiator  the one who initiated the transaction
+     * @param currency   the {@link Currency} of the balance being modified
+     * @param importance how important is the transaction
+     * @param reason     the reason of why the balance is modified
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
-    default void withdrawBalance(
+    default CompletableFuture<Response<BigDecimal>> withdrawBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
-            @Nullable String reason,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @Nullable String reason
     ) {
-        doTransaction(EconomyTransaction
-                .newBuilder()
-                .withCurrency(currency)
-                .withInitiator(initiator)
-                .withReason(reason)
-                .withTransactionAmount(amount)
-                .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.WITHDRAWAL)
-                .build(), subscription);
+        return doTransaction(EconomyTransaction.newBuilder().withCurrency(currency).withInitiator(
+                initiator).withReason(reason).withTransactionAmount(amount).withImportance(
+                importance).withTransactionType(EconomyTransactionType.WITHDRAWAL).build());
     }
 
     /**
      * Deposit an amount into the {@code Account} balance.
      *
-     * @param amount       the amount the balance will be increased by
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being modified
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @param amount    the amount the balance will be increased by
+     * @param initiator the one who initiated the transaction
+     * @param currency  the {@link Currency} of the balance being modified
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
-    default void depositBalance(
+    default CompletableFuture<Response<BigDecimal>> depositBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Currency currency,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @NotNull Currency currency
     ) {
-        depositBalance(
-                amount,
+        return depositBalance(amount,
                 initiator,
                 currency,
                 EconomyTransactionImportance.NORMAL,
-                null,
-                subscription
+                null
         );
     }
 
     /**
      * Deposit an amount into the {@code Account} balance.
      *
-     * @param amount       the amount the balance will be increased by
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being modified
-     * @param importance   how important is the transaction
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @param amount     the amount the balance will be increased by
+     * @param initiator  the one who initiated the transaction
+     * @param currency   the {@link Currency} of the balance being modified
+     * @param importance how important is the transaction
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
-    default void depositBalance(
+    default CompletableFuture<Response<BigDecimal>> depositBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
-            @NotNull EconomyTransactionImportance importance,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @NotNull EconomyTransactionImportance importance
     ) {
-        depositBalance(amount, initiator, currency, importance, null, subscription);
+        return depositBalance(amount, initiator, currency, importance, null);
     }
 
     /**
      * Deposit an amount into the {@code Account} balance.
      *
-     * @param amount       the amount the balance will be increased by
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being modified
-     * @param importance   how important is the transaction
-     * @param reason       the reason of why the balance is modified
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
+     * @param amount     the amount the balance will be increased by
+     * @param initiator  the one who initiated the transaction
+     * @param currency   the {@link Currency} of the balance being modified
+     * @param importance how important is the transaction
+     * @param reason     the reason of why the balance is modified
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
-    default void depositBalance(
+    default CompletableFuture<Response<BigDecimal>> depositBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
-            @Nullable String reason,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @Nullable String reason
     ) {
-        doTransaction(EconomyTransaction
-                .newBuilder()
-                .withCurrency(currency)
-                .withInitiator(initiator)
-                .withTransactionAmount(amount)
-                .withReason(reason)
-                .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.DEPOSIT)
-                .build(), subscription);
+        return doTransaction(EconomyTransaction.newBuilder().withCurrency(currency).withInitiator(
+                initiator).withTransactionAmount(amount).withReason(reason).withImportance(
+                importance).withTransactionType(EconomyTransactionType.DEPOSIT).build());
     }
 
     /**
      * Does a {@link EconomyTransaction} on this account.
      *
      * @param economyTransaction the transaction that should be done
-     * @param subscription       the {@link EconomySubscriber} accepting the new balance
+     * @return future with a {@link Response} which, if successful, contains the new balance
      * @since v1.0.0
      */
-    void doTransaction(
-            @NotNull EconomyTransaction economyTransaction,
-            @NotNull EconomySubscriber<BigDecimal> subscription
-    );
+    CompletableFuture<Response<BigDecimal>> doTransaction(@NotNull EconomyTransaction economyTransaction);
 
     /**
      * Reset the {@code Account} balance to its starting amount.
@@ -249,20 +222,19 @@ public interface Account {
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero
      * starting balances.
      *
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being reset
-     * @param importance   the reset transaction importance
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see #resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @param initiator  the one who initiated the transaction
+     * @param currency   the {@link Currency} of the balance being reset
+     * @param importance the reset transaction importance
+     * @return see {@link #doTransaction(EconomyTransaction)}
+     * @see #resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)
      * @since v2.0.0
      */
-    default void resetBalance(
+    default CompletableFuture<Response<BigDecimal>> resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
-            @NotNull EconomyTransactionImportance importance,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @NotNull EconomyTransactionImportance importance
     ) {
-        resetBalance(initiator, currency, importance, null, subscription);
+        return resetBalance(initiator, currency, importance, null);
     }
 
     /**
@@ -270,60 +242,48 @@ public interface Account {
      *
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
      *
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being reset
-     * @param importance   the reset transaction importance
-     * @param reason       the reset reason
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @param initiator  the one who initiated the transaction
+     * @param currency   the {@link Currency} of the balance being reset
+     * @param importance the reset transaction importance
+     * @param reason     the reset reason
+     * @return see {@link #doTransaction(EconomyTransaction)}
      * @since v1.0.0 (modified in 2.0.0)
      */
-    default void resetBalance(
+    default CompletableFuture<Response<BigDecimal>> resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
-            @Nullable String reason,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @Nullable String reason
     ) {
         Objects.requireNonNull(initiator, "initiator");
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(importance, "importance");
-        Objects.requireNonNull(subscription, "subscription");
 
-        doTransaction(EconomyTransaction
-                .newBuilder()
-                .withCurrency(currency)
-                .withInitiator(initiator)
-                .withTransactionAmount(BigDecimal.ZERO)
-                .withReason(reason)
-                .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.SET)
-                .build(), subscription);
+        return doTransaction(EconomyTransaction.newBuilder().withCurrency(currency).withInitiator(
+                initiator).withTransactionAmount(BigDecimal.ZERO).withReason(reason).withImportance(
+                importance).withTransactionType(EconomyTransactionType.SET).build());
     }
 
     /**
      * Check if the {@code Account} can afford a withdrawal of a certain amount.
      *
-     * @param amount       the amount the balance must meet or exceed
-     * @param currency     the {@link Currency} of the balance being queried
-     * @param subscription the {@link EconomySubscriber} accepting whether the balance is high enough
-     * @see Account#retrieveBalance(Currency, EconomySubscriber)
+     * @param amount   the amount the balance must meet or exceed
+     * @param currency the {@link Currency} of the balance being queried
+     * @return future with {@link Response} which if successful returns whether the balance is
+     *         high enough
+     * @see Account#retrieveBalance(Currency)
      * @since v1.0.0
      */
-    default void canAfford(
-            @NotNull BigDecimal amount,
-            @NotNull Currency currency,
-            @NotNull EconomySubscriber<Boolean> subscription
+    default CompletableFuture<Response<TriState>> canAfford(
+            @NotNull BigDecimal amount, @NotNull Currency currency
     ) {
-        retrieveBalance(currency, new EconomySubscriber<BigDecimal>() {
-            @Override
-            public void succeed(@NotNull BigDecimal value) {
-                subscription.succeed(value.compareTo(amount) >= 0);
-            }
-
-            @Override
-            public void fail(@NotNull EconomyException exception) {
-                subscription.fail(exception);
+        return retrieveBalance(currency).thenApply(resp -> {
+            if (!resp.isSuccessful()) {
+                return Response.failure(resp.getFailureReason());
+            } else {
+                return Response.success(TriState.fromBoolean(resp
+                        .getResult()
+                        .compareTo(amount) >= 0));
             }
         });
     }
@@ -333,18 +293,19 @@ public interface Account {
      *
      * <p>Providers should consider storing backups of deleted accounts.
      *
-     * @param subscription the {@link EconomySubscriber} accepting whether deletion occurred successfully
+     * @return future with {@link Response} which if successful returns whether deletion was
+     *         successful
      * @since v1.0.0
      */
-    void deleteAccount(@NotNull EconomySubscriber<Boolean> subscription);
+    CompletableFuture<Response<TriState>> deleteAccount();
 
     /**
      * Returns the {@link Currency#getIdentifier()  Currencies} this {@code Account} holds balance for.
      *
-     * @param subscription the {@link EconomySubscriber} accepting the currencies
+     * @return future with {@link Response} which if successful returns the held currencies
      * @since v1.0.0
      */
-    void retrieveHeldCurrencies(@NotNull EconomySubscriber<Collection<String>> subscription);
+    CompletableFuture<Response<Collection<String>>> retrieveHeldCurrencies();
 
     /**
      * Request the {@link EconomyTransaction} history, limited by the {@code transactionCount} and the {@link Temporal}
@@ -358,14 +319,11 @@ public interface Account {
      * @param transactionCount the count of the transactions wanted
      * @param from             the timestamp to get the transactions from
      * @param to               the timestamp to get the transactions to
-     * @param subscription     the {@link EconomySubscriber} accepting the transaction history
+     * @return future with {@link Response} which if successful returns the transaction history
      * @since v1.0.0
      */
-    void retrieveTransactionHistory(
-            int transactionCount,
-            @NotNull Temporal from,
-            @NotNull Temporal to,
-            @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
+    CompletableFuture<Response<Collection<EconomyTransaction>>> retrieveTransactionHistory(
+            int transactionCount, @NotNull Temporal from, @NotNull Temporal to
     );
 
     /**
@@ -375,34 +333,33 @@ public interface Account {
      * transactions.
      *
      * @param transactionCount the count of the transactions wanted
-     * @param subscription     the {@link EconomySubscriber} accepting the transaction history
+     * @return future with {@link Response} which if successful returns the transaction history
      * @since v1.0.0
      */
-    default void retrieveTransactionHistory(
-            int transactionCount,
-            @NotNull EconomySubscriber<Collection<EconomyTransaction>> subscription
+    default CompletableFuture<Response<Collection<EconomyTransaction>>> retrieveTransactionHistory(
+            int transactionCount
     ) {
-        retrieveTransactionHistory(transactionCount, Instant.EPOCH, Instant.now(), subscription);
+        return retrieveTransactionHistory(transactionCount, Instant.EPOCH, Instant.now());
     }
 
     /**
      * Request a listing of all member players of the account.
      *
-     * @param subscription the {@link EconomySubscriber} accepting the members
+     * @return future with {@link Response} which if successful returns the members
      * @since v1.0.0
      */
-    void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription);
+    CompletableFuture<Response<Collection<UUID>>> retrieveMemberIds();
 
     /**
      * Check if the specified user is a member of the account.
      *
      * <p>A member is any player with at least one allowed permission.
      *
-     * @param player       the {@link UUID} of the potential member
-     * @param subscription the {@link EconomySubscriber} accepting whether the user is a member
+     * @param player the {@link UUID} of the potential member
+     * @return future with {@link Response} which if successful returns whether the user is a member
      * @since v1.0.0
      */
-    void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription);
+    CompletableFuture<Response<TriState>> isMember(@NotNull UUID player);
 
     /**
      * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the
@@ -413,15 +370,14 @@ public interface Account {
      *
      * @param player          the player id you want to modify the permissions of
      * @param permissionValue the permission value you want to set
-     * @param subscription    the {@link EconomySubscriber} accepting if the permissions of the
-     *                        member were adjusted.
      * @param permissions     the permissions to modify
+     * @return future with {@link Response} which if successful returns whether the permissions
+     *         of the member were adjusted
      * @since v1.0.0
      */
-    void setPermission(
+    CompletableFuture<Response<TriState>> setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
-            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     );
 
@@ -429,30 +385,26 @@ public interface Account {
      * Request the {@link AccountPermission AccountPermissions} for the specified {@link UUID}
      * {@code player}.
      *
-     * @param player       the player {@link UUID} to get the permissions for
-     * @param subscription the {@link EconomySubscriber} accepting an immutable map of permissions and their values.
+     * @param player the player {@link UUID} to get the permissions for
+     * @return future with {@link Response} which if successful returns an immutable map of
+     *         permissions and their values.
      * @since v1.0.0
      */
-    void retrievePermissions(
-            @NotNull UUID player,
-            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
-    );
+    CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(@NotNull UUID player);
 
     /**
      * Checks whether given player has the given permission on this account.
      *
      * <p>Just a reminder: a member is any player with at least one allowed permission.
      *
-     * @param player       the {@link UUID} of the player to check if they have the permission
-     * @param subscription the {@link EconomySubscriber} accepting whether the player has all the specified permissions
-     * @param permissions  the permissions to check
+     * @param player      the {@link UUID} of the player to check if they have the permission
+     * @param permissions the permissions to check
+     * @return future with {@link Response} which if successful returns whether the player has all the specified permissions
      * @see AccountPermission
      * @since v1.0.0
      */
-    void hasPermission(
-            @NotNull UUID player,
-            @NotNull EconomySubscriber<TriState> subscription,
-            @NotNull AccountPermission @NotNull ... permissions
+    CompletableFuture<Response<TriState>> hasPermission(
+            @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     );
 
 }

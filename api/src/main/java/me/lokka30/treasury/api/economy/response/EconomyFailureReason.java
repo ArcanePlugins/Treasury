@@ -14,27 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public enum EconomyFailureReason implements FailureReason {
 
     /**
-     * A constant representing failure due to a
-     * {@link me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature}
-     * being attempted to be used, but it is not supported by the economy provider.
-     * To avoid this failure, ensure the associated constant in
-     * {@link me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature} is
-     * inside the set obtained from
-     * {@link EconomyProvider#getSupportedOptionalEconomyApiFeatures()}.
-     *
-     * @since v1.0.0
-     */
-    FEATURE_NOT_SUPPORTED {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "The feature is not supported by this Economy Provider.";
-        }
-    },
-
-    /**
      * A constant representing failure due to an operation being cancelled due to economy
      * migration being in progress.
      * To avoid this failure, the server owner should suspend any activities whilst migrating
@@ -132,27 +111,6 @@ public enum EconomyFailureReason implements FailureReason {
         @Override
         public @NotNull String getDescription() {
             return "Cannot modify the permissions of a player account!";
-        }
-    },
-
-    /**
-     * A constant representing failure due to an overdraft when
-     * negative balances are not supported.
-     * To avoid this failure, check if the economy provider supports negative balances by
-     * checking if the {@code NEGATIVE_BALANCES} constant exists in the collection from
-     * {@link EconomyProvider#getSupportedOptionalEconomyApiFeatures()}.
-     *
-     * @see EconomyProvider#getSupportedOptionalEconomyApiFeatures()
-     * @see me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature#NEGATIVE_BALANCES
-     * @since v1.0.0
-     */
-    NEGATIVE_BALANCES_NOT_SUPPORTED {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "This economy provider does not support negative balances!";
         }
     },
 
