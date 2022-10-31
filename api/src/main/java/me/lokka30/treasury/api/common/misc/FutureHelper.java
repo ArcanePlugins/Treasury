@@ -33,7 +33,7 @@ public class FutureHelper {
      */
     @NotNull
     public static <T> CompletableFuture<Collection<T>> joinAndFilter(
-            @NotNull Function<T, CompletableFuture<Boolean>> filter,
+            @NotNull Function<T, CompletableFuture<TriState>> filter,
             @NotNull Collection<CompletableFuture<T>> futures
     ) {
         return mapJoinFilter(filter, Function.identity(), futures);
@@ -54,7 +54,7 @@ public class FutureHelper {
      */
     @NotNull
     public static <A, B> CompletableFuture<Collection<B>> mapJoinFilter(
-            @NotNull Function<A, CompletableFuture<Boolean>> filter,
+            @NotNull Function<A, CompletableFuture<TriState>> filter,
             @NotNull Function<A, B> mapper,
             @NotNull Collection<CompletableFuture<A>> futures
     ) {
@@ -62,7 +62,7 @@ public class FutureHelper {
         Objects.requireNonNull(mapper, "mapper");
         Objects.requireNonNull(futures, "futures");
 
-        List<CompletableFuture<Map.Entry<A, Boolean>>> filteredFutures =
+        List<CompletableFuture<Map.Entry<A, TriState>>> filteredFutures =
                 new ArrayList<>(futures.size());
         for (CompletableFuture<A> future : futures) {
             filteredFutures.add(future.thenCompose((a) -> filter
@@ -73,10 +73,10 @@ public class FutureHelper {
                 filteredFutures.toArray(new CompletableFuture[0])
         ).thenApply((ignore) -> {
             List<B> results = new ArrayList<>(filteredFutures.size());
-            for (CompletableFuture<Map.Entry<A, Boolean>> filteredFuture : filteredFutures) {
+            for (CompletableFuture<Map.Entry<A, TriState>> filteredFuture : filteredFutures) {
                 // By now, all futures are complete -- join() will not block
-                Map.Entry<A, Boolean> entry = filteredFuture.join();
-                if (entry.getValue()) {
+                Map.Entry<A, TriState> entry = filteredFuture.join();
+                if (entry.getValue() == TriState.TRUE) {
                     results.add(mapper.apply(entry.getKey()));
                 }
             }

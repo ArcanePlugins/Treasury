@@ -18,11 +18,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
+import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
+import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.response.Response;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
+import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,8 +35,8 @@ public class BalanceCache extends BukkitRunnable {
     private final Multimap<UUID, Map.Entry<String, BigDecimal>> balances = HashMultimap.create();
     private final int delay;
     private final AtomicReference<EconomyProvider> providerRef;
-    private final AtomicReference<CountDownLatch> doneLatch =
-            new AtomicReference<>(new CountDownLatch(1));
+    private final AtomicReference<CountDownLatch> doneLatch = new AtomicReference<>(new CountDownLatch(
+            1));
 
     public BalanceCache(int delay, AtomicReference<EconomyProvider> providerRef) {
         this.delay = delay;
@@ -99,58 +101,65 @@ public class BalanceCache extends BukkitRunnable {
             return;
         }
         OfflinePlayer player = players.get(currentIndex);
-        EconomySubscriber
-                .<Boolean>asFuture(s -> provider.hasPlayerAccount(player.getUniqueId(), s))
-                .thenCompose(val -> {
-                    if (val) {
-                        return EconomySubscriber.<PlayerAccount>asFuture(s -> provider.retrievePlayerAccount(
-                                player.getUniqueId(),
-                                s
-                        ));
-                    } else {
-                        return CompletableFuture.completedFuture(null);
-                    }
-                })
-                .whenComplete((account, ex) -> {
-                    if (ex != null) {
-                        throw new RuntimeException(
-                                "An error occurred whilst updating balance cache",
-                                ex
+        provider.hasPlayerAccount(player.getUniqueId()).thenCompose(res -> {
+            if (!res.isSuccessful()) {
+                return CompletableFuture.completedFuture(Response.failure(res.getFailureReason()));
+            }
+            return provider.retrievePlayerAccount(player.getUniqueId());
+        }).whenComplete((res, ex) -> {
+            if (ex != null) {
+                throw new RuntimeException("An error occurred whilst updating balance cache", ex);
+            }
+
+            if (!res.isSuccessful()) {
+                // log the problem and proceed with next entry
+                TreasuryPlugin.getInstance().logger().error(
+                        "Error whilst trying to update balance cache for ( " + (player.getName() != null
+                                ? player.getName()
+                                : player.getUniqueId().toString()) + "): " + res
+                                .getFailureReason()
+                                .getDescription());
+                proceed(currentIndex + 1, players, provider);
+                return;
+            }
+
+            Account account = res.getResult();
+            List<CompletableFuture<Map.Entry<String, BigDecimal>>> balanceFutures = new ArrayList<>();
+            for (Currency currency : provider.getCurrencies()) {
+                balanceFutures.add(account.retrieveBalance(currency).thenApply(res1 -> {
+                    if (!res1.isSuccessful()) {
+                        TreasuryPlugin.getInstance().logger().error(
+                                "Error whilst trying to update balance cache for ( " + (player.getName() != null
+                                        ? player.getName()
+                                        : player.getUniqueId().toString()) + "): " + res1
+                                        .getFailureReason()
+                                        .getDescription());
+                        return new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
+                                null
                         );
                     }
+                    return new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
+                            res1.getResult()
+                    );
+                }));
+            }
 
-                    if (account == null) {
-                        // proceed with next entry
+            FutureHelper
+                    .joinAndFilter(bal -> CompletableFuture.completedFuture(TriState.fromBoolean(bal.getValue() != null && !bal
+                            .getValue()
+                            .equals(BigDecimal.ZERO))), balanceFutures)
+                    .whenComplete((
+                            balances, ex1
+                    ) -> {
+                        if (ex1 != null) {
+                            throw new RuntimeException("An error occurred whilst updating balance cache",
+                                    ex1
+                            );
+                        }
+                        this.balances.putAll(player.getUniqueId(), balances);
                         proceed(currentIndex + 1, players, provider);
-                        return;
-                    }
-
-                    List<CompletableFuture<Map.Entry<String, BigDecimal>>> balanceFutures = new ArrayList<>();
-                    for (Currency currency : provider.getCurrencies()) {
-                        balanceFutures.add(EconomySubscriber
-                                .<BigDecimal>asFuture(s -> account.retrieveBalance(currency, s))
-                                .thenApply(dec -> new AbstractMap.SimpleImmutableEntry<>(
-                                        currency.getIdentifier(),
-                                        dec
-                                )));
-                    }
-                    FutureHelper
-                            .joinAndFilter(bal -> CompletableFuture.completedFuture(bal.getValue() != null && !bal
-                                    .getValue()
-                                    .equals(BigDecimal.ZERO)), balanceFutures)
-                            .whenComplete((
-                                    balances, ex1
-                            ) -> {
-                                if (ex1 != null) {
-                                    throw new RuntimeException(
-                                            "An error occurred whilst updating balance cache",
-                                            ex1
-                                    );
-                                }
-                                this.balances.putAll(player.getUniqueId(), balances);
-                                proceed(currentIndex + 1, players, provider);
-                            });
-                });
+                    });
+        });
     }
 
 }

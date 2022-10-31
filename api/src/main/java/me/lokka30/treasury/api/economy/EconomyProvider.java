@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.CumulatedFailureReason;
 import me.lokka30.treasury.api.economy.account.Account;
@@ -149,51 +150,40 @@ public interface EconomyProvider {
     /**
      * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
-     * @param playerId     the player
+     * @param playerId the player
      * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    default CompletableFuture<Response<Collection<String>>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
+    default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
 
-        return retrieveAccountIds()
-                .thenCompose(result -> {
-                    if (!result.isSuccessful()) {
-                        return CompletableFuture.completedFuture(Response.failure(result.getFailureReason()));
-                    }
-                    Set<String> ret = Collections.synchronizedSet(new HashSet<>());
-                    CumulatedFailureReason cumulatedFailure = new CumulatedFailureReason();
-                    List<CompletableFuture<Void>> futures = new ArrayList<>();
-                    for (String identifier : result.getResult()) {
-                        futures.add(retrieveAccount(identifier).thenCompose(response -> {
-                            if (!response.isSuccessful()) {
-                                return CompletableFuture.completedFuture(Response.failure(response.getFailureReason()));
-                            }
-                            Account account = response.getResult();
-                            if (!(account instanceof NonPlayerAccount)) {
-                                return CompletableFuture.completedFuture(Response.success(TriState.UNSPECIFIED));
-                            }
-                            return account.isMember(playerId);
-                        }).thenAccept(val -> {
-                            if (!val.isSuccessful()) {
-                                cumulatedFailure.addFailureReason(val.getFailureReason());
-                                return;
-                            }
-                            TriState res = val.getResult();
-                            if (res == TriState.FALSE || res == TriState.UNSPECIFIED) {
-                                return;
-                            }
-                            ret.add(identifier);
-                        }));
-                    }
-                    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                            .thenApply($ -> {
-                                if (!ret.isEmpty()) {
-                                    return Response.success(ret);
+        return retrieveAccountIds().thenCompose(result -> {
+            if (!result.isSuccessful() || result.getResult().isEmpty()) {
+                return CompletableFuture.completedFuture(Collections.emptyList());
+            }
+            Collection<String> identifiers = result.getResult();
+            Collection<CompletableFuture<Response<Account>>> accountFutures =
+                    new ArrayList<>(identifiers.size());
+            for (String identifier : identifiers) {
+                accountFutures.add(retrieveAccount(identifier));
+            }
+            return FutureHelper.mapJoinFilter(
+                    res -> {
+                        if (!res.isSuccessful()) {
+                            return CompletableFuture.completedFuture(TriState.FALSE);
+                        } else {
+                            return res.getResult().isMember(playerId).thenCompose(res1 -> {
+                                if (!res1.isSuccessful()) {
+                                    return CompletableFuture.completedFuture(TriState.FALSE);
                                 }
-                                return Response.failure(cumulatedFailure);
+                                return CompletableFuture.completedFuture(res1.getResult());
                             });
-                });
+                        }
+                    },
+                    res -> res.getResult().getIdentifier(),
+                    accountFutures
+            );
+        });
     }
 
     /**
@@ -205,50 +195,39 @@ public interface EconomyProvider {
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID)
      * @since v1.0.0
      */
-    default CompletableFuture<Response<Collection<String>>> retrieveAllAccountsPlayerHasPermission(
+    default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(permissions, "permissions");
 
-        return retrieveAccountIds()
-                .thenCompose(result -> {
-                    if (!result.isSuccessful()) {
-                        return CompletableFuture.completedFuture(Response.failure(result.getFailureReason()));
-                    }
-                    Set<String> ret = Collections.synchronizedSet(new HashSet<>());
-                    CumulatedFailureReason cumulatedFailure = new CumulatedFailureReason();
-                    List<CompletableFuture<Void>> futures = new ArrayList<>();
-                    for (String identifier : result.getResult()) {
-                        futures.add(retrieveAccount(identifier).thenCompose(response -> {
-                            if (!response.isSuccessful()) {
-                                return CompletableFuture.completedFuture(Response.failure(response.getFailureReason()));
-                            }
-                            Account account = response.getResult();
-                            if (!(account instanceof NonPlayerAccount)) {
-                                return CompletableFuture.completedFuture(Response.success(TriState.UNSPECIFIED));
-                            }
-                            return account.hasPermission(playerId, permissions);
-                        }).thenAccept(val -> {
-                            if (!val.isSuccessful()) {
-                                cumulatedFailure.addFailureReason(val.getFailureReason());
-                                return;
-                            }
-                            TriState res = val.getResult();
-                            if (res == TriState.FALSE || res == TriState.UNSPECIFIED) {
-                                return;
-                            }
-                            ret.add(identifier);
-                        }));
-                    }
-                    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                            .thenApply($ -> {
-                                if (!ret.isEmpty()) {
-                                    return Response.success(ret);
+        return retrieveAccountIds().thenCompose(result -> {
+            if (!result.isSuccessful() || result.getResult().isEmpty()) {
+                return CompletableFuture.completedFuture(Collections.emptyList());
+            }
+            Collection<String> identifiers = result.getResult();
+            Collection<CompletableFuture<Response<Account>>> accountFutures =
+                    new ArrayList<>(identifiers.size());
+            for (String identifier : identifiers) {
+                accountFutures.add(retrieveAccount(identifier));
+            }
+            return FutureHelper.mapJoinFilter(
+                    res -> {
+                        if (!res.isSuccessful()) {
+                            return CompletableFuture.completedFuture(TriState.FALSE);
+                        } else {
+                            return res.getResult().hasPermission(playerId, permissions).thenCompose(res1 -> {
+                                if (!res1.isSuccessful()) {
+                                    return CompletableFuture.completedFuture(TriState.FALSE);
                                 }
-                                return Response.failure(cumulatedFailure);
+                                return CompletableFuture.completedFuture(res1.getResult());
                             });
-                });
+                        }
+                    },
+                    res -> res.getResult().getIdentifier(),
+                    accountFutures
+            );
+        });
     }
 
     /**
