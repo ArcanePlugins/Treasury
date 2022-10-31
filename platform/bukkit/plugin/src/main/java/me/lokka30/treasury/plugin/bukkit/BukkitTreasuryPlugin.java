@@ -129,21 +129,40 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void info(String message) {
-        plugin.getLogger().info(colorize(message));
+        if (BukkitVendor.isPaper()) {
+            plugin.getServer().getConsoleSender().sendMessage("[Treasury] " + colorize(message));
+        } else {
+            plugin.getLogger().info(colorize(message));
+        }
     }
 
     @Override
     public void warn(String message) {
-        plugin.getLogger().warning(colorize(message));
+        if (BukkitVendor.isPaper()) {
+            plugin
+                    .getServer()
+                    .getConsoleSender()
+                    .sendMessage(colorize("&e[WARNING] [Treasury] " + message));
+        } else {
+            plugin.getLogger().warning(colorize(message));
+        }
     }
 
     @Override
     public void error(String message) {
-        plugin.getLogger().severe(colorize(message));
+        if (BukkitVendor.isPaper()) {
+            plugin
+                    .getServer()
+                    .getConsoleSender()
+                    .sendMessage(colorize("&4[ERROR] [Treasury]" + message));
+        } else {
+            plugin.getLogger().severe(colorize(message));
+        }
     }
 
     @Override
     public void error(String message, Throwable t) {
+        // TODO: colorize() will NOT work on Paper
         plugin.getLogger().log(Level.SEVERE, colorize(message), t);
     }
 
