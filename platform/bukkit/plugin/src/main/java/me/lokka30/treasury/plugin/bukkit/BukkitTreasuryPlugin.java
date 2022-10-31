@@ -129,24 +129,46 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void info(String message) {
-        plugin.getServer().getConsoleSender().sendMessage("[Treasury] " + colorize(message));
+        if (BukkitVendor.isPaper()) {
+            plugin.getServer().getConsoleSender().sendMessage("[Treasury] " + colorize(message));
+        } else {
+            plugin.getLogger().info(colorize(message));
+        }
     }
 
     @Override
     public void warn(String message) {
-        plugin.getServer().getConsoleSender().sendMessage(
-                "&e[WARNING] [Treasury] " + colorize(message)
-        );
+        if (BukkitVendor.isPaper()) {
+            plugin
+                    .getServer()
+                    .getConsoleSender()
+                    .sendMessage(colorize("&e[WARNING] [Treasury] " + message));
+        } else {
+            plugin.getLogger().warning(colorize(message));
+        }
     }
 
     @Override
     public void error(String message) {
-        plugin.getServer().getConsoleSender().sendMessage("&4[ERROR] [Treasury]" + colorize(message));
+        if (BukkitVendor.isPaper()) {
+            plugin
+                    .getServer()
+                    .getConsoleSender()
+                    .sendMessage(colorize("&4[ERROR] [Treasury]" + message));
+        } else {
+            plugin.getLogger().severe(colorize(message));
+        }
     }
 
     @Override
     public void error(String message, Throwable t) {
-        plugin.getLogger().log(Level.SEVERE, colorize(message), t);
+        // in that case we're going to strip the colors (if any)
+        // currently this method isn't used for sending messages with colors but just to be on
+        // the right side let's strip if anything is there.
+        if (message.indexOf('&') != -1 || message.indexOf(ChatColor.COLOR_CHAR) != -1) {
+            message = ChatColor.stripColor(message.replace('&', ChatColor.COLOR_CHAR));
+        }
+        plugin.getLogger().log(Level.SEVERE, message, t);
     }
 
     @Override
