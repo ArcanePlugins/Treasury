@@ -162,13 +162,8 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void error(String message, Throwable t) {
-        // in that case we're going to strip the colors (if any)
-        // currently this method isn't used for sending messages with colors but just to be on
-        // the right side let's strip if anything is there.
-        if (message.indexOf('&') != -1 || message.indexOf(ChatColor.COLOR_CHAR) != -1) {
-            message = ChatColor.stripColor(message.replace('&', ChatColor.COLOR_CHAR));
-        }
-        plugin.getLogger().log(Level.SEVERE, message, t);
+        // TODO: colorize() will NOT work on Paper
+        plugin.getLogger().log(Level.SEVERE, colorize(message), t);
     }
 
     @Override
