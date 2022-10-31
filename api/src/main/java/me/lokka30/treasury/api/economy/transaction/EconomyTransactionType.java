@@ -28,7 +28,7 @@ public enum EconomyTransactionType {
     WITHDRAWAL,
 
     /**
-     * The Account's new balance is set. Can be more or less than their previous balance.
+     * The Account's balance is adjusted to a specified value.
      *
      * @since 2.0.0
      */
