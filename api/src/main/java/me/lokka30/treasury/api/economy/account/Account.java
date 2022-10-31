@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import me.lokka30.treasury.api.common.misc.TriState;
@@ -68,28 +69,10 @@ public interface Account {
      *
      * @param currency     the {@link Currency} of the balance being requested
      * @param subscription the {@link EconomySubscriber} accepting the amount
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since v1.0.0
      */
     void retrieveBalance(
             @NotNull Currency currency, @NotNull EconomySubscriber<BigDecimal> subscription
-    );
-
-    /**
-     * Set the balance of the {@code Account}.
-     *
-     * @param amount       the amount the new balance will be
-     * @param initiator    the one who initiated the transaction
-     * @param currency     the {@link Currency} of the balance being set
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#retrieveBalance(Currency, EconomySubscriber)
-     * @since v1.0.0
-     */
-    void setBalance(
-            @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Currency currency,
-            @NotNull EconomySubscriber<BigDecimal> subscription
     );
 
     /**
@@ -99,7 +82,6 @@ public interface Account {
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
      */
@@ -127,7 +109,6 @@ public interface Account {
      * @param currency     the {@link Currency} of the balance being modified
      * @param importance   how important is the transaction
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
      */
@@ -150,7 +131,6 @@ public interface Account {
      * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
      */
@@ -180,7 +160,6 @@ public interface Account {
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
      */
@@ -208,7 +187,6 @@ public interface Account {
      * @param currency     the {@link Currency} of the balance being modified
      * @param importance   how important is the transaction
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
      */
@@ -231,7 +209,6 @@ public interface Account {
      * @param importance   how important is the transaction
      * @param reason       the reason of why the balance is modified
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @see Account#doTransaction(EconomyTransaction, EconomySubscriber)
      * @since v1.0.0
      */
@@ -259,7 +236,6 @@ public interface Account {
      *
      * @param economyTransaction the transaction that should be done
      * @param subscription       the {@link EconomySubscriber} accepting the new balance
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
      * @since v1.0.0
      */
     void doTransaction(
@@ -270,31 +246,59 @@ public interface Account {
     /**
      * Reset the {@code Account} balance to its starting amount.
      *
-     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
+     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero
+     * starting balances.
      *
      * @param initiator    the one who initiated the transaction
      * @param currency     the {@link Currency} of the balance being reset
+     * @param importance   the reset transaction importance
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @see Account#setBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @since v1.0.0
+     * @see #resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @since v2.0.0
      */
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
-        setBalance(BigDecimal.ZERO, initiator, currency, new EconomySubscriber<BigDecimal>() {
-            @Override
-            public void succeed(@NotNull BigDecimal value) {
-                subscription.succeed(BigDecimal.ZERO);
-            }
+        resetBalance(initiator, currency, importance, null, subscription);
+    }
 
-            @Override
-            public void fail(@NotNull EconomyException exception) {
-                subscription.fail(exception);
-            }
-        });
+    /**
+     * Reset the {@code Account} balance to its starting amount.
+     *
+     * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
+     *
+     * @param initiator    the one who initiated the transaction
+     * @param currency     the {@link Currency} of the balance being reset
+     * @param importance   the reset transaction importance
+     * @param reason       the reset reason
+     * @param subscription the {@link EconomySubscriber} accepting the new balance
+     * @see PlayerAccount#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @since v1.0.0 (modified in 2.0.0)
+     */
+    default void resetBalance(
+            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @Nullable String reason,
+            @NotNull EconomySubscriber<BigDecimal> subscription
+    ) {
+        Objects.requireNonNull(initiator, "initiator");
+        Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(importance, "importance");
+        Objects.requireNonNull(subscription, "subscription");
+
+        doTransaction(EconomyTransaction
+                .newBuilder()
+                .withCurrency(currency)
+                .withInitiator(initiator)
+                .withTransactionAmount(BigDecimal.ZERO)
+                .withReason(reason)
+                .withImportance(importance)
+                .withTransactionType(EconomyTransactionType.SET)
+                .build(), subscription);
     }
 
     /**

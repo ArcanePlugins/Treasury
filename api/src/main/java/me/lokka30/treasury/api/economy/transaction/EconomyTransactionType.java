@@ -25,6 +25,13 @@ public enum EconomyTransactionType {
      *
      * @since v1.0.0
      */
-    WITHDRAWAL
+    WITHDRAWAL,
+
+    /**
+     * The Account's balance is adjusted to a specified value.
+     *
+     * @since 2.0.0
+     */
+    SET
 
 }

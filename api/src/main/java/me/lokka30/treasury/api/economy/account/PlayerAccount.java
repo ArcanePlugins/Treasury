@@ -17,7 +17,10 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.response.EconomySubscriber;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,31 +151,31 @@ public interface PlayerAccount extends Account {
      * @param initiator    the one who initiated this transaction
      * @param currency     of the balance being reset
      * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
      * @since v1.0.0
      */
     @Override
     default void resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
+            @NotNull EconomyTransactionImportance importance,
+            @Nullable String reason,
             @NotNull EconomySubscriber<BigDecimal> subscription
     ) {
         Objects.requireNonNull(initiator, "initiator");
         Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(importance, "importance");
         Objects.requireNonNull(subscription, "subscription");
 
-        final BigDecimal newBalance = currency.getStartingBalance(getUniqueId());
-        setBalance(newBalance, initiator, currency, new EconomySubscriber<BigDecimal>() {
-            @Override
-            public void succeed(@NotNull BigDecimal value) {
-                subscription.succeed(newBalance);
-            }
-
-            @Override
-            public void fail(@NotNull EconomyException exception) {
-                subscription.fail(exception);
-            }
-        });
+        doTransaction(EconomyTransaction
+                .newBuilder()
+                .withCurrency(currency)
+                .withInitiator(initiator)
+                .withTransactionAmount(currency.getStartingBalance(getUniqueId()))
+                .withReason(reason)
+                .withImportance(importance)
+                .withTransactionType(EconomyTransactionType.SET)
+                .build(), subscription);
     }
 
 }
