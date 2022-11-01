@@ -59,7 +59,7 @@ public interface Account {
      * Sets a new name for this {@link Account}, which may be null.
      *
      * @param name the new name for this account.
-     * @return future with a {@link Response} which result's whether name change was successful
+     * @return future with a {@link Response} which states whether the name change was successful
      * @since v1.0.0
      */
     CompletableFuture<Response<TriState>> setName(@Nullable String name);
