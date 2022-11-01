@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import me.lokka30.treasury.api.economy.response.Response;
+import me.lokka30.treasury.api.common.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

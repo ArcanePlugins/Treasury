@@ -14,12 +14,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,12 +213,13 @@ public interface EconomyProvider {
                         if (!res.isSuccessful()) {
                             return CompletableFuture.completedFuture(TriState.FALSE);
                         } else {
-                            return res.getResult().hasPermission(playerId, permissions).thenCompose(res1 -> {
-                                if (!res1.isSuccessful()) {
-                                    return CompletableFuture.completedFuture(TriState.FALSE);
-                                }
-                                return CompletableFuture.completedFuture(res1.getResult());
-                            });
+                            return res.getResult().hasPermission(playerId, permissions).thenCompose(
+                                    res1 -> {
+                                        if (!res1.isSuccessful()) {
+                                            return CompletableFuture.completedFuture(TriState.FALSE);
+                                        }
+                                        return CompletableFuture.completedFuture(res1.getResult());
+                                    });
                         }
                     },
                     res -> res.getResult().getIdentifier(),
