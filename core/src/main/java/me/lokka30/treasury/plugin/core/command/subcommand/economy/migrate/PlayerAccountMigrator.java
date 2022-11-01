@@ -11,13 +11,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
-import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
+// FIXME: Jikoo
 class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
 
+    /*
     @Override
     public @NotNull String getBulkFailLog(@NotNull Throwable throwable) {
         return "Unable to fetch player account UUIDs for migration: " + throwable.getMessage();
@@ -109,5 +109,6 @@ class PlayerAccountMigrator implements AccountMigrator<PlayerAccount> {
     public @NotNull AtomicInteger getSuccessfulMigrations(@NotNull MigrationData migration) {
         return migration.playerAccountsProcessed();
     }
+     */
 
 }

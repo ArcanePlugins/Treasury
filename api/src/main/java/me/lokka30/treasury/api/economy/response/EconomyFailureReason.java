@@ -1,3 +1,7 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ */
+
 package me.lokka30.treasury.api.economy.response;
 
 import java.math.BigDecimal;
@@ -12,27 +16,6 @@ import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
 public enum EconomyFailureReason implements FailureReason {
-
-    /**
-     * A constant representing failure due to a
-     * {@link me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature}
-     * being attempted to be used, but it is not supported by the economy provider.
-     * To avoid this failure, ensure the associated constant in
-     * {@link me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature} is
-     * inside the set obtained from
-     * {@link EconomyProvider#getSupportedOptionalEconomyApiFeatures()}.
-     *
-     * @since v1.0.0
-     */
-    FEATURE_NOT_SUPPORTED {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "The feature is not supported by this Economy Provider.";
-        }
-    },
 
     /**
      * A constant representing failure due to an operation being cancelled due to economy
@@ -76,10 +59,10 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if the account exists before attempting to
      * interact with it.
      *
-     * @see EconomyProvider#hasAccount(String, EconomySubscriber)
-     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
-     * @see EconomyProvider#retrieveAccount(String, EconomySubscriber)
-     * @see EconomyProvider#retrievePlayerAccount(UUID, EconomySubscriber)
+     * @see EconomyProvider#hasAccount(String)
+     * @see EconomyProvider#hasPlayerAccount(UUID)
+     * @see EconomyProvider#retrieveAccount(String)
+     * @see EconomyProvider#retrievePlayerAccount(UUID)
      * @since v1.0.0
      */
     ACCOUNT_NOT_FOUND {
@@ -99,11 +82,11 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if an account exists before attempting to create
      * one that uses the same identifier.
      *
-     * @see EconomyProvider#hasAccount(String, EconomySubscriber)
-     * @see EconomyProvider#hasPlayerAccount(UUID, EconomySubscriber)
-     * @see EconomyProvider#createAccount(String, EconomySubscriber)
-     * @see EconomyProvider#createAccount(String, String, EconomySubscriber)
-     * @see EconomyProvider#createPlayerAccount(UUID, EconomySubscriber)
+     * @see EconomyProvider#hasAccount(String)
+     * @see EconomyProvider#hasPlayerAccount(UUID)
+     * @see EconomyProvider#createAccount(String)
+     * @see EconomyProvider#createAccount(String, String)
+     * @see EconomyProvider#createPlayerAccount(UUID)
      * @since v1.0.0
      */
     ACCOUNT_ALREADY_EXISTS {
@@ -118,11 +101,11 @@ public enum EconomyFailureReason implements FailureReason {
 
     /**
      * A constant representing failure whenever the default implementation of
-     * {@link PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)}
+     * {@link PlayerAccount#setPermission(UUID, TriState, AccountPermission...)}
      * has been called.
      * To avoid this failure, do not try to set permissions on player accounts.
      *
-     * @see PlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
+     * @see PlayerAccount#setPermission(UUID, TriState, AccountPermission...)
      * @since v1.0.0
      */
     PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED {
@@ -136,34 +119,13 @@ public enum EconomyFailureReason implements FailureReason {
     },
 
     /**
-     * A constant representing failure due to an overdraft when
-     * negative balances are not supported.
-     * To avoid this failure, check if the economy provider supports negative balances by
-     * checking if the {@code NEGATIVE_BALANCES} constant exists in the collection from
-     * {@link EconomyProvider#getSupportedOptionalEconomyApiFeatures()}.
-     *
-     * @see EconomyProvider#getSupportedOptionalEconomyApiFeatures()
-     * @see me.lokka30.treasury.api.economy.misc.OptionalEconomyApiFeature#NEGATIVE_BALANCES
-     * @since v1.0.0
-     */
-    NEGATIVE_BALANCES_NOT_SUPPORTED {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "This economy provider does not support negative balances!";
-        }
-    },
-
-    /**
      * A constant representing failure due to a negative amount being
      * provided to a method that only accepts positive numbers.
      * Note: This does not apply to every method in the Economy API!
      * To avoid this failure, ensure such parameters only receive positive numbers.
      *
-     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
-     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.account.Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency)
+     * @see me.lokka30.treasury.api.economy.account.Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency)
      * @since v1.0.0
      */
     NEGATIVE_AMOUNT_SPECIFIED {
@@ -197,7 +159,7 @@ public enum EconomyFailureReason implements FailureReason {
      * economy provider.
      * To avoid this failure, check if a currency exists before attempting to register it.
      *
-     * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency, EconomySubscriber)
+     * @see me.lokka30.treasury.api.economy.EconomyProvider#registerCurrency(Currency)
      * @since v1.0.0
      */
     CURRENCY_ALREADY_REGISTERED {
@@ -231,7 +193,7 @@ public enum EconomyFailureReason implements FailureReason {
      * following an expected format/pattern when attempting
      * to parse it into a number type such as {@link BigDecimal}.
      *
-     * @see Currency#parse(String, EconomySubscriber)
+     * @see Currency#parse(String)
      * @since v1.0.0
      */
     NUMBER_PARSING_ERROR {

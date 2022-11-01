@@ -5,12 +5,12 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.util.concurrent.Phaser;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 
-abstract class PhasedSubscriber<T> implements EconomySubscriber<T> {
+// FIXME: Jikoo
+abstract class PhasedSubscriber<T> /* implements EconomySubscriber<T> */ {
 
+    /*
     private final @NotNull Phaser phaser;
 
     PhasedSubscriber(@NotNull Phaser phaser) {
@@ -33,5 +33,6 @@ abstract class PhasedSubscriber<T> implements EconomySubscriber<T> {
     }
 
     public abstract void phaseFail(@NotNull EconomyException exception);
+     */
 
 }

@@ -11,12 +11,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
@@ -61,10 +61,8 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
-    default void setName(
-            @Nullable String name, @NotNull EconomySubscriber<Boolean> subscription
-    ) {
-        subscription.succeed(false);
+    default CompletableFuture<Response<TriState>> setName(@Nullable String name) {
+        return CompletableFuture.completedFuture(Response.success(TriState.FALSE));
     }
 
     /**
@@ -80,48 +78,46 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
-    default void isMember(@NotNull UUID player, @NotNull EconomySubscriber<Boolean> subscription) {
+    default CompletableFuture<Response<TriState>> isMember(@NotNull UUID player) {
         Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(getUniqueId().equals(player));
+        return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
+                ? TriState.TRUE
+                : TriState.UNSPECIFIED));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void retrieveMemberIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed(Collections.singletonList(getUniqueId()));
+    default CompletableFuture<Response<Collection<UUID>>> retrieveMemberIds() {
+        return CompletableFuture.completedFuture(Response.success(Collections.singletonList(
+                getUniqueId())));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void hasPermission(
-            @NotNull UUID player,
-            @NotNull EconomySubscriber<TriState> subscription,
-            @NotNull AccountPermission @NotNull ... permissions
+    default CompletableFuture<Response<TriState>> hasPermission(
+            @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
         Objects.requireNonNull(permissions, "permissions");
 
-        subscription.succeed(TriState.fromBoolean(player.equals(getUniqueId())));
+        return CompletableFuture.completedFuture(Response.success(TriState.fromBoolean(getUniqueId().equals(
+                player))));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default void retrievePermissions(
-            @NotNull UUID player,
-            @NotNull EconomySubscriber<Map<AccountPermission, TriState>> subscription
+    default CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(
+            @NotNull UUID player
     ) {
         Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
-        subscription.succeed((getUniqueId().equals(player)
+
+        return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
                 ? ALL_PERMISSIONS_MAP
                 : Collections.emptyMap()));
     }
@@ -130,16 +126,14 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
-    default void setPermission(
+    default CompletableFuture<Response<TriState>> setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
-            @NotNull EconomySubscriber<TriState> subscription,
             @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(player, "player");
-        Objects.requireNonNull(subscription, "subscription");
 
-        subscription.fail(new EconomyException(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
     /**
@@ -148,26 +142,24 @@ public interface PlayerAccount extends Account {
      * player's balance to the 'starting balance' of the currency (other
      * accounts set it to zero instead). This is why the overridden method exists.
      *
-     * @param initiator    the one who initiated this transaction
-     * @param currency     of the balance being reset
-     * @param subscription the {@link EconomySubscriber} accepting the new balance
-     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String, EconomySubscriber)
+     * @param initiator the one who initiated this transaction
+     * @param currency  of the balance being reset
+     * @return see {@link Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)}
+     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)
      * @since v1.0.0
      */
     @Override
-    default void resetBalance(
+    default CompletableFuture<Response<BigDecimal>> resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
-            @Nullable String reason,
-            @NotNull EconomySubscriber<BigDecimal> subscription
+            @Nullable String reason
     ) {
         Objects.requireNonNull(initiator, "initiator");
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(importance, "importance");
-        Objects.requireNonNull(subscription, "subscription");
 
-        doTransaction(EconomyTransaction
+        return doTransaction(EconomyTransaction
                 .newBuilder()
                 .withCurrency(currency)
                 .withInitiator(initiator)
@@ -175,7 +167,7 @@ public interface PlayerAccount extends Account {
                 .withReason(reason)
                 .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.SET)
-                .build(), subscription);
+                .build());
     }
 
 }

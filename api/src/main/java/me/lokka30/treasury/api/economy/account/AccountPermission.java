@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
 /**
@@ -23,7 +22,7 @@ public enum AccountPermission {
     /**
      * Allows a player to see the balance of the {@link Account}.
      *
-     * @see Account#retrieveBalance(Currency, EconomySubscriber)
+     * @see Account#retrieveBalance(Currency)
      * @since v1.0.0
      */
     BALANCE,
@@ -31,7 +30,7 @@ public enum AccountPermission {
     /**
      * Allows a player to withdraw from the {@link Account}.
      *
-     * @see Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#withdrawBalance(BigDecimal, EconomyTransactionInitiator, Currency)
      * @since v1.0.0
      */
     WITHDRAW,
@@ -39,7 +38,7 @@ public enum AccountPermission {
     /**
      * Allows a player to deposit on the {@link Account}.
      *
-     * @see Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency, EconomySubscriber)
+     * @see Account#depositBalance(BigDecimal, EconomyTransactionInitiator, Currency)
      * @since v1.0.0
      */
     DEPOSIT,
@@ -47,7 +46,7 @@ public enum AccountPermission {
     /**
      * Allows a player to modify the permissions of other players on a {@link Account}
      *
-     * @see NonPlayerAccount#setPermission(UUID, TriState, EconomySubscriber, AccountPermission...)
+     * @see NonPlayerAccount#setPermission(UUID, TriState, AccountPermission...)
      * @since v1.0.0
      */
     MODIFY_PERMISSIONS

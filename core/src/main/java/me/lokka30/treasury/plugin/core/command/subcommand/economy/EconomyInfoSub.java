@@ -9,7 +9,6 @@ import java.util.Optional;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
@@ -22,12 +21,6 @@ import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholde
 
 // "/treasury economy info"
 public class EconomyInfoSub implements Subcommand {
-
-    private final TreasuryPlugin main;
-
-    public EconomyInfoSub() {
-        this.main = TreasuryPlugin.getInstance();
-    }
 
     @Override
     public void execute(

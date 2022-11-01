@@ -17,16 +17,16 @@ import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import org.jetbrains.annotations.NotNull;
 
+// FIXME: Jikoo
 interface AccountMigrator<T extends Account> {
 
+    /*
     @NotNull String getBulkFailLog(@NotNull Throwable throwable);
 
     @NotNull String getInitLog(@NotNull String identifier);
@@ -160,5 +160,6 @@ interface AccountMigrator<T extends Account> {
     }
 
     @NotNull AtomicInteger getSuccessfulMigrations(@NotNull MigrationData migration);
+     */
 
 }
