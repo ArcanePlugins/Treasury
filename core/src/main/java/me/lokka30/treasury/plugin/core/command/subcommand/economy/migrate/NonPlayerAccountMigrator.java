@@ -15,13 +15,13 @@ import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
+// FIXME: Jikoo
 class NonPlayerAccountMigrator implements AccountMigrator<Account> {
 
+    /*
     @Override
     public @NotNull String getBulkFailLog(@NotNull Throwable throwable) {
         return "Unable to fetch non player account UUIDs for migration: " + throwable.getMessage();
@@ -105,5 +105,6 @@ class NonPlayerAccountMigrator implements AccountMigrator<Account> {
     public @NotNull AtomicInteger getSuccessfulMigrations(@NotNull MigrationData migration) {
         return migration.nonPlayerAccountsProcessed();
     }
+     */
 
 }

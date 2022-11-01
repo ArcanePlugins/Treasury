@@ -20,7 +20,6 @@ import me.lokka30.treasury.api.common.service.ServicePriority;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -35,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
+// FIXME: Jikoo
 public class EconomyMigrateSub implements Subcommand {
 
     /*
@@ -46,6 +46,8 @@ public class EconomyMigrateSub implements Subcommand {
     public void execute(
             @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
     ) {
+        sender.sendMessage("work in progress");
+        /*
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.migrate")) {
@@ -173,6 +175,7 @@ public class EconomyMigrateSub implements Subcommand {
 
             sendMigrationMessage(sender, migration);
         });
+         */
     }
 
     @Override
@@ -211,6 +214,7 @@ public class EconomyMigrateSub implements Subcommand {
         ));
     }
 
+    /*
     private <T extends Account> Phaser migrateAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull MigrationData migration,
@@ -237,7 +241,9 @@ public class EconomyMigrateSub implements Subcommand {
 
         return phaser;
     }
+     */
 
+    /*
     private <T extends Account> void migrateAccount(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Phaser phaser,
@@ -298,5 +304,6 @@ public class EconomyMigrateSub implements Subcommand {
             migrator.getSuccessfulMigrations(migration).incrementAndGet();
         });
     }
+     */
 
 }

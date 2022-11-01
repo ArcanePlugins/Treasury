@@ -15,19 +15,19 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyException;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+// FIXME: Jikoo
 /**
  * A dummy {@link EconomyProvider} used to prevent transactions with
  *
  * @since v1.0.0
  */
-class MigrationEconomy implements EconomyProvider {
+class MigrationEconomy /* implements EconomyProvider */ {
 
+    /*
     private final @NotNull Currency currency;
     private final @NotNull EconomyException migrationException;
 
@@ -206,5 +206,6 @@ class MigrationEconomy implements EconomyProvider {
                 "Cannot register currencies during migration!"
         ));
     }
+     */
 
 }
