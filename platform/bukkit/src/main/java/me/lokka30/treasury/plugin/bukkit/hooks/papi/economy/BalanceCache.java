@@ -114,9 +114,9 @@ public class BalanceCache extends BukkitRunnable {
             if (!res.isSuccessful()) {
                 // log the problem and proceed with next entry
                 TreasuryPlugin.getInstance().logger().error(
-                        "Error whilst trying to update balance cache for ( " + (player.getName() != null
+                        "Error whilst trying to update balance cache for " + (player.getName() != null
                                 ? player.getName()
-                                : player.getUniqueId().toString()) + "): " + res
+                                : player.getUniqueId().toString()) + ": " + res
                                 .getFailureReason()
                                 .getDescription());
                 proceed(currentIndex + 1, players, provider);
