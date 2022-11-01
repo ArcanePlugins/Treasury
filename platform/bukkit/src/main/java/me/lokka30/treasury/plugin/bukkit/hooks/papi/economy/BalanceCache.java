@@ -148,9 +148,7 @@ public class BalanceCache extends BukkitRunnable {
                     .joinAndFilter(bal -> CompletableFuture.completedFuture(TriState.fromBoolean(bal.getValue() != null && !bal
                             .getValue()
                             .equals(BigDecimal.ZERO))), balanceFutures)
-                    .whenComplete((
-                            balances, ex1
-                    ) -> {
+                    .whenComplete((balances, ex1) -> {
                         if (ex1 != null) {
                             throw new RuntimeException("An error occurred whilst updating balance cache",
                                     ex1
