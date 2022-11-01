@@ -32,3 +32,4 @@ buildNumber.properties
 
 ### Mac OS X ###
 ._.git
+.DS_Store
