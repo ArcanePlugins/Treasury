@@ -256,7 +256,7 @@ public interface Account {
      *
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
      *
-     * @param initiator  the one who initiated the transaction
+     * @param initiator  the initiator of the transaction
      * @param currency   the {@link Currency} of the balance being reset
      * @param importance the reset transaction importance
      * @param reason     the reset reason
