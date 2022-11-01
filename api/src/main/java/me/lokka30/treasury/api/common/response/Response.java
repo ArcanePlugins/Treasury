@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a response of a method call.
+ * Represents a specialized response of a method call,
+ * containing the result of the call, or the reason the call failed.
  *
  * @param <Result> generic result type
  * @author MrIvanPlays
