@@ -69,7 +69,7 @@ public interface Response<Result> {
     /**
      * Returns whether this {@code Response} is successful.
      *
-     * @return true if successful, false otherwise
+     * @return whether this {@code Response} was successful
      * @since 2.0.0
      */
     default boolean isSuccessful() {
