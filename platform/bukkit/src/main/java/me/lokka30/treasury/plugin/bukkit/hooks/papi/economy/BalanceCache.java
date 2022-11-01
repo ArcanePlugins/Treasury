@@ -129,9 +129,9 @@ public class BalanceCache extends BukkitRunnable {
                 balanceFutures.add(account.retrieveBalance(currency).thenApply(res1 -> {
                     if (!res1.isSuccessful()) {
                         TreasuryPlugin.getInstance().logger().error(
-                                "Error whilst trying to update balance cache for ( " + (player.getName() != null
+                                "Error whilst trying to update balance cache for " + (player.getName() != null
                                         ? player.getName()
-                                        : player.getUniqueId().toString()) + "): " + res1
+                                        : player.getUniqueId().toString()) + ": " + res1
                                         .getFailureReason()
                                         .getDescription());
                         return new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
