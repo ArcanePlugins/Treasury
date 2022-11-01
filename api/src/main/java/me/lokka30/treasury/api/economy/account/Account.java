@@ -88,7 +88,8 @@ public interface Account {
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency
     ) {
-        return withdrawBalance(amount,
+        return withdrawBalance(
+                amount,
                 initiator,
                 currency,
                 EconomyTransactionImportance.NORMAL,
@@ -135,9 +136,15 @@ public interface Account {
             @NotNull EconomyTransactionImportance importance,
             @Nullable String reason
     ) {
-        return doTransaction(EconomyTransaction.newBuilder().withCurrency(currency).withInitiator(
-                initiator).withReason(reason).withTransactionAmount(amount).withImportance(
-                importance).withTransactionType(EconomyTransactionType.WITHDRAWAL).build());
+        return doTransaction(EconomyTransaction
+                .newBuilder()
+                .withCurrency(currency)
+                .withInitiator(initiator)
+                .withReason(reason)
+                .withTransactionAmount(amount)
+                .withImportance(importance)
+                .withTransactionType(EconomyTransactionType.WITHDRAWAL)
+                .build());
     }
 
     /**
@@ -155,7 +162,8 @@ public interface Account {
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency
     ) {
-        return depositBalance(amount,
+        return depositBalance(
+                amount,
                 initiator,
                 currency,
                 EconomyTransactionImportance.NORMAL,
@@ -202,9 +210,15 @@ public interface Account {
             @NotNull EconomyTransactionImportance importance,
             @Nullable String reason
     ) {
-        return doTransaction(EconomyTransaction.newBuilder().withCurrency(currency).withInitiator(
-                initiator).withTransactionAmount(amount).withReason(reason).withImportance(
-                importance).withTransactionType(EconomyTransactionType.DEPOSIT).build());
+        return doTransaction(EconomyTransaction
+                .newBuilder()
+                .withCurrency(currency)
+                .withInitiator(initiator)
+                .withTransactionAmount(amount)
+                .withReason(reason)
+                .withImportance(importance)
+                .withTransactionType(EconomyTransactionType.DEPOSIT)
+                .build());
     }
 
     /**
@@ -259,9 +273,16 @@ public interface Account {
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(importance, "importance");
 
-        return doTransaction(EconomyTransaction.newBuilder().withCurrency(currency).withInitiator(
-                initiator).withTransactionAmount(BigDecimal.ZERO).withReason(reason).withImportance(
-                importance).withTransactionType(EconomyTransactionType.SET).build());
+        return doTransaction(EconomyTransaction
+                .newBuilder()
+                .withCurrency(currency)
+                .withInitiator(initiator)
+                .withTransactionAmount(BigDecimal.ZERO)
+                .withReason(reason)
+                .withImportance(importance)
+                .withTransactionType(EconomyTransactionType.SET)
+                .build()
+        );
     }
 
     /**
