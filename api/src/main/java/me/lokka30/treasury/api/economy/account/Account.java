@@ -299,12 +299,12 @@ public interface Account {
             @NotNull BigDecimal amount, @NotNull Currency currency
     ) {
         return retrieveBalance(currency).thenApply(resp -> {
-            if (!resp.isSuccessful()) {
-                return Response.failure(resp.getFailureReason());
-            } else {
+            if (resp.isSuccessful()) {
                 return Response.success(TriState.fromBoolean(resp
-                        .getResult()
-                        .compareTo(amount) >= 0));
+                    .getResult()
+                    .compareTo(amount) >= 0));
+            } else {
+                return Response.failure(resp.getFailureReason());
             }
         });
     }
