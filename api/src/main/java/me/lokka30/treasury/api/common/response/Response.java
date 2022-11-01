@@ -43,7 +43,7 @@ public interface Response<Result> {
     }
 
     /**
-     * Creates a failure response object.
+     * Creates a failure response object with the specified failure reason.
      *
      * @param reason the reason why the response is failure
      * @return unsuccessful response
