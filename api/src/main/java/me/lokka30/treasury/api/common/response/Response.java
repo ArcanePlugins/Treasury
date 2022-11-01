@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public interface Response<Result> {
 
     /**
-     * Creates a successful response object.
+     * Creates a successful response object with the specified result.
      *
      * @param result the expected result
      * @return successful response
