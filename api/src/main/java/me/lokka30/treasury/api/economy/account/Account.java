@@ -68,7 +68,7 @@ public interface Account {
      * Request the balance of the {@code Account}.
      *
      * @param currency the {@link Currency} of the balance being requested
-     * @return future with a {@link Response} which result's the balance if successful
+     * @return future with a {@link Response} which states the balance of the {@link Account}
      * @since v1.0.0
      */
     CompletableFuture<Response<BigDecimal>> retrieveBalance(@NotNull Currency currency);
