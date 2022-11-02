@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents an account accessor, which accesses {@link NonPlayerAccount non player accounts}
+ * Provides access to {@link NonPlayerAccount non-player accounts}.
  *
  * @author MrIvanPlays
  * @since 2.0.0
