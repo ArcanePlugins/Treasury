@@ -12,7 +12,7 @@ import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an account accessor, which accesses {@link PlayerAccount player accounts}
+ * Provides access to {@link PlayerAccount player accounts}.
  *
  * @author MrIvanPlays
  * @since 2.0.0
