@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 public abstract class PlayerAccountAccessor {
 
     private UUID uniqueId;
-    private boolean createIfNotExists = false;
 
     protected PlayerAccountAccessor() {
     }
@@ -39,20 +38,6 @@ public abstract class PlayerAccountAccessor {
     }
 
     /**
-     * Specifies whether this account accessor shall create an account for the specified unique
-     * id if it doesn't exist. By default, this is <code>false</code>.
-     *
-     * @param createIfNotExists boolean value
-     * @return this instance for chaining
-     * @since 2.0.0
-     */
-    @NotNull
-    public PlayerAccountAccessor createIfNotExists(boolean createIfNotExists) {
-        this.createIfNotExists = createIfNotExists;
-        return this;
-    }
-
-    /**
      * Gets or creates the {@link PlayerAccount player account} needed.
      *
      * @return future with {@link Response} which if successful returns the resulting
@@ -61,13 +46,10 @@ public abstract class PlayerAccountAccessor {
      */
     @NotNull
     public CompletableFuture<Response<PlayerAccount>> get() {
-        return this.getOrCreate(uniqueId, createIfNotExists);
+        return this.getOrCreate(uniqueId);
     }
 
     @NotNull
-    protected abstract CompletableFuture<Response<PlayerAccount>> getOrCreate(
-            @NotNull UUID uniqueId,
-            boolean createIfNotExists
-    );
+    protected abstract CompletableFuture<Response<PlayerAccount>> getOrCreate(@NotNull UUID uniqueId);
 
 }

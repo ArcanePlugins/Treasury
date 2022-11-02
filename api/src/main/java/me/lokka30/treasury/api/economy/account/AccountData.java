@@ -53,7 +53,9 @@ public final class AccountData {
     private final Optional<String> identifier;
     private final Optional<UUID> uniqueId;
 
-    private AccountData(boolean player, Optional<String> identifier, Optional<UUID> uniqueId) {
+    private AccountData(
+            boolean player, @NotNull Optional<String> identifier, @NotNull Optional<UUID> uniqueId
+    ) {
         this.player = player;
         this.identifier = identifier;
         this.uniqueId = uniqueId;

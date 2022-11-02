@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 public abstract class NonPlayerAccountAccessor {
 
     private String identifier, name;
-    private boolean createIfNotExists = false;
 
     protected NonPlayerAccountAccessor() {
     }
@@ -53,20 +52,6 @@ public abstract class NonPlayerAccountAccessor {
     }
 
     /**
-     * Specifies whether this account accessor shall create an account for the specified unique
-     * id if it doesn't exist. By default, this is <code>false</code>.
-     *
-     * @param createIfNotExists boolean value
-     * @return this instance for chaining
-     * @since 2.0.0
-     */
-    @NotNull
-    public NonPlayerAccountAccessor createIfNotExists(boolean createIfNotExists) {
-        this.createIfNotExists = createIfNotExists;
-        return this;
-    }
-
-    /**
      * Gets or creates the {@link NonPlayerAccount non player account} needed.
      *
      * @return future with {@link Response} which if successful returns the resulting
@@ -74,14 +59,13 @@ public abstract class NonPlayerAccountAccessor {
      */
     @NotNull
     public CompletableFuture<Response<NonPlayerAccount>> get() {
-        return this.getOrCreate(identifier, name, createIfNotExists);
+        return this.getOrCreate(identifier, name);
     }
 
     @NotNull
     protected abstract CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
             @NotNull String identifier,
-            @NotNull String name,
-            boolean createIfNotExists
+            @NotNull String name
     );
 
 }
