@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public final class AccountData {
 
     /**
-     * Creates a new {@link PlayerAccount player account} data.
+     * Creates an {@link AccountData} object representing the identity of a {@link PlayerAccount player account}.
      *
      * @param uniqueId the unique id of the player account owner
      * @return new account data instance
