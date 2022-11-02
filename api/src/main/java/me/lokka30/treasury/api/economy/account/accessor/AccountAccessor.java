@@ -26,7 +26,7 @@ public interface AccountAccessor {
     @NotNull PlayerAccountAccessor player();
 
     /**
-     * Creates a new instance of a {@link NonPlayerAccountAccessor non player account accessor}
+     * Creates a new instance of a {@link NonPlayerAccountAccessor non-player account accessor}
      *
      * @return non player account accessor
      */
