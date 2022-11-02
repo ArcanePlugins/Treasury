@@ -38,7 +38,7 @@ public abstract class NonPlayerAccountAccessor {
     }
 
     /**
-     * Specifies the name of the accessed/created {@link NonPlayerAccount non player account}.
+     * Specifies the name of the accessed/created {@link NonPlayerAccount non-player account}.
      * This is optional to set.
      *
      * @param name account name
