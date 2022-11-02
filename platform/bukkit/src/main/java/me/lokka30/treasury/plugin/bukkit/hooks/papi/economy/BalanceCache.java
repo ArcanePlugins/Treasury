@@ -19,9 +19,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -101,24 +103,30 @@ public class BalanceCache extends BukkitRunnable {
             return;
         }
         OfflinePlayer player = players.get(currentIndex);
-        provider.hasPlayerAccount(player.getUniqueId()).thenCompose(res -> {
+        provider.hasAccount(AccountData.forPlayerAccount(player.getUniqueId())).thenCompose(res -> {
             if (!res.isSuccessful()) {
                 return CompletableFuture.completedFuture(Response.failure(res.getFailureReason()));
             }
-            return provider.retrievePlayerAccount(player.getUniqueId());
+            if (res.getResult() == TriState.TRUE) {
+                return provider.accountAccessor().player().withUniqueId(player.getUniqueId()).get();
+            }
+            return CompletableFuture.completedFuture(Response.failure(FailureReason.of(
+                    "accountNotExists")));
         }).whenComplete((res, ex) -> {
             if (ex != null) {
                 throw new RuntimeException("An error occurred whilst updating balance cache", ex);
             }
 
             if (!res.isSuccessful()) {
-                // log the problem and proceed with next entry
-                TreasuryPlugin.getInstance().logger().error(
-                        "Error whilst trying to update balance cache for " + (player.getName() != null
-                                ? player.getName()
-                                : player.getUniqueId().toString()) + ": " + res
-                                .getFailureReason()
-                                .getDescription());
+                if (!res.getFailureReason().getDescription().equalsIgnoreCase("accountNotExists")) {
+                    // log the problem and proceed with next entry
+                    TreasuryPlugin.getInstance().logger().error(
+                            "Error whilst trying to update balance cache for " + (player.getName() != null
+                                    ? player.getName()
+                                    : player.getUniqueId().toString()) + ": " + res
+                                    .getFailureReason()
+                                    .getDescription());
+                }
                 proceed(currentIndex + 1, players, provider);
                 return;
             }
