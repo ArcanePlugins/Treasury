@@ -34,7 +34,7 @@ public final class AccountData {
     }
 
     /**
-     * Creates a new {@link NonPlayerAccount non player account} data.
+     * Creates an {@link AccountData} object representing the identity of a {@link NonPlayerAccount non-player account}.
      *
      * @param identifier the identifier of the non player account
      * @return new account data instance
