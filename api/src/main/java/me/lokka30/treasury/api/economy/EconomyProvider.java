@@ -211,7 +211,7 @@ public interface EconomyProvider {
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(subscription, "subscription");
-        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
+        EconomySubscriber.asFuture(this::retrieveNonPlayerAccountIds).exceptionally(throwable -> {
             if (throwable instanceof EconomyException) {
                 subscription.fail((EconomyException) throwable);
             } else {
@@ -235,9 +235,6 @@ public interface EconomyProvider {
                         return CompletableFuture.completedFuture(false);
                     }
 
-                    if (!(account instanceof NonPlayerAccount)) {
-                        return CompletableFuture.completedFuture(false);
-                    }
                     return EconomySubscriber.asFuture(subscriber -> account.isMember(playerId,
                             subscriber
                     ));
@@ -281,7 +278,7 @@ public interface EconomyProvider {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(subscription, "subscription");
         Objects.requireNonNull(permissions, "permissions");
-        EconomySubscriber.asFuture(this::retrieveAccountIds).exceptionally(throwable -> {
+        EconomySubscriber.asFuture(this::retrieveNonPlayerAccountIds).exceptionally(throwable -> {
             if (throwable instanceof EconomyException) {
                 subscription.fail((EconomyException) throwable);
             } else {
@@ -302,10 +299,6 @@ public interface EconomyProvider {
                         subscriber -> retrieveAccount(identifier, subscriber)
                 ).thenCompose(account -> {
                     if (account == null) {
-                        return CompletableFuture.completedFuture(false);
-                    }
-
-                    if (!(account instanceof NonPlayerAccount)) {
                         return CompletableFuture.completedFuture(false);
                     }
 
