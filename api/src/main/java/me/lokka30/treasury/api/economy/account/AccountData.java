@@ -72,8 +72,10 @@ public final class AccountData {
     }
 
     /**
-     * Returns the identifier of the account this account data holds, empty {@link Optional} if the
-     * account data holds player account information.
+     * If the current {@link AccountData} object represents a
+     * {@link NonPlayerAccount non-player account}, this method
+     * will return the identifier of the account. Otherwise, an empty
+     * {@link Optional} will be returned.
      *
      * @return identifier or empty optional if the data is a player account data
      * @since 2.0.0
