@@ -4,6 +4,8 @@
 
 package me.lokka30.treasury.api.economy.account.accessor;
 
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
+import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 
 /**

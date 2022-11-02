@@ -16,8 +16,8 @@ import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
-import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.AccountData;
+import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.account.accessor.AccountAccessor;
@@ -36,6 +36,8 @@ public interface EconomyProvider {
 
     /**
      * Returns the {@link AccountAccessor} of this {@code EconomyProvider}.
+     * <p>The account accessor serves the purpose of creating or retrieving existing accounts.
+     * Please check its documentation for more in-depth explanation.
      *
      * @return account accessor
      * @see AccountAccessor
@@ -43,8 +45,7 @@ public interface EconomyProvider {
      * @see me.lokka30.treasury.api.economy.account.accessor.NonPlayerAccountAccessor
      * @since 2.0.0
      */
-    @NotNull
-    AccountAccessor accountAccessor();
+    @NotNull AccountAccessor accountAccessor();
 
     /**
      * Request whether the specified {@link AccountData} has an associated {@link Account}.
@@ -54,8 +55,7 @@ public interface EconomyProvider {
      * @see AccountData
      * @since 2.0.0
      */
-    @NotNull
-    CompletableFuture<Response<TriState>> hasAccount(AccountData accountData);
+    @NotNull CompletableFuture<Response<TriState>> hasAccount(AccountData accountData);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
@@ -96,8 +96,8 @@ public interface EconomyProvider {
                 return CompletableFuture.completedFuture(Collections.emptyList());
             }
             Collection<String> identifiers = result.getResult();
-            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures =
-                    new ArrayList<>(identifiers.size());
+            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
+                    identifiers.size());
             for (String identifier : identifiers) {
                 accountFutures.add(this
                         .accountAccessor()
@@ -105,22 +105,18 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.mapJoinFilter(
-                    res -> {
-                        if (!res.isSuccessful()) {
+            return FutureHelper.mapJoinFilter(res -> {
+                if (!res.isSuccessful()) {
+                    return CompletableFuture.completedFuture(TriState.FALSE);
+                } else {
+                    return res.getResult().isMember(playerId).thenCompose(res1 -> {
+                        if (!res1.isSuccessful()) {
                             return CompletableFuture.completedFuture(TriState.FALSE);
-                        } else {
-                            return res.getResult().isMember(playerId).thenCompose(res1 -> {
-                                if (!res1.isSuccessful()) {
-                                    return CompletableFuture.completedFuture(TriState.FALSE);
-                                }
-                                return CompletableFuture.completedFuture(res1.getResult());
-                            });
                         }
-                    },
-                    res -> res.getResult().getIdentifier(),
-                    accountFutures
-            );
+                        return CompletableFuture.completedFuture(res1.getResult());
+                    });
+                }
+            }, res -> res.getResult().getIdentifier(), accountFutures);
         });
     }
 
@@ -144,8 +140,8 @@ public interface EconomyProvider {
                 return CompletableFuture.completedFuture(Collections.emptyList());
             }
             Collection<String> identifiers = result.getResult();
-            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures =
-                    new ArrayList<>(identifiers.size());
+            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
+                    identifiers.size());
             for (String identifier : identifiers) {
                 accountFutures.add(this
                         .accountAccessor()
@@ -153,23 +149,21 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.mapJoinFilter(
-                    res -> {
-                        if (!res.isSuccessful()) {
-                            return CompletableFuture.completedFuture(TriState.FALSE);
-                        } else {
-                            return res.getResult().hasPermission(playerId, permissions).thenCompose(
-                                    res1 -> {
-                                        if (!res1.isSuccessful()) {
-                                            return CompletableFuture.completedFuture(TriState.FALSE);
-                                        }
-                                        return CompletableFuture.completedFuture(res1.getResult());
-                                    });
-                        }
-                    },
-                    res -> res.getResult().getIdentifier(),
-                    accountFutures
-            );
+            return FutureHelper.mapJoinFilter(res -> {
+                if (!res.isSuccessful()) {
+                    return CompletableFuture.completedFuture(TriState.FALSE);
+                } else {
+                    return res
+                            .getResult()
+                            .hasPermission(playerId, permissions)
+                            .thenCompose(res1 -> {
+                                if (!res1.isSuccessful()) {
+                                    return CompletableFuture.completedFuture(TriState.FALSE);
+                                }
+                                return CompletableFuture.completedFuture(res1.getResult());
+                            });
+                }
+            }, res -> res.getResult().getIdentifier(), accountFutures);
         });
     }
 
