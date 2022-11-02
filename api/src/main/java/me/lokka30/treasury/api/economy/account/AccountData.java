@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a data object, holding an account data.
+ * Objects of this class represent the identity of an Account, which may or may not exist.
  *
  * @author MrIvanPlays
  * @since 2.0.0
