@@ -7,9 +7,11 @@ package me.lokka30.treasury.api.economy.account.accessor;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a buffer interface, which shall create new instances of either the
- * {@link PlayerAccountAccessor player account accessor} or the {@link NonPlayerAccountAccessor non
- * player account accessor}.
+ * This is a buffer interface designed to instantiate accessors for
+ * {@link PlayerAccount player accounts} and
+ * {@link NonPlayerAccount non-player accounts}, through the
+ * {@link PlayerAccountAccessor} and
+ * {@link NonPlayerAccountAccessor} classes respectively.
  *
  * @author MrIvanPlays
  * @since 2.0.0
