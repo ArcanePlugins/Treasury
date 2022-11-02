@@ -59,13 +59,13 @@ public abstract class NonPlayerAccountAccessor {
      */
     @NotNull
     public CompletableFuture<Response<NonPlayerAccount>> get() {
-        return this.getOrCreate(identifier, name);
+        return this.getOrCreate(Objects.requireNonNull(identifier, "identifier"), name);
     }
 
     @NotNull
     protected abstract CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
             @NotNull String identifier,
-            @NotNull String name
+            @Nullable String name
     );
 
 }

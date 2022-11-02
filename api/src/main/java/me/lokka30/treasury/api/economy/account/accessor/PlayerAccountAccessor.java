@@ -46,7 +46,7 @@ public abstract class PlayerAccountAccessor {
      */
     @NotNull
     public CompletableFuture<Response<PlayerAccount>> get() {
-        return this.getOrCreate(uniqueId);
+        return this.getOrCreate(Objects.requireNonNull(uniqueId, "uniqueId"));
     }
 
     @NotNull
