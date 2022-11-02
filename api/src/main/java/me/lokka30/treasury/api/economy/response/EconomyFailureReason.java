@@ -9,6 +9,7 @@ import java.util.UUID;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -59,10 +60,7 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if the account exists before attempting to
      * interact with it.
      *
-     * @see EconomyProvider#hasAccount(String)
-     * @see EconomyProvider#hasPlayerAccount(UUID)
-     * @see EconomyProvider#retrieveAccount(String)
-     * @see EconomyProvider#retrievePlayerAccount(UUID)
+     * @see EconomyProvider#hasAccount(AccountData)
      * @since v1.0.0
      */
     ACCOUNT_NOT_FOUND {
@@ -82,11 +80,8 @@ public enum EconomyFailureReason implements FailureReason {
      * To avoid this failure, check if an account exists before attempting to create
      * one that uses the same identifier.
      *
-     * @see EconomyProvider#hasAccount(String)
-     * @see EconomyProvider#hasPlayerAccount(UUID)
-     * @see EconomyProvider#createAccount(String)
-     * @see EconomyProvider#createAccount(String, String)
-     * @see EconomyProvider#createPlayerAccount(UUID)
+     * @see EconomyProvider#hasAccount(AccountData)
+     * @see EconomyProvider#accountAccessor()
      * @since v1.0.0
      */
     ACCOUNT_ALREADY_EXISTS {
