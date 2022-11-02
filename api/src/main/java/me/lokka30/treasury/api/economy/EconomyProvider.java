@@ -103,7 +103,6 @@ public interface EconomyProvider {
                         .accountAccessor()
                         .nonPlayer()
                         .withIdentifier(identifier)
-                        .createIfNotExists(false)
                         .get());
             }
             return FutureHelper.mapJoinFilter(
@@ -152,7 +151,6 @@ public interface EconomyProvider {
                         .accountAccessor()
                         .nonPlayer()
                         .withIdentifier(identifier)
-                        .createIfNotExists(false)
                         .get());
             }
             return FutureHelper.mapJoinFilter(
