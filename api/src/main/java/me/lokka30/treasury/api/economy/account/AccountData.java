@@ -86,8 +86,10 @@ public final class AccountData {
     }
 
     /**
-     * Returns the {@link UUID unique id} of the account this account data holds, empty
-     * {@link Optional} if the account data held is
+     * If the current {@link AccountData} object represents a
+     * {@link PlayerAccount player account}, this method
+     * will return the {@link UUID} of the account. Otherwise, an
+     * empty {@link Optional} will be returned.
      *
      * @return unique id or empty optional if the data is a non player account data
      */
