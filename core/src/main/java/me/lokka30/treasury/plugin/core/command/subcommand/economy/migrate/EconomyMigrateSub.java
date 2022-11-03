@@ -320,6 +320,7 @@ public class EconomyMigrateSub implements Subcommand {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+            migrator.getSuccessfulMigrations(migration).incrementAndGet();
             migrateAccounts(latch, initiator, identifiers, currentIndex + 1, migration, migrator);
         });
     }
