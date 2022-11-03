@@ -16,12 +16,13 @@ import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
+import me.lokka30.treasury.api.economy.account.accessor.AccountAccessor;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementors providing and managing economy data create a class
@@ -34,33 +35,27 @@ import org.jetbrains.annotations.Nullable;
 public interface EconomyProvider {
 
     /**
-     * Request whether a user has an associated {@link PlayerAccount}.
+     * Returns the {@link AccountAccessor} of this {@code EconomyProvider}.
+     * <p>The account accessor serves the purpose of creating or retrieving existing accounts.
+     * Please check its documentation for more in-depth explanation.
      *
-     * @param accountId the {@link UUID} of the account owner
+     * @return account accessor
+     * @see AccountAccessor
+     * @see me.lokka30.treasury.api.economy.account.accessor.PlayerAccountAccessor
+     * @see me.lokka30.treasury.api.economy.account.accessor.NonPlayerAccountAccessor
+     * @since 2.0.0
+     */
+    @NotNull AccountAccessor accountAccessor();
+
+    /**
+     * Request whether the specified {@link AccountData} has an associated {@link Account}.
+     *
+     * @param accountData data about the account type and specific account identifiers
      * @return future with {@link Response} which if successful returns the resulting {@link TriState}
-     * @since v1.0.0
+     * @see AccountData
+     * @since 2.0.0
      */
-    CompletableFuture<Response<TriState>> hasPlayerAccount(@NotNull UUID accountId);
-
-    /**
-     * Request an existing {@link PlayerAccount} for a user.
-     *
-     * @param accountId the {@link UUID} of the account owner
-     * @return future with {@link Response} which if successful returns the resulting
-     *         {@link PlayerAccount}
-     * @since v1.0.0
-     */
-    CompletableFuture<Response<PlayerAccount>> retrievePlayerAccount(@NotNull UUID accountId);
-
-    /**
-     * Request the creation of a {@link PlayerAccount} for a user.
-     *
-     * @param accountId the {@link UUID} of the account owner
-     * @return future with {@link Response} which if successful returns the resulting
-     *         {@link PlayerAccount}
-     * @since v1.0.0
-     */
-    CompletableFuture<Response<PlayerAccount>> createPlayerAccount(@NotNull UUID accountId);
+    @NotNull CompletableFuture<Response<TriState>> hasAccount(AccountData accountData);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
@@ -69,64 +64,6 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
-
-    /**
-     * Request whether an identifier has an associated {@link Account}.
-     * <p>
-     * This method is safe for {@link NonPlayerAccount non-player accounts}.
-     * <p>
-     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
-     *
-     * @param identifier the identifier of the account
-     * @return future with {@link Response} which if successful returns the resulting value
-     * @since v1.0.0
-     */
-    CompletableFuture<Response<TriState>> hasAccount(@NotNull String identifier);
-
-    /**
-     * Request an existing {@link Account} for a specific identifier.
-     * <p>
-     * This method is safe for {@link NonPlayerAccount non-player accounts}.
-     * <p>
-     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
-     *
-     * @param identifier the identifier of the account
-     * @return future with {@link Response} which if successful returns the resulting value
-     * @since v1.0.0
-     */
-    CompletableFuture<Response<Account>> retrieveAccount(@NotNull String identifier);
-
-    /**
-     * Request the creation of a {@link Account} for a specific identifier.
-     * <p>
-     * This method is safe for {@link NonPlayerAccount non-player accounts}.
-     * <p>
-     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
-     *
-     * @param identifier the identifier of the account
-     * @return future with {@link Response} which if successful returns the resulting value
-     * @since v1.0.0
-     */
-    default CompletableFuture<Response<Account>> createAccount(@NotNull String identifier) {
-        return createAccount(null, identifier);
-    }
-
-    /**
-     * Request the creation of a {@link Account} for a specific identifier {@code identifier} with {@link String} {@code
-     * name}.
-     * <p>
-     * This method is safe for {@link NonPlayerAccount non-player accounts}.
-     * <p>
-     * This could return an {@link NonPlayerAccount} or an {@link PlayerAccount}.
-     *
-     * @param name       the human-readable name of the account
-     * @param identifier the unique identifier of the account
-     * @return future with {@link Response} which if successful returns the resulting value
-     * @since v1.0.0
-     */
-    CompletableFuture<Response<Account>> createAccount(
-            @Nullable String name, @NotNull String identifier
-    );
 
     /**
      * Request all identifiers with associated {@link Account Accounts}.
@@ -154,32 +91,32 @@ public interface EconomyProvider {
     default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
 
-        return retrieveAccountIds().thenCompose(result -> {
+        return retrieveNonPlayerAccountIds().thenCompose(result -> {
             if (!result.isSuccessful() || result.getResult().isEmpty()) {
                 return CompletableFuture.completedFuture(Collections.emptyList());
             }
             Collection<String> identifiers = result.getResult();
-            Collection<CompletableFuture<Response<Account>>> accountFutures =
-                    new ArrayList<>(identifiers.size());
+            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
+                    identifiers.size());
             for (String identifier : identifiers) {
-                accountFutures.add(retrieveAccount(identifier));
+                accountFutures.add(this
+                        .accountAccessor()
+                        .nonPlayer()
+                        .withIdentifier(identifier)
+                        .get());
             }
-            return FutureHelper.mapJoinFilter(
-                    res -> {
-                        if (!res.isSuccessful()) {
+            return FutureHelper.mapJoinFilter(res -> {
+                if (!res.isSuccessful()) {
+                    return CompletableFuture.completedFuture(TriState.FALSE);
+                } else {
+                    return res.getResult().isMember(playerId).thenCompose(res1 -> {
+                        if (!res1.isSuccessful()) {
                             return CompletableFuture.completedFuture(TriState.FALSE);
-                        } else {
-                            return res.getResult().isMember(playerId).thenCompose(res1 -> {
-                                if (!res1.isSuccessful()) {
-                                    return CompletableFuture.completedFuture(TriState.FALSE);
-                                }
-                                return CompletableFuture.completedFuture(res1.getResult());
-                            });
                         }
-                    },
-                    res -> res.getResult().getIdentifier(),
-                    accountFutures
-            );
+                        return CompletableFuture.completedFuture(res1.getResult());
+                    });
+                }
+            }, res -> res.getResult().getIdentifier(), accountFutures);
         });
     }
 
@@ -198,33 +135,35 @@ public interface EconomyProvider {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(permissions, "permissions");
 
-        return retrieveAccountIds().thenCompose(result -> {
+        return retrieveNonPlayerAccountIds().thenCompose(result -> {
             if (!result.isSuccessful() || result.getResult().isEmpty()) {
                 return CompletableFuture.completedFuture(Collections.emptyList());
             }
             Collection<String> identifiers = result.getResult();
-            Collection<CompletableFuture<Response<Account>>> accountFutures =
-                    new ArrayList<>(identifiers.size());
+            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
+                    identifiers.size());
             for (String identifier : identifiers) {
-                accountFutures.add(retrieveAccount(identifier));
+                accountFutures.add(this
+                        .accountAccessor()
+                        .nonPlayer()
+                        .withIdentifier(identifier)
+                        .get());
             }
-            return FutureHelper.mapJoinFilter(
-                    res -> {
-                        if (!res.isSuccessful()) {
-                            return CompletableFuture.completedFuture(TriState.FALSE);
-                        } else {
-                            return res.getResult().hasPermission(playerId, permissions).thenCompose(
-                                    res1 -> {
-                                        if (!res1.isSuccessful()) {
-                                            return CompletableFuture.completedFuture(TriState.FALSE);
-                                        }
-                                        return CompletableFuture.completedFuture(res1.getResult());
-                                    });
-                        }
-                    },
-                    res -> res.getResult().getIdentifier(),
-                    accountFutures
-            );
+            return FutureHelper.mapJoinFilter(res -> {
+                if (!res.isSuccessful()) {
+                    return CompletableFuture.completedFuture(TriState.FALSE);
+                } else {
+                    return res
+                            .getResult()
+                            .hasPermission(playerId, permissions)
+                            .thenCompose(res1 -> {
+                                if (!res1.isSuccessful()) {
+                                    return CompletableFuture.completedFuture(TriState.FALSE);
+                                }
+                                return CompletableFuture.completedFuture(res1.getResult());
+                            });
+                }
+            }, res -> res.getResult().getIdentifier(), accountFutures);
         });
     }
 
