@@ -11,25 +11,31 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.AccountData;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
+import me.lokka30.treasury.api.economy.account.accessor.AccountAccessor;
+import me.lokka30.treasury.api.economy.account.accessor.NonPlayerAccountAccessor;
+import me.lokka30.treasury.api.economy.account.accessor.PlayerAccountAccessor;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// FIXME: Jikoo
 /**
  * A dummy {@link EconomyProvider} used to prevent transactions with
  *
+ * @author Jikoo, MrIvanPlays
  * @since v1.0.0
  */
-class MigrationEconomy /* implements EconomyProvider */ {
+class MigrationEconomy implements EconomyProvider {
 
-    /*
     private final @NotNull Currency currency;
-    private final @NotNull EconomyException migrationException;
+    private final @NotNull AccountAccessor accountAccessor;
 
     MigrationEconomy() {
         this.currency = new Currency() {
@@ -69,29 +75,20 @@ class MigrationEconomy /* implements EconomyProvider */ {
             }
 
             @Override
-            public boolean supportsNegativeBalances() {
-                return false; // todo: ?????
+            public TriState supportsNegativeBalances() {
+                return TriState.UNSPECIFIED;
             }
 
             @Override
-            public void to(
-                    @NotNull final Currency currency,
-                    @NotNull final BigDecimal amount,
-                    @NotNull final EconomySubscriber<BigDecimal> subscription
+            public CompletableFuture<Response<BigDecimal>> to(
+                    @NotNull final Currency currency, @NotNull final BigDecimal amount
             ) {
-                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                        "Migration currency not convertible."
-                ));
+                return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
             }
 
             @Override
-            public void parse(
-                    @NotNull final String formatted,
-                    @NotNull final EconomySubscriber<BigDecimal> subscription
-            ) {
-                subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                        "Migration in progress, cannot parse value."
-                ));
+            public CompletableFuture<Response<BigDecimal>> parse(@NotNull final String formatted) {
+                return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
             }
 
             @Override
@@ -118,69 +115,58 @@ class MigrationEconomy /* implements EconomyProvider */ {
                 return amount.toPlainString();
             }
         };
-        this.migrationException = new EconomyException(EconomyFailureReason.MIGRATION,
-                "Economy unavailable during migration process."
-        );
+        this.accountAccessor = new AccountAccessor() {
+            @Override
+            public @NotNull PlayerAccountAccessor player() {
+                return new PlayerAccountAccessor() {
+                    @Override
+                    protected @NotNull CompletableFuture<Response<PlayerAccount>> getOrCreate(
+                            @NotNull final UUID uniqueId
+                    ) {
+                        return CompletableFuture.completedFuture(Response.failure(
+                                EconomyFailureReason.MIGRATION));
+                    }
+                };
+            }
 
+            @Override
+            public @NotNull NonPlayerAccountAccessor nonPlayer() {
+                return new NonPlayerAccountAccessor() {
+                    @Override
+                    protected @NotNull CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
+                            @NotNull final String identifier, @Nullable final String name
+                    ) {
+                        return CompletableFuture.completedFuture(Response.failure(
+                                EconomyFailureReason.MIGRATION));
+                    }
+                };
+            }
+        };
     }
 
     @Override
-    public void hasPlayerAccount(
-            @NotNull UUID accountId, @NotNull EconomySubscriber<Boolean> subscription
-    ) {
-        subscription.fail(migrationException);
+    public @NotNull AccountAccessor accountAccessor() {
+        return this.accountAccessor;
     }
 
     @Override
-    public void retrievePlayerAccount(
-            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
-    ) {
-        subscription.fail(migrationException);
+    public @NotNull CompletableFuture<Response<TriState>> hasAccount(final AccountData accountData) {
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
-    public void createPlayerAccount(
-            @NotNull UUID accountId, @NotNull EconomySubscriber<PlayerAccount> subscription
-    ) {
-        subscription.fail(migrationException);
+    public CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds() {
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
-    public void retrievePlayerAccountIds(@NotNull EconomySubscriber<Collection<UUID>> subscription) {
-        subscription.fail(migrationException);
+    public CompletableFuture<Response<Collection<String>>> retrieveAccountIds() {
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
-    public void hasAccount(
-            @NotNull String accountId, @NotNull EconomySubscriber<Boolean> subscription
-    ) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void retrieveAccount(
-            @NotNull String accountId, @NotNull EconomySubscriber<Account> subscription
-    ) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void createAccount(
-            @Nullable String name,
-            @NotNull String accountId,
-            @NotNull EconomySubscriber<Account> subscription
-    ) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void retrieveAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription) {
-        subscription.fail(migrationException);
-    }
-
-    @Override
-    public void retrieveNonPlayerAccountIds(@NotNull EconomySubscriber<Collection<String>> subscription) {
-        subscription.fail(migrationException);
+    public CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds() {
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
@@ -199,13 +185,8 @@ class MigrationEconomy /* implements EconomyProvider */ {
     }
 
     @Override
-    public void registerCurrency(
-            @NotNull final Currency currency, @NotNull final EconomySubscriber<Boolean> subscription
-    ) {
-        subscription.fail(new EconomyException(EconomyFailureReason.MIGRATION,
-                "Cannot register currencies during migration!"
-        ));
+    public CompletableFuture<Response<TriState>> registerCurrency(@NotNull final Currency currency) {
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
-     */
 
 }

@@ -4,17 +4,18 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
@@ -34,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
-// FIXME: Jikoo
 public class EconomyMigrateSub implements Subcommand {
 
     /*
@@ -46,8 +46,6 @@ public class EconomyMigrateSub implements Subcommand {
     public void execute(
             @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
     ) {
-        sender.sendMessage("work in progress");
-        /*
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.migrate")) {
@@ -157,25 +155,27 @@ public class EconomyMigrateSub implements Subcommand {
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
 
             // Initialize account migration.
-            Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
+            CountDownLatch playerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
                     migration,
                     new PlayerAccountMigrator()
             );
-            Phaser nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
+            CountDownLatch nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
                     migration,
                     new NonPlayerAccountMigrator()
             );
-            nonPlayerMigration.arriveAndAwaitAdvance();
-
-            // Block until migration is complete.
-            playerMigration.arriveAndAwaitAdvance();
+            try {
+                // Block until migration is complete.
+                nonPlayerMigration.await();
+                playerMigration.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
 
             // Unregister economy override.
             ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
 
             sendMigrationMessage(sender, migration);
         });
-         */
     }
 
     @Override
@@ -214,96 +214,103 @@ public class EconomyMigrateSub implements Subcommand {
         ));
     }
 
-    /*
-    private <T extends Account> Phaser migrateAccounts(
+    private <T extends Account> CountDownLatch migrateAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull MigrationData migration,
             @NotNull AccountMigrator<T> migrator
     ) {
-        // Initialize phaser with a single party: migration completion.
-        Phaser phaser = new Phaser(1);
+        CountDownLatch latch = new CountDownLatch(1);
+        migrator.requestAccountIds(migration.from().get()).thenAccept(resp -> {
+            if (!resp.isSuccessful()) {
+                migration.debug(() -> migrator.getBulkFailLog(resp.getFailureReason()));
+                return;
+            }
 
-        migrator.requestAccountIds().accept(migration.from().get(),
-                new PhasedSubscriber<Collection<String>>(phaser) {
-                    @Override
-                    public void phaseAccept(@NotNull Collection<String> identifiers) {
-                        for (String identifier : identifiers) {
-                            migrateAccount(initiator, phaser, identifier, migration, migrator);
-                        }
-                    }
+            List<String> identifiers = resp.getResult() instanceof List
+                    ? (List<String>) resp.getResult()
+                    : new ArrayList<>(resp.getResult());
 
-                    @Override
-                    public void phaseFail(@NotNull EconomyException exception) {
-                        migration.debug(() -> migrator.getBulkFailLog(exception));
-                    }
-                }
-        );
+            this.migrateAccounts(latch, initiator, identifiers, 0, migration, migrator);
+        });
 
-        return phaser;
+        return latch;
     }
-     */
 
-    /*
-    private <T extends Account> void migrateAccount(
+    private <T extends Account> void migrateAccounts(
+            @NotNull CountDownLatch latch,
             @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Phaser phaser,
-            @NotNull String identifier,
+            @NotNull List<String> identifiers,
+            int currentIndex,
             @NotNull MigrationData migration,
             @NotNull AccountMigrator<T> migrator
     ) {
+        if (currentIndex == identifiers.size()) {
+            latch.countDown();
+            return;
+        }
+
+        String identifier = identifiers.get(currentIndex);
+
         migration.debug(() -> migrator.getInitLog(identifier));
 
         // Set up logging for failure.
         // Because from and to accounts are requested in parallel, guard against duplicate failure logging.
         AtomicBoolean failed = new AtomicBoolean();
-        BiConsumer<T, Throwable> failureConsumer = (account, throwable) -> {
-            if (throwable != null && failed.compareAndSet(false, true)) {
-                migration.debug(() -> migrator.getErrorLog(identifier, throwable));
+        BiConsumer<Response<T>, Throwable> failureConsumer = (response, throwable) -> {
+            if (!response.isSuccessful() && failed.compareAndSet(false, true)) {
+                migration.debug(() -> migrator.getErrorLog(identifier,
+                        response.getFailureReason()
+                ));
             }
         };
 
-        CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
-        migrator.requestAccount().accept(migration.from().get(),
-                identifier,
-                new PhasedFutureSubscriber<>(phaser, fromAccountFuture)
-        );
-        fromAccountFuture.whenComplete(failureConsumer);
+        CompletableFuture<Response<T>> fromAccountFuture = migrator.requestOrCreateAccount(migration
+                .from()
+                .get(), identifier).whenComplete(failureConsumer);
 
-        CompletableFuture<T> toAccountFuture = new CompletableFuture<>();
-        migrator.checkAccountExistence().accept(migration.to().get(),
-                identifier,
-                new PhasedSubscriber<Boolean>(phaser) {
-                    @Override
-                    public void phaseAccept(@NotNull Boolean hasAccount) {
-                        PhasedFutureSubscriber<T> subscription = new PhasedFutureSubscriber<>(phaser,
-                                toAccountFuture
-                        );
-                        if (hasAccount) {
-                            migrator.requestAccount().accept(migration.to().get(),
-                                    identifier,
-                                    subscription
-                            );
-                        } else {
-                            migrator.createAccount().accept(migration.to().get(),
-                                    identifier,
-                                    subscription
-                            );
-                        }
-                    }
+        CompletableFuture<Response<T>> toAccountFuture = migrator.requestOrCreateAccount(migration
+                .to()
+                .get(), identifier).whenComplete(failureConsumer);
 
-                    @Override
-                    public void phaseFail(@NotNull EconomyException exception) {
-                        toAccountFuture.completeExceptionally(exception);
-                    }
-                }
-        );
-        toAccountFuture.whenComplete(failureConsumer);
-
-        fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccount, toAccount) -> {
-            migrator.migrate(initiator, phaser, fromAccount, toAccount, migration);
-            migrator.getSuccessfulMigrations(migration).incrementAndGet();
+        fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccountResp, toAccountResp) -> {
+            if (!fromAccountResp.isSuccessful()) {
+                migration.debug(() -> migrator.getErrorLog(identifier,
+                        fromAccountResp.getFailureReason()
+                ));
+                migrateAccounts(latch,
+                        initiator,
+                        identifiers,
+                        currentIndex + 1,
+                        migration,
+                        migrator
+                );
+                return;
+            }
+            if (!toAccountResp.isSuccessful()) {
+                migration.debug(() -> migrator.getErrorLog(identifier,
+                        toAccountResp.getFailureReason()
+                ));
+                migrateAccounts(latch,
+                        initiator,
+                        identifiers,
+                        currentIndex + 1,
+                        migration,
+                        migrator
+                );
+                return;
+            }
+            CountDownLatch migrateLatch = migrator.migrate(initiator,
+                    fromAccountResp.getResult(),
+                    toAccountResp.getResult(),
+                    migration
+            );
+            try {
+                migrateLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            migrateAccounts(latch, initiator, identifiers, currentIndex + 1, migration, migrator);
         });
     }
-     */
 
 }

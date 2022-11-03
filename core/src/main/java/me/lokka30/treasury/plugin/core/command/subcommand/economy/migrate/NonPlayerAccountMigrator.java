@@ -8,23 +8,22 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
 import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.FailureReason;
+import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
-// FIXME: Jikoo
-class NonPlayerAccountMigrator implements AccountMigrator<Account> {
+class NonPlayerAccountMigrator implements AccountMigrator<NonPlayerAccount> {
 
-    /*
     @Override
-    public @NotNull String getBulkFailLog(@NotNull Throwable throwable) {
-        return "Unable to fetch non player account UUIDs for migration: " + throwable.getMessage();
+    public @NotNull String getBulkFailLog(final @NotNull FailureReason failureReason) {
+        return "Unable to fetch non player account UUIDs for migration: " + failureReason.getDescription();
     }
 
     @Override
@@ -33,78 +32,77 @@ class NonPlayerAccountMigrator implements AccountMigrator<Account> {
     }
 
     @Override
-    public @NotNull String getErrorLog(@NotNull String identifier, @NotNull Throwable throwable) {
-        return "Error migrating non player account ID '&b" + identifier + "&7': &b" + throwable.getMessage();
+    public @NotNull String getErrorLog(
+            @NotNull String identifier, @NotNull FailureReason failureReason
+    ) {
+        return "Error migrating non player account ID '&b" + identifier + "&7': &b" + failureReason.getDescription();
     }
 
     @Override
-    public @NotNull BiConsumer<@NotNull EconomyProvider, @NotNull EconomySubscriber<Collection<String>>> requestAccountIds() {
-        return EconomyProvider::retrieveNonPlayerAccountIds;
+    public @NotNull CompletableFuture<Response<Collection<String>>> requestAccountIds(@NotNull final EconomyProvider provider) {
+        return provider.retrieveNonPlayerAccountIds();
     }
 
     @Override
-    public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<Account>> requestAccount() {
-        return EconomyProvider::retrieveAccount;
+    public @NotNull CompletableFuture<Response<NonPlayerAccount>> requestOrCreateAccount(
+            @NotNull final EconomyProvider provider, final String identifier
+    ) {
+        return provider.accountAccessor().nonPlayer().withIdentifier(identifier).get();
     }
 
     @Override
-    public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<Boolean>> checkAccountExistence() {
-        return EconomyProvider::hasAccount;
-    }
-
-    @Override
-    public @NotNull TriConsumer<@NotNull EconomyProvider, @NotNull String, @NotNull EconomySubscriber<Account>> createAccount() {
-        return EconomyProvider::createAccount;
-    }
-
-    @Override
-    public void migrate(
+    @NotNull
+    public CountDownLatch migrate(
             @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Phaser phaser,
-            @NotNull Account fromAccount,
-            @NotNull Account toAccount,
+            @NotNull NonPlayerAccount fromAccount,
+            @NotNull NonPlayerAccount toAccount,
             @NotNull MigrationData migration
     ) {
-        AccountMigrator.super.migrate(initiator, phaser, fromAccount, toAccount, migration);
+        // todo: see AccountMigrator#migrate
+        AccountMigrator.super.migrate(initiator, fromAccount, toAccount, migration);
 
-        CompletableFuture<Collection<UUID>> memberUuidsFuture = new CompletableFuture<>();
-        fromAccount.retrieveMemberIds(new PhasedFutureSubscriber<>(phaser, memberUuidsFuture));
-        memberUuidsFuture.thenAccept(uuids -> {
-            for (UUID uuid : uuids) {
-                fromAccount.retrievePermissions(uuid,
-                        new EconomySubscriber<Map<AccountPermission, TriState>>() {
-                            @Override
-                            public void succeed(@NotNull final Map<AccountPermission, TriState> map) {
-                                for (Map.Entry<AccountPermission, TriState> entry : map.entrySet()) {
-                                    toAccount.setPermission(uuid,
-                                            entry.getValue(),
-                                            new FailureConsumer<>(phaser,
-                                                    exception -> migration.debug(() -> getErrorLog(
-                                                            fromAccount.getIdentifier(),
-                                                            exception
-                                                    ))
-                                            ),
-                                            entry.getKey()
-                                    );
-                                }
-                            }
+        fromAccount.retrieveMemberIds().thenAccept(resp -> {
+            if (!resp.isSuccessful()) {
+                migration.debug(() -> getErrorLog(
+                        fromAccount.getIdentifier(),
+                        resp.getFailureReason()
+                ));
+                return;
+            }
 
-                            @Override
-                            public void fail(@NotNull final EconomyException exception) {
-                                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
-                                        exception
-                                ));
-                            }
-                        }
-                );
+            for (UUID uuid : resp.getResult()) {
+                fromAccount.retrievePermissions(uuid).thenAccept((permResp) -> {
+                    if (!permResp.isSuccessful()) {
+                        migration.debug(() -> getErrorLog(
+                                fromAccount.getIdentifier(),
+                                permResp.getFailureReason()
+                        ));
+                        return;
+                    }
+
+                    for (Map.Entry<AccountPermission, TriState> entry : permResp
+                            .getResult()
+                            .entrySet()) {
+                        toAccount
+                                .setPermission(uuid, entry.getValue(), entry.getKey())
+                                .thenAccept((resp1) -> {
+                                    if (!resp1.isSuccessful()) {
+                                        migration.debug(() -> getErrorLog(
+                                                fromAccount.getIdentifier(),
+                                                resp1.getFailureReason()
+                                        ));
+                                    }
+                                });
+                    }
+                });
             }
         });
+        return null; // todo
     }
 
     @Override
     public @NotNull AtomicInteger getSuccessfulMigrations(@NotNull MigrationData migration) {
         return migration.nonPlayerAccountsProcessed();
     }
-     */
 
 }

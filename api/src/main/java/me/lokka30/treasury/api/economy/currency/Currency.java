@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,7 +95,7 @@ public interface Currency {
      * @return boolean value
      * @since v2.0.0
      */
-    boolean supportsNegativeBalances();
+    TriState supportsNegativeBalances();
 
     /**
      * Used to convert this {@link Currency} to another based on a specified amount of the other
