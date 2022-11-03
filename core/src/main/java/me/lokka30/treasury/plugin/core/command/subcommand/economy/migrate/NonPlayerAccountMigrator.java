@@ -4,7 +4,9 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -58,46 +60,106 @@ class NonPlayerAccountMigrator implements AccountMigrator<NonPlayerAccount> {
             @NotNull NonPlayerAccount toAccount,
             @NotNull MigrationData migration
     ) {
-        // todo: see AccountMigrator#migrate
-        AccountMigrator.super.migrate(initiator, fromAccount, toAccount, migration);
+        CountDownLatch latch1 = AccountMigrator.super.migrate(initiator,
+                fromAccount,
+                toAccount,
+                migration
+        );
 
+        try {
+            latch1.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
         fromAccount.retrieveMemberIds().thenAccept(resp -> {
             if (!resp.isSuccessful()) {
-                migration.debug(() -> getErrorLog(
-                        fromAccount.getIdentifier(),
+                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
                         resp.getFailureReason()
                 ));
                 return;
             }
 
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             for (UUID uuid : resp.getResult()) {
-                fromAccount.retrievePermissions(uuid).thenAccept((permResp) -> {
+                futures.add(fromAccount.retrievePermissions(uuid).thenApply(permResp -> {
                     if (!permResp.isSuccessful()) {
-                        migration.debug(() -> getErrorLog(
-                                fromAccount.getIdentifier(),
+                        migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
                                 permResp.getFailureReason()
                         ));
-                        return;
+                        return null;
                     }
 
-                    for (Map.Entry<AccountPermission, TriState> entry : permResp
-                            .getResult()
-                            .entrySet()) {
-                        toAccount
-                                .setPermission(uuid, entry.getValue(), entry.getKey())
-                                .thenAccept((resp1) -> {
-                                    if (!resp1.isSuccessful()) {
-                                        migration.debug(() -> getErrorLog(
-                                                fromAccount.getIdentifier(),
-                                                resp1.getFailureReason()
-                                        ));
-                                    }
-                                });
+                    return permResp.getResult();
+                }).thenCompose(permissions -> {
+                    if (permissions == null) {
+                        return CompletableFuture.completedFuture(null);
                     }
-                });
+                    // optimise setPermission calls
+                    List<AccountPermission> truePermissions = null, falsePermissions = null;
+                    for (Map.Entry<AccountPermission, TriState> entry : permissions.entrySet()) {
+                        if (entry.getValue() == TriState.TRUE) {
+                            if (truePermissions == null) {
+                                truePermissions = new ArrayList<>();
+                            }
+                            truePermissions.add(entry.getKey());
+                        } else if (entry.getValue() == TriState.FALSE) {
+                            if (falsePermissions == null) {
+                                falsePermissions = new ArrayList<>();
+                            }
+                            falsePermissions.add(entry.getKey());
+                        }
+                    }
+                    List<AccountPermission> falsePermissionsFinal = falsePermissions;
+                    if (truePermissions != null) {
+                        return toAccount.setPermission(uuid,
+                                TriState.TRUE,
+                                truePermissions.toArray(new AccountPermission[0])
+                        ).thenCompose(response -> {
+                            if (!response.isSuccessful()) {
+                                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
+                                        response.getFailureReason()
+                                ));
+                            }
+                            return falsePermissionsFinal == null
+                                    ? CompletableFuture.completedFuture(null)
+                                    : toAccount.setPermission(uuid,
+                                            TriState.FALSE,
+                                            falsePermissionsFinal.toArray(new AccountPermission[0])
+                                    ).thenCompose((resp1) -> {
+                                        if (!resp1.isSuccessful()) {
+                                            migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
+                                                    response.getFailureReason()
+                                            ));
+                                        }
+                                        return CompletableFuture.completedFuture(null);
+                                    });
+                        });
+                    } else if (falsePermissions != null) {
+                        return toAccount.setPermission(uuid,
+                                TriState.FALSE,
+                                falsePermissions.toArray(new AccountPermission[0])
+                        ).thenCompose(response -> {
+                            if (!response.isSuccessful()) {
+                                migration.debug(() -> getErrorLog(fromAccount.getIdentifier(),
+                                        response.getFailureReason()
+                                ));
+                            }
+                            // no need to check whether true permissions is not null, it is null
+                            // already
+                            return CompletableFuture.completedFuture(null);
+                        });
+                    } else {
+                        return CompletableFuture.completedFuture(null);
+                    }
+                }));
             }
+            CompletableFuture
+                    .allOf(futures.toArray(new CompletableFuture[0]))
+                    .thenRun(latch::countDown);
         });
-        return null; // todo
+        return latch;
     }
 
     @Override

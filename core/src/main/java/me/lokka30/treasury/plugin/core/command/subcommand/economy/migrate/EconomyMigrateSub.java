@@ -5,10 +5,12 @@
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -202,6 +204,13 @@ public class EconomyMigrateSub implements Subcommand {
     private void sendMigrationMessage(
             @NotNull CommandSource sender, @NotNull MigrationData migration
     ) {
+        List<String> nonMigratedCurrencies = new ArrayList<>();
+        for (Map.Entry<String, Collection<String>> entry : migration
+                .nonMigratedCurrencies()
+                .asMap()
+                .entrySet()) {
+            nonMigratedCurrencies.add(entry.getKey() + " - " + Utils.formatListMessage(entry.getValue()));
+        }
         sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
                 placeholder("time", migration.timer().getTimer()),
                 placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
@@ -209,7 +218,9 @@ public class EconomyMigrateSub implements Subcommand {
                         migration.nonPlayerAccountsProcessed().toString()
                 ),
                 placeholder("non-migrated-currencies",
-                        Utils.formatListMessage(migration.nonMigratedCurrencies())
+                        nonMigratedCurrencies.isEmpty()
+                                ? ""
+                                : Utils.formatListMessage(nonMigratedCurrencies)
                 )
         ));
     }

@@ -4,7 +4,10 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -24,7 +27,10 @@ class MigrationData {
     private final @NotNull Service<EconomyProvider> to;
     private final boolean debugEnabled;
     private final @NotNull QuickTimer timer = new QuickTimer();
-    private final @NotNull Collection<String> nonMigratedCurrencies = new ConcurrentLinkedQueue<>();
+    private final @NotNull Multimap<String, String> nonMigratedCurrencies = Multimaps.newMultimap(
+            new ConcurrentHashMap<>(),
+            ConcurrentLinkedQueue::new
+    );
     private final @NotNull AtomicInteger playerAccountsProcessed = new AtomicInteger();
     private final @NotNull AtomicInteger nonPlayerAccountsProcessed = new AtomicInteger();
 
@@ -56,7 +62,7 @@ class MigrationData {
         return timer;
     }
 
-    @NotNull Collection<String> nonMigratedCurrencies() {
+    @NotNull Multimap<String, String> nonMigratedCurrencies() {
         return nonMigratedCurrencies;
     }
 

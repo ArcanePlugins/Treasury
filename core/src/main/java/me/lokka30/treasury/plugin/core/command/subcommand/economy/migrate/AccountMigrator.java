@@ -12,17 +12,14 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import org.jetbrains.annotations.NotNull;
 
 interface AccountMigrator<T extends Account> {
@@ -35,7 +32,9 @@ interface AccountMigrator<T extends Account> {
 
     @NotNull CompletableFuture<Response<Collection<String>>> requestAccountIds(@NotNull EconomyProvider provider);
 
-    @NotNull CompletableFuture<Response<T>> requestOrCreateAccount(@NotNull EconomyProvider provider, String identifier);
+    @NotNull CompletableFuture<Response<T>> requestOrCreateAccount(
+            @NotNull EconomyProvider provider, String identifier
+    );
 
     @NotNull
     default CountDownLatch migrate(
@@ -44,17 +43,11 @@ interface AccountMigrator<T extends Account> {
             @NotNull T toAccount,
             @NotNull MigrationData migration
     ) {
-        // todo: a proper way is needed to wait for this method to finish before proceeding
-        // using .join or .get on futures is not the proper solution and i'd like to avoid it
-        // the latch currently implemented captures whenever fromAccount.resetBalance future
-        // finishes and NOT when .thenAccept finishes which is a problem
         CountDownLatch latch = new CountDownLatch(1);
+        String accountId = fromAccount.getIdentifier();
         fromAccount.retrieveHeldCurrencies().thenAccept(resp -> {
             if (!resp.isSuccessful()) {
-                migration.debug(() -> getErrorLog(
-                        fromAccount.getIdentifier(),
-                        resp.getFailureReason()
-                ));
+                migration.debug(() -> getErrorLog(accountId, resp.getFailureReason()));
                 return;
             }
 
@@ -65,86 +58,73 @@ interface AccountMigrator<T extends Account> {
                     continue;
                 }
 
-                Optional<Currency> currency = ServiceRegistry.INSTANCE
+                Optional<Currency> currencyOpt = ServiceRegistry.INSTANCE
                         .serviceFor(EconomyProvider.class)
                         .get()
                         .get()
                         .findCurrency(id);
 
-                if (currency.isPresent()) {
-                    futures.add(fromAccount.resetBalance(
-                            initiator,
-                            currency.get(),
-                            EconomyTransactionImportance.NORMAL,
-                            "normal"
-                    ).thenAccept(balResp -> {
+                if (currencyOpt.isPresent()) {
+                    Currency currency = currencyOpt.get();
+                    futures.add(fromAccount.retrieveBalance(currency).thenApply(balResp -> {
                         if (!balResp.isSuccessful()) {
-                            migration.debug(() -> getErrorLog(
-                                    fromAccount.getIdentifier(),
+                            migration.debug(() -> getErrorLog(accountId,
                                     balResp.getFailureReason()
                             ));
-                            return;
+                            return null;
                         }
 
-                        BigDecimal balance = balResp.getResult();
-                        if (balance.compareTo(BigDecimal.ZERO) == 0) {
-                            return;
+                        return balResp.getResult();
+                    }).thenCompose(bal -> {
+                        if (bal == null) {
+                            return CompletableFuture.completedFuture(null);
+                        }
+                        if (bal.compareTo(BigDecimal.ZERO) == 0) {
+                            return CompletableFuture.completedFuture(null);
                         }
 
-                        Consumer<Response<BigDecimal>> action = (resp1) -> {
-                            if (!resp1.isSuccessful()) {
-                                migration.debug(() -> getErrorLog(
-                                        fromAccount.getIdentifier(),
-                                        resp1.getFailureReason()
+                        return fromAccount.resetBalance(initiator,
+                                currency,
+                                EconomyTransactionImportance.NORMAL,
+                                "migration"
+                        ).thenApply(newRes -> {
+                            if (!newRes.isSuccessful()) {
+                                migration.debug(() -> getErrorLog(accountId,
+                                        newRes.getFailureReason()
                                 ));
-                                return;
+                                return bal;
                             }
-
-                            fromAccount.doTransaction(
-                                    EconomyTransaction
-                                            .newBuilder()
-                                            .withTransactionType(EconomyTransactionType.SET)
-                                            .withImportance(EconomyTransactionImportance.NORMAL)
-                                            .withReason("migration")
-                                            .withTransactionAmount(balance)
-                                            .withInitiator(initiator)
-                                            .withCurrency(currency.get())
-                                            .build()
-                            ).thenAccept((transResp) -> {
-                                if (!transResp.isSuccessful()) {
-                                    migration.debug(() -> getErrorLog(
-                                            fromAccount.getIdentifier(),
-                                            transResp.getFailureReason()
-                                    ));
-                                    migration.debug(() -> String.format(
-                                            "Failed to recover from an issue transferring %s %s from %s, currency will not be migrated!",
-                                            balance,
-                                            currency.get().getDisplayNameSingular(),
-                                            fromAccount.getIdentifier()
-                                    ));
-                                    if (!migration.nonMigratedCurrencies().contains(currency
-                                            .get()
-                                            .getIdentifier())) {
-                                        migration.nonMigratedCurrencies().add(currency
-                                                .get()
-                                                .getIdentifier());
-                                    }
-                                }
-                            });
-                        };
-
-                        if (balance.compareTo(BigDecimal.ZERO) < 0) {
-                            toAccount
-                                    .withdrawBalance(balance, initiator, currency.get())
-                                    .thenAccept(action);
-                        } else {
-                            toAccount
-                                    .depositBalance(balance, initiator, currency.get())
-                                    .thenAccept(action);
+                            return bal;
+                        });
+                    }).thenCompose(balance -> {
+                        if (balance == null) {
+                            return CompletableFuture.completedFuture(null);
                         }
+                        return balance.compareTo(BigDecimal.ZERO) < 0 ? toAccount.withdrawBalance(balance,
+                                initiator,
+                                currency
+                        ) : toAccount.depositBalance(balance, initiator, currency);
+                    }).thenApply(depResult -> {
+                        if (depResult == null || !depResult.isSuccessful()) {
+                            migration.debug(() -> getErrorLog(accountId,
+                                    depResult.getFailureReason()
+                            ));
+                            migration.debug(() -> String.format(
+                                    "Failed to recover from an issue transferring %s from %s, currency will not be migrated!",
+                                    currency.getDisplayNameSingular(),
+                                    fromAccount.getIdentifier()
+                            ));
+                            Collection<String> currencies = migration.nonMigratedCurrencies().get(
+                                    accountId);
+                            if (!currencies.contains(currency.getIdentifier())) {
+                                migration.nonMigratedCurrencies().put(accountId,
+                                        currency.getIdentifier()
+                                );
+                            }
+                        }
+                        return null;
                     }));
                 } else {
-                    futures.add(CompletableFuture.completedFuture(null));
                     migration.debug(() -> "Currency with ID '&b" + id + "&7' will not be migrated.");
                 }
             }
