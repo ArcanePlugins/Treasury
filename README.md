@@ -3,8 +3,8 @@
 <!-- Badges -->
 ![Latest Version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fother-developers%2Fme%2Flokka30%2Ftreasury-api%2Fmaven-metadata.xml)
 [![Support Discord](https://img.shields.io/discord/752310043214479462.svg?colorB=Blue&logo=discord&label=support)](https://discord.gg/HqZwdcJ) 
-![Issues Open](https://img.shields.io/github/issues/lokka30/Treasury.svg)
-![License](https://img.shields.io/github/license/lokka30/Treasury.svg)
+![Issues Open](https://img.shields.io/github/issues/ArcanePlugins/Treasury.svg)
+![License](https://img.shields.io/github/license/ArcanePlugins/Treasury.svg)
 [![MrIvanPlays CI Status](https://ci.mrivanplays.com/job/Treasury/badge/icon)](https://ci.mrivanplays.com/job/Treasury)
 
 ![Treasury Logo](https://i.ibb.co/gPN6x5P/Treasury250.png)
@@ -13,11 +13,11 @@
 
 A modern, multi-platform library taking plugin integrations to the next level.
 
-Maintained by [lokka30](https://github.com/lokka30), [MrIvanPlays](https://github.com/MrIvanPlays) and [Jikoo](https://github.com/Jikoo), with [several kind contributors](https://github.com/lokka30/Treasury/wiki/Credits).
+Maintained by [lokka30](https://github.com/lokka30), [MrIvanPlays](https://github.com/MrIvanPlays) and [Jikoo](https://github.com/Jikoo), with [several kind contributors](https://github.com/ArcanePlugins/Treasury/wiki/Credits).
 
-### [Download @ SpigotMC.org](https://www.spigotmc.org/resources/99531/) &bullet; [Read the Wiki](https://github.com/lokka30/Treasury/wiki)
+### [Download @ SpigotMC.org](https://www.spigotmc.org/resources/99531/) &bullet; [Read the Wiki](https://github.com/ArcanePlugins/Treasury/wiki)
 
-#### [Frequently Asked Questions](https://github.com/lokka30/Treasury/wiki/Frequently-Asked-Questions) &bullet; [Integration Guide](https://github.com/lokka30/Treasury/wiki/Using-Treasury-in-your-Project) &bullet; [Support Discord](https://www.discord.io/arcaneplugins)
+#### [Frequently Asked Questions](https://github.com/ArcanePlugins/Treasury/wiki/Frequently-Asked-Questions) &bullet; [Integration Guide](https://github.com/ArcanePlugins/Treasury/wiki/Using-Treasury-in-your-Project) &bullet; [Support Discord](https://www.discord.io/arcaneplugins)
 
 </div>
 
@@ -35,13 +35,13 @@ This can be thought of as Treasury providing a different languages to speak for 
 </details>
 <br />
 
-Treasury currently provides the following APIs: Economy, Services, Events. [Several more are planned](https://github.com/lokka30/Treasury/issues/131) for the future, such as Permissions and Chat.
+Treasury currently provides the following APIs: Economy, Services, Events. [Several more are planned](https://github.com/ArcanePlugins/Treasury/issues/131) for the future, such as Permissions and Chat.
 
 The scope of this library is narrowly focused on making it easy to facilitate powerful integrations between plugins on multiple platforms.
 
 This is scratching the surface – we encourage you to read more about the library:
 
-#### [Learn more about Treasury here: our mission, why you should choose it, and more!](https://github.com/lokka30/Treasury/wiki/About-Treasury)
+#### [Learn more about Treasury here: our mission, why you should choose it, and more!](https://github.com/ArcanePlugins/Treasury/wiki/About-Treasury)
 
 ***
 
