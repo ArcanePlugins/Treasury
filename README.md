@@ -1,6 +1,6 @@
 [![mrivanplays](https://ci.mrivanplays.com/job/Treasury/badge/icon)](https://ci.mrivanplays.com/job/Treasury)
-![license](https://img.shields.io/github/license/lokka30/Treasury.svg)
-![issues](https://img.shields.io/github/issues/lokka30/Treasury.svg)
+![license](https://img.shields.io/github/license/ArcanePlugins/Treasury.svg)
+![issues](https://img.shields.io/github/issues/ArcanePlugins/Treasury.svg)
 ![api version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fother-developers%2Fme%2Flokka30%2Ftreasury-api%2Fmaven-metadata.xml)
 [![support](https://img.shields.io/discord/752310043214479462.svg?colorB=Blue&logo=discord&label=support)](https://discord.gg/HqZwdcJ)
 
@@ -8,19 +8,19 @@
 
 ## ⏬ Click on a banner below for more information:
 
-<a href="https://github.com/lokka30/Treasury/wiki/About-Treasury">
+<a href="https://github.com/ArcanePlugins/Treasury/wiki/About-Treasury">
     <img src="https://i.ibb.co/yQx8p42/about-treasury.png"/>
 </a>
 
-<a href="https://github.com/lokka30/Treasury/wiki/Installing-Treasury">
+<a href="https://github.com/ArcanePlugins/Treasury/wiki/Installing-Treasury">
     <img src="https://i.ibb.co/Hxktt1W/install-the-plugin.png"/>
 </a>
 
-<a href="https://github.com/lokka30/Treasury/wiki">
+<a href="https://github.com/ArcanePlugins/Treasury/wiki">
     <img src="https://i.ibb.co/rk9v1Gj/read-the-official-wiki.png"/>
 </a>
 
-<a href="https://github.com/lokka30/Treasury/wiki/Contact-Treasury's-Support-Team">
+<a href="https://github.com/ArcanePlugins/Treasury/wiki/Contact-Treasury's-Support-Team">
     <img src="https://i.ibb.co/tLzzhjM/contact-support.png"/>
 </a>
 
@@ -34,7 +34,7 @@
 
 Treasury uses the MIT License:
 
-> Copyright (c) 2021-2022 lokka30
+> Copyright (c) 2021-2022 ArcanePlugins
 >
 > Permission is hereby granted, free of charge, to any person
 > obtaining a copy of this software and associated documentation 
