@@ -6,12 +6,12 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -25,17 +25,39 @@ public class DummyAccountImpl implements Account {
     private final Collection<UUID> memberIds;
     private final Map<UUID, Set<Map.Entry<AccountPermission, TriState>>> permissionsMap;
 
-    public DummyAccountImpl(String id, Collection<UUID> memberIds) {
+    public DummyAccountImpl(String id, List<UUID> memberIds) {
         this.id = id;
         this.memberIds = memberIds;
         this.permissionsMap = new HashMap<>();
-        // set some random values
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        for (UUID member : memberIds) {
+        for (int i = 0; i < memberIds.size(); i++) {
+            UUID member = memberIds.get(i);
+            // these switches are good enough for the test
+            TriState value;
+            switch (i) {
+                case 0:
+                    value = TriState.TRUE;
+                    break;
+                case 1:
+                    value = TriState.FALSE;
+                    break;
+                default:
+                    value = TriState.UNSPECIFIED;
+                    break;
+            }
             Set<Map.Entry<AccountPermission, TriState>> perms = new HashSet<>();
-            for (int i = 0; i < 2; i++) {
-                AccountPermission permission = AccountPermission.values()[random.nextInt(0, 3)];
-                TriState value = TriState.values()[random.nextInt(0, 2)];
+            for (int i1 = 0; i1 < 2; i1++) {
+                AccountPermission permission;
+                switch (i1) {
+                    case 0:
+                        permission = AccountPermission.DEPOSIT;
+                        break;
+                    case 1:
+                        permission = AccountPermission.WITHDRAW;
+                        break;
+                    default:
+                        permission = AccountPermission.MODIFY_PERMISSIONS;
+                        break;
+                }
                 perms.add(new AbstractMap.SimpleImmutableEntry<>(permission, value));
             }
             this.permissionsMap.put(member, perms);
