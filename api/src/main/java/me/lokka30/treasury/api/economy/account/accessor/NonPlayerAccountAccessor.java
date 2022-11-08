@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.economy.account.accessor;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,6 +61,23 @@ public abstract class NonPlayerAccountAccessor {
     @NotNull
     public CompletableFuture<Response<NonPlayerAccount>> get() {
         return this.getOrCreate(Objects.requireNonNull(identifier, "identifier"), name);
+    }
+
+    /**
+     * Does the same as what {@link #get()} does, but returns a generic {@link Account}
+     * interface, rather a specific {@link NonPlayerAccount} interface.
+     *
+     * @return future with response which if successful returns the resulting
+     *         {@link NonPlayerAccount} in the form of {@link Account}
+     */
+    @NotNull
+    public CompletableFuture<Response<Account>> genericGet() {
+        return this.get().thenApply(resp -> {
+            if (!resp.isSuccessful()) {
+                return Response.failure(resp.getFailureReason());
+            }
+            return Response.success(resp.getResult());
+        });
     }
 
     @NotNull

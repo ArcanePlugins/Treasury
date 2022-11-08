@@ -7,12 +7,18 @@ package me.lokka30.treasury.api.economy.account;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.Temporal;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -412,6 +418,49 @@ public interface Account {
      * @since v1.0.0
      */
     CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(@NotNull UUID player);
+
+    /**
+     * Returns a {@link Map} abomination, with the permissions of each account member.
+     * <p><b>Strongly advised not to leave the default implementation of this method.
+     * Although it works, it may make an awfully lot of requests.</b>
+     *
+     * @return future which if successful returns a map of member id as a key and permissions as
+     *         values.
+     * @since v2.0.0
+     */
+    @NotNull
+    default CompletableFuture<Response<Map<UUID, Set<Map.Entry<AccountPermission, TriState>>>>> retrievePermissionsMap() {
+        return this.retrieveMemberIds().thenComposeAsync(resp -> {
+            if (!resp.isSuccessful()) {
+                return CompletableFuture.completedFuture(Response.failure(resp.getFailureReason()));
+            }
+            List<UUID> ids = new LinkedList<>(resp.getResult());
+            Queue<CompletableFuture<Response<Map<AccountPermission, TriState>>>> fifo = new ArrayDeque<>();
+            for (UUID uuid : ids) {
+                fifo.add(this.retrievePermissions(uuid));
+            }
+            return CompletableFuture
+                    .allOf(fifo.toArray(new CompletableFuture[0]))
+                    .thenApply(ignored -> {
+                        Map<UUID, Set<Map.Entry<AccountPermission, TriState>>> ret = new ConcurrentHashMap<>();
+                        for (UUID uuid : ids) {
+                            CompletableFuture<Response<Map<AccountPermission, TriState>>> future = fifo.poll();
+                            if (future == null) {
+                                throw new RuntimeException("Queue ended but there are still ids?");
+                            }
+                            // safe to call .join - since it's all been done
+                            Response<Map<AccountPermission, TriState>> response = future.join();
+                            if (!response.isSuccessful()) {
+                                // TODO: this is swallowing potential failures - METHOD FOR
+                                //  LOGGING NEEDED
+                                continue;
+                            }
+                            ret.put(uuid, response.getResult().entrySet());
+                        }
+                        return Response.success(ret);
+                    });
+        });
+    }
 
     /**
      * Checks whether given player has the given permission on this account.

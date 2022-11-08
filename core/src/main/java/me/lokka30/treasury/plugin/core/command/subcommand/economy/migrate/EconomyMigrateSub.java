@@ -4,6 +4,9 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import com.mrivanplays.process.Process;
+import com.mrivanplays.process.ProcessException;
+import com.mrivanplays.process.ProcessesCompletion;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,17 +15,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -152,31 +152,71 @@ public class EconomyMigrateSub implements Subcommand {
                 ServicePriority.HIGH
         );
 
-        MigrationData migration = new MigrationData(from, to, debugEnabled);
+        MigrationData migration = new MigrationData(from.get(), to.get(), debugEnabled);
 
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
 
             // Initialize account migration.
-            CountDownLatch playerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
-                    migration,
-                    new PlayerAccountMigrator()
+            ProcessesCompletion playerCompletion = this.migratePlayerAccounts(
+                    sender.getAsTransactionInitiator(),
+                    migration
             );
-            CountDownLatch nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
-                    migration,
-                    new NonPlayerAccountMigrator()
-            );
-            try {
-                // Block until migration is complete.
-                nonPlayerMigration.await();
-                playerMigration.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+
+            if (playerCompletion == null) {
+                // since this is a rare occasion i decided not to add translations.
+                sender.sendMessage(
+                        "Unable to migrate player accounts, enable debugging and run the command again for more information.");
+                sender.sendMessage(
+                        "Make sure to restart your server after you enable debugging so the migrate command doesn't have internal bias.");
+                sender.sendMessage("Non player accounts will NOT be migrated.");
+                return;
             }
 
-            // Unregister economy override.
-            ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
+            ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(
+                    sender.getAsTransactionInitiator(),
+                    migration
+            );
 
-            sendMigrationMessage(sender, migration);
+            if (nonPlayerCompletion == null) {
+                // send a message that non player accounts will not be migrated
+                // since this is a rare occasion i decided not to add translations
+                sender.sendMessage(
+                        "Unable to migrate non player accounts, enable debugging and run the command again for more information.");
+                sender.sendMessage(
+                        "Make sure to restart your server after you enable debugging so the migrate command doesn't have internal bias.");
+                sender.sendMessage("Player accounts WILL be migrated.");
+
+                playerCompletion.whenDone((errors) -> {
+                    if (!errors.isEmpty()) {
+                        sender.sendMessage(
+                                "There were errors whilst migrating, please check console for more information.");
+                        TreasuryPlugin.getInstance().logger().error("Errors whilst migrating:");
+                        for (ProcessException e : errors) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // Unregister economy override.
+                    ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
+
+                    sendMigrationMessage(sender, migration);
+                });
+                return;
+            }
+
+            // Block until migration is complete.
+            ProcessesCompletion.whenAllDone(false, (errors) -> {
+                if (!errors.isEmpty()) {
+                    sender.sendMessage("There were errors whilst migrating, please check console for more information.");
+                    TreasuryPlugin.getInstance().logger().error("Errors whilst migrating:");
+                    for (ProcessException e : errors) {
+                        e.printStackTrace();
+                    }
+                }
+                // Unregister economy override.
+                ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
+
+                sendMigrationMessage(sender, migration);
+            }, playerCompletion, nonPlayerCompletion);
         });
     }
 
@@ -225,104 +265,69 @@ public class EconomyMigrateSub implements Subcommand {
         ));
     }
 
-    private <T extends Account> CountDownLatch migrateAccounts(
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull MigrationData migration,
-            @NotNull AccountMigrator<T> migrator
+    private ProcessesCompletion migratePlayerAccounts(
+            @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
     ) {
-        CountDownLatch latch = new CountDownLatch(1);
-        migrator.requestAccountIds(migration.from().get()).thenAccept(resp -> {
-            if (!resp.isSuccessful()) {
-                migration.debug(() -> migrator.getBulkFailLog(resp.getFailureReason()));
-                return;
+        try {
+            Response<Collection<UUID>> accountIdResp = migration
+                    .from()
+                    .retrievePlayerAccountIds()
+                    .get();
+            if (!accountIdResp.isSuccessful()) {
+                migration.debug(() -> "Unable to fetch player account UUIDs for migration: " + accountIdResp
+                        .getFailureReason()
+                        .getDescription());
+                return null;
+            }
+            Collection<UUID> accountIds = accountIdResp.getResult();
+            List<Process> processes = new ArrayList<>(accountIds.size());
+            for (UUID uuid : accountIds) {
+                processes.add(new PlayerAccountMigrationProcess(initiator,
+                        uuid.toString(),
+                        migration
+                ));
             }
 
-            List<String> identifiers = resp.getResult() instanceof List
-                    ? (List<String>) resp.getResult()
-                    : new ArrayList<>(resp.getResult());
-
-            this.migrateAccounts(latch, initiator, identifiers, 0, migration, migrator);
-        });
-
-        return latch;
+            return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
+                    new Process[0]));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (ExecutionException e) {
+            TreasuryPlugin.getInstance().logger().error("Error during migration", e);
+            return null;
+        }
     }
 
-    private <T extends Account> void migrateAccounts(
-            @NotNull CountDownLatch latch,
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull List<String> identifiers,
-            int currentIndex,
-            @NotNull MigrationData migration,
-            @NotNull AccountMigrator<T> migrator
+    private ProcessesCompletion migrateNonPlayerAccounts(
+            @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
     ) {
-        if (currentIndex == identifiers.size()) {
-            latch.countDown();
-            return;
+        try {
+            Response<Collection<String>> accountIdResp = migration
+                    .from()
+                    .retrieveNonPlayerAccountIds()
+                    .get();
+            if (!accountIdResp.isSuccessful()) {
+                migration.debug(() -> "Unable to fetch non player account ids for migration: " + accountIdResp
+                        .getFailureReason()
+                        .getDescription());
+                return null;
+            }
+            Collection<String> accountIds = accountIdResp.getResult();
+            List<Process> processes = new ArrayList<>(accountIds.size());
+            for (String id : accountIds) {
+                processes.add(new NonPlayerAccountMigrationProcess(initiator, id, migration));
+            }
+
+            return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
+                    new Process[0]));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (ExecutionException e) {
+            TreasuryPlugin.getInstance().logger().error("Error during migration", e);
+            return null;
         }
-
-        String identifier = identifiers.get(currentIndex);
-
-        migration.debug(() -> migrator.getInitLog(identifier));
-
-        // Set up logging for failure.
-        // Because from and to accounts are requested in parallel, guard against duplicate failure logging.
-        AtomicBoolean failed = new AtomicBoolean();
-        BiConsumer<Response<T>, Throwable> failureConsumer = (response, throwable) -> {
-            if (!response.isSuccessful() && failed.compareAndSet(false, true)) {
-                migration.debug(() -> migrator.getErrorLog(identifier,
-                        response.getFailureReason()
-                ));
-            }
-        };
-
-        CompletableFuture<Response<T>> fromAccountFuture = migrator.requestOrCreateAccount(migration
-                .from()
-                .get(), identifier).whenComplete(failureConsumer);
-
-        CompletableFuture<Response<T>> toAccountFuture = migrator.requestOrCreateAccount(migration
-                .to()
-                .get(), identifier).whenComplete(failureConsumer);
-
-        fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccountResp, toAccountResp) -> {
-            if (!fromAccountResp.isSuccessful()) {
-                migration.debug(() -> migrator.getErrorLog(identifier,
-                        fromAccountResp.getFailureReason()
-                ));
-                migrateAccounts(latch,
-                        initiator,
-                        identifiers,
-                        currentIndex + 1,
-                        migration,
-                        migrator
-                );
-                return;
-            }
-            if (!toAccountResp.isSuccessful()) {
-                migration.debug(() -> migrator.getErrorLog(identifier,
-                        toAccountResp.getFailureReason()
-                ));
-                migrateAccounts(latch,
-                        initiator,
-                        identifiers,
-                        currentIndex + 1,
-                        migration,
-                        migrator
-                );
-                return;
-            }
-            CountDownLatch migrateLatch = migrator.migrate(initiator,
-                    fromAccountResp.getResult(),
-                    toAccountResp.getResult(),
-                    migration
-            );
-            try {
-                migrateLatch.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            migrator.getSuccessfulMigrations(migration).incrementAndGet();
-            migrateAccounts(latch, initiator, identifiers, currentIndex + 1, migration, migrator);
-        });
     }
 
 }

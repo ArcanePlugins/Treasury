@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -120,6 +121,18 @@ public interface PlayerAccount extends Account {
         return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
                 ? ALL_PERMISSIONS_MAP
                 : Collections.emptyMap()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @NotNull
+    default CompletableFuture<Response<Map<UUID, Set<Map.Entry<AccountPermission, TriState>>>>> retrievePermissionsMap() {
+        return CompletableFuture.completedFuture(Response.success(Collections.singletonMap(
+                this.getUniqueId(),
+                ALL_PERMISSIONS_MAP.entrySet()
+        )));
     }
 
     /**

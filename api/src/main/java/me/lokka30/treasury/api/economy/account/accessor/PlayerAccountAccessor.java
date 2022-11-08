@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.economy.account.Account;
+import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,6 +49,23 @@ public abstract class PlayerAccountAccessor {
     @NotNull
     public CompletableFuture<Response<PlayerAccount>> get() {
         return this.getOrCreate(Objects.requireNonNull(uniqueId, "uniqueId"));
+    }
+
+    /**
+     * Does the same as what {@link #get()} does, but returns a generic {@link Account}
+     * interface, rather a specific {@link PlayerAccount} interface.
+     *
+     * @return future with response which if successful returns the resulting
+     *         {@link PlayerAccount} in the form of {@link Account}
+     */
+    @NotNull
+    public CompletableFuture<Response<Account>> genericGet() {
+        return this.get().thenApply(resp -> {
+            if (!resp.isSuccessful()) {
+                return Response.failure(resp.getFailureReason());
+            }
+            return Response.success(resp.getResult());
+        });
     }
 
     @NotNull
