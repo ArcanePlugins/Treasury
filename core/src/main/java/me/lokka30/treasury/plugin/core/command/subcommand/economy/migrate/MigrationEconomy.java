@@ -75,8 +75,8 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public TriState supportsNegativeBalances() {
-                return TriState.FALSE;
+            public boolean supportsNegativeBalances() {
+                return false;
             }
 
             @Override
