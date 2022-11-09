@@ -62,9 +62,13 @@ class PlayerAccountMigrationProcess extends Process {
         for (String id : heldCurrenciesResp.getResult()) {
             // find currency in the new provider
             Optional<Currency> currencyOpt = this.migration.to().findCurrency(id);
+            // find old currency
+            Optional<Currency> oldCurrencyOpt = this.migration.from().findCurrency(id);
             Currency currency;
-            if (currencyOpt.isPresent()) {
+            Currency oldCurrency;
+            if (currencyOpt.isPresent() && oldCurrencyOpt.isPresent()) {
                 currency = currencyOpt.get();
+                oldCurrency = oldCurrencyOpt.get();
             } else {
                 this.migration.debug(() -> "Currency with ID '&b" + id + "&7' will not be migrated for account '" + this.accountId + "'.");
                 Collection<String> currencies = this.migration
@@ -77,7 +81,7 @@ class PlayerAccountMigrationProcess extends Process {
             }
 
             // get balance
-            Response<BigDecimal> balResp = fromAccount.retrieveBalance(currency).get();
+            Response<BigDecimal> balResp = fromAccount.retrieveBalance(oldCurrency).get();
             if (!handleUnsuccessfulResponse(balResp)) {
                 continue;
             }
@@ -85,6 +89,19 @@ class PlayerAccountMigrationProcess extends Process {
             BigDecimal balance = balResp.getResult();
             if (balance == null || balance.compareTo(BigDecimal.ZERO) == 0) {
                 continue;
+            }
+            if (!currency.isPrimary() && oldCurrency.isPrimary()) {
+                // in case the new provider's primary currency is different, make sure to convert
+                // the old currency value to the new one
+                Response<BigDecimal> balRespNew = oldCurrency.to(currency, balance).get();
+                if (!handleUnsuccessfulResponse(balRespNew)) {
+                    continue;
+                }
+                BigDecimal newBalance = balRespNew.getResult();
+                if (newBalance == null || newBalance.compareTo(BigDecimal.ZERO) == 0) {
+                    continue;
+                }
+                balance = newBalance;
             }
 
             Response<BigDecimal> transactionResponse;
