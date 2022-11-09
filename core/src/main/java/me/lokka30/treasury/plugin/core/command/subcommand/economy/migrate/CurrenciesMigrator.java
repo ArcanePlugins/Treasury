@@ -55,7 +55,10 @@ class CurrenciesMigrator implements Runnable {
 
                 if (response.getResult() != TriState.TRUE) {
                     this.migration.debug(() -> "Currency '" + id + "' was not migrated for unknown reason.");
+                    continue;
                 }
+
+                this.migration.migratedCurrencies().add(id);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (ExecutionException e) {

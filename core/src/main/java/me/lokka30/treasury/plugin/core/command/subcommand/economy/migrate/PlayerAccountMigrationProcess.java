@@ -90,7 +90,9 @@ class PlayerAccountMigrationProcess extends Process {
             if (balance == null || balance.compareTo(BigDecimal.ZERO) == 0) {
                 continue;
             }
-            if (!currency.isPrimary() && oldCurrency.isPrimary()) {
+            if (!currency.isPrimary() && oldCurrency.isPrimary() && !this.migration
+                    .migratedCurrencies()
+                    .contains(currency.getIdentifier())) {
                 // in case the new provider's primary currency is different, make sure to convert
                 // the old currency value to the new one
                 Response<BigDecimal> balRespNew = oldCurrency.to(currency, balance).get();
