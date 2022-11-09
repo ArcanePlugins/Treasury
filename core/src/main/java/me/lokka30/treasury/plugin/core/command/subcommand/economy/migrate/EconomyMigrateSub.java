@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.common.service.Service;
@@ -154,42 +155,17 @@ public class EconomyMigrateSub implements Subcommand {
 
         MigrationData migration = new MigrationData(from.get(), to.get(), debugEnabled);
 
+        EconomyTransactionInitiator<?> initiator = sender.getAsTransactionInitiator();
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
+            // Run the currencies migrator first before doing anything else.
+            try {
+                CurrenciesMigrator currenciesMigrator = new CurrenciesMigrator(migration);
+                currenciesMigrator.run();
 
-            // Initialize account migration.
-            ProcessesCompletion playerCompletion = this.migratePlayerAccounts(
-                    sender.getAsTransactionInitiator(),
-                    migration
-            );
-
-            if (playerCompletion == null) {
-                // since this is a rare occasion i decided not to add translations.
-                sender.sendMessage(
-                        "Unable to migrate player accounts, enable debugging and run the command again for more information.");
-                sender.sendMessage(
-                        "Make sure to restart your server after you enable debugging so the migrate command doesn't have internal bias.");
-                sender.sendMessage("Non player accounts will NOT be migrated.");
-                return;
-            }
-
-            ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(
-                    sender.getAsTransactionInitiator(),
-                    migration
-            );
-
-            if (nonPlayerCompletion == null) {
-                // send a message that non player accounts will not be migrated
-                // since this is a rare occasion i decided not to add translations
-                sender.sendMessage(
-                        "Unable to migrate non player accounts, enable debugging and run the command again for more information.");
-                sender.sendMessage(
-                        "Make sure to restart your server after you enable debugging so the migrate command doesn't have internal bias.");
-                sender.sendMessage("Player accounts WILL be migrated.");
-
-                playerCompletion.whenDone((errors) -> {
+                // whenDone consumer
+                Consumer<Set<ProcessException>> callback = (errors) -> {
                     if (!errors.isEmpty()) {
-                        sender.sendMessage(
-                                "There were errors whilst migrating, please check console for more information.");
+                        sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
                         TreasuryPlugin.getInstance().logger().error("Errors whilst migrating:");
                         for (ProcessException e : errors) {
                             e.printStackTrace();
@@ -198,25 +174,69 @@ public class EconomyMigrateSub implements Subcommand {
                     // Unregister economy override.
                     ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
 
-                    sendMigrationMessage(sender, migration);
-                });
-                return;
-            }
-
-            // Block until migration is complete.
-            ProcessesCompletion.whenAllDone(false, (errors) -> {
-                if (!errors.isEmpty()) {
-                    sender.sendMessage("There were errors whilst migrating, please check console for more information.");
-                    TreasuryPlugin.getInstance().logger().error("Errors whilst migrating:");
-                    for (ProcessException e : errors) {
-                        e.printStackTrace();
+                    // Send migration message
+                    List<String> nonMigratedCurrencies = new ArrayList<>();
+                    for (Map.Entry<String, Collection<String>> entry : migration
+                            .nonMigratedCurrencies()
+                            .asMap()
+                            .entrySet()) {
+                        nonMigratedCurrencies.add(entry.getKey() + " - " + Utils.formatListMessage(
+                                entry.getValue()));
                     }
-                }
-                // Unregister economy override.
-                ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
+                    sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
+                            placeholder("time", migration.timer().getTimer()),
+                            placeholder("player-accounts",
+                                    migration.playerAccountsProcessed().toString()
+                            ),
+                            placeholder("nonplayer-accounts",
+                                    migration.nonPlayerAccountsProcessed().toString()
+                            ),
+                            placeholder("non-migrated-currencies",
+                                    nonMigratedCurrencies.isEmpty()
+                                            ? ""
+                                            : Utils.formatListMessage(nonMigratedCurrencies)
+                            )
+                    ));
+                };
 
-                sendMigrationMessage(sender, migration);
-            }, playerCompletion, nonPlayerCompletion);
+                ProcessesCompletion playerCompletion = this.migratePlayerAccounts(initiator,
+                        migration
+                );
+
+                if (playerCompletion == null) {
+                    // Weird. No player accounts to migrate.
+                    // let's try to migrate just non player accounts
+                    ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(initiator,
+                            migration
+                    );
+                    if (nonPlayerCompletion == null) {
+                        // Also weird. just call done with no errors
+                        callback.accept(Collections.emptySet());
+                    } else {
+                        nonPlayerCompletion.whenDone(callback);
+                    }
+                    return;
+                }
+
+                ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(initiator,
+                        migration
+                );
+
+                if (nonPlayerCompletion == null) {
+                    // No non player accounts to migrate.
+                    playerCompletion.whenDone(callback);
+                    return;
+                }
+
+                ProcessesCompletion.whenAllDone(false,
+                        callback,
+                        playerCompletion,
+                        nonPlayerCompletion
+                );
+            } catch (Throwable e) {
+                sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
+                e.printStackTrace();
+            }
         });
     }
 
@@ -241,30 +261,6 @@ public class EconomyMigrateSub implements Subcommand {
         return Collections.emptyList();
     }
 
-    private void sendMigrationMessage(
-            @NotNull CommandSource sender, @NotNull MigrationData migration
-    ) {
-        List<String> nonMigratedCurrencies = new ArrayList<>();
-        for (Map.Entry<String, Collection<String>> entry : migration
-                .nonMigratedCurrencies()
-                .asMap()
-                .entrySet()) {
-            nonMigratedCurrencies.add(entry.getKey() + " - " + Utils.formatListMessage(entry.getValue()));
-        }
-        sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
-                placeholder("time", migration.timer().getTimer()),
-                placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                placeholder("nonplayer-accounts",
-                        migration.nonPlayerAccountsProcessed().toString()
-                ),
-                placeholder("non-migrated-currencies",
-                        nonMigratedCurrencies.isEmpty()
-                                ? ""
-                                : Utils.formatListMessage(nonMigratedCurrencies)
-                )
-        ));
-    }
-
     private ProcessesCompletion migratePlayerAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
     ) {
@@ -274,12 +270,14 @@ public class EconomyMigrateSub implements Subcommand {
                     .retrievePlayerAccountIds()
                     .get();
             if (!accountIdResp.isSuccessful()) {
-                migration.debug(() -> "Unable to fetch player account UUIDs for migration: " + accountIdResp
+                throw new RuntimeException("Unable to fetch player account UUIDs for migration: " + accountIdResp
                         .getFailureReason()
                         .getDescription());
-                return null;
             }
             Collection<UUID> accountIds = accountIdResp.getResult();
+            if (accountIds.isEmpty()) {
+                return null;
+            }
             List<Process> processes = new ArrayList<>(accountIds.size());
             for (UUID uuid : accountIds) {
                 processes.add(new PlayerAccountMigrationProcess(initiator,
@@ -290,12 +288,8 @@ public class EconomyMigrateSub implements Subcommand {
 
             return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
                     new Process[0]));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return null;
-        } catch (ExecutionException e) {
-            TreasuryPlugin.getInstance().logger().error("Error during migration", e);
-            return null;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error during migration of player accounts", e);
         }
     }
 
@@ -308,12 +302,14 @@ public class EconomyMigrateSub implements Subcommand {
                     .retrieveNonPlayerAccountIds()
                     .get();
             if (!accountIdResp.isSuccessful()) {
-                migration.debug(() -> "Unable to fetch non player account ids for migration: " + accountIdResp
+                throw new RuntimeException("Unable to fetch non player account ids for migration: " + accountIdResp
                         .getFailureReason()
                         .getDescription());
-                return null;
             }
             Collection<String> accountIds = accountIdResp.getResult();
+            if (accountIds.isEmpty()) {
+                return null;
+            }
             List<Process> processes = new ArrayList<>(accountIds.size());
             for (String id : accountIds) {
                 processes.add(new NonPlayerAccountMigrationProcess(initiator, id, migration));
@@ -321,12 +317,8 @@ public class EconomyMigrateSub implements Subcommand {
 
             return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
                     new Process[0]));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return null;
-        } catch (ExecutionException e) {
-            TreasuryPlugin.getInstance().logger().error("Error during migration", e);
-            return null;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error during migration of non player accounts", e);
         }
     }
 

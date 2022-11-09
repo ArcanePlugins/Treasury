@@ -66,8 +66,7 @@ class PlayerAccountMigrationProcess extends Process {
             if (currencyOpt.isPresent()) {
                 currency = currencyOpt.get();
             } else {
-                // TODO: perhaps create the currency in the new provider?
-                this.migration.debug(() -> "Currency with ID '&b" + id + "&7' will not be migrated.");
+                this.migration.debug(() -> "Currency with ID '&b" + id + "&7' will not be migrated for account '" + this.accountId + "'.");
                 Collection<String> currencies = this.migration
                         .nonMigratedCurrencies()
                         .get(this.accountId);
