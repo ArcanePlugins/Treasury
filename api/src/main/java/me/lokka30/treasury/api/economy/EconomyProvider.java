@@ -66,14 +66,6 @@ public interface EconomyProvider {
     CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
 
     /**
-     * Request all identifiers with associated {@link Account Accounts}.
-     *
-     * @return future with {@link Response} which if successful returns the resulting value
-     * @since v1.0.0
-     */
-    CompletableFuture<Response<Collection<String>>> retrieveAccountIds();
-
-    /**
      * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
      *
      * @return future with {@link Response} which if successful returns the resulting value
@@ -210,11 +202,23 @@ public interface EconomyProvider {
      *
      * @param currency The currency to register with the {@link EconomyProvider}.
      * @return future with {@link Response} which if successful returns a {@link TriState}
-     *         whether the registration was successful. If the currency was successfully registered, this
-     *         shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that currency is
-     *         already registered, {@link TriState#UNSPECIFIED}
+     *         whether the registration was successful. If the currency was successfully registered,
+     *         this shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that
+     *         currency is already registered, {@link TriState#UNSPECIFIED}.
      * @since v1.0.0
      */
     CompletableFuture<Response<TriState>> registerCurrency(@NotNull Currency currency);
+
+    /**
+     * Used to un-register a currency with the {@link EconomyProvider}.
+     *
+     * @param currency The currency to un-register with the {@link EconomyProvider}.
+     * @return future with {@link Response} which if successful returns a {@link TriState}
+     *         whether the registration was successful. IF the currency was successfully registered,
+     *         this shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that
+     *         currency is not registered already, {@link TriState#UNSPECIFIED}.
+     * @since v2.0.0
+     */
+    CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull Currency currency);
 
 }
