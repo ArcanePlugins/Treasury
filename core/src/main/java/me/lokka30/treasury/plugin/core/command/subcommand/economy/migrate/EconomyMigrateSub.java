@@ -191,6 +191,9 @@ public class EconomyMigrateSub implements Subcommand {
                             placeholder("nonplayer-accounts",
                                     migration.nonPlayerAccountsProcessed().toString()
                             ),
+                            placeholder("migrated-currencies",
+                                    Utils.formatListMessage(migration.migratedCurrencies())
+                            ),
                             placeholder("non-migrated-currencies",
                                     nonMigratedCurrencies.isEmpty()
                                             ? ""

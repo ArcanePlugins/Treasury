@@ -272,13 +272,14 @@ public class Messages {
                     "%prefix% An internal error occurred whilst attempting to migrate. Please check console for more information.");
 
             @Comment("Placeholders: %prefix%, %time%, %player-accounts%,")
-            @Comment("              %non-migrated-currencies%")
+            @Comment("              %non-migrated-currencies%, %migrated-currencies%")
             @Key("subcommands.migrate.finished-migration")
             private List<String> migrateFinishedMigration = Arrays.asList(
                     "%prefix% Migration complete! Statistics:",
                     "&8 &m->&7 Took &b%time%ms&7.",
                     "&8 &m->&7 Processed &b%player-accounts%&7 player accounts.",
                     "&8 &m->&7 Processed &b%nonplayer-accounts%&7 non player accounts.",
+                    "&8 &m->&7 Migrated currencies: &b%migrated-currencies%",
                     "&8 &m->&7 Non-migrated currencies: &b%non-migrated-currencies%&7."
             );
 
