@@ -1,5 +1,5 @@
 /*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
 package me.lokka30.treasury.plugin.core.config.settings;
@@ -31,7 +31,7 @@ import me.lokka30.treasury.plugin.core.utils.downloader.DownloadPlatform;
  */
 @Comment("## Treasury")
 @Comment("Treasury is a modern code library for plugins.")
-@Comment("GitHub Repository: <https://github.com/lokka30/Treasury/>")
+@Comment("GitHub Repository: <https://github.com/ArcanePlugins/Treasury/>")
 @Comment(" ")
 @Comment("## About this File")
 @Comment("Welcome to the settings.yml file, here you may configure")

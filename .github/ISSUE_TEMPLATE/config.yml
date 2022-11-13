@@ -4,5 +4,5 @@ contact_links:
     url: https://www.discord.io/arcaneplugins
     about: Use `#help-chat` or `#create-a-ticket` to get in touch!
   - name: Questions
-    url: https://github.com/lokka30/Treasury/discussions/categories/q-a
+    url: https://github.com/ArcanePlugins/Treasury/discussions/categories/q-a
     about: Got a question? Ask in Discussions
