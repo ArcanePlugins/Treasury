@@ -1,5 +1,5 @@
 /*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
 package me.lokka30.treasury.plugin.core.utils;
@@ -28,7 +28,7 @@ public final class UpdateChecker {
             RESOURCE_ID
     );
 
-    private static final String GITHUB_COMMITS_URI = "https://api.github.com/repos/lokka30/Treasury/commits";
+    private static final String GITHUB_COMMITS_URI = "https://api.github.com/repos/ArcanePlugins/Treasury/commits";
 
     /**
      * Runs an update check.
@@ -166,7 +166,7 @@ public final class UpdateChecker {
                     .warn("You are running a newer development version. How did we get here?");
         } else if (comparisonResult == PluginVersion.ComparisonResult.EQUAL) {
             plugin.logger().warn(
-                    "You are running a development version of Treasury. If there are any issues, please report them to: https://github.com/lokka30/Treasury/issues .");
+                    "You are running a development version of Treasury. If there are any issues, please report them to: https://github.com/ArcanePlugins/Treasury/issues .");
             plugin.logger().error("USE WITH CAUTION");
         } else if (comparisonResult == PluginVersion.ComparisonResult.UNKNOWN) {
             plugin.logger().warn(
