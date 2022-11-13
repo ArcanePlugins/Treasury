@@ -1,5 +1,5 @@
 /*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
 package me.lokka30.treasury.plugin.core.command.subcommand;
@@ -44,8 +44,8 @@ public class InfoSubcommand implements Subcommand {
         sender.sendMessage(Message.of(MessageKey.INFO_TREASURY,
                 placeholder("version", main.getVersion()),
                 placeholder("description", TreasuryPlugin.DESCRIPTION),
-                placeholder("credits", "https://github.com/lokka30/Treasury/wiki/Credits"),
-                placeholder("repository", "https://github.com/lokka30/Treasury/")
+                placeholder("credits", "https://github.com/ArcanePlugins/Treasury/wiki/Credits"),
+                placeholder("repository", "https://github.com/ArcanePlugins/Treasury/")
         ));
 
         sender.sendMessage(Message.of(MessageKey.INFO_MISC_INFO));

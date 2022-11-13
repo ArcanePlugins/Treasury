@@ -1,5 +1,5 @@
 /*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
 package me.lokka30.treasury.api.common.service;
@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import me.lokka30.treasury.api.common.event.EventBus;
+import me.lokka30.treasury.api.common.misc.SortedList;
 import me.lokka30.treasury.api.common.service.event.ServiceRegisteredEvent;
 import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,16 +33,16 @@ import org.jetbrains.annotations.NotNull;
 public enum ServiceRegistry {
     INSTANCE;
 
-    private Map<Class<?>, Set<Service<?>>> servicesMap = new ConcurrentHashMap<>();
+    private Map<Class<?>, List<Service<?>>> servicesMap = new ConcurrentHashMap<>();
 
     /**
      * Register a provider of a service.
      *
-     * @param clazz       service class
-     * @param service     service to register
+     * @param clazz     service class
+     * @param service   service to register
      * @param registrar who registers this provider
-     * @param priority    priority of the service
-     * @param <T>         provider
+     * @param priority  priority of the service
+     * @param <T>       provider
      */
     public <T> void registerService(
             @NotNull Class<T> clazz,
@@ -55,7 +55,7 @@ public enum ServiceRegistry {
         Objects.requireNonNull(registrar, "registrar");
         Objects.requireNonNull(priority, "priority");
         Service<T> serviceObj = new Service<>(registrar, priority, service);
-        servicesMap.computeIfAbsent(clazz, k -> new TreeSet<>()).add(serviceObj);
+        servicesMap.computeIfAbsent(clazz, k -> new SortedList<>()).add(serviceObj);
         EventBus.INSTANCE.fire(new ServiceRegisteredEvent(serviceObj));
     }
 
@@ -67,9 +67,11 @@ public enum ServiceRegistry {
     public void unregisterAll(@NotNull String registrar) {
         Objects.requireNonNull(registrar, "registrar");
         List<Service<?>> removed = new ArrayList<>();
-        Iterator<Map.Entry<Class<?>, Set<Service<?>>>> iterator = servicesMap.entrySet().iterator();
+        Iterator<Map.Entry<Class<?>, List<Service<?>>>> iterator = servicesMap
+                .entrySet()
+                .iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Class<?>, Set<Service<?>>> entry = iterator.next();
+            Map.Entry<Class<?>, List<Service<?>>> entry = iterator.next();
             entry.getValue().removeIf(service -> {
                 if (service.registrarName().equalsIgnoreCase(registrar)) {
                     removed.add(service);
@@ -101,9 +103,11 @@ public enum ServiceRegistry {
         Objects.requireNonNull(service, "service");
 
         List<Service<?>> removed = new ArrayList<>();
-        Iterator<Map.Entry<Class<?>, Set<Service<?>>>> iterator = servicesMap.entrySet().iterator();
+        Iterator<Map.Entry<Class<?>, List<Service<?>>>> iterator = servicesMap
+                .entrySet()
+                .iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Class<?>, Set<Service<?>>> entry = iterator.next();
+            Map.Entry<Class<?>, List<Service<?>>> entry = iterator.next();
             if (entry.getKey() != clazz) {
                 continue;
             }
@@ -148,7 +152,7 @@ public enum ServiceRegistry {
     public <T> Optional<Service<T>> serviceFor(@NotNull Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz");
 
-        Set<Service<?>> services = servicesMap.get(clazz);
+        List<Service<?>> services = servicesMap.get(clazz);
 
         return services == null || services.isEmpty()
                 ? Optional.empty()
@@ -166,7 +170,7 @@ public enum ServiceRegistry {
     public <T> Set<Service<T>> allServicesFor(@NotNull Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz");
 
-        Set<Service<?>> services = servicesMap.get(clazz);
+        List<Service<?>> services = servicesMap.get(clazz);
         if (services == null) {
             return Collections.emptySet();
         }

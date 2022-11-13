@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/lokka30/Treasury>.
+  ~ This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -29,7 +29,7 @@
     </description>
 
     <inceptionYear>2021</inceptionYear>
-    <url>https://github.com/lokka30/Treasury</url>
+    <url>https://github.com/ArcanePlugins/Treasury</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -63,9 +63,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/lokka30/Treasury.git</connection>
-        <developerConnection>scm:git:git@github.com:lokka30/Treasury.git</developerConnection>
-        <url>https://github.com/lokka30/Treasury</url>
+        <connection>scm:git:https://github.com/ArcanePlugins/Treasury.git</connection>
+        <developerConnection>scm:git:git@github.com:ArcanePlugins/Treasury.git</developerConnection>
+        <url>https://github.com/ArcanePlugins/Treasury</url>
     </scm>
 
     <dependencies>
