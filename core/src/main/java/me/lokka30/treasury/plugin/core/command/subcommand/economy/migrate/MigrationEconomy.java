@@ -160,11 +160,6 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public CompletableFuture<Response<Collection<String>>> retrieveAccountIds() {
-        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
-    }
-
-    @Override
     public CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds() {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
@@ -186,6 +181,11 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     public CompletableFuture<Response<TriState>> registerCurrency(@NotNull final Currency currency) {
+        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
+    }
+
+    @Override
+    public CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull final Currency currency) {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
