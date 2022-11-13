@@ -236,6 +236,10 @@ public class EconomyMigrateSub implements Subcommand {
                         playerCompletion,
                         nonPlayerCompletion
                 );
+            } catch (InterruptedException e) {
+                sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
+                TreasuryPlugin.getInstance().logger().error("Interrupted whilst migrating");
+                Thread.currentThread().interrupt();
             } catch (Throwable e) {
                 sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
                 e.printStackTrace();
@@ -266,69 +270,56 @@ public class EconomyMigrateSub implements Subcommand {
 
     private ProcessesCompletion migratePlayerAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
-    ) {
-        try {
-            Response<Collection<UUID>> accountIdResp = migration
-                    .from()
-                    .retrievePlayerAccountIds()
-                    .get();
-            if (!accountIdResp.isSuccessful()) {
-                throw new RuntimeException("Unable to fetch player account UUIDs for migration: " + accountIdResp
-                        .getFailureReason()
-                        .getDescription());
-            }
-            Collection<UUID> accountIds = accountIdResp.getResult();
-            if (accountIds.isEmpty()) {
-                return null;
-            }
-            List<Process> processes = new ArrayList<>(accountIds.size());
-            for (UUID uuid : accountIds) {
-                processes.add(new PlayerAccountMigrationProcess(initiator,
-                        uuid.toString(),
-                        migration
-                ));
-            }
-
-            return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
-                    new Process[0]));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Player account migration interrupted", e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException("Error during migration of player accounts", e);
+    ) throws InterruptedException, ExecutionException {
+        Response<Collection<UUID>> accountIdResp = migration
+                .from()
+                .retrievePlayerAccountIds()
+                .get();
+        if (!accountIdResp.isSuccessful()) {
+            throw new RuntimeException("Unable to fetch player account UUIDs for migration: " + accountIdResp
+                    .getFailureReason()
+                    .getDescription());
         }
+        Collection<UUID> accountIds = accountIdResp.getResult();
+        if (accountIds.isEmpty()) {
+            return null;
+        }
+        List<Process> processes = new ArrayList<>(accountIds.size());
+        for (UUID uuid : accountIds) {
+            processes.add(new PlayerAccountMigrationProcess(initiator, uuid.toString(), migration));
+        }
+
+        return TreasuryPlugin
+                .getInstance()
+                .processScheduler()
+                .runProcesses(processes.toArray(new Process[0]));
     }
 
     private ProcessesCompletion migrateNonPlayerAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
-    ) {
-        try {
-            Response<Collection<String>> accountIdResp = migration
-                    .from()
-                    .retrieveNonPlayerAccountIds()
-                    .get();
-            if (!accountIdResp.isSuccessful()) {
-                throw new RuntimeException("Unable to fetch non player account ids for migration: " + accountIdResp
-                        .getFailureReason()
-                        .getDescription());
-            }
-            Collection<String> accountIds = accountIdResp.getResult();
-            if (accountIds.isEmpty()) {
-                return null;
-            }
-            List<Process> processes = new ArrayList<>(accountIds.size());
-            for (String id : accountIds) {
-                processes.add(new NonPlayerAccountMigrationProcess(initiator, id, migration));
-            }
-
-            return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
-                    new Process[0]));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Player account migration interrupted", e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException("Error during migration of non player accounts", e);
+    ) throws InterruptedException, ExecutionException {
+        Response<Collection<String>> accountIdResp = migration
+                .from()
+                .retrieveNonPlayerAccountIds()
+                .get();
+        if (!accountIdResp.isSuccessful()) {
+            throw new RuntimeException("Unable to fetch non player account ids for migration: " + accountIdResp
+                    .getFailureReason()
+                    .getDescription());
         }
+        Collection<String> accountIds = accountIdResp.getResult();
+        if (accountIds.isEmpty()) {
+            return null;
+        }
+        List<Process> processes = new ArrayList<>(accountIds.size());
+        for (String id : accountIds) {
+            processes.add(new NonPlayerAccountMigrationProcess(initiator, id, migration));
+        }
+
+        return TreasuryPlugin
+                .getInstance()
+                .processScheduler()
+                .runProcesses(processes.toArray(new Process[0]));
     }
 
 }
