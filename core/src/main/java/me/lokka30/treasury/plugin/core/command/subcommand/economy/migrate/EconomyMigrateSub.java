@@ -291,7 +291,10 @@ public class EconomyMigrateSub implements Subcommand {
 
             return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
                     new Process[0]));
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Player account migration interrupted", e);
+        } catch (ExecutionException e) {
             throw new RuntimeException("Error during migration of player accounts", e);
         }
     }
@@ -320,7 +323,10 @@ public class EconomyMigrateSub implements Subcommand {
 
             return TreasuryPlugin.getInstance().processScheduler().runProcesses(processes.toArray(
                     new Process[0]));
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Player account migration interrupted", e);
+        } catch (ExecutionException e) {
             throw new RuntimeException("Error during migration of non player accounts", e);
         }
     }
