@@ -75,15 +75,13 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public boolean supportsNegativeBalances() {
-                return false;
+            public @NotNull BigDecimal getConversionRate() {
+                return new BigDecimal(1);
             }
 
             @Override
-            public CompletableFuture<Response<BigDecimal>> to(
-                    @NotNull final Currency currency, @NotNull final BigDecimal amount
-            ) {
-                return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
+            public boolean supportsNegativeBalances() {
+                return false;
             }
 
             @Override

@@ -121,16 +121,13 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
-            public boolean supportsNegativeBalances() {
-                return c.supportsNegativeBalances();
+            public @NotNull BigDecimal getConversionRate() {
+                return c.getConversionRate();
             }
 
             @Override
-            public CompletableFuture<Response<BigDecimal>> to(
-                    @NotNull Currency currency,
-                    @NotNull BigDecimal amount
-            ) {
-                return c.to(currency, amount);
+            public boolean supportsNegativeBalances() {
+                return c.supportsNegativeBalances();
             }
 
             @Override
