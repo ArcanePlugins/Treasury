@@ -50,6 +50,7 @@
         <placeholderapi.version>2.11.2</placeholderapi.version>
         <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
         <velocity.version>3.1.1</velocity.version>
+        <process.version>0.0.1-SNAPSHOT</process.version>
     </properties>
 
     <licenses>

@@ -23,7 +23,7 @@
     </properties>
 
     <repositories>
-        <!-- AnnotationConfig repo -->
+        <!-- AnnotationConfig/Process repo -->
         <repository>
             <id>ivan</id>
             <url>https://repo.mrivanplays.com/repository/ivan/</url>
@@ -52,6 +52,11 @@
             <groupId>com.mrivanplays</groupId>
             <artifactId>annotationconfig-yaml</artifactId>
             <version>${annotationconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mrivanplays</groupId>
+            <artifactId>process-api</artifactId>
+            <version>${process.version}</version>
         </dependency>
     </dependencies>
 

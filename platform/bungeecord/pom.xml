@@ -40,6 +40,10 @@
                             <pattern>com.mrivanplays.annotationconfig</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.shade.annotationconfig</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.mrivanplays.process</pattern>
+                            <shadedPattern>me.lokka30.treasury.plugin.shade.process</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>

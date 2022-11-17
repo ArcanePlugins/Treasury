@@ -4,22 +4,26 @@
 
 package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
+import com.mrivanplays.process.Process;
+import com.mrivanplays.process.ProcessException;
+import com.mrivanplays.process.ProcessesCompletion;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -34,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder.placeholder;
 
-// FIXME: Jikoo
 public class EconomyMigrateSub implements Subcommand {
 
     /*
@@ -46,8 +49,6 @@ public class EconomyMigrateSub implements Subcommand {
     public void execute(
             @NotNull CommandSource sender, @NotNull String label, @NotNull String[] args
     ) {
-        sender.sendMessage("work in progress");
-        /*
         final boolean debugEnabled = DebugHandler.isCategoryEnabled(DebugCategory.MIGRATE_SUBCOMMAND);
 
         if (!Utils.checkPermissionForCommand(sender, "treasury.command.treasury.economy.migrate")) {
@@ -152,30 +153,98 @@ public class EconomyMigrateSub implements Subcommand {
                 ServicePriority.HIGH
         );
 
-        MigrationData migration = new MigrationData(from, to, debugEnabled);
+        MigrationData migration = new MigrationData(from.get(), to.get(), debugEnabled);
 
+        EconomyTransactionInitiator<?> initiator = sender.getAsTransactionInitiator();
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
+            // Run the currencies migrator first before doing anything else.
+            try {
+                CurrenciesMigrator currenciesMigrator = new CurrenciesMigrator(migration);
+                currenciesMigrator.run();
 
-            // Initialize account migration.
-            Phaser playerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
-                    migration,
-                    new PlayerAccountMigrator()
-            );
-            Phaser nonPlayerMigration = migrateAccounts(sender.getAsTransactionInitiator(),
-                    migration,
-                    new NonPlayerAccountMigrator()
-            );
-            nonPlayerMigration.arriveAndAwaitAdvance();
+                // whenDone consumer
+                Consumer<Set<ProcessException>> callback = (errors) -> {
+                    if (!errors.isEmpty()) {
+                        sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
+                        TreasuryPlugin.getInstance().logger().error("Errors whilst migrating:");
+                        for (ProcessException e : errors) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // Unregister economy override.
+                    ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
 
-            // Block until migration is complete.
-            playerMigration.arriveAndAwaitAdvance();
+                    // Send migration message
+                    List<String> nonMigratedCurrencies = new ArrayList<>();
+                    for (Map.Entry<String, Collection<String>> entry : migration
+                            .nonMigratedCurrencies()
+                            .asMap()
+                            .entrySet()) {
+                        nonMigratedCurrencies.add(entry.getKey() + " - " + Utils.formatListMessage(
+                                entry.getValue()));
+                    }
+                    sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
+                            placeholder("time", migration.timer().getTimer()),
+                            placeholder("player-accounts",
+                                    migration.playerAccountsProcessed().toString()
+                            ),
+                            placeholder("nonplayer-accounts",
+                                    migration.nonPlayerAccountsProcessed().toString()
+                            ),
+                            placeholder("migrated-currencies",
+                                    Utils.formatListMessage(migration.migratedCurrencies())
+                            ),
+                            placeholder("non-migrated-currencies",
+                                    nonMigratedCurrencies.isEmpty()
+                                            ? ""
+                                            : Utils.formatListMessage(nonMigratedCurrencies)
+                            )
+                    ));
+                };
 
-            // Unregister economy override.
-            ServiceRegistry.INSTANCE.unregister(EconomyProvider.class, dummyEconomy);
+                ProcessesCompletion playerCompletion = this.migratePlayerAccounts(initiator,
+                        migration
+                );
 
-            sendMigrationMessage(sender, migration);
+                if (playerCompletion == null) {
+                    // Weird. No player accounts to migrate.
+                    // let's try to migrate just non player accounts
+                    ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(initiator,
+                            migration
+                    );
+                    if (nonPlayerCompletion == null) {
+                        // Also weird. just call done with no errors
+                        callback.accept(Collections.emptySet());
+                    } else {
+                        nonPlayerCompletion.whenDone(callback);
+                    }
+                    return;
+                }
+
+                ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(initiator,
+                        migration
+                );
+
+                if (nonPlayerCompletion == null) {
+                    // No non player accounts to migrate.
+                    playerCompletion.whenDone(callback);
+                    return;
+                }
+
+                ProcessesCompletion.whenAllDone(false,
+                        callback,
+                        playerCompletion,
+                        nonPlayerCompletion
+                );
+            } catch (InterruptedException e) {
+                sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
+                TreasuryPlugin.getInstance().logger().error("Interrupted whilst migrating");
+                Thread.currentThread().interrupt();
+            } catch (Throwable e) {
+                sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
+                e.printStackTrace();
+            }
         });
-         */
     }
 
     @Override
@@ -199,111 +268,58 @@ public class EconomyMigrateSub implements Subcommand {
         return Collections.emptyList();
     }
 
-    private void sendMigrationMessage(
-            @NotNull CommandSource sender, @NotNull MigrationData migration
-    ) {
-        sender.sendMessage(Message.of(MessageKey.MIGRATE_FINISHED_MIGRATION,
-                placeholder("time", migration.timer().getTimer()),
-                placeholder("player-accounts", migration.playerAccountsProcessed().toString()),
-                placeholder("nonplayer-accounts",
-                        migration.nonPlayerAccountsProcessed().toString()
-                ),
-                placeholder("non-migrated-currencies",
-                        Utils.formatListMessage(migration.nonMigratedCurrencies())
-                )
-        ));
+    private ProcessesCompletion migratePlayerAccounts(
+            @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
+    ) throws InterruptedException, ExecutionException {
+        Response<Collection<UUID>> accountIdResp = migration
+                .from()
+                .retrievePlayerAccountIds()
+                .get();
+        if (!accountIdResp.isSuccessful()) {
+            throw new RuntimeException("Unable to fetch player account UUIDs for migration: " + accountIdResp
+                    .getFailureReason()
+                    .getDescription());
+        }
+        Collection<UUID> accountIds = accountIdResp.getResult();
+        if (accountIds.isEmpty()) {
+            return null;
+        }
+        List<Process> processes = new ArrayList<>(accountIds.size());
+        for (UUID uuid : accountIds) {
+            processes.add(new PlayerAccountMigrationProcess(initiator, uuid.toString(), migration));
+        }
+
+        return TreasuryPlugin
+                .getInstance()
+                .processScheduler()
+                .runProcesses(processes.toArray(new Process[0]));
     }
 
-    /*
-    private <T extends Account> Phaser migrateAccounts(
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull MigrationData migration,
-            @NotNull AccountMigrator<T> migrator
-    ) {
-        // Initialize phaser with a single party: migration completion.
-        Phaser phaser = new Phaser(1);
+    private ProcessesCompletion migrateNonPlayerAccounts(
+            @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
+    ) throws InterruptedException, ExecutionException {
+        Response<Collection<String>> accountIdResp = migration
+                .from()
+                .retrieveNonPlayerAccountIds()
+                .get();
+        if (!accountIdResp.isSuccessful()) {
+            throw new RuntimeException("Unable to fetch non player account ids for migration: " + accountIdResp
+                    .getFailureReason()
+                    .getDescription());
+        }
+        Collection<String> accountIds = accountIdResp.getResult();
+        if (accountIds.isEmpty()) {
+            return null;
+        }
+        List<Process> processes = new ArrayList<>(accountIds.size());
+        for (String id : accountIds) {
+            processes.add(new NonPlayerAccountMigrationProcess(initiator, id, migration));
+        }
 
-        migrator.requestAccountIds().accept(migration.from().get(),
-                new PhasedSubscriber<Collection<String>>(phaser) {
-                    @Override
-                    public void phaseAccept(@NotNull Collection<String> identifiers) {
-                        for (String identifier : identifiers) {
-                            migrateAccount(initiator, phaser, identifier, migration, migrator);
-                        }
-                    }
-
-                    @Override
-                    public void phaseFail(@NotNull EconomyException exception) {
-                        migration.debug(() -> migrator.getBulkFailLog(exception));
-                    }
-                }
-        );
-
-        return phaser;
+        return TreasuryPlugin
+                .getInstance()
+                .processScheduler()
+                .runProcesses(processes.toArray(new Process[0]));
     }
-     */
-
-    /*
-    private <T extends Account> void migrateAccount(
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Phaser phaser,
-            @NotNull String identifier,
-            @NotNull MigrationData migration,
-            @NotNull AccountMigrator<T> migrator
-    ) {
-        migration.debug(() -> migrator.getInitLog(identifier));
-
-        // Set up logging for failure.
-        // Because from and to accounts are requested in parallel, guard against duplicate failure logging.
-        AtomicBoolean failed = new AtomicBoolean();
-        BiConsumer<T, Throwable> failureConsumer = (account, throwable) -> {
-            if (throwable != null && failed.compareAndSet(false, true)) {
-                migration.debug(() -> migrator.getErrorLog(identifier, throwable));
-            }
-        };
-
-        CompletableFuture<T> fromAccountFuture = new CompletableFuture<>();
-        migrator.requestAccount().accept(migration.from().get(),
-                identifier,
-                new PhasedFutureSubscriber<>(phaser, fromAccountFuture)
-        );
-        fromAccountFuture.whenComplete(failureConsumer);
-
-        CompletableFuture<T> toAccountFuture = new CompletableFuture<>();
-        migrator.checkAccountExistence().accept(migration.to().get(),
-                identifier,
-                new PhasedSubscriber<Boolean>(phaser) {
-                    @Override
-                    public void phaseAccept(@NotNull Boolean hasAccount) {
-                        PhasedFutureSubscriber<T> subscription = new PhasedFutureSubscriber<>(phaser,
-                                toAccountFuture
-                        );
-                        if (hasAccount) {
-                            migrator.requestAccount().accept(migration.to().get(),
-                                    identifier,
-                                    subscription
-                            );
-                        } else {
-                            migrator.createAccount().accept(migration.to().get(),
-                                    identifier,
-                                    subscription
-                            );
-                        }
-                    }
-
-                    @Override
-                    public void phaseFail(@NotNull EconomyException exception) {
-                        toAccountFuture.completeExceptionally(exception);
-                    }
-                }
-        );
-        toAccountFuture.whenComplete(failureConsumer);
-
-        fromAccountFuture.thenAcceptBoth(toAccountFuture, (fromAccount, toAccount) -> {
-            migrator.migrate(initiator, phaser, fromAccount, toAccount, migration);
-            migrator.getSuccessfulMigrations(migration).incrementAndGet();
-        });
-    }
-     */
 
 }

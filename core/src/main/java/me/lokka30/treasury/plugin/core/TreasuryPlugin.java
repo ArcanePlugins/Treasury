@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.plugin.core;
 
+import com.mrivanplays.process.ProcessScheduler;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -152,6 +153,21 @@ public abstract class TreasuryPlugin {
      */
     public boolean validatePluginJar(@NotNull File file) {
         return true;
+    }
+
+    private ProcessScheduler processScheduler;
+
+    /**
+     * Returns the {@link ProcessScheduler} instance, required for scheduling
+     * {@link com.mrivanplays.process.Process processes}.
+     *
+     * @return process scheduler
+     */
+    public ProcessScheduler processScheduler() {
+        if (this.processScheduler == null) {
+            this.processScheduler = new ProcessScheduler((task) -> scheduler().runAsync(task));
+        }
+        return processScheduler;
     }
 
 }

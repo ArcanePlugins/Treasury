@@ -6,6 +6,7 @@ package me.lokka30.treasury.api.economy.currency;
 
 import java.math.BigDecimal;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.response.Response;
@@ -89,6 +90,18 @@ public interface Currency {
     boolean isPrimary();
 
     /**
+     * Get the conversion rate of this {@code Currency}.
+     * <p>A conversion rate is a rate of how this currency will be converted to other currencies.
+     * As an example, the conversion rate of BGN and EUR are as following: {@code 0.511292} and
+     * {@code 0.884059}. By the default formula used in {@link #to(Currency, BigDecimal)}, the
+     * conversion of 1 BGN -> EUR will result in {@code 0.51129188} of EUR.
+     *
+     * @return conversion rate
+     * @since 2.0.0
+     */
+    @NotNull BigDecimal getConversionRate();
+
+    /**
      * Returns whether this {@code Currency} supports negative balances.
      *
      * @return boolean value
@@ -97,18 +110,22 @@ public interface Currency {
     boolean supportsNegativeBalances();
 
     /**
-     * Used to convert this {@link Currency} to another based on a specified amount of the other
-     * currency.
+     * Used to convert this {@link Currency} to another based on the {@link #getConversionRate()}
+     * of this {@code Currency} and the specified one.
      *
      * @param currency The currency we are converting to.
      * @param amount   The amount to be converted to the specified {@link Currency}
-     * @return future with {@link Response} which if successful returns the resulting
-     *         {@link BigDecimal} that represents the converted amount of the specified {@link Currency}
+     * @return converted balance
      * @since v1.0.0
      */
-    CompletableFuture<Response<BigDecimal>> to(
+    @NotNull
+    default BigDecimal to(
             @NotNull Currency currency, @NotNull BigDecimal amount
-    );
+    ) {
+        Objects.requireNonNull(currency, "currency");
+        Objects.requireNonNull(amount, "amount");
+        return amount.multiply(this.getConversionRate()).divide(currency.getConversionRate());
+    }
 
     /**
      * Used to get the BigDecimal representation of an amount represented by a formatted string.
