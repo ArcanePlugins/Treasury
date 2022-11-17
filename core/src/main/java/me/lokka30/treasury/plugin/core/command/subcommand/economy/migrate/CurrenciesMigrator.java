@@ -131,6 +131,7 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
+            @NotNull
             public CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted) {
                 return c.parse(formatted);
             }

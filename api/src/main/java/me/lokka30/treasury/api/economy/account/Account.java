@@ -54,6 +54,7 @@ public interface Account {
      * @return an optional fulfilled with a name or an empty optional
      * @since v1.0.0
      */
+    @NotNull
     Optional<String> getName();
 
     /**
@@ -63,6 +64,7 @@ public interface Account {
      * @return future with a {@link Response} which states whether the name change was successful
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> setName(@Nullable String name);
 
     /**
@@ -72,6 +74,7 @@ public interface Account {
      * @return future with a {@link Response} which states the balance of the {@link Account}
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<BigDecimal>> retrieveBalance(@NotNull Currency currency);
 
     /**
@@ -84,6 +87,7 @@ public interface Account {
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> withdrawBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -109,6 +113,7 @@ public interface Account {
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> withdrawBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -130,6 +135,7 @@ public interface Account {
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> withdrawBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -158,6 +164,7 @@ public interface Account {
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> depositBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -183,6 +190,7 @@ public interface Account {
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> depositBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -204,6 +212,7 @@ public interface Account {
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> depositBalance(
             @NotNull BigDecimal amount,
             @NotNull EconomyTransactionInitiator<?> initiator,
@@ -229,6 +238,7 @@ public interface Account {
      * @return future with a {@link Response} which, if successful, contains the new balance
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<BigDecimal>> doTransaction(@NotNull EconomyTransaction economyTransaction);
 
     /**
@@ -244,6 +254,7 @@ public interface Account {
      * @see #resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)
      * @since v2.0.0
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
@@ -264,6 +275,7 @@ public interface Account {
      * @return see {@link #doTransaction(EconomyTransaction)}
      * @since v1.0.0 (modified in 2.0.0)
      */
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,
@@ -296,6 +308,7 @@ public interface Account {
      * @see Account#retrieveBalance(Currency)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<TriState>> canAfford(
             @NotNull BigDecimal amount, @NotNull Currency currency
     ) {
@@ -319,6 +332,7 @@ public interface Account {
      *         successful
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> deleteAccount();
 
     /**
@@ -327,6 +341,7 @@ public interface Account {
      * @return future with {@link Response} which if successful returns the held currencies
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<Collection<String>>> retrieveHeldCurrencies();
 
     /**
@@ -344,6 +359,7 @@ public interface Account {
      * @return future with {@link Response} which if successful returns the transaction history
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<Collection<EconomyTransaction>>> retrieveTransactionHistory(
             int transactionCount, @NotNull Temporal from, @NotNull Temporal to
     );
@@ -358,6 +374,7 @@ public interface Account {
      * @return future with {@link Response} which if successful returns the transaction history
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Response<Collection<EconomyTransaction>>> retrieveTransactionHistory(
             int transactionCount
     ) {
@@ -370,6 +387,7 @@ public interface Account {
      * @return future with {@link Response} which if successful returns the members
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<Collection<UUID>>> retrieveMemberIds();
 
     /**
@@ -381,6 +399,7 @@ public interface Account {
      * @return future with {@link Response} which if successful returns whether the user is a member
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> isMember(@NotNull UUID player);
 
     /**
@@ -397,6 +416,7 @@ public interface Account {
      *         of the member were adjusted
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
@@ -412,6 +432,7 @@ public interface Account {
      *         permissions and their values.
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(@NotNull UUID player);
 
     /**
@@ -435,6 +456,7 @@ public interface Account {
      * @see AccountPermission
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> hasPermission(
             @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     );

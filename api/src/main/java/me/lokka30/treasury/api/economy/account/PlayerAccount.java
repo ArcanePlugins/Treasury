@@ -62,6 +62,7 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<TriState>> setName(@Nullable String name) {
         return CompletableFuture.completedFuture(Response.success(TriState.FALSE));
     }
@@ -79,6 +80,7 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<TriState>> isMember(@NotNull UUID player) {
         Objects.requireNonNull(player, "player");
         return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
@@ -90,6 +92,7 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<Collection<UUID>>> retrieveMemberIds() {
         return CompletableFuture.completedFuture(Response.success(Collections.singletonList(
                 getUniqueId())));
@@ -99,6 +102,7 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<TriState>> hasPermission(
             @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     ) {
@@ -113,6 +117,7 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(
             @NotNull UUID player
     ) {
@@ -139,6 +144,7 @@ public interface PlayerAccount extends Account {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<TriState>> setPermission(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
@@ -162,6 +168,7 @@ public interface PlayerAccount extends Account {
      * @since v1.0.0
      */
     @Override
+    @NotNull
     default CompletableFuture<Response<BigDecimal>> resetBalance(
             @NotNull EconomyTransactionInitiator<?> initiator,
             @NotNull Currency currency,

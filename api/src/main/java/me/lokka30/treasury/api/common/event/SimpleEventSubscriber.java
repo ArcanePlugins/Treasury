@@ -49,14 +49,17 @@ public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
     /**
      * Creates a new {@link SimpleEventSubscriber} via a {@link Consumer} function.
      *
-     * @param eventClass event class
-     * @param priority event priority
+     * @param eventClass    event class
+     * @param priority      event priority
      * @param subscribeFunc on event handler
+     * @param <T>           event type
      * @return simple event subscriber
-     * @param <T> event type
      */
+    @NotNull
     public static <T> SimpleEventSubscriber<T> functional(
-            Class<T> eventClass, EventPriority priority, Consumer<T> subscribeFunc
+            @NotNull Class<T> eventClass,
+            @NotNull EventPriority priority,
+            @NotNull Consumer<T> subscribeFunc
     ) {
         return new SimpleEventSubscriber<T>(eventClass, priority) {
             @Override
@@ -69,18 +72,19 @@ public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
     /**
      * Creates a new {@link SimpleEventSubscriber} via a {@link Consumer} function.
      *
-     * @param eventClass event class
-     * @param priority event priority
+     * @param eventClass      event class
+     * @param priority        event priority
      * @param ignoreCancelled whether to ignore cancelled event object(s)
-     * @param subscribeFunc on event handler
+     * @param subscribeFunc   on event handler
+     * @param <T>             event type
      * @return simple event subscriber
-     * @param <T> event type
      */
+    @NotNull
     public static <T> SimpleEventSubscriber<T> functional(
-            Class<T> eventClass,
-            EventPriority priority,
+            @NotNull Class<T> eventClass,
+            @NotNull EventPriority priority,
             boolean ignoreCancelled,
-            Consumer<T> subscribeFunc
+            @NotNull Consumer<T> subscribeFunc
     ) {
         return new SimpleEventSubscriber<T>(eventClass, priority, ignoreCancelled) {
             @Override

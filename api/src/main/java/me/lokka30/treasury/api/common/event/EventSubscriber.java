@@ -63,14 +63,17 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
     /**
      * Creates a new {@link EventSubscriber} via a {@link Function}
      *
-     * @param eventClass event class
-     * @param priority event priority
+     * @param eventClass  event class
+     * @param priority    event priority
      * @param onEventFunc on event handler function
+     * @param <T>         event type
      * @return event subscriber
-     * @param <T> event type
      */
+    @NotNull
     public static <T> EventSubscriber<T> functional(
-            Class<T> eventClass, EventPriority priority, Function<T, Completion> onEventFunc
+            @NotNull Class<T> eventClass,
+            @NotNull EventPriority priority,
+            @NotNull Function<T, Completion> onEventFunc
     ) {
         return new EventSubscriber<T>(eventClass, priority) {
             @Override
@@ -83,18 +86,19 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
     /**
      * Creates a new {@link EventSubscriber} via a {@link Function}
      *
-     * @param eventClass event class
-     * @param priority event priority
+     * @param eventClass      event class
+     * @param priority        event priority
      * @param ignoreCancelled whether to ignore cancelled event object(s)
-     * @param onEventFunc on event handler function
+     * @param onEventFunc     on event handler function
+     * @param <T>             event type
      * @return event subscriber
-     * @param <T> event type
      */
+    @NotNull
     public static <T> EventSubscriber<T> functional(
-            Class<T> eventClass,
-            EventPriority priority,
+            @NotNull Class<T> eventClass,
+            @NotNull EventPriority priority,
             boolean ignoreCancelled,
-            Function<T, Completion> onEventFunc
+            @NotNull Function<T, Completion> onEventFunc
     ) {
         return new EventSubscriber<T>(eventClass, priority, ignoreCancelled) {
             @Override
@@ -161,7 +165,7 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(EventSubscriber<T> other) {
+    public int compareTo(@NotNull EventSubscriber<T> other) {
         return priority.compareTo(other.priority());
     }
 

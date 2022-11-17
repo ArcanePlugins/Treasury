@@ -22,6 +22,7 @@ public interface FailureReason {
      * @return new failure reason
      * @since v1.0.0
      */
+    @NotNull
     static FailureReason of(@NotNull String description) {
         Objects.requireNonNull(description, "description");
         return () -> description;
