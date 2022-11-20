@@ -33,12 +33,9 @@ public class HookRegistrar implements Listener {
         if (!hooks.containsKey(plugin.getName())) {
             return;
         }
-        for (Hook hook : hooks.values()) {
-            if (hook.register(treasuryBukkit)) {
-                treasuryBukkit
-                        .getLogger()
-                        .info(plugin.getName() + " hook registered successfully");
-            }
+        Hook hook = this.hooks.get(plugin.getName());
+        if (hook.register(treasuryBukkit)) {
+            treasuryBukkit.getLogger().info(plugin.getName() + " hook registered successfully");
         }
     }
 
