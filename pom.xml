@@ -88,6 +88,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${jetbrains.annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
@@ -220,6 +227,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <!-- workaround since the plugin doesn't work in other ways -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains</groupId>
+                        <artifactId>annotations</artifactId>
+                        <version>${jetbrains.annotations.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
