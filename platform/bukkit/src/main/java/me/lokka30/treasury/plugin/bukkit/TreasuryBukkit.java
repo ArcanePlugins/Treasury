@@ -35,6 +35,11 @@ public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
 
+    @Override
+    public void onLoad() {
+        getServer().getPluginManager().registerEvents(new BukkitServiceRegistrationListener(getLogger()), this);
+    }
+
     /**
      * Run the start-up procedure for the plugin.
      * This is called by Bukkit's plugin manager.
@@ -54,8 +59,6 @@ public class TreasuryBukkit extends JavaPlugin {
         treasuryPlugin.loadMessages();
         treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
-
-        getServer().getPluginManager().registerEvents(new BukkitServiceRegistrationListener(getLogger()), this);
 
         getServer().getPluginManager().registerEvents(new HookRegistrar(this), this);
 
