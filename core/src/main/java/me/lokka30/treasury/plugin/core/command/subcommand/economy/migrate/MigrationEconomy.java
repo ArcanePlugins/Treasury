@@ -120,7 +120,7 @@ class MigrationEconomy implements EconomyProvider {
                 return new PlayerAccountAccessor() {
                     @Override
                     protected @NotNull CompletableFuture<Response<PlayerAccount>> getOrCreate(
-                            @NotNull final UUID uniqueId
+                            @NotNull PlayerAccountCreateContext context
                     ) {
                         return CompletableFuture.completedFuture(Response.failure(
                                 EconomyFailureReason.MIGRATION));
@@ -133,7 +133,7 @@ class MigrationEconomy implements EconomyProvider {
                 return new NonPlayerAccountAccessor() {
                     @Override
                     protected @NotNull CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
-                            @NotNull final String identifier, @Nullable final String name
+                            @NotNull NonPlayerAccountCreateContext context
                     ) {
                         return CompletableFuture.completedFuture(Response.failure(
                                 EconomyFailureReason.MIGRATION));

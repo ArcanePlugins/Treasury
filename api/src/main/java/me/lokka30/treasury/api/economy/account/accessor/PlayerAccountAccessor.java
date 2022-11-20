@@ -47,7 +47,9 @@ public abstract class PlayerAccountAccessor {
      */
     @NotNull
     public CompletableFuture<Response<PlayerAccount>> get() {
-        return this.getOrCreate(Objects.requireNonNull(uniqueId, "uniqueId"));
+        return this.getOrCreate(new PlayerAccountCreateContext(Objects.requireNonNull(uniqueId,
+                "uniqueId"
+        )));
     }
 
     /**
@@ -68,6 +70,33 @@ public abstract class PlayerAccountAccessor {
     }
 
     @NotNull
-    protected abstract CompletableFuture<Response<PlayerAccount>> getOrCreate(@NotNull UUID uniqueId);
+    protected abstract CompletableFuture<Response<PlayerAccount>> getOrCreate(@NotNull PlayerAccountCreateContext context);
+
+    /**
+     * Represents a class, holder of data, needed to create/retrieve a {@link PlayerAccount}
+     *
+     * @author MrIvanPlays
+     * @since 2.0.0
+     */
+    public static final class PlayerAccountCreateContext {
+
+        private final UUID uuid;
+
+        public PlayerAccountCreateContext(@NotNull UUID uuid) {
+            this.uuid = uuid;
+        }
+
+        /**
+         * Returns the {@link UUID unique identifier} of the {@link PlayerAccount player account}
+         * created/retrieved.
+         *
+         * @return unique id
+         */
+        @NotNull
+        public UUID getUniqueId() {
+            return uuid;
+        }
+
+    }
 
 }

@@ -60,7 +60,9 @@ public abstract class NonPlayerAccountAccessor {
      */
     @NotNull
     public CompletableFuture<Response<NonPlayerAccount>> get() {
-        return this.getOrCreate(Objects.requireNonNull(identifier, "identifier"), name);
+        return this.getOrCreate(new NonPlayerAccountCreateContext(Objects.requireNonNull(identifier,
+                "identifier"
+        ), name));
     }
 
     /**
@@ -82,8 +84,47 @@ public abstract class NonPlayerAccountAccessor {
 
     @NotNull
     protected abstract CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
-            @NotNull String identifier,
-            @Nullable String name
+            @NotNull NonPlayerAccountCreateContext context
     );
+
+    /**
+     * Represents a class, holder of data, needed to create/retrieve a {@link NonPlayerAccount}
+     *
+     * @author MrIvanPlays
+     * @since 2.0.0
+     */
+    public static final class NonPlayerAccountCreateContext {
+
+        private final String identifier, name;
+
+        public NonPlayerAccountCreateContext(@NotNull String identifier, @Nullable String name) {
+            this.identifier = identifier;
+            this.name = name;
+        }
+
+        /**
+         * Returns the {@link String identifier} of the {@link NonPlayerAccount non player account}
+         * created/retrieved.
+         *
+         * @return string identifier
+         */
+        @NotNull
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        /**
+         * Returns the (new) name of the {@link NonPlayerAccount non player account} created.
+         * <p><b>WARNING:</b> Names are not identifiers of non player accounts. The
+         * {@link #getIdentifier()} is.
+         *
+         * @return name
+         */
+        @Nullable
+        public String getName() {
+            return name;
+        }
+
+    }
 
 }
