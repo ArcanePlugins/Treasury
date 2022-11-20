@@ -22,13 +22,15 @@ class EventExecutorTracker {
 
     private Map<Class<?>, ExecutorService> executors = new ConcurrentHashMap<>();
 
-    public ExecutorService getExecutor(Class<?> eventClass) {
+    @NotNull
+    public ExecutorService getExecutor(@NotNull Class<?> eventClass) {
         return executors.computeIfAbsent(eventClass,
                 k -> Executors.newCachedThreadPool(new ThreadFactory() {
 
                     private AtomicInteger amountOfThreads = new AtomicInteger(0);
 
                     @Override
+                    @NotNull
                     public Thread newThread(@NotNull final Runnable r) {
                         Thread thread = new Thread(r);
                         thread.setName("Event " + eventClass.getSimpleName() + " caller thread #" + amountOfThreads.get());

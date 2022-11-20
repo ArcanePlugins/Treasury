@@ -29,6 +29,7 @@ public class EconomyTransaction {
      *
      * @return new builder
      */
+    @NotNull
     public static Builder newBuilder() {
         return new Builder();
     }
@@ -80,6 +81,7 @@ public class EconomyTransaction {
      * @return transaction amount
      * @since v1.0.0
      */
+    @NotNull
     public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
@@ -135,6 +137,7 @@ public class EconomyTransaction {
      *
      * @return reason string or empty optional if not present
      */
+    @NotNull
     public Optional<String> getReason() {
         return reason;
     }
@@ -172,7 +175,7 @@ public class EconomyTransaction {
          *
          * @param other the other builder to create a new builder from
          */
-        public Builder(Builder other) {
+        public Builder(@NotNull Builder other) {
             this.currencyID = other.currencyID;
             this.initiator = other.initiator;
             this.timestamp = other.timestamp;
@@ -187,6 +190,7 @@ public class EconomyTransaction {
          *
          * @return builder copy
          */
+        @NotNull
         public Builder copy() {
             return new Builder(this);
         }
@@ -295,6 +299,7 @@ public class EconomyTransaction {
          *
          * @return transaction object
          */
+        @NotNull
         public EconomyTransaction build() {
             Objects.requireNonNull(currencyID, "currencyID");
             Objects.requireNonNull(initiator, "initiator");

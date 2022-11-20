@@ -38,6 +38,7 @@
         <!-- Versions for specifying in plugin.yml's -->
         <plugin.version>2.0.0</plugin.version>
         <plugin.specificationVersion>SNAPSHOT</plugin.specificationVersion>
+        <plugin.authors>lokka30, MrIvanPlays, Jikoo</plugin.authors>
 
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
@@ -51,6 +52,8 @@
         <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
         <velocity.version>3.1.1</velocity.version>
         <process.version>0.0.1-SNAPSHOT</process.version>
+        <!-- asm is for testing purposes only -->
+        <asm.version>9.4</asm.version>
     </properties>
 
     <licenses>
@@ -60,6 +63,22 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <id>lokka30</id>
+            <email>lokka30@protonmail.com</email>
+        </developer>
+        <developer>
+            <id>MrIvanPlays</id>
+            <name>Ivan Pekov</name>
+            <email>ivan@mrivanplays.com</email>
+        </developer>
+        <developer>
+            <id>Jikoo</id>
+            <email>jikoo.games@gmail.com</email>
+        </developer>
+    </developers>
 
     <scm>
         <connection>scm:git:https://github.com/ArcanePlugins/Treasury.git</connection>
@@ -72,6 +91,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>${asm.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -128,6 +153,9 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
+                            <Specification-Title>Treasury</Specification-Title>
+                            <Specification-Version>${project.version}</Specification-Version>
+                            <Specification-Vendor>${plugin.authors}</Specification-Vendor>
                             <Implementation-Version>${git.commit.time}</Implementation-Version>
                         </manifestEntries>
                     </archive>
@@ -176,6 +204,19 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>se.eris</groupId>
+                <artifactId>notnull-instrumenter-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>instrument</goal>
+                            <goal>tests-instrument</goal>
                         </goals>
                     </execution>
                 </executions>

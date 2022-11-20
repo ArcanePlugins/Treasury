@@ -11,12 +11,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
 class EventTypeTracker {
 
     private final Map<Class<?>, List<Class<?>>> friends = new ConcurrentHashMap<>();
 
-    public List<Class<?>> getFriendsOf(Class<?> event) {
+    @NotNull
+    public List<Class<?>> getFriendsOf(@NotNull Class<?> event) {
         List<Class<?>> computedFriends = friends.computeIfAbsent((event), (eventType) -> {
             return getEventTypes(eventType)
                     .filter(type -> type != eventType)

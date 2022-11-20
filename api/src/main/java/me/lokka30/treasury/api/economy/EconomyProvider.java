@@ -55,7 +55,7 @@ public interface EconomyProvider {
      * @see AccountData
      * @since 2.0.0
      */
-    @NotNull CompletableFuture<Response<TriState>> hasAccount(AccountData accountData);
+    @NotNull CompletableFuture<Response<TriState>> hasAccount(@NotNull AccountData accountData);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
@@ -63,6 +63,7 @@ public interface EconomyProvider {
      * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
 
     /**
@@ -71,6 +72,7 @@ public interface EconomyProvider {
      * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds();
 
     /**
@@ -80,6 +82,7 @@ public interface EconomyProvider {
      * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
 
@@ -121,6 +124,7 @@ public interface EconomyProvider {
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID)
      * @since v1.0.0
      */
+    @NotNull
     default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
@@ -175,6 +179,7 @@ public interface EconomyProvider {
      *         resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.
      * @since v1.0.0
      */
+    @NotNull
     Optional<Currency> findCurrency(@NotNull String identifier);
 
     /**
@@ -183,6 +188,7 @@ public interface EconomyProvider {
      * @return A set of every {@link Currency} object that is available for the server.
      * @since v1.0.0
      */
+    @NotNull
     Set<Currency> getCurrencies();
 
     /**
@@ -207,6 +213,7 @@ public interface EconomyProvider {
      *         currency is already registered, {@link TriState#UNSPECIFIED}.
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> registerCurrency(@NotNull Currency currency);
 
     /**
@@ -219,6 +226,7 @@ public interface EconomyProvider {
      *         currency is not registered already, {@link TriState#UNSPECIFIED}.
      * @since v2.0.0
      */
+    @NotNull
     CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull Currency currency);
 
 }

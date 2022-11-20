@@ -12,6 +12,7 @@ package me.lokka30.treasury.api.common.misc;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a sorted list. Sorting algorithm's O(log2n) which is not that much efficient, with
@@ -73,7 +74,7 @@ public class SortedList<T extends Comparable<T>> extends LinkedList<T> {
     }
 
     @Override
-    public boolean add(T t) {
+    public boolean add(@NotNull T t) {
         ListIterator<T> iterator = listIterator(size());
         int idx = binarySearch(iterator, t);
         if (idx < 0) {

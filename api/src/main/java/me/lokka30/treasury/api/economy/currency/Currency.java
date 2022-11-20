@@ -139,6 +139,7 @@ public interface Currency {
      * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
      * @since v1.0.0
      */
+    @NotNull
     CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted);
 
     /**

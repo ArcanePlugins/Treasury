@@ -15,7 +15,7 @@ class EventCaller {
     private List<EventSubscriber> subscriptions = new SortedList<>();
     private final Class<?> eventClass;
 
-    EventCaller(Class<?> eventClass) {
+    EventCaller(@NotNull Class<?> eventClass) {
         this.eventClass = eventClass;
     }
 
@@ -23,7 +23,8 @@ class EventCaller {
         subscriptions.add(Objects.requireNonNull(subscriber, "subscriber"));
     }
 
-    public Completion call(Object event) {
+    @NotNull
+    public Completion call(@NotNull Object event) {
         if (subscriptions.isEmpty()) {
             return Completion.completed();
         }

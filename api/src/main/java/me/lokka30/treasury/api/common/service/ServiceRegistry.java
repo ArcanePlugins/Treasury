@@ -149,6 +149,7 @@ public enum ServiceRegistry {
      * @param <T>   service type
      * @return service or an empty optional if not present
      */
+    @NotNull
     public <T> Optional<Service<T>> serviceFor(@NotNull Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz");
 
@@ -167,6 +168,7 @@ public enum ServiceRegistry {
      * @param <T>   service type
      * @return services
      */
+    @NotNull
     public <T> Set<Service<T>> allServicesFor(@NotNull Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz");
 

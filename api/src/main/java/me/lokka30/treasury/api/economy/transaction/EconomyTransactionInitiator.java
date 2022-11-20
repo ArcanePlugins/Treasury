@@ -3,6 +3,7 @@ package me.lokka30.treasury.api.economy.transaction;
 import java.util.Objects;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an initiator of {@link EconomyTransaction}.
@@ -51,6 +52,7 @@ public interface EconomyTransactionInitiator<T> {
      */
     EconomyTransactionInitiator<?> SERVER = new EconomyTransactionInitiator<Object>() {
         @Override
+        @Nullable
         public Object getData() {
             return null;
         }
@@ -70,7 +72,7 @@ public interface EconomyTransactionInitiator<T> {
      * @return new economy transaction initiator
      */
     @NotNull
-    static <T> EconomyTransactionInitiator<T> createInitiator(@NotNull Type type, T data) {
+    static <T> EconomyTransactionInitiator<T> createInitiator(@NotNull Type type, @Nullable T data) {
         Objects.requireNonNull(type, "type");
         switch (type) {
             case PLAYER:
@@ -101,6 +103,7 @@ public interface EconomyTransactionInitiator<T> {
         }
         return new EconomyTransactionInitiator<T>() {
             @Override
+            @Nullable
             public T getData() {
                 return data;
             }
@@ -128,6 +131,7 @@ public interface EconomyTransactionInitiator<T> {
      *
      * @return data
      */
+    @Nullable
     T getData();
 
     /**

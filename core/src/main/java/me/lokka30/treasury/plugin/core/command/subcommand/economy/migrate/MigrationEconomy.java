@@ -85,6 +85,7 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
+            @NotNull
             public CompletableFuture<Response<BigDecimal>> parse(@NotNull final String formatted) {
                 return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
             }
@@ -148,16 +149,18 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public @NotNull CompletableFuture<Response<TriState>> hasAccount(final AccountData accountData) {
+    public @NotNull CompletableFuture<Response<TriState>> hasAccount(@NotNull AccountData accountData) {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
+    @NotNull
     public CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds() {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
+    @NotNull
     public CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds() {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
@@ -168,21 +171,25 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
+    @NotNull
     public Optional<Currency> findCurrency(@NotNull final String identifier) {
         return Optional.empty();
     }
 
     @Override
+    @NotNull
     public Set<Currency> getCurrencies() {
         return new HashSet<>();
     }
 
     @Override
+    @NotNull
     public CompletableFuture<Response<TriState>> registerCurrency(@NotNull final Currency currency) {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 
     @Override
+    @NotNull
     public CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull final Currency currency) {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
