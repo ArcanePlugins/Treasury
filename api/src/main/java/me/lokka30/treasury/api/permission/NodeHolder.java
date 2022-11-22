@@ -21,6 +21,8 @@ public interface NodeHolder {
 
     @NotNull <Data> CompletableFuture<Response<Collection<Node<Data>>>> allNodesWithType(@NotNull NodeType<Data> nodeType);
 
+    @NotNull CompletableFuture<Response<Collection<Node<?>>>> allNodesWithContext(@NotNull Context context);
+
     @NotNull <Data> CompletableFuture<Response<TriState>> modifyNode(
             @NotNull Node<Data> node, @NotNull Data data
     );
