@@ -14,6 +14,8 @@ public interface Node<Data> {
     @NotNull
     Context context();
 
+    int weight();
+
     @NotNull
     String key();
 
