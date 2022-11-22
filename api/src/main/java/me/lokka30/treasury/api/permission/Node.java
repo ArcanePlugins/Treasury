@@ -4,21 +4,19 @@
 
 package me.lokka30.treasury.api.permission;
 
-import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 public interface Node<Data> {
 
-    @NotNull UUID getBoundTo();
+    @NotNull
+    NodeType<Data> nodeType();
 
     @NotNull
-    NodeType nodeType();
+    Context context();
 
     @NotNull
     String key();
 
     @NotNull
     Data data();
-
-    void updateData(@NotNull Data data);
 }

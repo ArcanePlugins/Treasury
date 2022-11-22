@@ -9,6 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 public final class Context {
 
+    private static final Context GLOBAL = new Context("global", TriState.FALSE);
+
+    @NotNull
+    public static Context global() {
+        return GLOBAL;
+    }
+
     @NotNull
     public static Context of(@NotNull String context) {
         return new Context(context, TriState.UNSPECIFIED);
