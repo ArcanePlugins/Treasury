@@ -30,6 +30,14 @@ public interface NodeHolder {
 
     @NotNull <Data> CompletableFuture<Response<Optional<Node<Data>>>> retrieveNodeWithKey(@NotNull String key);
 
+    /**
+     * Retrieves all the {@link Context contexts} this {@code NodeHolder} holds {@link Node nodes}
+     * under.
+     *
+     * @return
+     */
+    @NotNull CompletableFuture<Response<Collection<NodeHolder>>> retrieveHeldContexts();
+
     @NotNull <Data> CompletableFuture<Response<TriState>> insertOrModifyNode(@NotNull Node<Data> node);
 
 }
