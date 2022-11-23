@@ -21,22 +21,29 @@ public abstract class NodeFactory {
     public PermissionNode createPermissionNode(
             @NotNull String permission, @NotNull Context context
     ) {
-        return this.createPermissionNode(permission, context, null);
+        return this.createPermissionNode(permission, context, (Integer) null);
     }
 
     @NotNull
     public PermissionNode createPermissionNode(
             @NotNull String permission, @NotNull Context context, @Nullable Integer weight
     ) {
-        return this.createPermissionNode(permission, context, TriState.UNSPECIFIED, weight);
+        return this.createPermissionNode(permission, context, weight, TriState.UNSPECIFIED);
+    }
+
+    @NotNull
+    public PermissionNode createPermissionNode(
+            @NotNull String permission, @NotNull Context context, @NotNull TriState value
+    ) {
+        return this.createPermissionNode(permission, context, null, value);
     }
 
     @NotNull
     public abstract PermissionNode createPermissionNode(
             @NotNull String permission,
             @NotNull Context context,
-            @NotNull TriState value,
-            @Nullable Integer weight
+            @Nullable Integer weight,
+            @NotNull TriState value
     );
 
 }
