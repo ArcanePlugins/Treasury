@@ -35,6 +35,18 @@ public final class UpdateChecker {
      */
     public static void checkForUpdates() {
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
+        if (true) {
+            // todo: v2 still in development, disable update checking
+            plugin
+                    .logger()
+                    .error("YOU ARE RUNNING UNDER HEAVY DEVELOPMENT VERSION OF TREASURY V2");
+            plugin
+                    .logger()
+                    .error("THESE VERSIONS ARE NOT INTENDED FOR THE REGULAR USER AND ARE INTENDED FOR DEVELOPERS ONLY");
+            plugin.logger().error("PLEASE CHECK FOR NEW BUILDS @ ci.mrivanplays.com");
+            plugin.logger().error("THESE BUILDS ARE ALPHA!!!!!!");
+            return;
+        }
         if (!plugin.configAdapter().getSettings().checkForUpdates()) {
             return;
         }
