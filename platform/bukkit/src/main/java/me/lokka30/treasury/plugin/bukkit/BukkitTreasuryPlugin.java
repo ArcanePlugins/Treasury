@@ -167,11 +167,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
-    public void runSync(Runnable task) {
-        Bukkit.getScheduler().runTask(plugin, task);
-    }
-
-    @Override
     public void runAsync(Runnable task) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, task);
     }

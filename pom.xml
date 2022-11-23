@@ -17,6 +17,7 @@
         <module>platform/bukkit</module>
         <module>platform/bungeecord</module>
         <module>platform/velocity</module>
+        <module>platform/sponge</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -54,6 +55,7 @@
         <process.version>0.0.1-SNAPSHOT</process.version>
         <!-- asm is for testing purposes only -->
         <asm.version>9.4</asm.version>
+        <sponge.version>8.0.0</sponge.version>
     </properties>
 
     <licenses>

@@ -1,14 +1,8 @@
-/*
- * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
- */
+package me.lokka30.treasury.plugin.sponge;
 
-package me.lokka30.treasury.plugin.velocity;
-
-import com.velocitypowered.api.plugin.PluginContainer;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.Optional;
 import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
@@ -19,48 +13,43 @@ import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.scheduler.Task;
 
-public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Scheduler,
+public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Scheduler,
         ConfigAdapter {
 
-    private final TreasuryVelocity plugin;
+    private final TreasurySponge plugin;
     private final PluginVersion version;
+
     private Messages messages;
     private Settings settings;
 
     private final File messagesFile;
     private final File settingsFile;
 
-    public VelocityTreasuryPlugin(@NotNull TreasuryVelocity plugin) {
+    public SpongeTreasuryPlugin(TreasurySponge plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
-        Optional<PluginContainer> containerOpt = plugin.getProxy().getPluginManager().fromInstance(
-                plugin);
-        if (!containerOpt.isPresent()) {
-            throw new IllegalArgumentException(
-                    "Something went wrong ; containerOpt.isPresent = false. Please report to developers of Treasury.");
-        }
-        this.version = new PluginVersion(
-                containerOpt.get().getDescription().getVersion().get(),
-                this
-        );
-        messagesFile = plugin.getDataDirectory().resolve("messages.yml").toFile();
-        settingsFile = plugin.getDataDirectory().resolve("settings.yml").toFile();
-    }
+        messagesFile = new File(plugin.getDataDir().toFile(), "messages.yml");
+        settingsFile = new File(plugin.getDataDir().toFile(), "settings.yml");
 
+        // todo: somehow parse back the container#metadata#version back into a string
+        this.version = new PluginVersion("", this);
+    }
 
     @Override
     public @NotNull PluginVersion getVersion() {
-        return version;
+        return this.version;
     }
 
     @Override
     public @NotNull Platform platform() {
-        return Platform.VELOCITY;
+        return Platform.SPONGE;
     }
 
     @Override
     public @NotNull Path pluginsFolder() {
-        return plugin.getDataDirectory().getParent();
+        return null; // TODO
     }
 
     @Override
@@ -80,8 +69,8 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     @Override
     public void reload() {
-        loadMessages();
-        loadSettings();
+        this.loadMessages();
+        this.loadSettings();
     }
 
     public void loadMessages() {
@@ -94,15 +83,34 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     @Override
     public @NotNull Messages getMessages() {
-        return messages;
+        return this.messages;
     }
 
     @Override
     public @NotNull Settings getSettings() {
-        return settings;
+        return this.settings;
     }
 
-    // adventure parses hex colors for us :)
+    @Override
+    public void info(final String message) {
+        plugin.getLogger().info(this.color(message));
+    }
+
+    @Override
+    public void warn(final String message) {
+        plugin.getLogger().warn(this.color(message));
+    }
+
+    @Override
+    public void error(final String message) {
+        plugin.getLogger().error(this.color(message));
+    }
+
+    @Override
+    public void error(final String message, final Throwable t) {
+        plugin.getLogger().error(this.color(message), t);
+    }
+
     private String color(String message) {
         return LegacyComponentSerializer.legacySection().serialize(LegacyComponentSerializer
                 .legacyAmpersand()
@@ -110,28 +118,8 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
     }
 
     @Override
-    public void info(final String message) {
-        plugin.getLogger().info(color(message));
-    }
-
-    @Override
-    public void warn(final String message) {
-        plugin.getLogger().warn(color(message));
-    }
-
-    @Override
-    public void error(final String message) {
-        plugin.getLogger().error(color(message));
-    }
-
-    @Override
-    public void error(final String message, final Throwable t) {
-        plugin.getLogger().error(color(message), t);
-    }
-
-    @Override
     public void runAsync(final Runnable task) {
-        plugin.getProxy().getScheduler().buildTask(plugin, task).schedule();
+        Sponge.asyncScheduler().submit(Task.builder().execute(task).build());
     }
 
 }
