@@ -41,9 +41,10 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
         pluginsFolder = plugin.getDataDir().getParent().getParent().resolve("mods");
 
-        // todo: somehow parse back the container#metadata#version back into a string
-        // put a valid version for now so we can test whether the plugin works
-        this.version = new PluginVersion("2.0.0-4103d11-SNAPSHOT", this);
+        this.version = new PluginVersion(
+                plugin.getContainer().metadata().version().toString(),
+                this
+        );
     }
 
     @Override
