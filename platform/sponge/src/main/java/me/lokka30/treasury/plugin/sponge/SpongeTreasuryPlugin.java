@@ -38,7 +38,8 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         settingsFile = new File(plugin.getDataDir().toFile(), "settings.yml");
 
         // todo: somehow parse back the container#metadata#version back into a string
-        this.version = new PluginVersion("", this);
+        // put a valid version for now so we can test whether the plugin works
+        this.version = new PluginVersion("2.0.0-4103d11-SNAPSHOT", this);
     }
 
     @Override

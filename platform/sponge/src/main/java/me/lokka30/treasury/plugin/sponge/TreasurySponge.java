@@ -18,6 +18,7 @@ import org.spongepowered.api.command.Command;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.lifecycle.RefreshGameEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
@@ -83,8 +84,15 @@ public class TreasurySponge {
     }
 
     @Listener
-    public void onRegisterCommands(RegisterCommandEvent<Command.Raw> event) {
-        event.register(this.container, this.command, "treasury");
+    public void onRegisterCommands(RegisterCommandEvent<Command.Parameterized> event) {
+        event.register(this.container, this.command.buildCommand(), "treasury");
+    }
+
+    @Listener
+    public void onReload(RefreshGameEvent event) {
+        logger.info("Reload triggered");
+        treasuryPlugin.reload();
+        logger.info("Configurations reloaded");
     }
 
     public Logger getLogger() {
