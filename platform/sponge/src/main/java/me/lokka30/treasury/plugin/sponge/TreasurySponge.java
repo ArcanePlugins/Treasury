@@ -5,6 +5,8 @@
 package me.lokka30.treasury.plugin.sponge;
 
 import com.google.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -45,6 +47,14 @@ public class TreasurySponge {
     @Listener
     public void onStart(StartedEngineEvent<Server> event) {
         QuickTimer startupTimer = new QuickTimer();
+
+        if (!Files.exists(configDirectory)) {
+            try {
+                Files.createDirectories(configDirectory);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         treasuryPlugin = new SpongeTreasuryPlugin(this);
         treasuryPlugin.loadSettings();
