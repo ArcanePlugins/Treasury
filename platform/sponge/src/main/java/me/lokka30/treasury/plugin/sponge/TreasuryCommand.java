@@ -147,7 +147,7 @@ public class TreasuryCommand {
                 .cause()
                 .audience()), "treasury", args);
 
-        if (completions == null) {
+        if (completions == null || completions.isEmpty()) {
             return Collections.emptyList();
         }
 
