@@ -11,14 +11,14 @@ import me.lokka30.treasury.plugin.core.command.CommandSource;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.EventListener;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 
-public class CommandSources implements EventListener<ServerSideConnectionEvent.Disconnect> {
+public class CommandSources {
 
-    public static final CommandSource CONSOLE = new SpongeCommandSource(Sponge.game().server());
+    private static CommandSource CONSOLE;
 
-    private Map<UUID, CommandSource> byUUID = new HashMap<>();
+    protected Map<UUID, CommandSource> byUUID = new HashMap<>();
 
     public CommandSource obtainSource(Audience sender) {
         if (sender instanceof Player) {
@@ -27,12 +27,25 @@ public class CommandSources implements EventListener<ServerSideConnectionEvent.D
                     ($) -> new SpongeCommandSource(sender)
             );
         }
+        if (CONSOLE == null) {
+            CONSOLE = new SpongeCommandSource(Sponge.game().server());
+        }
         return CONSOLE;
     }
 
-    @Override
-    public void handle(ServerSideConnectionEvent.Disconnect event) {
-        this.byUUID.remove(event.player().uniqueId());
+    public static class QuitListener {
+
+        private final CommandSources sources;
+
+        public QuitListener(CommandSources sources) {
+            this.sources = sources;
+        }
+
+        @Listener
+        public void onQuit(ServerSideConnectionEvent.Disconnect event) {
+            sources.byUUID.remove(event.player().uniqueId());
+        }
+
     }
 
 }

@@ -16,13 +16,12 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.lifecycle.LoadedGameEvent;
 import org.spongepowered.api.event.lifecycle.RefreshGameEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
-import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -32,6 +31,9 @@ public class TreasurySponge {
     private final Logger logger;
     private final PluginContainer container;
 
+    private final TreasuryCommand command;
+    private final CommandSources sources;
+
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path configDirectory;
@@ -40,10 +42,12 @@ public class TreasurySponge {
     TreasurySponge(PluginContainer container, Logger logger) {
         this.logger = logger;
         this.container = container;
+
+        this.sources = new CommandSources();
+        this.command = new TreasuryCommand(this.sources);
     }
 
     private SpongeTreasuryPlugin treasuryPlugin;
-    private TreasuryCommand command;
 
     @Listener
     public void onStart(StartedEngineEvent<Server> event) {
@@ -62,15 +66,7 @@ public class TreasurySponge {
         treasuryPlugin.loadMessages();
         TreasuryPlugin.setInstance(treasuryPlugin);
 
-        CommandSources sources = new CommandSources();
-        Sponge.eventManager().registerListener(EventListenerRegistration
-                .builder(ServerSideConnectionEvent.Disconnect.class)
-                .plugin(this.container)
-                .listener(sources)
-                .build());
-        this.command = new TreasuryCommand(sources);
-
-        treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f)");
+        treasuryPlugin.info("Start-up complete (took " + startupTimer.getTimer() + "ms)");
     }
 
     @Listener
@@ -80,12 +76,19 @@ public class TreasurySponge {
         // Shutdown events
         EventExecutorTrackerShutdown.shutdown();
 
-        treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+        treasuryPlugin.info("Shut-down complete (took " + shutdownTimer.getTimer() + "ms).");
     }
 
     @Listener
     public void onRegisterCommands(RegisterCommandEvent<Command.Parameterized> event) {
         event.register(this.container, this.command.buildCommand(), "treasury");
+    }
+
+    @Listener
+    public void onLoadedGame(LoadedGameEvent event) {
+        Sponge.eventManager().registerListeners(this.container,
+                new CommandSources.QuitListener(this.sources)
+        );
     }
 
     @Listener

@@ -9,7 +9,6 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.permission.PermissionChecker;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -33,9 +32,7 @@ public class SpongeCommandSource implements CommandSource {
 
     @Override
     public void sendMessage(@NotNull final String message) {
-        handle.sendMessage(LegacyComponentSerializer
-                .legacyAmpersand()
-                .deserialize(((SpongeTreasuryPlugin) TreasuryPlugin.getInstance()).color(message)));
+        handle.sendMessage(((SpongeTreasuryPlugin) TreasuryPlugin.getInstance()).color(message));
     }
 
     @Override

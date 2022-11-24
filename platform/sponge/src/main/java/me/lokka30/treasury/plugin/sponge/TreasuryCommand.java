@@ -65,7 +65,7 @@ public class TreasuryCommand {
     private Command.Parameterized buildEconomy() {
         Map<String, Command.Parameterized> temp = new HashMap<>();
         for (String sub : EconomySubcommand.SUBCOMMAND_COMPLETIONS) {
-            if (sub.equalsIgnoreCase("migration")) {
+            if (sub.equalsIgnoreCase("migrate")) {
                 continue;
             }
             //@formatter:off

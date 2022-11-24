@@ -15,7 +15,9 @@ import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.Task;
@@ -29,13 +31,15 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     private Messages messages;
     private Settings settings;
 
-    private final File messagesFile;
-    private final File settingsFile;
+    private final File messagesFile, settingsFile;
+    private final Path pluginsFolder;
 
     public SpongeTreasuryPlugin(TreasurySponge plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         messagesFile = new File(plugin.getDataDir().toFile(), "messages.yml");
         settingsFile = new File(plugin.getDataDir().toFile(), "settings.yml");
+
+        pluginsFolder = plugin.getDataDir().getParent().getParent().resolve("mods");
 
         // todo: somehow parse back the container#metadata#version back into a string
         // put a valid version for now so we can test whether the plugin works
@@ -54,7 +58,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public @NotNull Path pluginsFolder() {
-        return plugin.getDataDir().getParent();
+        return pluginsFolder;
     }
 
     @Override
@@ -98,28 +102,36 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void info(final String message) {
-        plugin.getLogger().info(this.color(message));
+        plugin.getLogger().info(this.stripColor(message));
     }
 
     @Override
     public void warn(final String message) {
-        plugin.getLogger().warn(this.color(message));
+        plugin.getLogger().warn(this.stripColor(message));
     }
 
     @Override
     public void error(final String message) {
-        plugin.getLogger().error(this.color(message));
+        plugin.getLogger().error(this.stripColor(message));
     }
 
     @Override
     public void error(final String message, final Throwable t) {
-        plugin.getLogger().error(this.color(message), t);
+        plugin.getLogger().error(this.stripColor(message), t);
     }
 
-    public String color(String message) {
-        return LegacyComponentSerializer.legacySection().serialize(LegacyComponentSerializer
-                .legacyAmpersand()
-                .deserialize(message));
+    public Component color(String message) {
+        if (message.indexOf('&') == -1) {
+            return Component.text(message);
+        }
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+    }
+
+    private String stripColor(String message) {
+        if (message.indexOf('&') == -1) {
+            return message;
+        }
+        return PlainTextComponentSerializer.plainText().serialize(this.color(message));
     }
 
     @Override
