@@ -1,3 +1,7 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
+ */
+
 package me.lokka30.treasury.plugin.sponge;
 
 import com.google.inject.Inject;
@@ -7,13 +11,15 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -24,12 +30,17 @@ public class TreasurySponge {
     private final PluginContainer container;
 
     @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path configDirectory;
+
+    @Inject
     TreasurySponge(PluginContainer container, Logger logger) {
         this.logger = logger;
         this.container = container;
     }
 
     private SpongeTreasuryPlugin treasuryPlugin;
+    private TreasuryCommand command;
 
     @Listener
     public void onStart(StartedEngineEvent<Server> event) {
@@ -39,6 +50,14 @@ public class TreasurySponge {
         treasuryPlugin.loadSettings();
         treasuryPlugin.loadMessages();
         TreasuryPlugin.setInstance(treasuryPlugin);
+
+        CommandSources sources = new CommandSources();
+        Sponge.eventManager().registerListener(EventListenerRegistration
+                .builder(ServerSideConnectionEvent.Disconnect.class)
+                .plugin(this.container)
+                .listener(sources)
+                .build());
+        this.command = new TreasuryCommand(sources);
 
         treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f)");
     }
@@ -54,20 +73,8 @@ public class TreasurySponge {
     }
 
     @Listener
-    public void onRegisterCommands(RegisterCommandEvent<Command.Parameterized> event) {
-        Parameter.Value<String> nameParam = Parameter.string().key("name").build();
-        // TODO
-        event.register(
-                this.container,
-                Command.builder()
-                        .addParameter(nameParam)
-                        .permission("treasury.command.treasury")
-                        .executor(ctx -> {
-
-                            return CommandResult.success();
-                        })
-                        .build(), "treasury"
-        );
+    public void onRegisterCommands(RegisterCommandEvent<Command.Raw> event) {
+        event.register(this.container, this.command, "treasury");
     }
 
     public Logger getLogger() {
@@ -75,7 +82,7 @@ public class TreasurySponge {
     }
 
     public Path getDataDir() {
-        return null; // TODO
+        return configDirectory;
     }
 
     public PluginContainer getContainer() {

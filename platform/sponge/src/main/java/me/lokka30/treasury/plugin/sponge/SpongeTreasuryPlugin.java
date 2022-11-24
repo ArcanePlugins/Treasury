@@ -1,3 +1,7 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
+ */
+
 package me.lokka30.treasury.plugin.sponge;
 
 import java.io.File;
@@ -49,7 +53,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public @NotNull Path pluginsFolder() {
-        return null; // TODO
+        return plugin.getDataDir().getParent();
     }
 
     @Override
@@ -111,7 +115,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         plugin.getLogger().error(this.color(message), t);
     }
 
-    private String color(String message) {
+    public String color(String message) {
         return LegacyComponentSerializer.legacySection().serialize(LegacyComponentSerializer
                 .legacyAmpersand()
                 .deserialize(message));
@@ -119,7 +123,11 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void runAsync(final Runnable task) {
-        Sponge.asyncScheduler().submit(Task.builder().execute(task).build());
+        Sponge.asyncScheduler().submit(Task
+                .builder()
+                .plugin(this.plugin.getContainer())
+                .execute(task)
+                .build());
     }
 
 }
