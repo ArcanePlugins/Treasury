@@ -146,6 +146,11 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
+    public void runSync(final Runnable task) {
+        task.run();
+    }
+
+    @Override
     public void runAsync(final Runnable task) {
         plugin.getProxy().getScheduler().runAsync(plugin, task);
     }

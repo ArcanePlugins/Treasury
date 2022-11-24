@@ -130,6 +130,11 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
     }
 
     @Override
+    public void runSync(final Runnable task) {
+        task.run();
+    }
+
+    @Override
     public void runAsync(final Runnable task) {
         plugin.getProxy().getScheduler().buildTask(plugin, task).schedule();
     }
