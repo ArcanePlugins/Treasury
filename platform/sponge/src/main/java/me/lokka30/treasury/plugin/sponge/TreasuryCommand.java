@@ -92,14 +92,14 @@ public class TreasuryCommand {
                                 .key("plugin1")
                                 .completer((context, input) -> this.complete(
                                         context,
-                                        ("economy migrate " + input).split(" ")
+                                        new String[] {"economy", "migrate", input}
                                 )).build(),
                         plugin2Param = Parameter
                                 .string()
                                 .key("plugin2")
                                 .completer((context, input) -> this.complete(
                                         context,
-                                        ("economy migrate " + input).split(" ")
+                                        new String[] {"economy", "migrate", input}
                                 ))
                                 .build()
                 )
@@ -112,8 +112,7 @@ public class TreasuryCommand {
                     }
                     return this.execute(
                             ctx,
-                            ("economy migrate " + firstPlugin.get() + " " + secondPlugin.get()).split(
-                                    " ")
+                            new String[] {"economy", "migrate", firstPlugin.get(), secondPlugin.get()}
                     );
                 })
                 .terminal(true)
