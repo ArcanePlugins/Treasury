@@ -150,7 +150,7 @@ public class TreasuryCommand {
             return Collections.emptyList();
         }
 
-        List<CommandCompletion> ret = new ArrayList<>();
+        List<CommandCompletion> ret = new ArrayList<>(completions.size());
         for (String comp : completions) {
             ret.add(CommandCompletion.of(comp));
         }
