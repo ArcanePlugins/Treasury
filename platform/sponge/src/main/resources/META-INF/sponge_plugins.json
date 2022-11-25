@@ -1,0 +1,43 @@
+{
+    "loader": {
+        "name": "java_plain",
+        "version": "1.0"
+    },
+    "license": "MIT",
+    "plugins": [
+        {
+            "version": "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}",
+            "id": "treasury",
+            "entrypoint": "me.lokka30.treasury.plugin.sponge.TreasurySponge",
+            "name": "Treasury",
+            "description": "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server.",
+            "links": {
+                "homepage": "https://github.com/ArcanePlugins/Treasury",
+                "source": "https://github.com/ArcanePlugins/Treasury",
+                "issues": "https://github.com/ArcanePlugins/Treasury/issues"
+            },
+            "contributors": [
+                {
+                    "name": "lokka30",
+                    "description": "Lead Treasury developer."
+                },
+                {
+                    "name": "MrIvanPlays",
+                    "description": "Treasury developer."
+                },
+                {
+                    "name": "Jikoo",
+                    "description": "Treasury developer."
+                }
+            ],
+            "dependencies": [
+                {
+                    "id": "spongeapi",
+                    "version": "8.0.0",
+                    "load-order": "after",
+                    "optional": false
+                }
+            ]
+        }
+    ]
+}

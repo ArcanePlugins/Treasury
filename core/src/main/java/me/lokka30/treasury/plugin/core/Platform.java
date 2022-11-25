@@ -12,5 +12,6 @@ package me.lokka30.treasury.plugin.core;
 public enum Platform {
     BUKKIT,
     BUNGEECORD,
-    VELOCITY
+    VELOCITY,
+    SPONGE
 }
