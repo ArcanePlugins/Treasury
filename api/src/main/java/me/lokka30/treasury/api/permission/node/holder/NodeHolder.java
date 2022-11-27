@@ -14,10 +14,13 @@ import me.lokka30.treasury.api.permission.context.Context;
 import me.lokka30.treasury.api.permission.node.Node;
 import me.lokka30.treasury.api.permission.node.type.NodeType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NodeHolder {
 
     @NotNull String getIdentifier();
+
+    @Nullable NodeHolder parentNodeHolder();
 
     @NotNull CompletableFuture<Response<Collection<Node<?>>>> allNodes();
 
