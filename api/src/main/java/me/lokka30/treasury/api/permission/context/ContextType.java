@@ -27,14 +27,7 @@ public enum ContextType {
         if (value.isEmpty()) {
             throw new IllegalArgumentException("value is empty");
         }
-        boolean hasSpace = false;
-        for (int i = 0; i < value.length(); i++) {
-            if (Character.isWhitespace(value.charAt(i))) {
-                hasSpace = true;
-                break;
-            }
-        }
-        if (hasSpace) {
+        if (value.indexOf(' ') != -1) {
             throw new IllegalArgumentException("Invalid value: value should not contain spaces!");
         }
         return new Context(type, value);
