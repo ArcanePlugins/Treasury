@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.permission.node.holder;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.misc.TriState;
@@ -19,6 +20,8 @@ public interface NodeHolder {
     @NotNull String getIdentifier();
 
     @NotNull CompletableFuture<Response<Collection<Node<?>>>> allNodes();
+
+    @NotNull CompletableFuture<Response<Map<String, NodeType<?>>>> allNodesKeys();
 
     @NotNull <Data> CompletableFuture<Response<Collection<Node<Data>>>> allNodesWithType(@NotNull NodeType<Data> nodeType);
 
