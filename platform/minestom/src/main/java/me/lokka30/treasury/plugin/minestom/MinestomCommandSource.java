@@ -35,7 +35,7 @@ public class MinestomCommandSource implements CommandSource {
 
     @Override
     public boolean hasPermission(@NotNull final String node) {
-        return handle.hasPermission(node);
+        return !(handle instanceof Player) || handle.hasPermission(node);
     }
 
     @Override

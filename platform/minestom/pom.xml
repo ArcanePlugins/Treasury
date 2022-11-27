@@ -85,6 +85,12 @@
             <artifactId>Minestom</artifactId>
             <version>${minestom.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                    <artifactId>shrinkwrap-resolver-depchain</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

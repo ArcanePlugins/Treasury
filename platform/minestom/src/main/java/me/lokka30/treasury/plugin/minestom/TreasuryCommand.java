@@ -7,6 +7,8 @@ package me.lokka30.treasury.plugin.minestom;
 import java.util.List;
 import me.lokka30.treasury.plugin.core.command.TreasuryBaseCommand;
 import me.lokka30.treasury.plugin.core.command.subcommand.economy.EconomySubcommand;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentLiteral;
 import net.minestom.server.command.builder.arguments.ArgumentType;
@@ -19,7 +21,7 @@ public class TreasuryCommand extends Command {
     final TreasuryBaseCommand baseCommand;
 
     public TreasuryCommand(TreasuryMinestom plugin) {
-        super("treasury", (String[]) null);
+        super("treasury", new String[0]);
 
         sources = new CommandSources(plugin);
         baseCommand = new TreasuryBaseCommand();
@@ -82,7 +84,7 @@ public class TreasuryCommand extends Command {
     private static class EconomySub extends Command {
 
         public EconomySub(TreasuryCommand parent) {
-            super("economy", (String[]) null);
+            super("economy", new String[0]);
 
             setDefaultExecutor(parent.getDefaultExecutor());
             setCondition(parent.getCondition());
@@ -95,8 +97,7 @@ public class TreasuryCommand extends Command {
                 this.addSyntax(this.getDefaultExecutor(), literal);
             }
 
-            this.addSyntax(
-                    this.getDefaultExecutor(),
+            this.addSyntax(this.getDefaultExecutor(),
                     ArgumentType.Literal("migrate"),
                     ArgumentType
                             .String("plugin1")
@@ -109,14 +110,11 @@ public class TreasuryCommand extends Command {
 
         private SuggestionCallback getSuggestionCallback(TreasuryCommand parent) {
             return (sender, context, suggestion) -> {
-                String[] args = context
-                        .getInput()
-                        .replace(context.getCommandName(), "")
-                        .trim()
-                        .split(" ");
-
-                List<String> completions = parent.baseCommand.complete(parent.sources.obtainSource(
-                        sender), "treasury", args);
+                List<String> completions = parent.baseCommand.complete(
+                        parent.sources.obtainSource(sender),
+                        "treasury",
+                        new String[]{"economy", "migrate", suggestion.getInput()}
+                );
 
                 if (completions == null || completions.isEmpty()) {
                     return;
