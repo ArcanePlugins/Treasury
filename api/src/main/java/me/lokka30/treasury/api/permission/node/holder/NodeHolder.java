@@ -40,4 +40,6 @@ public interface NodeHolder {
 
     @NotNull <Data> CompletableFuture<Response<TriState>> insertOrModifyNode(@NotNull Node<Data> node);
 
+    @NotNull CompletableFuture<Response<TriState>> removeNode(@NotNull String nodeKey);
+
 }
