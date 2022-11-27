@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
+import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
@@ -65,6 +66,8 @@ public class TreasurySponge {
         treasuryPlugin.loadSettings();
         treasuryPlugin.loadMessages();
         TreasuryPlugin.setInstance(treasuryPlugin);
+
+        UpdateChecker.checkForUpdates();
 
         treasuryPlugin.info("Start-up complete (took " + startupTimer.getTimer() + "ms)");
     }
