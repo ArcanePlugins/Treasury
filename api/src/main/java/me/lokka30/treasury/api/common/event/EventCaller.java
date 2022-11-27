@@ -5,8 +5,13 @@
 package me.lokka30.treasury.api.common.event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
 import me.lokka30.treasury.api.common.misc.SortedList;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,11 +35,29 @@ class EventCaller {
         }
         Completion completion = new Completion();
         EventExecutorTracker.INSTANCE.getExecutor(eventClass).execute(() -> {
-            List<Throwable> errors = call(event, new ArrayList<>(), 0);
-            if (!errors.isEmpty()) {
-                completion.completeExceptionally(errors);
+            ParallelProcessing parallelAnno = event
+                    .getClass()
+                    .getAnnotation(ParallelProcessing.class);
+            if (parallelAnno == null) {
+                List<Throwable> errors = call(event, new ArrayList<>(), 0);
+                if (!errors.isEmpty()) {
+                    completion.completeExceptionally(errors);
+                } else {
+                    completion.complete();
+                }
             } else {
-                completion.complete();
+                if (event instanceof Cancellable) {
+                    completion.completeExceptionally(Collections.singletonList(new IllegalStateException(
+                            "@ParallelProcessing at cancellable event.")));
+                    return;
+                }
+                parallelCall(event, (errors) -> {
+                    if (!errors.isEmpty()) {
+                        completion.completeExceptionally(errors);
+                    } else {
+                        completion.complete();
+                    }
+                });
             }
         });
         return completion;
@@ -60,6 +83,27 @@ class EventCaller {
             break;
         }
         return errorsToThrow;
+    }
+
+    private void parallelCall(Object event, Consumer<Set<Throwable>> callback) {
+        CountDownLatch latch = new CountDownLatch(subscriptions.size());
+        Set<Throwable> errors = ConcurrentHashMap.newKeySet();
+        for (EventSubscriber subscriber : subscriptions) {
+            EventExecutorTracker.INSTANCE.getExecutor(this.eventClass).submit(() -> {
+                subscriber.onEvent(event).whenComplete(e -> {
+                    if (!e.isEmpty()) {
+                        errors.addAll(e);
+                    }
+                    latch.countDown();
+                });
+            });
+        }
+        try {
+            latch.await();
+            callback.accept(errors);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 }
