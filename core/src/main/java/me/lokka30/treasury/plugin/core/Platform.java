@@ -13,5 +13,6 @@ public enum Platform {
     BUKKIT,
     BUNGEECORD,
     VELOCITY,
-    SPONGE
+    SPONGE,
+    MINESTOM
 }

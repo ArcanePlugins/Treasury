@@ -18,6 +18,7 @@
         <module>platform/bungeecord</module>
         <module>platform/velocity</module>
         <module>platform/sponge</module>
+        <module>platform/minestom</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -56,6 +57,7 @@
         <!-- asm is for testing purposes only -->
         <asm.version>9.4</asm.version>
         <sponge.version>8.0.0</sponge.version>
+        <minestom.version>d37f40a1bb</minestom.version>
     </properties>
 
     <licenses>

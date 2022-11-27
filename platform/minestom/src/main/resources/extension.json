@@ -1,0 +1,5 @@
+{
+    "entrypoint": "me.lokka30.treasury.plugin.minestom.TreasuryMinestom",
+    "name": "Treasury",
+    "version": "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}"
+}
