@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
@@ -69,17 +68,12 @@ public class TreasurySponge {
 
         UpdateChecker.checkForUpdates();
 
-        treasuryPlugin.info("Start-up complete (took " + startupTimer.getTimer() + "ms)");
+        treasuryPlugin.logStartupMessage(startupTimer, true);
     }
 
     @Listener
     public void onShutdown(StoppingEngineEvent<Server> event) {
-        QuickTimer shutdownTimer = new QuickTimer();
-
-        // Shutdown events
-        EventExecutorTrackerShutdown.shutdown();
-
-        treasuryPlugin.info("Shut-down complete (took " + shutdownTimer.getTimer() + "ms).");
+        treasuryPlugin.shutdown(true);
     }
 
     @Listener

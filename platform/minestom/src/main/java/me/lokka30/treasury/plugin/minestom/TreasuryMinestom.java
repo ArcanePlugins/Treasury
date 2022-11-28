@@ -36,18 +36,12 @@ public class TreasuryMinestom extends Extension {
 
         UpdateChecker.checkForUpdates();
 
-        treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f)");
-
+        treasuryPlugin.logStartupMessage(startupTimer, false);
     }
 
     @Override
     public void terminate() {
-        final QuickTimer shutdownTimer = new QuickTimer();
-
-        // Shutdown events
-        EventExecutorTrackerShutdown.shutdown();
-
-        treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+        treasuryPlugin.shutdown(false);
     }
 
 }

@@ -45,7 +45,8 @@ public class InfoSubcommand implements Subcommand {
                 placeholder("version", main.getVersion()),
                 placeholder("description", TreasuryPlugin.DESCRIPTION),
                 placeholder("credits", "https://github.com/ArcanePlugins/Treasury/wiki/Credits"),
-                placeholder("repository", "https://github.com/ArcanePlugins/Treasury/")
+                placeholder("repository", "https://github.com/ArcanePlugins/Treasury/"),
+                placeholder("platform", main.platform().displayName())
         ));
 
         sender.sendMessage(Message.of(MessageKey.INFO_MISC_INFO));

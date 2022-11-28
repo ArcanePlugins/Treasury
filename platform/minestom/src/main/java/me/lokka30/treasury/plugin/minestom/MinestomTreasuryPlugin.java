@@ -15,6 +15,7 @@ import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.ExecutionType;
@@ -24,16 +25,16 @@ import org.jetbrains.annotations.NotNull;
 public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Scheduler,
         ConfigAdapter {
 
-    private final TreasuryMinestom plugin;
+    public static final ComponentLogger PLATFORM_LOGGER = ComponentLogger.logger("Treasury");
     private final PluginVersion version;
 
     private Messages messages;
     private Settings settings;
 
-    private final File messagesFile, settingsFile;
+    private final File messagesFile, settingsFile, pluginFile;
 
     public MinestomTreasuryPlugin(TreasuryMinestom plugin) {
-        this.plugin = plugin;
+        pluginFile = plugin.getOrigin().getOriginalJar();
         messagesFile = new File(plugin.getDataDirectory().toFile(), "messages.yml");
         settingsFile = new File(plugin.getDataDirectory().toFile(), "settings.yml");
 
@@ -85,6 +86,13 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
     }
 
     @Override
+    public boolean validatePluginJar(@NotNull File file) {
+        return pluginFile.getAbsoluteFile().getAbsolutePath().equalsIgnoreCase(file
+                .getAbsoluteFile()
+                .getAbsolutePath());
+    }
+
+    @Override
     public @NotNull Messages getMessages() {
         return messages;
     }
@@ -96,22 +104,22 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     @Override
     public void info(final String message) {
-        plugin.getLogger().info(this.deserialize(message));
+        PLATFORM_LOGGER.info(this.deserialize(message));
     }
 
     @Override
     public void warn(final String message) {
-        plugin.getLogger().warn(this.deserialize(message));
+        PLATFORM_LOGGER.warn(this.deserialize(message));
     }
 
     @Override
     public void error(final String message) {
-        plugin.getLogger().error(this.deserialize(message));
+        PLATFORM_LOGGER.error(this.deserialize(message));
     }
 
     @Override
     public void error(final String message, final Throwable t) {
-        plugin.getLogger().error(this.deserialize(message), t);
+        PLATFORM_LOGGER.error(this.deserialize(message), t);
     }
 
     public Component deserialize(String message) {

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -20,6 +21,7 @@ import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
+import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -168,6 +170,42 @@ public abstract class TreasuryPlugin {
             this.processScheduler = new ProcessScheduler((task) -> scheduler().runAsync(task));
         }
         return processScheduler;
+    }
+
+    /**
+     * Logs the plugin startup message
+     *
+     * @param startupTimer startup timer
+     * @param noColors     whether the message should contain colors
+     */
+    public void logStartupMessage(QuickTimer startupTimer, boolean noColors) {
+        if (!noColors) {
+            this.logger().info("&fRunning on " + this.platform().displayName());
+            this.logger().info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
+        } else {
+            this.logger().info("Running on " + this.platform().displayName());
+            this.logger().info("Start-up complete (took " + startupTimer.getTimer() + "ms).");
+        }
+    }
+
+    /**
+     * Due to the shut-down logic being the same on all the platforms, the disable method has
+     * been abstracted into here.
+     *
+     * @param noColors whether the logged shutdown message should contain colors
+     */
+    public void shutdown(boolean noColors) {
+        QuickTimer shutdownTimer = new QuickTimer();
+
+        EventExecutorTrackerShutdown.shutdown();
+
+        if (!noColors) {
+            this
+                    .logger()
+                    .info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+        } else {
+            this.logger().info("Shut-down complete (took " + shutdownTimer.getTimer() + "ms).");
+        }
     }
 
 }

@@ -6,7 +6,6 @@ package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
 import java.util.Optional;
-import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -70,7 +69,7 @@ public class TreasuryBukkit extends JavaPlugin {
 
         loadMetrics();
 
-        treasuryPlugin.info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
+        treasuryPlugin.logStartupMessage(startupTimer, false);
     }
 
     private void loadMetrics() {
@@ -130,12 +129,7 @@ public class TreasuryBukkit extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        final QuickTimer shutdownTimer = new QuickTimer();
-
-        // Shutdown events
-        EventExecutorTrackerShutdown.shutdown();
-
-        treasuryPlugin.info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
+        treasuryPlugin.shutdown(false);
     }
 
     /**
