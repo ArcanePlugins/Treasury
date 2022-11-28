@@ -208,11 +208,11 @@ public class Messages {
                     "%prefix% Invalid usage, try '&b/%label% info&7'.");
 
             @Comment("Placeholders: %prefix%, %version%, %description%,")
-            @Comment("              %credits%, %repository%")
+            @Comment("              %credits%, %repository%, %platform%")
             @Key("subcommands.info.treasury")
             private List<String> infoTreasury = Arrays.asList(
                     "&f&nAbout Treasury",
-                    "&8 &m->&7 Running &bTreasury v%version%",
+                    "&8 &m->&7 Running &bTreasury v%version% on %platform%",
                     "&8 &m->&7 Description: &b%description%",
                     "&8 &m->&7 Made possible by: &bSee &n%credits%",
                     "&8 &m->&7 Learn more at: &b&n%repository%",

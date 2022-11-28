@@ -1,0 +1,13 @@
+{
+    "entrypoint": "me.lokka30.treasury.plugin.minestom.TreasuryMinestom",
+    "name": "Treasury",
+    "version": "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}",
+    "externalDependencies": {
+        "repositories": [
+            {"name": "Central", "url": "https://repo1.maven.org/maven2/"}
+        ],
+        "artifacts": [
+            "org.yaml:snakeyaml:1.32"
+        ]
+    }
+}
