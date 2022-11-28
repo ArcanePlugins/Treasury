@@ -19,6 +19,9 @@
     <name>Treasury-Minestom</name>
 
     <properties>
+        <!-- Compile minestom against java 17 -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
