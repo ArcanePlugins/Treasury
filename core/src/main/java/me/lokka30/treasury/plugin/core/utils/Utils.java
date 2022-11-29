@@ -11,7 +11,6 @@ import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.config.messaging.Message;
 import me.lokka30.treasury.plugin.core.config.messaging.MessageKey;
 import me.lokka30.treasury.plugin.core.config.messaging.MessagePlaceholder;
-import me.lokka30.treasury.plugin.core.config.messaging.Messages;
 import org.jetbrains.annotations.NotNull;
 
 public class Utils {
@@ -43,13 +42,6 @@ public class Utils {
             ));
             return false;
         }
-    }
-
-    @NotNull
-    public static String getYesNoStateMessage(final boolean state) {
-        Messages messages = TreasuryPlugin.getInstance().configAdapter().getMessages();
-        return state ? messages.getSingleMessage(MessageKey.STATE_YES) : messages.getSingleMessage(
-                MessageKey.STATE_NO);
     }
 
     @NotNull
