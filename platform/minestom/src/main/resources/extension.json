@@ -7,7 +7,7 @@
             {"name": "Central", "url": "https://repo1.maven.org/maven2/"}
         ],
         "artifacts": [
-            "org.yaml:snakeyaml:1.32"
+            "org.yaml:snakeyaml:1.33"
         ]
     }
 }
