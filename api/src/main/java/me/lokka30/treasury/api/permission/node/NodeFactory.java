@@ -18,6 +18,7 @@ public abstract class NodeFactory {
         return this.createPermissionNode(permission, ContextType.global());
     }
 
+    @NotNull
     public PermissionNode createPermissionNode(
             @NotNull String permission, @NotNull Context context
     ) {
