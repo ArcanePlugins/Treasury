@@ -17,8 +17,6 @@ public enum MessageKey {
     // Common
     PREFIX("common.prefix"),
     NO_PERMISSION("common.no-permission"),
-    STATE_YES("common.states.does"),
-    STATE_NO("common.states.does-not"),
     LIST_DELIMITER("common.list-delimiter"),
 
     // Commands

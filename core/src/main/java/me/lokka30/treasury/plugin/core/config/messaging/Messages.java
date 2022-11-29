@@ -63,19 +63,6 @@ public class Messages {
         private List<String> noPermission = Collections.singletonList(
                 "%prefix% You don't have access to that &8(&7requires permission &b%permission%&8)&7.");
 
-        @ConfigObject
-        private States states = new States();
-
-        @Comment("These states are used in various messages.")
-        public static class States {
-
-            private String does = "&aYes";
-
-            @Key("does-not")
-            private String doesNot = "&cNo";
-
-        }
-
         @Comment("The delimiter used in lists of things - this separates each list term.")
         @Comment("For example, the non-colored version of a list can look like:")
         @Comment("\"List item 1&7, &bList item 2&7, &bList item 3\"")
