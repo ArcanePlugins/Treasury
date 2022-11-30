@@ -5,7 +5,6 @@
 package me.lokka30.treasury.plugin.bukkit;
 
 import java.io.File;
-import java.util.Optional;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -19,10 +18,7 @@ import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  * This is the plugin's main class, loaded by Bukkit's plugin manager.
@@ -78,30 +74,19 @@ public class TreasuryBukkit extends JavaPlugin {
     private void loadMetrics() {
         Metrics metrics = new Metrics(this, 12927);
 
-        Optional<Service<EconomyProvider>> service = ServiceRegistry.INSTANCE.serviceFor(
-                EconomyProvider.class);
+        Service<EconomyProvider> service = ServiceRegistry.INSTANCE
+                .serviceFor(EconomyProvider.class)
+                .orElse(null);
 
-        EconomyProvider economyProvider;
-        String pluginName;
+        EconomyProvider economyProvider = service == null ? null : service.get();
 
-        if (!service.isPresent()) {
-            RegisteredServiceProvider<EconomyProvider> serviceProvider = getServer()
-                    .getServicesManager()
-                    .getRegistration(EconomyProvider.class);
-
-            economyProvider = serviceProvider == null ? null : serviceProvider.getProvider();
-            pluginName = serviceProvider == null ? null : serviceProvider.getPlugin().getName();
-        } else {
-            Service<EconomyProvider> serv = service.get();
-            economyProvider = serv.get();
-            pluginName = serv.registrarName();
-        }
-
-        metrics.addCustomChart(new SimplePie("economy-provider-name",
-                () -> economyProvider == null ? "None" : pluginName
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-name",
+                () -> economyProvider == null ? "None" : service.registrarName()
         ));
 
-        metrics.addCustomChart(new SimplePie("plugin-update-checking-enabled",
+        metrics.addCustomChart(new SimplePie(
+                "plugin-update-checking-enabled",
                 () -> Boolean.toString(treasuryPlugin
                         .configAdapter()
                         .getSettings()
