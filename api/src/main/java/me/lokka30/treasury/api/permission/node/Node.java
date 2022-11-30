@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.api.permission.node;
 
-import me.lokka30.treasury.api.permission.context.Context;
+import me.lokka30.treasury.api.permission.context.ContextSet;
 import me.lokka30.treasury.api.permission.node.type.NodeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +13,7 @@ public interface Node<Data> {
 
     @NotNull NodeType<Data> nodeType();
 
-    @NotNull Context context();
+    @NotNull ContextSet contexts();
 
     @Nullable Integer weight();
 
@@ -22,7 +22,7 @@ public interface Node<Data> {
     @NotNull Data data();
 
     @NotNull Node<Data> copyWithNewData(
-            @NotNull Context context, @Nullable Integer weight, @NotNull Data data
+            @NotNull ContextSet contexts, @Nullable Integer weight, @NotNull Data data
     );
 
 }

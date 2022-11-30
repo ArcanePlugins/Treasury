@@ -4,26 +4,34 @@
 
 package me.lokka30.treasury.api.permission.context;
 
+import java.util.Objects;
+import java.util.function.BiPredicate;
+import me.lokka30.treasury.api.permission.node.holder.NodeHolder;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public final class Context {
+public interface Context {
 
-    private final ContextType type;
-    private final String value;
-
-    Context(@NotNull ContextType type, @NotNull String value) {
-        this.type = type;
-        this.value = value;
-    }
-
+    @Contract(value = "_, _ -> new", pure = true)
     @NotNull
-    public ContextType type() {
-        return this.type;
+    static Context of(@NotNull String key, @NotNull BiPredicate<NodeHolder, String> condition) {
+        Objects.requireNonNull(key, "key");
+        Objects.requireNonNull(condition, "condition");
+        return new Context() {
+            @Override
+            public @NotNull String getKey() {
+                return key;
+            }
+
+            @Override
+            public @NotNull BiPredicate<NodeHolder, String> getCondition() {
+                return condition;
+            }
+        };
     }
 
-    @NotNull
-    public String value() {
-        return this.value;
-    }
+    @NotNull String getKey();
+
+    @NotNull BiPredicate<NodeHolder, String> getCondition();
 
 }
