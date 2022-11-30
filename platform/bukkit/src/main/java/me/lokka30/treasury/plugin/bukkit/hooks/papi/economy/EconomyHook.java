@@ -164,7 +164,9 @@ public class EconomyHook implements TreasuryPapiHook {
                 balanceCache,
                 providerRef
         );
-        this.baltop.start(plugin);
+        if (this.baltop.isEnabled()) {
+            this.baltop.start(plugin);
+        }
         return true;
     }
 
@@ -184,6 +186,14 @@ public class EconomyHook implements TreasuryPapiHook {
         if (this.baltop != null) {
             try {
                 this.baltop.cancel();
+            } catch (IllegalStateException ignored) {
+                // Ignore scheduler having failed to start task.
+            }
+        }
+        // Cancel balance cache task.
+        if (this.balanceCache != null) {
+            try {
+                this.balanceCache.cancel();
             } catch (IllegalStateException ignored) {
                 // Ignore scheduler having failed to start task.
             }

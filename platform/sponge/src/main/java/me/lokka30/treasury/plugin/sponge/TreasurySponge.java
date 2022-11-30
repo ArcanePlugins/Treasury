@@ -8,10 +8,15 @@ import com.google.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import me.lokka30.treasury.api.common.service.Service;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
+import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.apache.logging.log4j.Logger;
+import org.bstats.charts.SimplePie;
+import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
@@ -31,6 +36,8 @@ public class TreasurySponge {
     private final Logger logger;
     private final PluginContainer container;
 
+    private final Metrics.Factory metricsFactory;
+
     private final TreasuryCommand command;
     private final CommandSources sources;
 
@@ -39,9 +46,10 @@ public class TreasurySponge {
     private Path configDirectory;
 
     @Inject
-    TreasurySponge(PluginContainer container, Logger logger) {
+    TreasurySponge(PluginContainer container, Logger logger, Metrics.Factory metricsFactory) {
         this.logger = logger;
         this.container = container;
+        this.metricsFactory = metricsFactory;
 
         this.sources = new CommandSources();
         this.command = new TreasuryCommand(this.sources);
@@ -67,6 +75,7 @@ public class TreasurySponge {
         TreasuryPlugin.setInstance(treasuryPlugin);
 
         UpdateChecker.checkForUpdates();
+        //loadMetrics(); // commented for now
 
         treasuryPlugin.logStartupMessage(startupTimer, true);
     }
@@ -93,6 +102,44 @@ public class TreasurySponge {
         logger.info("Reload triggered");
         treasuryPlugin.reload();
         logger.info("Configurations reloaded");
+    }
+
+    private void loadMetrics() {
+        Metrics metrics = metricsFactory.make(1234455342); // todo
+
+        Service<EconomyProvider> service = ServiceRegistry.INSTANCE
+                .serviceFor(EconomyProvider.class)
+                .orElse(null);
+
+        EconomyProvider economyProvider = service == null ? null : service.get();
+        String pluginName = service == null ? null : service.registrarName();
+
+        metrics.addCustomChart(new SimplePie(
+                "economy-provider-name",
+                () -> economyProvider == null ? "None" : pluginName
+        ));
+
+        metrics.addCustomChart(new SimplePie(
+                "plugin-update-checking-enabled",
+                () -> Boolean.toString(treasuryPlugin
+                        .configAdapter()
+                        .getSettings()
+                        .checkForUpdates())
+        ));
+
+        metrics.addCustomChart(new SimplePie("economy-provider-currencies", () -> {
+            if (economyProvider == null) {
+                return null;
+            }
+
+            final int size = economyProvider.getCurrencies().size();
+
+            if (size >= 10) {
+                return "10+";
+            } else {
+                return Integer.toString(size);
+            }
+        }));
     }
 
     public Logger getLogger() {

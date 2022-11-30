@@ -33,6 +33,10 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>me.lokka30.treasury.plugin.sponge.shade.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>com.mrivanplays.annotationconfig</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.shade.annotationconfig</shadedPattern>
                         </relocation>
@@ -87,6 +91,12 @@
             <version>${sponge.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-sponge</artifactId>
+            <version>${bstats.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

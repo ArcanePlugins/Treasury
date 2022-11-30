@@ -14,4 +14,6 @@ public interface Hook {
 
     boolean register(@NotNull TreasuryBukkit plugin);
 
+    void shutdown();
+
 }

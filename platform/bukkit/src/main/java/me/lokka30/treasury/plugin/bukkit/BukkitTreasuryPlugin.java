@@ -154,7 +154,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
             plugin
                     .getServer()
                     .getConsoleSender()
-                    .sendMessage(colorize("&4[ERROR] [Treasury]" + message));
+                    .sendMessage(colorize("&c[ERROR] [Treasury] " + message));
         } else {
             plugin.getLogger().severe(colorize(message));
         }

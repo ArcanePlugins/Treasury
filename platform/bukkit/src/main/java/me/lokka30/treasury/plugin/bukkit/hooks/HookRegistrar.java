@@ -27,6 +27,12 @@ public class HookRegistrar implements Listener {
         hooks.put(hook.getPlugin(), hook);
     }
 
+    public void shutdownHooks() {
+        for (Hook hook : this.hooks.values()) {
+            hook.shutdown();
+        }
+    }
+
     @EventHandler
     public void onEnable(PluginEnableEvent event) {
         Plugin plugin = event.getPlugin();

@@ -195,9 +195,23 @@ public abstract class TreasuryPlugin {
      * @param noColors whether the logged shutdown message should contain colors
      */
     public void shutdown(boolean noColors) {
+        this.shutdown(noColors, null);
+    }
+
+    /**
+     * Due to the shut-down logic being the same on all the platforms, the disable method has
+     * been abstracted into here.
+     *
+     * @param noColors whether the logged shutdown message should contain colors
+     * @param psShutdownCode platform specific shutdown code to run
+     */
+    public void shutdown(boolean noColors, Runnable psShutdownCode) {
         QuickTimer shutdownTimer = new QuickTimer();
 
         EventExecutorTrackerShutdown.shutdown();
+        if (psShutdownCode != null) {
+            psShutdownCode.run();
+        }
 
         if (!noColors) {
             this
