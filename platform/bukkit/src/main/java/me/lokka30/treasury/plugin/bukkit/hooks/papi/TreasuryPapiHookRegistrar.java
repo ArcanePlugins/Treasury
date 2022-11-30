@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class TreasuryPapiHookRegistrar implements Hook {
 
+    private TreasuryPapiExpansion expansion;
+
     @Override
     public @NotNull String getPlugin() {
         return "PlaceholderAPI";
@@ -17,7 +19,17 @@ public class TreasuryPapiHookRegistrar implements Hook {
 
     @Override
     public boolean register(@NotNull TreasuryBukkit plugin) {
-        return new TreasuryPapiExpansion(plugin).register();
+        if (expansion == null) {
+            expansion = new TreasuryPapiExpansion(plugin);
+        }
+        return expansion.register();
+    }
+
+    @Override
+    public void shutdown() {
+        if (expansion != null) {
+            expansion.clear();
+        }
     }
 
 }

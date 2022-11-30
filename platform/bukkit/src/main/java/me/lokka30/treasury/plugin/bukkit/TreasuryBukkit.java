@@ -19,8 +19,10 @@ import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * This is the plugin's main class, loaded by Bukkit's plugin manager.
@@ -33,6 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TreasuryBukkit extends JavaPlugin {
 
     private BukkitTreasuryPlugin treasuryPlugin;
+    private HookRegistrar hookRegistrar;
 
     /**
      * Run the start-up procedure for the plugin.
@@ -57,7 +60,9 @@ public class TreasuryBukkit extends JavaPlugin {
         treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
 
-        getServer().getPluginManager().registerEvents(new HookRegistrar(this), this);
+        this.hookRegistrar = new HookRegistrar(this);
+
+        getServer().getPluginManager().registerEvents(hookRegistrar, this);
 
         if (BukkitVendor.isPaper()) {
             PaperEnhancements.enhance(this);
@@ -127,7 +132,7 @@ public class TreasuryBukkit extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        treasuryPlugin.shutdown(false);
+        treasuryPlugin.shutdown(false, () -> this.hookRegistrar.shutdownHooks());
     }
 
     /**
