@@ -34,7 +34,9 @@ public interface NodeHolder {
 
     @NotNull CompletableFuture<Response<TriState>> hasNode(@NotNull String nodeKey);
 
-    @NotNull <Data> CompletableFuture<Response<Optional<Node<Data>>>> retrieveNodeWithKey(@NotNull String key);
+    @NotNull <Data> CompletableFuture<Response<Optional<Node<Data>>>> retrieveNode(
+            @NotNull String key, @NotNull Context context
+    );
 
     /**
      * Retrieves all the {@link Context contexts} this {@code NodeHolder} holds {@link Node nodes}
@@ -44,7 +46,9 @@ public interface NodeHolder {
      */
     @NotNull CompletableFuture<Response<Collection<NodeHolder>>> retrieveHeldContexts();
 
-    @NotNull <Data> CompletableFuture<Response<TriState>> insertOrModifyNode(@NotNull Node<Data> node);
+    @NotNull <Data> CompletableFuture<Response<TriState>> insertOrModifyNode(
+            @NotNull Node<Data> node, @NotNull Context context
+    );
 
     @NotNull CompletableFuture<Response<TriState>> removeNode(@NotNull String nodeKey);
 
