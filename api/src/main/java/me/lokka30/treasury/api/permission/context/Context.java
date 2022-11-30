@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Context {
 
+    Context GLOBAL = Context.of("global", ($, $1) -> true);
+
     @Contract(value = "_, _ -> new", pure = true)
     @NotNull
     static Context of(@NotNull String key, @NotNull BiPredicate<NodeHolder, String> condition) {
