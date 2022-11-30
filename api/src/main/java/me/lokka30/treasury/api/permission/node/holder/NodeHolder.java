@@ -50,6 +50,8 @@ public interface NodeHolder {
             @NotNull Node<Data> node, @NotNull Context context
     );
 
-    @NotNull CompletableFuture<Response<TriState>> removeNode(@NotNull String nodeKey);
+    @NotNull CompletableFuture<Response<TriState>> removeNode(
+            @NotNull String nodeKey, @NotNull Context context
+    );
 
 }
