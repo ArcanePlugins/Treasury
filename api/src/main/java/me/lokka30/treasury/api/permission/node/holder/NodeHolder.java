@@ -30,8 +30,6 @@ public interface NodeHolder {
 
     @NotNull CompletableFuture<Response<Collection<Node<?>>>> allNodesWithContext(@NotNull Context context);
 
-    @NotNull CompletableFuture<Response<TriState>> hasNode(@NotNull Node<?> node);
-
     @NotNull CompletableFuture<Response<TriState>> hasNode(@NotNull String nodeKey);
 
     @NotNull <Data> CompletableFuture<Response<Optional<Node<Data>>>> retrieveNode(
