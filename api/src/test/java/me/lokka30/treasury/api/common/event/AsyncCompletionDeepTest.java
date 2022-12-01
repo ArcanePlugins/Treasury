@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class AsyncCompletionDeepTest {
@@ -13,18 +14,22 @@ class AsyncCompletionDeepTest {
 
     }
 
-    @Test
-    void testAsyncCompletionDeep() {
-        AtomicInteger latch = new AtomicInteger(100);
+    private static AtomicInteger latch = new AtomicInteger(100);
+
+    @BeforeAll
+    static void initialize() {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
         for (int i = 0; i < 100; i++) {
             if (i % 10 == 0) {
-                registerCompletionListener(latch, executor);
+                registerCompletionListener(executor);
             } else {
-                registerNormalListener(latch);
+                registerNormalListener();
             }
         }
+    }
 
+    @Test
+    void testAsyncCompletionDeep() {
         LogAwaiter logAwaiter = new LogAwaiter(1);
 
         EventBus.INSTANCE.fire(new Event())
@@ -41,16 +46,17 @@ class AsyncCompletionDeepTest {
                 });
 
         logAwaiter.startWaiting();
+        Assertions.assertEquals(0, latch.get());
     }
 
-    void registerNormalListener(AtomicInteger latch) {
+    static void registerNormalListener() {
         EventBus bus = EventBus.INSTANCE;
         bus.subscribe(bus.subscriptionFor(Event.class).whenCalled(event -> {
             latch.decrementAndGet();
         }).completeSubscription());
     }
 
-    void registerCompletionListener(AtomicInteger latch, ScheduledExecutorService executor) {
+    static void registerCompletionListener(ScheduledExecutorService executor) {
         EventBus bus = EventBus.INSTANCE;
         bus.subscribe(bus.subscriptionFor(Event.class).whenCalled(event -> {
             Completion completion = new Completion();
