@@ -94,8 +94,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
-                    <reuseForks>false</reuseForks>
-                    <forkCount>1</forkCount>
+                    <paralleL>all</paralleL>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
                 </configuration>
                 <dependencies>
                     <dependency>
