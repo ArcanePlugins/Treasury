@@ -75,7 +75,7 @@ public class TreasurySponge {
         TreasuryPlugin.setInstance(treasuryPlugin);
 
         UpdateChecker.checkForUpdates();
-        //loadMetrics(); // commented for now
+        loadMetrics();
 
         treasuryPlugin.logStartupMessage(startupTimer, true);
     }
@@ -105,7 +105,7 @@ public class TreasurySponge {
     }
 
     private void loadMetrics() {
-        Metrics metrics = metricsFactory.make(1234455342); // todo
+        Metrics metrics = metricsFactory.make(16997);
 
         Service<EconomyProvider> service = ServiceRegistry.INSTANCE
                 .serviceFor(EconomyProvider.class)
