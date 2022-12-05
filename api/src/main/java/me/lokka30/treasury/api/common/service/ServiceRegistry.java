@@ -152,12 +152,15 @@ public enum ServiceRegistry {
     @NotNull
     public <T> Optional<Service<T>> serviceFor(@NotNull Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz");
+        if (!hasRegistration(clazz)) {
+            return Optional.empty();
+        }
 
         List<Service<?>> services = servicesMap.get(clazz);
-
-        return services == null || services.isEmpty()
-                ? Optional.empty()
-                : services.stream().findFirst().map(s -> (Service<T>) s);
+        if (services == null || services.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of((Service<T>) services.get(0));
     }
 
     /**
@@ -171,9 +174,12 @@ public enum ServiceRegistry {
     @NotNull
     public <T> Set<Service<T>> allServicesFor(@NotNull Class<T> clazz) {
         Objects.requireNonNull(clazz, "clazz");
+        if (!hasRegistration(clazz)) {
+            return Collections.emptySet();
+        }
 
         List<Service<?>> services = servicesMap.get(clazz);
-        if (services == null) {
+        if (services == null || services.isEmpty()) {
             return Collections.emptySet();
         }
 
