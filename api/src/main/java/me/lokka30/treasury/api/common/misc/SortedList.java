@@ -1,87 +1,65 @@
 /*
- * Source:      <https://stackoverflow.com/a/4903775>
- * Author:      <https://stackoverflow.com/users/554431/bestsss>
- * License:     Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) license: <https://creativecommons.org/licenses/by-sa/4.0/legalcode>
- * Alterations:
- *  - Implemented into a LinkedList (by: MrIvanPlays)
- *
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
 package me.lokka30.treasury.api.common.misc;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a sorted list. Sorting algorithm's O(log2n) which is not that much efficient, with
- * O(n) moves. Not the fastest implementation, but it suits our needs.
+ * Represents a sorted list.
+ * <p>This implementation of a sorted list is backed by a {@link LinkedList}, with a custom sorting
+ * algorithm added, since {@link java.util.List#sort(Comparator)} proves inefficient when dealing
+ * with bigger lists.
+ * <p>Benchmarked with this code using the JMH library:
+ * <pre>
+ * &#64;BenchmarkMode(Mode.AverageTime)
+ * &#64;OutputTimeUnit(TimeUnit.NANOSECONDS)
+ * &#64;Fork(value = 3)
+ * &#64;State(Scope.Benchmark)
+ * public class SortedListBenchmark {
+ *
+ *   &#64;Benchmark
+ *   public static void sortedList(Blackhole blackhole) {
+ *     SortedList<Integer> list = new SortedList<>();
+ *     list.add(3);
+ *     list.add(5);
+ *     list.add(2);
+ *     list.add(6);
+ *     blackhole.consume(list);
+ *   }
+ *
+ * }
+ * </pre>
+ * we've got results of 33.039 ± 3.311 ns/op .
  *
  * @param <T> type
- * @author bestsss, MrIvanPlays
+ * @author <a href="mailto:ivan@mrivanplays.com">Ivan Pekov</a>
  */
 public class SortedList<T extends Comparable<T>> extends LinkedList<T> {
 
-    private int binarySearch(ListIterator<T> iterator, T key) {
-        int low = 0;
-        int high = iterator.previousIndex();
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-            T midVal = get(iterator, mid);
-            int cmp = midVal.compareTo(key);
+    @Override
+    public boolean add(@NotNull T t) {
+        int index = 0;
+        while (index < size() && t.compareTo(get(index)) > 0) {
+            index++;
+        }
 
-            if (cmp < 0) {
-                low = mid + 1;
-            } else if (cmp > 0) {
-                high = mid - 1;
-            } else {
-                return mid;
-            }
-        }
-        return -(low + 1); // key not found
-    }
-
-    private T get(ListIterator<T> iterator, int index) {
-        T obj;
-        int pos = iterator.nextIndex();
-        if (pos <= index) {
-            do {
-                obj = iterator.next();
-            } while (pos++ < index);
-        } else {
-            do {
-                obj = iterator.previous();
-            } while (--pos > index);
-        }
-        return obj;
-    }
-
-    private void move(ListIterator<T> iterator, int index) {
-        int pos = iterator.nextIndex();
-        if (pos == index) {
-            return;
-        }
-        if (pos < index) {
-            do {
-                iterator.next();
-            } while (++pos < index);
-        } else {
-            do {
-                iterator.previous();
-            } while (--pos > index);
-        }
+        super.add(index, t);
+        return true;
     }
 
     @Override
-    public boolean add(@NotNull T t) {
-        ListIterator<T> iterator = listIterator(size());
-        int idx = binarySearch(iterator, t);
-        if (idx < 0) {
-            idx = ~idx;
+    public boolean addAll(int index, @NotNull Collection<? extends T> add) {
+        if (add.isEmpty()) {
+            return false;
         }
-        move(iterator, idx);
-        iterator.add(t);
+        for (T val : add) {
+            add(val);
+        }
         return true;
     }
 
