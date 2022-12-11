@@ -299,31 +299,6 @@ public interface Account {
     }
 
     /**
-     * Check if the {@code Account} can afford a withdrawal of a certain amount.
-     *
-     * @param amount   the amount the balance must meet or exceed
-     * @param currency the {@link Currency} of the balance being queried
-     * @return future with {@link Response} which if successful returns whether the balance is
-     *         high enough
-     * @see Account#retrieveBalance(Currency)
-     * @since v1.0.0
-     */
-    @NotNull
-    default CompletableFuture<Response<TriState>> canAfford(
-            @NotNull BigDecimal amount, @NotNull Currency currency
-    ) {
-        return retrieveBalance(currency).thenApply(resp -> {
-            if (resp.isSuccessful()) {
-                return Response.success(TriState.fromBoolean(resp
-                    .getResult()
-                    .compareTo(amount) >= 0));
-            } else {
-                return Response.failure(resp.getFailureReason());
-            }
-        });
-    }
-
-    /**
      * Delete data stored for the {@code Account}.
      *
      * <p>Providers should consider storing backups of deleted accounts.
