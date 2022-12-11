@@ -27,8 +27,6 @@ public interface NodeHolder {
 
     @NotNull <Data> CompletableFuture<Response<Collection<Node<Data>>>> allNodesWithType(@NotNull NodeType<Data> nodeType);
 
-    @NotNull CompletableFuture<Response<TriState>> hasNode(@NotNull String nodeKey);
-
     @NotNull <Data> CompletableFuture<Response<Optional<Node<Data>>>> retrieveNode(
             @NotNull String key, @NotNull NodeType<Data> nodeType
     );

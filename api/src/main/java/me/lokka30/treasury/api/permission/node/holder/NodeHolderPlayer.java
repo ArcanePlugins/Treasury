@@ -5,13 +5,11 @@
 package me.lokka30.treasury.api.permission.node.holder;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.permission.context.ContextSet;
-import me.lokka30.treasury.api.permission.node.Node;
 import me.lokka30.treasury.api.permission.node.type.NodeType;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,13 +42,11 @@ public interface NodeHolderPlayer extends NodeHolder {
             if (!resp.isSuccessful()) {
                 return Response.failure(resp.getFailureReason());
             }
-            Optional<Node<TriState>> nodeOpt = resp.getResult();
-            if (!nodeOpt.isPresent()) {
-                return Response.success(TriState.UNSPECIFIED);
-            }
-            return Response.success(TriState.fromBoolean(this.contextSetApplies(nodeOpt
-                    .get()
-                    .contexts())));
+            return resp
+                    .getResult()
+                    .map(triStateNode -> Response.success(TriState.fromBoolean(this.contextSetApplies(
+                            triStateNode.contexts()))))
+                    .orElseGet(() -> Response.success(TriState.UNSPECIFIED));
         });
     }
 
