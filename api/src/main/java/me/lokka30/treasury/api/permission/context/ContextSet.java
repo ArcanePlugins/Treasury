@@ -13,15 +13,35 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a set of {@link Context contexts}, which can be applied for a
+ * {@link me.lokka30.treasury.api.permission.node.Node}.
+ * <p>Class is immutable. Creating it via {@link #of(Context...)}, the returned object is always
+ * the same.
+ *
+ * @author <a href="mailto:ivan@mrivanplays.com">Ivan Pekov</a>
+ * @since 2.0.0
+ */
 public final class ContextSet {
 
     private static final ContextSet EMPTY = new ContextSet(Collections.emptyMap());
 
+    /**
+     * Returns the empty context set constant.
+     *
+     * @return empty context set
+     */
     @NotNull
     public static ContextSet empty() {
         return EMPTY;
     }
 
+    /**
+     * Creates a new context set of the specified {@link Context contexts}
+     *
+     * @param contexts contexts the created context set will contain
+     * @return new context set
+     */
     @NotNull
     public static ContextSet of(@NotNull Context @NotNull ... contexts) {
         Objects.requireNonNull(contexts, "contexts");
@@ -42,26 +62,37 @@ public final class ContextSet {
         this.contexts = contexts;
     }
 
+    /**
+     * Returns a {@link Optional}, which will be fulfilled with a {@link Context} if this context
+     * set holds a context, identified by the specified {@code contextKey}.
+     *
+     * @param contextKey context key
+     * @return context if such is found, empty optional otherwise
+     */
     @NotNull
     public Optional<Context> getContext(@NotNull String contextKey) {
         Objects.requireNonNull(contextKey, "contextKey");
         return Optional.ofNullable(this.contexts.get(contextKey));
     }
 
-    public void registerContext(@NotNull Context context) {
-        Objects.requireNonNull(context, "context");
-        if (!this.contexts.containsKey(context.getKey())) {
-            this.contexts.put(context.getKey(), context);
-            return;
-        }
-        throw new IllegalArgumentException("Context already registered in this context set");
-    }
-
+    /**
+     * Returns whether a {@link Context} is held under the specified {@code contextKey} in this
+     * context set.
+     *
+     * @param contextKey context key
+     * @return true if context is held, false otherwise
+     */
     public boolean hasContext(@NotNull String contextKey) {
         Objects.requireNonNull(contextKey, "contextKey");
         return contexts.containsKey(contextKey);
     }
 
+    /**
+     * Returns this context set as a mutable {@link Set}. Modifying the returned set will not
+     * affect the context set object this method is called from.
+     *
+     * @return set copy representation of this context set
+     */
     @NotNull
     public Set<Context> asSet() {
         if (this.contexts.isEmpty()) {
