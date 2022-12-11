@@ -120,6 +120,9 @@ public final class ContextSet implements Iterable<Context> {
                 return handle.hasNext();
             }
 
+            // NotNull contract because per Iterator javadoc, Iterator#next throws
+            // NoSuchElementException if !hasNext() = true
+            @NotNull
             @Override
             public Context next() {
                 return handle.next();
