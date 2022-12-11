@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.permission.context;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:ivan@mrivanplays.com">Ivan Pekov</a>
  * @since 2.0.0
  */
-public final class ContextSet {
+public final class ContextSet implements Iterable<Context> {
 
     private static final ContextSet EMPTY = new ContextSet(Collections.emptyMap());
 
@@ -101,6 +102,29 @@ public final class ContextSet {
         Set<Context> ret = ConcurrentHashMap.newKeySet();
         ret.addAll(this.contexts.values());
         return ret;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NotNull
+    @Override
+    public Iterator<Context> iterator() {
+        Iterator<Context> handle = this.contexts.values().iterator();
+        // Iterator#remove default impl throws a UnsupportedOperationException which suits our needs
+        // we don't return this.contexts.values().iterator() directly as it is likely to have a
+        // remove() impl
+        return new Iterator<Context>() {
+            @Override
+            public boolean hasNext() {
+                return handle.hasNext();
+            }
+
+            @Override
+            public Context next() {
+                return handle.next();
+            }
+        };
     }
 
 }
