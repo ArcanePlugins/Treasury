@@ -133,6 +133,13 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
     }
 
     /**
+     * A utility method for registering this event subscriber into the {@link EventBus event bus}.
+     */
+    public void register() {
+        EventBus.INSTANCE.subscribe(this);
+    }
+
+    /**
      * Returns the event class this subscriber has a subscription to.
      *
      * @return event class
