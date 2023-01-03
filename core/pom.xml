@@ -22,14 +22,6 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
-    <repositories>
-        <!-- AnnotationConfig/Process repo -->
-        <repository>
-            <id>ivan</id>
-            <url>https://repo.mrivanplays.com/repository/ivan/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>me.lokka30</groupId>
