@@ -58,6 +58,7 @@
         <asm.version>9.4</asm.version>
         <sponge.version>8.0.0</sponge.version>
         <minestom.version>d37f40a1bb</minestom.version>
+        <methodcaller.version>1.0.0</methodcaller.version>
     </properties>
 
     <licenses>
