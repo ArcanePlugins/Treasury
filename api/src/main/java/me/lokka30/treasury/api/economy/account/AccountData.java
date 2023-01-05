@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.economy.account;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,8 +27,7 @@ public final class AccountData {
      */
     @NotNull
     public static AccountData forPlayerAccount(@NotNull UUID uniqueId) {
-        return new AccountData(
-                true,
+        return new AccountData(true,
                 Optional.empty(),
                 Optional.of(Objects.requireNonNull(uniqueId, "uniqueId"))
         );
@@ -36,25 +36,26 @@ public final class AccountData {
     /**
      * Creates an {@link AccountData} object representing the identity of a {@link NonPlayerAccount non-player account}.
      *
-     * @param identifier the identifier of the non player account
+     * @param identifier the {@link NamespacedKey} identifier of the non player account
      * @return new account data instance
      * @since 2.0.0
      */
     @NotNull
-    public static AccountData forNonPlayerAccount(@NotNull String identifier) {
-        return new AccountData(
-                false,
+    public static AccountData forNonPlayerAccount(@NotNull NamespacedKey identifier) {
+        return new AccountData(false,
                 Optional.of(Objects.requireNonNull(identifier, "identifier")),
                 Optional.empty()
         );
     }
 
     private final boolean player;
-    private final Optional<String> identifier;
+    private final Optional<NamespacedKey> identifier;
     private final Optional<UUID> uniqueId;
 
     private AccountData(
-            boolean player, @NotNull Optional<String> identifier, @NotNull Optional<UUID> uniqueId
+            boolean player,
+            @NotNull Optional<NamespacedKey> identifier,
+            @NotNull Optional<UUID> uniqueId
     ) {
         this.player = player;
         this.identifier = identifier;
@@ -74,14 +75,14 @@ public final class AccountData {
     /**
      * If the current {@link AccountData} object represents a
      * {@link NonPlayerAccount non-player account}, this method
-     * will return the identifier of the account. Otherwise, an empty
+     * will return the {@link NamespacedKey} identifier of the account. Otherwise, an empty
      * {@link Optional} will be returned.
      *
      * @return identifier or empty optional if the data is a player account data
      * @since 2.0.0
      */
     @NotNull
-    public Optional<String> getIdentifier() {
+    public Optional<NamespacedKey> getIdentifier() {
         return this.identifier;
     }
 

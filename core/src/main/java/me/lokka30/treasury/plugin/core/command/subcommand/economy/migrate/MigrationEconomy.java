@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -161,7 +162,7 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     @NotNull
-    public CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds() {
+    public CompletableFuture<Response<Collection<NamespacedKey>>> retrieveNonPlayerAccountIds() {
         return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.MIGRATION));
     }
 

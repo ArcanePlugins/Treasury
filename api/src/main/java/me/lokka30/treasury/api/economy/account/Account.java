@@ -39,14 +39,6 @@ import org.jetbrains.annotations.Nullable;
 public interface Account {
 
     /**
-     * Gets the string-based unique identifier for this account.
-     *
-     * @return The String unique identifier for this account.
-     * @since v1.0.0
-     */
-    @NotNull String getIdentifier();
-
-    /**
      * Returns the name of this {@link Account}, if specified. Empty optional otherwise.
      *
      * <p>A economy provider may choose not to provide a name.
