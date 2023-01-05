@@ -24,7 +24,8 @@ public final class NamespacedKey {
      * @param namespace namespace
      * @param key       key
      * @return new namespaced key
-     * @throws IllegalArgumentException if the namespace is "treasury". The
+     * @throws IllegalArgumentException if the inputted namespace or key contain any spaces or if
+     *                                  the namespace is "treasury". The
      *                                  "treasury" namespace is reserved for the Treasury plugin.
      */
     @NotNull
@@ -43,8 +44,10 @@ public final class NamespacedKey {
      *
      * @param namespacedKey namespaced key
      * @return new namespaced key
-     * @throws IllegalArgumentException if the inputted string is not correctly formatted or if
-     *                                  the namespace is "treasury". The "treasury" namespace is reserved for the Treasury plugin.
+     * @throws IllegalArgumentException if the inputted string is not correctly formatted, if the
+     *                                  inputted string contains any whitespaces, or if
+     *                                  the namespace is "treasury". The "treasury" namespace is
+     *                                  reserved for the Treasury plugin.
      */
     @NotNull
     public static NamespacedKey fromString(@NotNull String namespacedKey) {
@@ -77,7 +80,9 @@ public final class NamespacedKey {
         String callerClassName = null;
         for (int i = 1; i < elements.length; i++) {
             StackTraceElement element = elements[i];
-            if (!element.getClassName().equals(NamespacedKey.class.getName()) && element.getClassName().indexOf("java.lang.Thread") != 0) {
+            if (!element.getClassName().equals(NamespacedKey.class.getName()) && element
+                    .getClassName()
+                    .indexOf("java.lang.Thread") != 0) {
                 if (callerClassName == null) {
                     callerClassName = element.getClassName();
                 } else if (!callerClassName.equals(element.getClassName())) {
