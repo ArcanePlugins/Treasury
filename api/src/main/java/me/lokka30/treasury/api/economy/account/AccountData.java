@@ -82,7 +82,7 @@ public final class AccountData {
      * @since 2.0.0
      */
     @NotNull
-    public Optional<NamespacedKey> getIdentifier() {
+    public Optional<NamespacedKey> getNonPlayerIdentifier() {
         return this.identifier;
     }
 
@@ -95,7 +95,7 @@ public final class AccountData {
      * @return unique id or empty optional if the data is a non player account data
      */
     @NotNull
-    public Optional<UUID> getUniqueId() {
+    public Optional<UUID> getPlayerIdentifier() {
         return this.uniqueId;
     }
 

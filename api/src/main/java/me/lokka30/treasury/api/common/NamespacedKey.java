@@ -52,9 +52,20 @@ public final class NamespacedKey {
     @NotNull
     public static NamespacedKey fromString(@NotNull String namespacedKey) {
         Objects.requireNonNull(namespacedKey, "namespacedKey");
-        validateWhitespaces(namespacedKey, "A namespaced key string cannot contain spaces");
-        if (namespacedKey.indexOf(':') == -1) {
-            throw new IllegalArgumentException("namespacedKey string should contain a ':'");
+        int columnCharOccurrences = 0;
+        for (char c : namespacedKey.toCharArray()) {
+            if (Character.isWhitespace(c)) {
+                throw new IllegalArgumentException("A namespaced key string cannot contain spaces");
+            }
+            if (c == ':') {
+                columnCharOccurrences++;
+                if (columnCharOccurrences > 1) {
+                    break;
+                }
+            }
+        }
+        if (columnCharOccurrences > 1 || columnCharOccurrences == 0) {
+            throw new IllegalArgumentException("namespacedKey string should contain a single ':'");
         }
         String[] parts = namespacedKey.split(":");
         String namespace = parts[0], key = parts[1];
