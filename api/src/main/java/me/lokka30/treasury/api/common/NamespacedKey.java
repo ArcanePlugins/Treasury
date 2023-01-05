@@ -4,10 +4,10 @@
 
 package me.lokka30.treasury.api.common;
 
-import com.mrivanplays.methodcaller.MethodCallerAccessor;
 import java.util.Locale;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a namespaced key, used for unique identification of any so-called "non-player"
@@ -32,6 +32,8 @@ public final class NamespacedKey {
         Objects.requireNonNull(namespace, "namespace");
         Objects.requireNonNull(key, "key");
         validateNotTreasuryNamespace(namespace);
+        validateWhitespaces(namespace, "Namespaces cannot contain spaces");
+        validateWhitespaces(key, "Keys cannot contain spaces");
         return new NamespacedKey(namespace, key);
     }
 
@@ -47,6 +49,7 @@ public final class NamespacedKey {
     @NotNull
     public static NamespacedKey fromString(@NotNull String namespacedKey) {
         Objects.requireNonNull(namespacedKey, "namespacedKey");
+        validateWhitespaces(namespacedKey, "A namespaced key string cannot contain spaces");
         if (namespacedKey.indexOf(':') == -1) {
             throw new IllegalArgumentException("namespacedKey string should contain a ':'");
         }
@@ -59,11 +62,36 @@ public final class NamespacedKey {
     }
 
     private static void validateNotTreasuryNamespace(@NotNull String namespace) {
-        Class<?> caller = MethodCallerAccessor.create().getCallerClass();
-        if (!caller.getPackage().getName().contains("me.lokka30.treasury")) {
+        String callerClassName = getCallerClassName();
+        if (!callerClassName.contains("me.lokka30.treasury")) {
             if (namespace.toLowerCase(Locale.ROOT).contains("treasury")) {
                 throw new IllegalArgumentException(
                         "The 'treasury' namespace is reserved for Treasury plugin!");
+            }
+        }
+    }
+
+    @Nullable
+    private static String getCallerClassName() {
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        String callerClassName = null;
+        for (int i = 1; i < elements.length; i++) {
+            StackTraceElement element = elements[i];
+            if (!element.getClassName().equals(NamespacedKey.class.getName()) && element.getClassName().indexOf("java.lang.Thread") != 0) {
+                if (callerClassName == null) {
+                    callerClassName = element.getClassName();
+                } else if (!callerClassName.equals(element.getClassName())) {
+                    return callerClassName;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void validateWhitespaces(@NotNull String val, @NotNull String error) {
+        for (char c : val.toCharArray()) {
+            if (Character.isWhitespace(c)) {
+                throw new IllegalArgumentException(error);
             }
         }
     }

@@ -58,7 +58,6 @@
         <asm.version>9.4</asm.version>
         <sponge.version>8.0.0</sponge.version>
         <minestom.version>d37f40a1bb</minestom.version>
-        <methodcaller.version>1.0.0</methodcaller.version>
     </properties>
 
     <licenses>
@@ -90,14 +89,6 @@
         <developerConnection>scm:git:git@github.com:ArcanePlugins/Treasury.git</developerConnection>
         <url>https://github.com/ArcanePlugins/Treasury</url>
     </scm>
-
-    <repositories>
-        <!-- AnnotationConfig/Process/MethodCaller repo -->
-        <repository>
-            <id>ivan</id>
-            <url>https://repo.mrivanplays.com/repository/ivan/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>

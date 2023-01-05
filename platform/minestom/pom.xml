@@ -43,10 +43,6 @@
                             <pattern>com.mrivanplays.process</pattern>
                             <shadedPattern>me.lokka30.treasury.plugin.shade.process</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>com.mrivanplays.methodcaller</pattern>
-                            <shadedPattern>me.lokka30.treasury.plugin.shade.methodcaller</shadedPattern>
-                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
