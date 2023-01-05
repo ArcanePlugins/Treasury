@@ -27,7 +27,8 @@ public final class AccountData {
      */
     @NotNull
     public static AccountData forPlayerAccount(@NotNull UUID uniqueId) {
-        return new AccountData(true,
+        return new AccountData(
+                true,
                 Optional.empty(),
                 Optional.of(Objects.requireNonNull(uniqueId, "uniqueId"))
         );
@@ -42,7 +43,8 @@ public final class AccountData {
      */
     @NotNull
     public static AccountData forNonPlayerAccount(@NotNull NamespacedKey identifier) {
-        return new AccountData(false,
+        return new AccountData(
+                false,
                 Optional.of(Objects.requireNonNull(identifier, "identifier")),
                 Optional.empty()
         );
