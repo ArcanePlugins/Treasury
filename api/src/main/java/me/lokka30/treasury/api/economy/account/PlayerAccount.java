@@ -48,17 +48,6 @@ public interface PlayerAccount extends Account {
             .collect(Collectors.toConcurrentMap(p -> p, $ -> TriState.TRUE)));
 
     /**
-     * Gets the string-based unique identifier for this account.
-     *
-     * @return The String unique identifier for this account.
-     * @since v1.0.0
-     */
-    @Override
-    default @NotNull String getIdentifier() {
-        return getUniqueId().toString();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

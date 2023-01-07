@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
@@ -63,17 +64,16 @@ public interface EconomyProvider {
      * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    @NotNull
-    CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
+    @NotNull CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
 
     /**
-     * Request all identifiers with associated {@link NonPlayerAccount NonPlayer Accounts}.
+     * Request all {@link NamespacedKey identifiers} with associated {@link NonPlayerAccount
+     * NonPlayer Accounts}.
      *
      * @return future with {@link Response} which if successful returns the resulting value
      * @since v1.0.0
      */
-    @NotNull
-    CompletableFuture<Response<Collection<String>>> retrieveNonPlayerAccountIds();
+    @NotNull CompletableFuture<Response<Collection<NamespacedKey>>> retrieveNonPlayerAccountIds();
 
     /**
      * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
@@ -83,17 +83,17 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
+    default CompletableFuture<Collection<NamespacedKey>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
 
         return retrieveNonPlayerAccountIds().thenCompose(result -> {
             if (!result.isSuccessful() || result.getResult().isEmpty()) {
                 return CompletableFuture.completedFuture(Collections.emptyList());
             }
-            Collection<String> identifiers = result.getResult();
+            Collection<NamespacedKey> identifiers = result.getResult();
             Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
                     identifiers.size());
-            for (String identifier : identifiers) {
+            for (NamespacedKey identifier : identifiers) {
                 accountFutures.add(this
                         .accountAccessor()
                         .nonPlayer()
@@ -125,7 +125,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<String>> retrieveAllAccountsPlayerHasPermission(
+    default CompletableFuture<Collection<NamespacedKey>> retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
@@ -135,10 +135,10 @@ public interface EconomyProvider {
             if (!result.isSuccessful() || result.getResult().isEmpty()) {
                 return CompletableFuture.completedFuture(Collections.emptyList());
             }
-            Collection<String> identifiers = result.getResult();
+            Collection<NamespacedKey> identifiers = result.getResult();
             Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
                     identifiers.size());
-            for (String identifier : identifiers) {
+            for (NamespacedKey identifier : identifiers) {
                 accountFutures.add(this
                         .accountAccessor()
                         .nonPlayer()
@@ -179,8 +179,7 @@ public interface EconomyProvider {
      *         resulting {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}.
      * @since v1.0.0
      */
-    @NotNull
-    Optional<Currency> findCurrency(@NotNull String identifier);
+    @NotNull Optional<Currency> findCurrency(@NotNull String identifier);
 
     /**
      * Used to get a set of every  {@link Currency} object for the server.
@@ -188,8 +187,7 @@ public interface EconomyProvider {
      * @return A set of every {@link Currency} object that is available for the server.
      * @since v1.0.0
      */
-    @NotNull
-    Set<Currency> getCurrencies();
+    @NotNull Set<Currency> getCurrencies();
 
     /**
      * Get the String identifier of the primary or main {@link Currency} of the economy.
@@ -213,8 +211,7 @@ public interface EconomyProvider {
      *         currency is already registered, {@link TriState#UNSPECIFIED}.
      * @since v1.0.0
      */
-    @NotNull
-    CompletableFuture<Response<TriState>> registerCurrency(@NotNull Currency currency);
+    @NotNull CompletableFuture<Response<TriState>> registerCurrency(@NotNull Currency currency);
 
     /**
      * Used to un-register a currency with the {@link EconomyProvider}.
@@ -226,7 +223,6 @@ public interface EconomyProvider {
      *         currency is not registered already, {@link TriState#UNSPECIFIED}.
      * @since v2.0.0
      */
-    @NotNull
-    CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull Currency currency);
+    @NotNull CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull Currency currency);
 
 }

@@ -27,8 +27,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * An Account is something that holds a balance and is associated with
- * something bound by a UUID. For example, a PlayerAccount is bound to
- * a Player on a server by their UUID.
+ * an identifier, which is specific to the account type. For example,
+ * {@link PlayerAccount player accounts} use {@link UUID uuids} for
+ * identifier/identification, whereas {@link NonPlayerAccount non player accounts}
+ * use {@link me.lokka30.treasury.api.common.NamespacedKey namespaced keys}.
+ * <br>
+ * <b>WARNING:</b> This is a raw type. It does not hold any identifier/identification
+ * information.
  *
  * @author lokka30, Geolykt, creatorfromhell
  * @see EconomyProvider
@@ -37,14 +42,6 @@ import org.jetbrains.annotations.Nullable;
  * @since v1.0.0
  */
 public interface Account {
-
-    /**
-     * Gets the string-based unique identifier for this account.
-     *
-     * @return The String unique identifier for this account.
-     * @since v1.0.0
-     */
-    @NotNull String getIdentifier();
 
     /**
      * Returns the name of this {@link Account}, if specified. Empty optional otherwise.

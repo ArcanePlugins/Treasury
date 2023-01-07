@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.common.response.Response;
@@ -68,7 +69,8 @@ class NonPlayerAccountMigrationProcess extends PlayerAccountMigrationProcess {
     @NotNull CompletableFuture<Response<Account>> requestOrCreateAccount(
             @NotNull EconomyProvider provider, @NotNull String identifier
     ) {
-        return provider.accountAccessor().nonPlayer().withIdentifier(identifier).genericGet();
+        return provider.accountAccessor().nonPlayer().withIdentifier(NamespacedKey.fromString(
+                identifier)).genericGet();
     }
 
     @Override

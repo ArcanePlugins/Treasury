@@ -6,6 +6,7 @@ package me.lokka30.treasury.api.economy.account.accessor;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
@@ -20,20 +21,22 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class NonPlayerAccountAccessor {
 
-    private String identifier, name;
+    private String name;
+    private NamespacedKey identifier;
 
     protected NonPlayerAccountAccessor() {
     }
 
     /**
-     * Specifies the identifier of the accessed/created {@link NonPlayerAccount non player account}
+     * Specifies the {@link NamespacedKey} identifier of the accessed/created
+     * {@link NonPlayerAccount non player account}
      *
      * @param identifier account identifier
      * @return this instance for chaining
      * @since 2.0.0
      */
     @NotNull
-    public NonPlayerAccountAccessor withIdentifier(@NotNull String identifier) {
+    public NonPlayerAccountAccessor withIdentifier(@NotNull NamespacedKey identifier) {
         this.identifier = Objects.requireNonNull(identifier, "identifier");
         return this;
     }
@@ -95,21 +98,25 @@ public abstract class NonPlayerAccountAccessor {
      */
     public static final class NonPlayerAccountCreateContext {
 
-        private final String identifier, name;
+        private final String name;
+        private final NamespacedKey identifier;
 
-        public NonPlayerAccountCreateContext(@NotNull String identifier, @Nullable String name) {
+        public NonPlayerAccountCreateContext(
+                @NotNull NamespacedKey identifier, @Nullable String name
+        ) {
             this.identifier = identifier;
             this.name = name;
         }
 
         /**
-         * Returns the {@link String identifier} of the {@link NonPlayerAccount non player account}
+         * Returns the {@link NamespacedKey identifier} of the {@link NonPlayerAccount non player
+         * account}
          * created/retrieved.
          *
          * @return string identifier
          */
         @NotNull
-        public String getIdentifier() {
+        public NamespacedKey getIdentifier() {
             return identifier;
         }
 
