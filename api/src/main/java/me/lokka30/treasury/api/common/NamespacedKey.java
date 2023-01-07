@@ -65,7 +65,7 @@ public final class NamespacedKey {
             }
         }
         if (columnCharOccurrences > 1 || columnCharOccurrences == 0) {
-            throw new IllegalArgumentException("namespacedKey string should contain a single ':'");
+            throw new IllegalArgumentException("namespacedKey string should only contain a single colon (':') character");
         }
         String[] parts = namespacedKey.split(":");
         String namespace = parts[0], key = parts[1];
