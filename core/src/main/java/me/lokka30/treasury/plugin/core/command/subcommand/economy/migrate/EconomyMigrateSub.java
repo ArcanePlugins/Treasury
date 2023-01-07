@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
@@ -298,7 +299,7 @@ public class EconomyMigrateSub implements Subcommand {
     private ProcessesCompletion migrateNonPlayerAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
     ) throws InterruptedException, ExecutionException {
-        Response<Collection<String>> accountIdResp = migration
+        Response<Collection<NamespacedKey>> accountIdResp = migration
                 .from()
                 .retrieveNonPlayerAccountIds()
                 .get();
@@ -307,13 +308,13 @@ public class EconomyMigrateSub implements Subcommand {
                     .getFailureReason()
                     .getDescription());
         }
-        Collection<String> accountIds = accountIdResp.getResult();
+        Collection<NamespacedKey> accountIds = accountIdResp.getResult();
         if (accountIds.isEmpty()) {
             return null;
         }
         List<Process> processes = new ArrayList<>(accountIds.size());
-        for (String id : accountIds) {
-            processes.add(new NonPlayerAccountMigrationProcess(initiator, id, migration));
+        for (NamespacedKey id : accountIds) {
+            processes.add(new NonPlayerAccountMigrationProcess(initiator, id.toString(), migration));
         }
 
         return TreasuryPlugin
