@@ -17,12 +17,6 @@ public interface NodeHolderPlayer extends NodeHolder {
 
     @NotNull UUID getUniqueId();
 
-    @Override
-    @NotNull
-    default String getIdentifier() {
-        return this.getUniqueId().toString();
-    }
-
     /**
      * Returns whether the specified {@link ContextSet context set} applies for this player node
      * holder.

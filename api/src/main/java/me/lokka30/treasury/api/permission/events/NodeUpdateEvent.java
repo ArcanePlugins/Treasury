@@ -6,16 +6,18 @@ package me.lokka30.treasury.api.permission.events;
 
 import me.lokka30.treasury.api.permission.node.Node;
 import me.lokka30.treasury.api.permission.node.holder.NodeHolder;
+import org.jetbrains.annotations.NotNull;
 
 public class NodeUpdateEvent extends NodeEvent {
 
     private final NodeHolder nodeHolder;
 
-    public NodeUpdateEvent(NodeHolder nodeHolder, Node<?> node) {
+    public NodeUpdateEvent(@NotNull NodeHolder nodeHolder, @NotNull Node<?> node) {
         super(node);
         this.nodeHolder = nodeHolder;
     }
 
+    @NotNull
     public NodeHolder getNodeHolder() {
         return nodeHolder;
     }

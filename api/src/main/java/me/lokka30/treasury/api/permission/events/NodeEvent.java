@@ -6,21 +6,23 @@ package me.lokka30.treasury.api.permission.events;
 
 import me.lokka30.treasury.api.common.event.Cancellable;
 import me.lokka30.treasury.api.permission.node.Node;
+import org.jetbrains.annotations.NotNull;
 
 public class NodeEvent implements Cancellable {
 
     private Node<?> node;
     private boolean cancelled;
 
-    public NodeEvent(Node<?> node) {
+    public NodeEvent(@NotNull Node<?> node) {
         this.node = node;
     }
 
+    @NotNull
     public Node<?> getNode() {
         return this.node;
     }
 
-    public void setNode(Node<?> node) {
+    public void setNode(@NotNull Node<?> node) {
         this.node = node;
     }
 

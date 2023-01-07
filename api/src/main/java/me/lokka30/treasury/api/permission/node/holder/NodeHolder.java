@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface NodeHolder {
 
-    @NotNull String getIdentifier();
-
     @Nullable NodeHolder parentNodeHolder();
 
     @NotNull CompletableFuture<Response<Collection<Node<?>>>> allNodes();
