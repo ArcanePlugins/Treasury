@@ -8,11 +8,12 @@ import me.lokka30.treasury.api.common.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This is used to differentiate between a {@link PlayerAccount player account} and an
- * {@link Account account} that is not associated with a player.
+ * Represents a non-player account. A non-player account is an account that is not owned by a
+ * player. Such account might be, for example, a bank account.
  *
  * @author lokka30, MrNemo64, MrIvanPlays
  * @see Account
+ * @see NonPlayerAccount
  * @since v1.0.0
  */
 public interface NonPlayerAccount extends Account {

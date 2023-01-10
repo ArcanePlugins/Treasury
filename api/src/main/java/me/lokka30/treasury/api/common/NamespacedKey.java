@@ -12,6 +12,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a namespaced key, used for unique identification of any so-called "non-player"
  * object the Treasury APIs have.
+ * <br>
+ * A namespaced key is created from 2 parts: a namespace, and a key. In this implementation,
+ * they're both represented via the {@link String} object. Namespacing keys allows for having the
+ * same key "name" with a different namespace e.g. "treasury:test" and "economy:test", hence
+ * their proven advantage over just a single {@code String} for identification.
  *
  * @author MrIvanPlays
  * @since 2.0.0

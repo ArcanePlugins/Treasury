@@ -16,8 +16,9 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a transaction, made by an {@link me.lokka30.treasury.api.economy.account.Account}.
- * A transaction is a move on a specific entity's balance, whether it is a {@link EconomyTransactionType#DEPOSIT} or
- * {@link EconomyTransactionType#WITHDRAWAL}.
+ * A transaction is a move on a specific entity's balance, whether it is a
+ * {@link EconomyTransactionType#DEPOSIT},
+ * {@link EconomyTransactionType#WITHDRAWAL} or {@link EconomyTransactionType#SET}.
  *
  * @author lokka30, MrIvanPlays
  * @since v1.0.0

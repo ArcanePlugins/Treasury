@@ -65,7 +65,8 @@ public final class AccountData {
     }
 
     /**
-     * Returns whether this account data holds a {@link PlayerAccount player account} or {link NonPlayerAccount non-player account} data.
+     * Returns whether this account data holds a {@link PlayerAccount player account} or
+     * {@link NonPlayerAccount non-player account} data.
      *
      * @return whether held data references a player account
      * @since 2.0.0

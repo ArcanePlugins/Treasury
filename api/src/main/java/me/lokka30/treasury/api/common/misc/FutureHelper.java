@@ -15,7 +15,7 @@ import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A utility class to help with {@link CompletableFuture} stuff
+ * A utility class to help with {@link CompletableFuture completable futures}.
  *
  * @author MrIvanPlays, A248
  * @since 1.2.1

@@ -16,6 +16,13 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an enum, containing commonly used {@link FailureReason failure reasons} for the
+ * economy api.
+ *
+ * @author Jikoo, lokka30, creatorfromhell, MrIvanPlays
+ * @since v1.0.0
+ */
 public enum EconomyFailureReason implements FailureReason {
 
     /**
@@ -33,24 +40,6 @@ public enum EconomyFailureReason implements FailureReason {
         @Override
         public @NotNull String getDescription() {
             return "The feature is currently not available during migration.";
-        }
-    },
-
-    /**
-     * A constant representing failure due to request cancellation.
-     * <p>
-     * "Request cancellation" could be anything that results in a request being cancelled, server
-     * shutdown, thread interruption, etc.
-     *
-     * @since v1.0.0
-     */
-    REQUEST_CANCELLED {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public @NotNull String getDescription() {
-            return "The pending action requested was cancelled.";
         }
     },
 
