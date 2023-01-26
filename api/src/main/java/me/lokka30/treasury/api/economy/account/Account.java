@@ -44,11 +44,10 @@ import org.jetbrains.annotations.Nullable;
 public interface Account {
 
     /**
-     * Returns the name of this {@link Account}, if specified. Empty optional otherwise.
+     * Returns the name of this {@link Account}, if specified. Otherwise, an empty
+     * {@link Optional} is returned.
      *
-     * <p>A economy provider may choose not to provide a name.
-     *
-     * @return an optional fulfilled with a name or an empty optional
+     * @return an optional, fulfilled with either a name or an empty optional.
      * @since v1.0.0
      */
     @NotNull
