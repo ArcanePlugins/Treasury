@@ -26,9 +26,9 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Implementors providing and managing economy data create a class
- * which implements this interface to be registered in
- * the specific platform they're implementing it for.
+ * Implementors providing and managing economy data create a class which implements this
+ * interface to be registered in Treasury's {@link me.lokka30.treasury.api.common.service
+ * Services API}.
  *
  * @author lokka30, Jikoo, MrIvanPlays, NoahvdAa, creatorfromhell
  * @since v1.0.0
@@ -50,6 +50,10 @@ public interface EconomyProvider {
 
     /**
      * Request whether the specified {@link AccountData} has an associated {@link Account}.
+     * <br>
+     * This is here for edge case situations, where calling the {@link #accountAccessor()} does
+     * not make sense. Per standard, calling the {@link #accountAccessor()} will give an account,
+     * whether just created or pulled from a database.
      *
      * @param accountData data about the account type and specific account identifiers
      * @return future with {@link Response} which if successful returns the resulting {@link TriState}

@@ -26,12 +26,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A PlayerAccount is an Account owned by a Player.
- * Economy providers are likely to create player accounts
- * for players when they join the server, although
- * this is optional, which should be taken into consideration
- * when trying to access a player account which may not exist
- * yet for a player.
+ * A {@code PlayerAccount} is an {@link Account account} owned by a Player. Economy providers are
+ * likely to create player accounts for players when they join the server, although this is
+ * optional.
+ * <br>
+ * A Player, on all the platforms Treasury plugin aims to support, is described as a minecraft
+ * client, mainly identifiable by a {@link #getUniqueId() unique-id}.
  *
  * @author lokka30, Geolykt, creatorfromhell
  * @see Account
@@ -57,9 +57,9 @@ public interface PlayerAccount extends Account {
     }
 
     /**
-     * Get the {@link UUID} of the {@code Account}.
+     * Get the {@link UUID unique identifier} of this {@code PlayerAccount}.
      *
-     * @return uuid of the Account.
+     * @return account identifier
      * @see UUID
      * @since v1.0.0
      */

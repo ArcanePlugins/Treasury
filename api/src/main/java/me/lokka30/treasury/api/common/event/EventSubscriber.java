@@ -9,8 +9,11 @@ import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a subscriber of an event. This should be used only if you want to block event
- * execution.
+ * Represents a subscriber of an event. An event subscriber is an object that listens for incoming
+ * event calls.
+ * <br>
+ * Best practice is to use this for complex event subscribers, e.g. when event call block is needed,
+ * and use the {@link SimpleEventSubscriber} for so-called "simple" event subscribers.
  *
  * <p>Examples:
  * <pre>

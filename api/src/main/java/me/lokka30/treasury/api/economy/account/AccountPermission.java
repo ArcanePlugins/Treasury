@@ -11,7 +11,8 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
 /**
- * Enum that holds the permissions of an {@link Account} that is shared among multiple players.
+ * Represents an enum, describing all the permissions a {@link PlayerAccount player account} may
+ * have on a {@link NonPlayerAccount non player account}.
  *
  * @author MrNemo64
  * @see Account
