@@ -73,7 +73,15 @@ public interface Currency {
     @NotNull String getDisplayNamePlural();
 
     /**
-     * Gets the currency's default number of decimal digits when formatting this currency.
+     * Gets the currency's precision of fractional digits when formatting this currency.
+     * <p>
+     * This method concerns precision, not formatting. The economy provider is expected to handle
+     * numbers internally with <i>x</i> fractional digits of precision.
+     * <p>
+     * For instance, if you are using the SQL data type {@code DECIMAL(38, 4)}, you are storing
+     * numbers with a precision of {@code 4} fractional digits.
+     * <p>
+     * It is recommended that you have a precision of three or more fractional digits.
      *
      * @return The currency's default number of decimal digits when formatting this currency.
      * @since v1.0.0
