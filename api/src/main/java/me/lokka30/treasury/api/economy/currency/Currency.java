@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
@@ -46,12 +45,20 @@ public interface Currency {
     @NotNull String getSymbol();
 
     /**
-     * Gets the currency's decimal character to be used for formatting purposes.
+     * Gets the currency's decimal character for the specified {@link Locale locale} to be used for
+     * formatting purposes.
+     * <p>
+     * The given {@link Locale locale} may be null (unspecified), in this case, the decimal
+     * character of this {@link Currency currency}'s preferred locale should be returned.
+     * <p>
+     * If the decimal character for a given {@link Locale locale} is not available, the decimal
+     * character of this {@link Currency currency}'s preferred locale should be returned.
      *
-     * @return The currency's decimal character.
-     * @since v1.0.0
+     * @return decimal character of the given locale, if available (may fallback on preferred
+     * locale).
+     * @since v2.0.0
      */
-    char getDecimal();
+    char getDecimal(@Nullable Locale locale);
 
     /**
      * Gets the singular form of the currency's user-friendly display name.
@@ -107,6 +114,7 @@ public interface Currency {
      *
      * @param account the account for which the starting balance shall be retrieved.
      * @return the starting balance of this currency for the specified account
+     * @since v2.0.0
      */
     @NotNull
     BigDecimal getStartingBalance(@NotNull Account account);
@@ -121,7 +129,7 @@ public interface Currency {
      * conversion of 1 BGN -> EUR will result in {@code 0.51129188} EUR.
      *
      * @return conversion rate
-     * @since 2.0.0
+     * @since v2.0.0
      */
     @NotNull BigDecimal getConversionRate();
 

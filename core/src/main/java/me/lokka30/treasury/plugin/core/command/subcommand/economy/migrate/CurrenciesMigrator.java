@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,8 +97,8 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
-            public char getDecimal() {
-                return c.getDecimal();
+            public char getDecimal(@Nullable Locale locale) {
+                return c.getDecimal(locale);
             }
 
             @Override
@@ -121,6 +122,11 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
+            public @NotNull BigDecimal getStartingBalance(@NotNull final Account account) {
+                return c.getStartingBalance(account);
+            }
+
+            @Override
             public @NotNull BigDecimal getConversionRate() {
                 return c.getConversionRate();
             }
@@ -133,17 +139,17 @@ class CurrenciesMigrator implements Runnable {
 
             @Override
             public @NotNull String format(
-                    @NotNull BigDecimal amount,
-                    @Nullable Locale locale
+                @NotNull BigDecimal amount,
+                @Nullable Locale locale
             ) {
                 return c.format(amount, locale);
             }
 
             @Override
             public @NotNull String format(
-                    @NotNull BigDecimal amount,
-                    @Nullable Locale locale,
-                    final int precision
+                @NotNull BigDecimal amount,
+                @Nullable Locale locale,
+                final int precision
             ) {
                 return c.format(amount, locale, precision);
             }

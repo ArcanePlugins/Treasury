@@ -17,6 +17,7 @@ import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -35,7 +36,8 @@ import org.jetbrains.annotations.Nullable;
  */
 class MigrationEconomy implements EconomyProvider {
     
-    private static final FailureReason MIGRATION = () -> "The feature is currently not available during migration.";
+    private static final FailureReason MIGRATION = () ->
+            "The feature is currently not available during migration.";
 
     private final @NotNull Currency currency;
     private final @NotNull AccountAccessor accountAccessor;
@@ -53,18 +55,18 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public char getDecimal() {
-                return 0;
+            public char getDecimal(final @Nullable Locale locale) {
+                return '.';
             }
 
             @Override
             public @NotNull String getDisplayNameSingular() {
-                return "MigrationMoney";
+                return getIdentifier();
             }
 
             @Override
             public @NotNull String getDisplayNamePlural() {
-                return "MigrationMonies";
+                return getIdentifier();
             }
 
             @Override
@@ -75,6 +77,11 @@ class MigrationEconomy implements EconomyProvider {
             @Override
             public boolean isPrimary() {
                 return false;
+            }
+
+            @Override
+            public @NotNull BigDecimal getStartingBalance(@NotNull final Account account) {
+                return BigDecimal.ZERO;
             }
 
             @Override
