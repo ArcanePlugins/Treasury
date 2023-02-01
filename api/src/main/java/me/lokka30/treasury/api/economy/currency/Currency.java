@@ -89,21 +89,22 @@ public interface Currency {
     int getPrecision();
 
     /**
-     * Checks if this currency is the primary currency to use.
+     * Checks if this currency is the primary currency to use of this economy provider.
      *
-     * @return True if this currency is the primary currency. This method should use a global
-     *         context if multi-world support is not present, otherwise it should use the default world
-     *         for this check.
+     * @return {@code true} if this currency is the primary currency of this economy provider,
+     *         otherwise, {@code} false.
      * @since v1.0.0
      */
     boolean isPrimary();
 
     /**
      * Get the conversion rate of this {@code Currency}.
-     * <p>A conversion rate is a rate of how this currency will be converted to other currencies.
-     * As an example, the conversion rate of BGN and EUR are as following: {@code 0.511292} and
-     * {@code 0.884059}. By the default formula used in {@link #to(Currency, BigDecimal)}, the
-     * conversion of 1 BGN -> EUR will result in {@code 0.51129188} of EUR.
+     * <p>
+     * A conversion rate is a rate of how this currency will be converted to other currencies.
+     * <p>
+     * For example, the conversion rate of BGN and EUR may be {@code 0.511292} and {@code 0.884059},
+     * respectively. By the default formula used in {@link #to(Currency, BigDecimal)}, the
+     * conversion of 1 BGN -> EUR will result in {@code 0.51129188} EUR.
      *
      * @return conversion rate
      * @since 2.0.0
