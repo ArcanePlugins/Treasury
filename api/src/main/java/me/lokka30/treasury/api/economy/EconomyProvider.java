@@ -222,7 +222,7 @@ public interface EconomyProvider {
      *
      * @param currency The currency to un-register with the {@link EconomyProvider}.
      * @return future with {@link Response} which if successful returns a {@link TriState}
-     *         whether the registration was successful. IF the currency was successfully registered,
+     *         whether the registration was successful. If the currency was successfully registered,
      *         this shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that
      *         currency is not registered already, {@link TriState#UNSPECIFIED}.
      * @since v2.0.0

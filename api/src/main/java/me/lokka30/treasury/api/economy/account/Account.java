@@ -74,6 +74,15 @@ public interface Account {
     CompletableFuture<Response<BigDecimal>> retrieveBalance(@NotNull Currency currency);
 
     /**
+     * Gets the starting balance of this {@code Account} for the specified {@link Currency currency}
+     *
+     * @param currency the currency for which the starting balance shall be retrieved.
+     * @return the starting balance of this account for the specified currency
+     */
+    @NotNull
+    BigDecimal getStartingBalance(@NotNull Currency currency);
+
+    /**
      * Withdraw an amount from the {@code Account} balance.
      *
      * @param amount    the amount the balance will be reduced by

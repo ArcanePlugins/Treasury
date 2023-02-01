@@ -15,9 +15,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
+import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.response.EconomyFailureReason;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
@@ -46,6 +46,12 @@ public interface PlayerAccount extends Account {
     Map<AccountPermission, TriState> ALL_PERMISSIONS_MAP = Collections.unmodifiableMap(Arrays
             .stream(AccountPermission.values())
             .collect(Collectors.toConcurrentMap(p -> p, $ -> TriState.TRUE)));
+
+    /**
+     * A {@link FailureReason}, describing that for {@code PlayerAccounts}, modifying the
+     * permissions are not supported.
+     */
+    FailureReason PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED = () -> "Cannot modify the permissions of a player account!";
 
     /**
      * {@inheritDoc}
@@ -141,7 +147,7 @@ public interface PlayerAccount extends Account {
     ) {
         Objects.requireNonNull(player, "player");
 
-        return CompletableFuture.completedFuture(Response.failure(EconomyFailureReason.PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
+        return CompletableFuture.completedFuture(Response.failure(PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
     /**
@@ -172,7 +178,7 @@ public interface PlayerAccount extends Account {
                 .newBuilder()
                 .withCurrency(currency)
                 .withInitiator(initiator)
-                .withTransactionAmount(currency.getStartingBalance(getUniqueId()))
+                .withTransactionAmount(this.getStartingBalance(currency))
                 .withReason(reason)
                 .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.SET)
