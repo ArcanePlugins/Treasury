@@ -150,39 +150,4 @@ public interface PlayerAccount extends Account {
         return CompletableFuture.completedFuture(Response.failure(PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
-    /**
-     * Resets the player's balance. Unlike resetting balances of non-player
-     * and non player accounts, resetting a player account's balance will set the
-     * player's balance to the 'starting balance' of the currency (other
-     * accounts set it to zero instead). This is why the overridden method exists.
-     *
-     * @param initiator the one who initiated this transaction
-     * @param currency  of the balance being reset
-     * @return see {@link Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)}
-     * @see Account#resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)
-     * @since v1.0.0
-     */
-    @Override
-    @NotNull
-    default CompletableFuture<Response<BigDecimal>> resetBalance(
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Currency currency,
-            @NotNull EconomyTransactionImportance importance,
-            @Nullable String reason
-    ) {
-        Objects.requireNonNull(initiator, "initiator");
-        Objects.requireNonNull(currency, "currency");
-        Objects.requireNonNull(importance, "importance");
-
-        return doTransaction(EconomyTransaction
-                .newBuilder()
-                .withCurrency(currency)
-                .withInitiator(initiator)
-                .withTransactionAmount(this.getStartingBalance(currency))
-                .withReason(reason)
-                .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.SET)
-                .build());
-    }
-
 }

@@ -74,7 +74,8 @@ public interface Account {
     CompletableFuture<Response<BigDecimal>> retrieveBalance(@NotNull Currency currency);
 
     /**
-     * Gets the starting balance of this {@code Account} for the specified {@link Currency currency}
+     * Gets the starting balance of this {@code Account} for the specified {@link Currency
+     * currency}.
      *
      * @param currency the currency for which the starting balance shall be retrieved.
      * @return the starting balance of this account for the specified currency
@@ -295,7 +296,7 @@ public interface Account {
                 .newBuilder()
                 .withCurrency(currency)
                 .withInitiator(initiator)
-                .withTransactionAmount(BigDecimal.ZERO)
+                .withTransactionAmount(getStartingBalance(currency))
                 .withReason(reason)
                 .withImportance(importance)
                 .withTransactionType(EconomyTransactionType.SET)
