@@ -5,6 +5,7 @@
 package me.lokka30.treasury.api.economy.currency;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -116,7 +117,10 @@ public interface Currency {
     ) {
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(amount, "amount");
-        return amount.multiply(this.getConversionRate()).divide(currency.getConversionRate());
+
+        return amount
+                .multiply(this.getConversionRate())
+                .divide(currency.getConversionRate(), RoundingMode.HALF_UP);
     }
 
     /**
