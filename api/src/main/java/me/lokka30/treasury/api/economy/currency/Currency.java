@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.economy.account.Account;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,6 +99,19 @@ public interface Currency {
     boolean isPrimary();
 
     /**
+     * Gets the starting balance of the specified {@link Account account} for this particular
+     * {@link Currency currency}.
+     * <p>
+     * An economy provider may choose to have different starting balances of this
+     * {@link Currency currency} on a per-{@link Account account} basis.
+     *
+     * @param account the account for which the starting balance shall be retrieved.
+     * @return the starting balance of this currency for the specified account
+     */
+    @NotNull
+    BigDecimal getStartingBalance(@NotNull Account account);
+
+    /**
      * Get the conversion rate of this {@code Currency}.
      * <p>
      * A conversion rate is a rate of how this currency will be converted to other currencies.
@@ -121,9 +135,7 @@ public interface Currency {
      * @since v1.0.0
      */
     @NotNull
-    default BigDecimal to(
-            @NotNull Currency currency, @NotNull BigDecimal amount
-    ) {
+    default BigDecimal to(@NotNull Currency currency, @NotNull BigDecimal amount) {
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(amount, "amount");
 
