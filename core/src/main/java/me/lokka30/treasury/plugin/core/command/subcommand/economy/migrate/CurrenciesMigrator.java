@@ -126,19 +126,9 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
-            public boolean supportsNegativeBalances() {
-                return c.supportsNegativeBalances();
-            }
-
-            @Override
             @NotNull
             public CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted) {
                 return c.parse(formatted);
-            }
-
-            @Override
-            public @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID) {
-                return c.getStartingBalance(playerID);
             }
 
             @Override

@@ -44,7 +44,7 @@ public interface Currency {
     @NotNull String getSymbol();
 
     /**
-     * Get's the currency's decimal character to be used for formatting purposes.
+     * Gets the currency's decimal character to be used for formatting purposes.
      *
      * @return The currency's decimal character.
      * @since v1.0.0
@@ -102,14 +102,6 @@ public interface Currency {
     @NotNull BigDecimal getConversionRate();
 
     /**
-     * Returns whether this {@code Currency} supports negative balances.
-     *
-     * @return boolean value
-     * @since v2.0.0
-     */
-    boolean supportsNegativeBalances();
-
-    /**
      * Used to convert this {@link Currency} to another based on the {@link #getConversionRate()}
      * of this {@code Currency} and the specified one.
      *
@@ -129,30 +121,16 @@ public interface Currency {
 
     /**
      * Used to get the BigDecimal representation of an amount represented by a formatted string.
-     * If the {@code formatted} value can't be parsed, then
-     * {@link me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR}
-     * should be used as the {@code FailureReason} for the failure reason.
+     * If the specified string cannot be parsed, a {@link Response} with a suitable
+     * {@link me.lokka30.treasury.api.common.response.FailureReason} shall be returned.
      *
      * @param formatted The formatted string to be converted to BigDecimal form.
      * @return future with {@link Response} which if successful returns the resulting
      *         {@link BigDecimal} that represents the deformatted amount of the formatted String.
-     * @see me.lokka30.treasury.api.economy.response.EconomyFailureReason#NUMBER_PARSING_ERROR
      * @since v1.0.0
      */
     @NotNull
     CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted);
-
-    /**
-     * Gets the starting balance of a specific player account for this currency.
-     * If a per-player starting balance system is not used, simply ignore the parameter.
-     *
-     * @param playerID The UUID of the player we are getting the starting balance for. If the
-     *                 'general' starting balance of a currency is desired (not for a specific
-     *                 player), then specify {@code null} for this parameter.
-     * @return The starting balance of the player for this currency.
-     * @since v1.0.0
-     */
-    @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID);
 
     /**
      * Used to translate an amount to a user readable format with the default precision.
