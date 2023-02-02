@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.economy.currency;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.response.Response;
@@ -59,6 +60,15 @@ public interface Currency {
      * @since v2.0.0
      */
     char getDecimal(@Nullable Locale locale);
+
+    /**
+     * Gets a map of each available {@link Currency#getDecimal(Locale) decimal character}, mapped
+     * by the locale it belongs to.
+     *
+     * @return map of decimal characters against which locale they each belong to
+     * @since v2.0.0
+     */
+    Map<Locale, Character> getLocaleDecimalMap();
 
     /**
      * Gets the singular form of the currency's user-friendly display name.
