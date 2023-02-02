@@ -7,6 +7,7 @@ package me.lokka30.treasury.api.permission;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.permission.node.NodeFactory;
 import me.lokka30.treasury.api.permission.node.holder.NodeHolderGroup;
@@ -21,8 +22,10 @@ public interface PermissionsProvider {
 
     @NotNull CompletableFuture<Response<Collection<UUID>>> allPlayerNodeHolderIds();
 
-    @NotNull CompletableFuture<Response<NodeHolderGroup>> retrieveOrCreateGroup(@NotNull String groupId);
+    @NotNull CompletableFuture<Response<NodeHolderGroup>> retrieveOrCreateGroup(@NotNull NamespacedKey groupId);
 
-    @NotNull CompletableFuture<Response<Collection<String>>> allGroupNodeHolderIds();
+    @NotNull CompletableFuture<Response<Collection<NamespacedKey>>> allGroupNodeHolderIds();
+
+    @NotNull NodeHolderGroup defaultGroup();
 
 }
