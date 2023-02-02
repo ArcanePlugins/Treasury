@@ -49,21 +49,21 @@ public interface Currency {
      * Gets the currency's decimal character for the specified {@link Locale locale} to be used for
      * formatting purposes.
      * <p>
-     * The given {@link Locale locale} may be null (unspecified), in this case, the decimal
-     * character of this {@link Currency currency}'s default locale should be returned.
+     * The given {@code locale} may be {@code null} (unspecified), in this case, the decimal
+     * character of this currency's default locale should be returned.
      * <p>
-     * If the decimal character for a given {@link Locale locale} is not available, the decimal
-     * character of this {@link Currency currency}'s default locale should be returned.
+     * If the decimal character for a given {@code Locale} is not available, the decimal
+     * character of this currency's default locale should be returned.
      *
-     * @return decimal character of the given locale, if available (may fallback on a default
-     * locale).
+     * @return decimal character of the given locale, if available (may fall back on a default
+     *         locale).
      * @since v2.0.0
      */
     char getDecimal(@Nullable Locale locale);
 
     /**
-     * Gets a map of each available {@link Currency#getDecimal(Locale) decimal character}, mapped
-     * by the locale it belongs to.
+     * Returns an immutable {@link Map} of each available {@link Currency#getDecimal(Locale)
+     * decimal character}, mapped by the locale it belongs to.
      *
      * @return map of decimal characters against which locale they each belong to
      * @since v2.0.0
@@ -107,7 +107,9 @@ public interface Currency {
     int getPrecision();
 
     /**
-     * Checks if this currency is the primary currency to use of this economy provider.
+     * Checks if this {@code Currency} is the primary currency to use of the
+     * {@link me.lokka30.treasury.api.economy.EconomyProvider economy provider} this {@code
+     * Currency} originated from.
      *
      * @return {@code true} if this currency is the primary currency of this economy provider,
      *         otherwise, {@code} false.
@@ -117,17 +119,16 @@ public interface Currency {
 
     /**
      * Gets the starting balance of the specified {@link Account account} for this particular
-     * {@link Currency currency}.
+     * {@code Currency}.
      * <p>
      * An economy provider may choose to have different starting balances of this
-     * {@link Currency currency} on a per-{@link Account account} basis.
+     * {@code Currency} on a per-{@link Account account} basis.
      *
      * @param account the account for which the starting balance shall be retrieved.
      * @return the starting balance of this currency for the specified account
      * @since v2.0.0
      */
-    @NotNull
-    BigDecimal getStartingBalance(@NotNull Account account);
+    @NotNull BigDecimal getStartingBalance(@NotNull Account account);
 
     /**
      * Get the conversion rate of this {@code Currency}.
@@ -157,9 +158,10 @@ public interface Currency {
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(amount, "amount");
 
-        return amount
-                .multiply(this.getConversionRate())
-                .divide(currency.getConversionRate(), RoundingMode.HALF_UP);
+        return amount.multiply(this.getConversionRate()).divide(
+                currency.getConversionRate(),
+                RoundingMode.HALF_UP
+        );
     }
 
     /**
@@ -178,10 +180,8 @@ public interface Currency {
      *         resulting {@link BigDecimal} that is represented by the specified string .
      * @since v2.0.0
      */
-    @NotNull
-    CompletableFuture<Response<BigDecimal>> parse(
-            @NotNull String formattedAmount,
-            @Nullable Locale locale
+    @NotNull CompletableFuture<Response<BigDecimal>> parse(
+            @NotNull String formattedAmount, @Nullable Locale locale
     );
 
     /**

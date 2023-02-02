@@ -6,7 +6,7 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -37,15 +37,18 @@ import org.jetbrains.annotations.Nullable;
  * @since v1.0.0
  */
 class MigrationEconomy implements EconomyProvider {
-    
-    private static final FailureReason MIGRATION = () ->
-            "The feature is currently not available during migration.";
+
+    private static final FailureReason MIGRATION = () -> "The feature is currently not available during migration.";
 
     private final @NotNull Currency currency;
     private final @NotNull AccountAccessor accountAccessor;
 
     MigrationEconomy() {
         this.currency = new Currency() {
+
+            private Map<Locale, Character> decimalMap = Collections
+                    .singletonMap(Locale.getDefault(), '.');
+
             @Override
             public @NotNull String getIdentifier() {
                 return "MigrationMoney";
@@ -63,9 +66,7 @@ class MigrationEconomy implements EconomyProvider {
 
             @Override
             public @NotNull Map<Locale, Character> getLocaleDecimalMap() {
-                final Map<Locale, Character> map = new HashMap<>();
-                map.put(Locale.getDefault(), '.');
-                return map;
+                return this.decimalMap;
             }
 
             @Override
@@ -95,14 +96,13 @@ class MigrationEconomy implements EconomyProvider {
 
             @Override
             public @NotNull BigDecimal getConversionRate() {
-                return new BigDecimal(1);
+                return BigDecimal.ONE;
             }
 
             @Override
             @NotNull
             public CompletableFuture<Response<BigDecimal>> parse(
-                    @NotNull final String formatted,
-                    @Nullable final Locale locale
+                    @NotNull final String formatted, @Nullable final Locale locale
             ) {
                 return CompletableFuture.completedFuture(Response.failure(MIGRATION));
             }
@@ -133,8 +133,7 @@ class MigrationEconomy implements EconomyProvider {
                     protected @NotNull CompletableFuture<Response<PlayerAccount>> getOrCreate(
                             @NotNull PlayerAccountCreateContext context
                     ) {
-                        return CompletableFuture.completedFuture(Response.failure(
-                                MIGRATION));
+                        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
                     }
                 };
             }
@@ -146,8 +145,7 @@ class MigrationEconomy implements EconomyProvider {
                     protected @NotNull CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
                             @NotNull NonPlayerAccountCreateContext context
                     ) {
-                        return CompletableFuture.completedFuture(Response.failure(
-                                MIGRATION));
+                        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
                     }
                 };
             }

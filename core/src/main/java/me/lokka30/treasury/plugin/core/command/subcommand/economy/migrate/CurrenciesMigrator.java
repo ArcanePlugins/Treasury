@@ -138,25 +138,21 @@ class CurrenciesMigrator implements Runnable {
             @Override
             @NotNull
             public CompletableFuture<Response<BigDecimal>> parse(
-                    @NotNull String formatted,
-                    @Nullable Locale locale
+                    @NotNull String formatted, @Nullable Locale locale
             ) {
                 return c.parse(formatted, locale);
             }
 
             @Override
             public @NotNull String format(
-                    @NotNull BigDecimal amount,
-                    @Nullable Locale locale
+                    @NotNull BigDecimal amount, @Nullable Locale locale
             ) {
                 return c.format(amount, locale);
             }
 
             @Override
             public @NotNull String format(
-                    @NotNull BigDecimal amount,
-                    @Nullable Locale locale,
-                    final int precision
+                    @NotNull BigDecimal amount, @Nullable Locale locale, final int precision
             ) {
                 return c.format(amount, locale, precision);
             }
