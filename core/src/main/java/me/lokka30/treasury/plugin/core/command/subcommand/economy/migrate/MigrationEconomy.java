@@ -100,7 +100,10 @@ class MigrationEconomy implements EconomyProvider {
 
             @Override
             @NotNull
-            public CompletableFuture<Response<BigDecimal>> parse(@NotNull final String formatted) {
+            public CompletableFuture<Response<BigDecimal>> parse(
+                    @NotNull final String formatted,
+                    @Nullable final Locale locale
+            ) {
                 return CompletableFuture.completedFuture(Response.failure(MIGRATION));
             }
 

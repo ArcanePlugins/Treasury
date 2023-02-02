@@ -50,12 +50,12 @@ public interface Currency {
      * formatting purposes.
      * <p>
      * The given {@link Locale locale} may be null (unspecified), in this case, the decimal
-     * character of this {@link Currency currency}'s preferred locale should be returned.
+     * character of this {@link Currency currency}'s default locale should be returned.
      * <p>
      * If the decimal character for a given {@link Locale locale} is not available, the decimal
-     * character of this {@link Currency currency}'s preferred locale should be returned.
+     * character of this {@link Currency currency}'s default locale should be returned.
      *
-     * @return decimal character of the given locale, if available (may fallback on preferred
+     * @return decimal character of the given locale, if available (may fallback on a default
      * locale).
      * @since v2.0.0
      */
@@ -163,33 +163,45 @@ public interface Currency {
     }
 
     /**
-     * Used to get the BigDecimal representation of an amount represented by a formatted string.
+     * Converts a formatted amount string (i.e., one generated via
+     * {@link Currency#format(BigDecimal, Locale)}) into the BigDecimal value it represents,
+     * according to the specified locale (nullable).
+     * <p>
+     * If a per-locale formatting system is not used by the currency, the parameter can be ignored.
+     * If the specified locale is null, the currency implementation should assume a default.
+     * <p>
      * If the specified string cannot be parsed, a {@link Response} with a suitable
-     * {@link me.lokka30.treasury.api.common.response.FailureReason} shall be returned.
+     * {@link me.lokka30.treasury.api.common.response.FailureReason} is returned.
      *
-     * @param formatted The formatted string to be converted to BigDecimal form.
-     * @return future with {@link Response} which if successful returns the resulting
-     *         {@link BigDecimal} that represents the deformatted amount of the formatted String.
-     * @since v1.0.0
+     * @param formattedAmount formatted amount string to be parsed
+     * @return future containing a {@link Response response} which, if successful, contains the
+     *         resulting {@link BigDecimal} that is represented by the specified string .
+     * @since v2.0.0
      */
     @NotNull
-    CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted);
+    CompletableFuture<Response<BigDecimal>> parse(
+            @NotNull String formattedAmount,
+            @Nullable Locale locale
+    );
 
     /**
-     * Used to translate an amount to a user readable format with the default precision.
-     * If a per-locale format is not used, simply ignore the parameter.
+     * Translates the given {@link BigDecimal amount} to a human-readable representation as a
+     * formatted string. The formatted string should be determined by the given
+     * {@link Locale locale}.
      *
      * @param amount The amount to format.
      * @param locale The locale to use for formatting the balance. This value may be
-     *               {@code null} if the provider should provide their 'default' Locale.
-     * @return The formatted text.
+     *               {@code null} if the provider should assume a default locale.
+     * @return human-readable representation of the {@link BigDecimal amount} as a formatted string
      * @since v1.0.0
      */
     @NotNull String format(@NotNull BigDecimal amount, @Nullable Locale locale);
 
     /**
      * Used to translate an amount to a user readable format with the specified amount of decimal places.
-     * If a per-locale format is not used, simply ignore the parameter.
+     * <p>
+     * If a per-locale formatting system is not used by the currency, the parameter can be ignored -
+     * likewise with the specified precision value.
      *
      * @param amount    The amount to format.
      * @param locale    The locale to use for formatting the balance. This value may be
