@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.FailureReason;
 import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +65,16 @@ public interface PlayerAccount extends Account {
      * @since v1.0.0
      */
     @NotNull UUID getUniqueId();
+
+    /**
+     * Get this {@code PlayerAccount} as a {@link EconomyTransactionInitiator transaction
+     * initiator}.
+     * <p>
+     * The return value of this method shall be cached upon a {@code PlayerAccount} creation.
+     *
+     * @return this player account, represented by an economy transaction initiator
+     */
+    @NotNull EconomyTransactionInitiator<UUID> getAsTransactionInitiator();
 
     /**
      * {@inheritDoc}
