@@ -12,7 +12,8 @@ import org.jetbrains.annotations.Nullable;
  * The PLAYER and PLUGIN types should always provide data which matches types:
  * <ul>
  *     <li>For PLAYER type: data type should be an {@link UUID} of the player, whom initiated the transaction</li>
- *     <li>For PLUGIN type: data type should be am {@link String}, fulfilled with the plugin name, whom initiated the
+ *     <li>For PLUGIN type: data type should be an {@link String}, fulfilled with the plugin
+ *     name, whom initiated the
  *     transaction.</li>
  * </ul>
  * <p>In most of the cases, if the initiator is of type SERVER, {@link EconomyTransactionInitiator#SERVER} is going to be fine,
@@ -72,7 +73,9 @@ public interface EconomyTransactionInitiator<T> {
      * @return new economy transaction initiator
      */
     @NotNull
-    static <T> EconomyTransactionInitiator<T> createInitiator(@NotNull Type type, @Nullable T data) {
+    static <T> EconomyTransactionInitiator<T> createInitiator(
+            @NotNull Type type, @Nullable T data
+    ) {
         Objects.requireNonNull(type, "type");
         switch (type) {
             case PLAYER:
@@ -131,8 +134,7 @@ public interface EconomyTransactionInitiator<T> {
      *
      * @return data
      */
-    @Nullable
-    T getData();
+    @Nullable T getData();
 
     /**
      * Get the {@link Type} for this {@code EconomyTransactionInitiator}

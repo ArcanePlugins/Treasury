@@ -26,9 +26,9 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Implementors providing and managing economy data create a class
- * which implements this interface to be registered in
- * the specific platform they're implementing it for.
+ * Implementors providing and managing economy data create a class which implements this
+ * interface to be registered in Treasury's {@link me.lokka30.treasury.api.common.service
+ * Services API}.
  *
  * @author lokka30, Jikoo, MrIvanPlays, NoahvdAa, creatorfromhell
  * @since v1.0.0
@@ -50,6 +50,10 @@ public interface EconomyProvider {
 
     /**
      * Request whether the specified {@link AccountData} has an associated {@link Account}.
+     * <br>
+     * This is here for edge case situations, where calling the {@link #accountAccessor()} does
+     * not make sense. Per standard, calling the {@link #accountAccessor()} will give an account,
+     * whether just created or pulled from a database.
      *
      * @param accountData data about the account type and specific account identifiers
      * @return future with {@link Response} which if successful returns the resulting {@link TriState}
@@ -83,7 +87,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<NamespacedKey>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
+    default CompletableFuture<Collection<Response<NonPlayerAccount>>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
 
         return retrieveNonPlayerAccountIds().thenCompose(result -> {
@@ -100,7 +104,7 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.mapJoinFilter(res -> {
+            return FutureHelper.joinAndFilter(res -> {
                 if (!res.isSuccessful()) {
                     return CompletableFuture.completedFuture(TriState.FALSE);
                 } else {
@@ -111,7 +115,7 @@ public interface EconomyProvider {
                         return CompletableFuture.completedFuture(res1.getResult());
                     });
                 }
-            }, res -> res.getResult().getIdentifier(), accountFutures);
+            }, accountFutures);
         });
     }
 
@@ -125,7 +129,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<NamespacedKey>> retrieveAllAccountsPlayerHasPermission(
+    default CompletableFuture<Collection<Response<NonPlayerAccount>>> retrieveAllAccountsPlayerHasPermission(
             @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
@@ -145,7 +149,7 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.mapJoinFilter(res -> {
+            return FutureHelper.joinAndFilter(res -> {
                 if (!res.isSuccessful()) {
                     return CompletableFuture.completedFuture(TriState.FALSE);
                 } else {
@@ -159,7 +163,7 @@ public interface EconomyProvider {
                                 return CompletableFuture.completedFuture(res1.getResult());
                             });
                 }
-            }, res -> res.getResult().getIdentifier(), accountFutures);
+            }, accountFutures);
         });
     }
 
@@ -218,7 +222,7 @@ public interface EconomyProvider {
      *
      * @param currency The currency to un-register with the {@link EconomyProvider}.
      * @return future with {@link Response} which if successful returns a {@link TriState}
-     *         whether the registration was successful. IF the currency was successfully registered,
+     *         whether the registration was successful. If the currency was successfully registered,
      *         this shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that
      *         currency is not registered already, {@link TriState#UNSPECIFIED}.
      * @since v2.0.0

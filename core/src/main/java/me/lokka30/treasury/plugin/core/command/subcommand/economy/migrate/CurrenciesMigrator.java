@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
+import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,8 +96,13 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
-            public char getDecimal() {
-                return c.getDecimal();
+            public char getDecimal(@Nullable Locale locale) {
+                return c.getDecimal(locale);
+            }
+
+            @Override
+            public @NotNull Map<Locale, Character> getLocaleDecimalMap() {
+                return c.getLocaleDecimalMap();
             }
 
             @Override
@@ -121,39 +126,33 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
+            public @NotNull BigDecimal getStartingBalance(@NotNull final Account account) {
+                return c.getStartingBalance(account);
+            }
+
+            @Override
             public @NotNull BigDecimal getConversionRate() {
                 return c.getConversionRate();
             }
 
             @Override
-            public boolean supportsNegativeBalances() {
-                return c.supportsNegativeBalances();
-            }
-
-            @Override
             @NotNull
-            public CompletableFuture<Response<BigDecimal>> parse(@NotNull String formatted) {
-                return c.parse(formatted);
-            }
-
-            @Override
-            public @NotNull BigDecimal getStartingBalance(@Nullable UUID playerID) {
-                return c.getStartingBalance(playerID);
+            public CompletableFuture<Response<BigDecimal>> parse(
+                    @NotNull String formatted, @Nullable Locale locale
+            ) {
+                return c.parse(formatted, locale);
             }
 
             @Override
             public @NotNull String format(
-                    @NotNull BigDecimal amount,
-                    @Nullable Locale locale
+                    @NotNull BigDecimal amount, @Nullable Locale locale
             ) {
                 return c.format(amount, locale);
             }
 
             @Override
             public @NotNull String format(
-                    @NotNull BigDecimal amount,
-                    @Nullable Locale locale,
-                    final int precision
+                    @NotNull BigDecimal amount, @Nullable Locale locale, final int precision
             ) {
                 return c.format(amount, locale, precision);
             }

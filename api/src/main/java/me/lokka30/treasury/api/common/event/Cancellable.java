@@ -5,7 +5,10 @@
 package me.lokka30.treasury.api.common.event;
 
 /**
- * An interface, which can be implemented by events which should be cancellable.
+ * Represents an interface, which can be implemented by events, which should be cancellable.
+ * <br>
+ * Upon cancellation, events may postpone the execution of code, or events may require it for
+ * updating data in the event.
  *
  * @author MrIvanPlays
  * @since v1.1.0

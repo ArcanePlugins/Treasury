@@ -1,3 +1,6 @@
+### Local Development Files ###
+local/
+
 ### Eclipse ###
 .metadata
 bin/
