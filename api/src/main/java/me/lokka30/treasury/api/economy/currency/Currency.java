@@ -68,7 +68,7 @@ public interface Currency {
      * @return map of decimal characters against which locale they each belong to
      * @since v2.0.0
      */
-    Map<Locale, Character> getLocaleDecimalMap();
+    @NotNull Map<Locale, Character> getLocaleDecimalMap();
 
     /**
      * Gets the singular form of the currency's user-friendly display name.

@@ -6,8 +6,10 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -57,6 +59,13 @@ class MigrationEconomy implements EconomyProvider {
             @Override
             public char getDecimal(final @Nullable Locale locale) {
                 return '.';
+            }
+
+            @Override
+            public @NotNull Map<Locale, Character> getLocaleDecimalMap() {
+                final Map<Locale, Character> map = new HashMap<>();
+                map.put(Locale.getDefault(), '.');
+                return map;
             }
 
             @Override

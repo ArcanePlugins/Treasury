@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -99,6 +98,11 @@ class CurrenciesMigrator implements Runnable {
             @Override
             public char getDecimal(@Nullable Locale locale) {
                 return c.getDecimal(locale);
+            }
+
+            @Override
+            public @NotNull Map<Locale, Character> getLocaleDecimalMap() {
+                return c.getLocaleDecimalMap();
             }
 
             @Override
