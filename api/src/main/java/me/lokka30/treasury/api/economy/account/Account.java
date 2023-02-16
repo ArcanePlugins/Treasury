@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -411,6 +410,7 @@ public interface Account {
      * @return future with {@link Response} which if successful returns whether the permissions
      *         of the member were adjusted
      */
+    @NotNull
     CompletableFuture<Response<TriState>> setPermissions(
             @NotNull UUID player, @NotNull Map<AccountPermission, TriState> permissionsMap
     );
@@ -428,14 +428,14 @@ public interface Account {
     CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(@NotNull UUID player);
 
     /**
-     * Returns a {@link Map}, with the permissions of each account member.
+     * Returns a nested {@link Map}, with the permissions of each account member.
      *
-     * @return future which if successful returns a map of member id as a key and permissions as
-     *         values.
+     * @return future which if successful returns a map of member id as a key and permissions map as
+     *         value.
      * @since v2.0.0
      */
     @NotNull
-    CompletableFuture<Response<Map<UUID, Set<Map.Entry<AccountPermission, TriState>>>>> retrievePermissionsMap();
+    CompletableFuture<Response<Map<UUID, Map<AccountPermission, TriState>>>> retrievePermissionsMap();
 
     /**
      * Checks whether given player has the given permissions on this account.
