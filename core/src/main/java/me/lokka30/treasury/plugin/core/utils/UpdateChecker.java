@@ -37,14 +37,12 @@ public final class UpdateChecker {
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
         if (true) {
             // todo: v2 still in development, disable update checking
-            plugin
-                    .logger()
-                    .error("YOU ARE RUNNING UNDER HEAVY DEVELOPMENT VERSION OF TREASURY V2");
-            plugin
-                    .logger()
-                    .error("THESE VERSIONS ARE NOT INTENDED FOR THE REGULAR USER AND ARE INTENDED FOR DEVELOPERS ONLY");
-            plugin.logger().error("PLEASE CHECK FOR NEW BUILDS @ ci.mrivanplays.com");
-            plugin.logger().error("THESE BUILDS ARE ALPHA!!!!!!");
+            plugin.logger().warn("\n" +
+                    "You are running an in-development snapshot of Treasury v2.\n\n" +
+                    "These versions are only intended for advanced users to test on non-" +
+                    "production servers.\n" +
+                    "Plugins developed against Treasury v1 will not work with Treasury v2.\n\n" +
+                    "Please regularly check for new builds at << ci.mrivanplays.com >>.");
             return;
         }
         if (!plugin.configAdapter().getSettings().checkForUpdates()) {
@@ -64,7 +62,8 @@ public final class UpdateChecker {
                     }
                 } catch (IOException e) {
                     plugin.logger().error(
-                            "Unable to retrieve the latest version data for the Treasury resource on SpigotMC.org (IOException)",
+                            "Unable to retrieve the latest version data for the " +
+                                    "Treasury resource on SpigotMC.org (IOException)",
                             e
                     );
                 }
@@ -98,7 +97,8 @@ public final class UpdateChecker {
                             plugin.logger().warn(
                                     "Couldn't perform update check on development version; " +
                                             "couldn't retrieve the last non SCM skipped commit. " +
-                                            "Please do an update check yourself. There may be important changes!");
+                                            "Please do an update check yourself. There may be " +
+                                            "important changes!");
                             return;
                         }
                         // we can't really compare SHA's as we have an abbreviated SHA rather
@@ -135,7 +135,8 @@ public final class UpdateChecker {
                     }
                 } catch (IOException e) {
                     plugin.logger().error(
-                            "Unable to retrieve the latest version data for the Treasury resource on GitHub.com (IOException)",
+                            "Unable to retrieve the latest version data for the " +
+                                    "Treasury resource on GitHub.com (IOException)",
                             e
                     );
                 }
@@ -143,7 +144,10 @@ public final class UpdateChecker {
         } else {
             // how did we get here?
             plugin.logger().warn(
-                    "Illegal version of Treasury detected. Something didn't stop the plugin from running already, so you're seeing this. If you are running a development build or you're a developer running live environment, please change this ASAP!");
+                    "Improperly-formatted version of Treasury detected. Something didn't stop the" +
+                            " plugin from running already, so you're seeing this. If you're " +
+                            "running a development build, or you're a developer running live " +
+                            "environment, change this ASAP.");
         }
     }
 
@@ -157,7 +161,9 @@ public final class UpdateChecker {
             // this statement means that the "latestVersionRead" is newer than the version we're running.
             plugin
                     .logger()
-                    .warn("A new Treasury update is available - '&bv" + latestVersionRead + "&e' - please update as soon as possible. &8(&7You're running '&bv" + currentVersion + "&7'&8)");
+                    .warn("A new Treasury update is available - '&bv" + latestVersionRead + "&e' " +
+                            "- please update as soon as possible. &8(&7You're running '&bv" +
+                            currentVersion + "&7'&8)");
         } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
             // this statement means that the "latestVersionRead" is older than the version we're running.
             plugin.logger().warn(
@@ -170,19 +176,23 @@ public final class UpdateChecker {
         if (comparisonResult == PluginVersion.ComparisonResult.NEWER) {
             // this statement means that the "latestVersionRead" is newer than the version we're running.
             plugin.logger().warn(
-                    "You are running an outdated development version. There may be issues that have been fixed in the newer development versions. Please update as soon as possible.");
+                    "You are running an outdated development version. There may be issues that" +
+                            "have been fixed in the newer development versions. Please update as " +
+                            "soon as possible.");
         } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
             // this statement means that the "latestVersionRead" is older than the version we're running.
-            plugin
-                    .logger()
-                    .warn("You are running a newer development version. How did we get here?");
+            plugin.logger().warn("You are running a newer development version. " +
+                    "How did we get here?");
         } else if (comparisonResult == PluginVersion.ComparisonResult.EQUAL) {
             plugin.logger().warn(
-                    "You are running a development version of Treasury. If there are any issues, please report them to: https://github.com/ArcanePlugins/Treasury/issues .");
+                    "You are running a development version of Treasury. If you detect any issues," +
+                            " please report them on our Issue Tracker, at " +
+                            "<< https://github.com/ArcanePlugins/Treasury/issues >>.");
             plugin.logger().error("USE WITH CAUTION");
         } else if (comparisonResult == PluginVersion.ComparisonResult.UNKNOWN) {
             plugin.logger().warn(
-                    "Couldn't check for a development version update. You are running a development version. Please check for updates and stay updated :).");
+                    "Couldn't check for a development version update. You are running a " +
+                            "development version. Please regularly check for updates. :)");
         }
     }
 

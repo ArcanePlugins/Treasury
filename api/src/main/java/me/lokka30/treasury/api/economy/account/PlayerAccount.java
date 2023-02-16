@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -103,7 +102,7 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> hasPermission(
+    default CompletableFuture<Response<TriState>> hasPermissions(
             @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(player, "player");
@@ -133,10 +132,10 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<Map<UUID, Set<Map.Entry<AccountPermission, TriState>>>>> retrievePermissionsMap() {
+    default CompletableFuture<Response<Map<UUID, Map<AccountPermission, TriState>>>> retrievePermissionsMap() {
         return CompletableFuture.completedFuture(Response.success(Collections.singletonMap(
                 this.getUniqueId(),
-                ALL_PERMISSIONS_MAP.entrySet()
+                ALL_PERMISSIONS_MAP
         )));
     }
 
@@ -145,14 +144,13 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> setPermission(
-            @NotNull UUID player,
-            @NotNull TriState permissionValue,
-            @NotNull AccountPermission @NotNull ... permissions
+    default CompletableFuture<Response<TriState>> setPermissions(
+            @NotNull UUID player, @NotNull Map<AccountPermission, TriState> permissionsMap
     ) {
         Objects.requireNonNull(player, "player");
 
-        return CompletableFuture.completedFuture(Response.failure(PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
+        return CompletableFuture.completedFuture(Response.failure(
+                PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
 }

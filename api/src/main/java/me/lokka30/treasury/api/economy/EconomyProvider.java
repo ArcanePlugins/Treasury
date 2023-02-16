@@ -155,7 +155,7 @@ public interface EconomyProvider {
                 } else {
                     return res
                             .getResult()
-                            .hasPermission(playerId, permissions)
+                            .hasPermissions(playerId, permissions)
                             .thenCompose(res1 -> {
                                 if (!res1.isSuccessful()) {
                                     return CompletableFuture.completedFuture(TriState.FALSE);

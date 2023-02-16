@@ -46,8 +46,10 @@ class MigrationEconomy implements EconomyProvider {
     MigrationEconomy() {
         this.currency = new Currency() {
 
-            private Map<Locale, Character> decimalMap = Collections
-                    .singletonMap(Locale.getDefault(), '.');
+            private Map<Locale, Character> decimalMap = Collections.singletonMap(
+                    Locale.getDefault(),
+                    '.'
+            );
 
             @Override
             public @NotNull String getIdentifier() {
@@ -70,12 +72,9 @@ class MigrationEconomy implements EconomyProvider {
             }
 
             @Override
-            public @NotNull String getDisplayNameSingular() {
-                return getIdentifier();
-            }
-
-            @Override
-            public @NotNull String getDisplayNamePlural() {
+            public @NotNull String getDisplayName(
+                    @NotNull final BigDecimal value, @Nullable final Locale locale
+            ) {
                 return getIdentifier();
             }
 

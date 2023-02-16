@@ -7,13 +7,14 @@ package me.lokka30.treasury.api.economy.account;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.Temporal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -144,9 +145,9 @@ public interface Account {
                 .withCurrency(currency)
                 .withInitiator(initiator)
                 .withReason(reason)
-                .withTransactionAmount(amount)
+                .withAmount(amount)
                 .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.WITHDRAWAL)
+                .withType(EconomyTransactionType.WITHDRAWAL)
                 .build());
     }
 
@@ -220,10 +221,10 @@ public interface Account {
                 .newBuilder()
                 .withCurrency(currency)
                 .withInitiator(initiator)
-                .withTransactionAmount(amount)
+                .withAmount(amount)
                 .withReason(reason)
                 .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.DEPOSIT)
+                .withType(EconomyTransactionType.DEPOSIT)
                 .build());
     }
 
@@ -286,10 +287,10 @@ public interface Account {
                 .newBuilder()
                 .withCurrency(currency)
                 .withInitiator(initiator)
-                .withTransactionAmount(currency.getStartingBalance(this))
+                .withAmount(currency.getStartingBalance(this))
                 .withReason(reason)
                 .withImportance(importance)
-                .withTransactionType(EconomyTransactionType.SET)
+                .withType(EconomyTransactionType.SET)
                 .build()
         );
     }
@@ -388,10 +389,30 @@ public interface Account {
      * @since v1.0.0
      */
     @NotNull
-    CompletableFuture<Response<TriState>> setPermission(
+    default CompletableFuture<Response<TriState>> setPermissions(
             @NotNull UUID player,
             @NotNull TriState permissionValue,
             @NotNull AccountPermission @NotNull ... permissions
+    ) {
+        return setPermissions(
+                player,
+                Arrays.stream(permissions).collect(Collectors.toMap(k -> k, k -> permissionValue))
+        );
+    }
+
+    /**
+     * Modifies the permissions, specified in the inputted {@code permissionMap} for the
+     * specified {@link UUID} {@code player}. Just a reminder: a member is any player with at
+     * least one allowed permission.
+     *
+     * @param player         the player id you want to modify the permissions of
+     * @param permissionsMap the permissions to modify
+     * @return future with {@link Response} which if successful returns whether the permissions
+     *         of the member were adjusted
+     */
+    @NotNull
+    CompletableFuture<Response<TriState>> setPermissions(
+            @NotNull UUID player, @NotNull Map<AccountPermission, TriState> permissionsMap
     );
 
     /**
@@ -407,17 +428,17 @@ public interface Account {
     CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(@NotNull UUID player);
 
     /**
-     * Returns a {@link Map}, with the permissions of each account member.
+     * Returns a nested {@link Map}, with the permissions of each account member.
      *
-     * @return future which if successful returns a map of member id as a key and permissions as
-     *         values.
+     * @return future which if successful returns a map of member id as a key and permissions map as
+     *         value.
      * @since v2.0.0
      */
     @NotNull
-    CompletableFuture<Response<Map<UUID, Set<Map.Entry<AccountPermission, TriState>>>>> retrievePermissionsMap();
+    CompletableFuture<Response<Map<UUID, Map<AccountPermission, TriState>>>> retrievePermissionsMap();
 
     /**
-     * Checks whether given player has the given permission on this account.
+     * Checks whether given player has the given permissions on this account.
      *
      * <p>Just a reminder: a member is any player with at least one allowed permission.
      *
@@ -428,7 +449,7 @@ public interface Account {
      * @since v1.0.0
      */
     @NotNull
-    CompletableFuture<Response<TriState>> hasPermission(
+    CompletableFuture<Response<TriState>> hasPermissions(
             @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     );
 

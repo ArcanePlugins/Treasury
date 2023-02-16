@@ -106,13 +106,10 @@ class CurrenciesMigrator implements Runnable {
             }
 
             @Override
-            public @NotNull String getDisplayNameSingular() {
-                return c.getDisplayNameSingular();
-            }
-
-            @Override
-            public @NotNull String getDisplayNamePlural() {
-                return c.getDisplayNamePlural();
+            public @NotNull String getDisplayName(
+                    @NotNull final BigDecimal value, @Nullable final Locale locale
+            ) {
+                return c.getDisplayName(value, locale);
             }
 
             @Override

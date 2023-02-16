@@ -35,41 +35,39 @@ public class EconomyTransaction {
         return new Builder();
     }
 
-    private final BigDecimal transactionAmount;
-    private final String currencyID;
+    private final BigDecimal amount;
+    private final String currencyId;
     private final EconomyTransactionInitiator<?> initiator;
     private final Instant timestamp;
-    private final EconomyTransactionType economyTransactionType;
+    private final EconomyTransactionType type;
     private final Optional<String> reason;
     private final EconomyTransactionImportance importance;
 
     /**
      * Creates a new account transaction object.
      *
-     * @param currencyID             the currency's {@link Currency#getIdentifier() identifier} the transaction was made into
-     * @param initiator              the one who initiated the transaction
-     * @param timestamp              the time at which this transaction occurred. specifying null would mean "now"
-     * @param economyTransactionType the transaction type
-     * @param reason                 optional specification of a string message reason
-     * @param transactionAmount      the amount which to deposit/withdraw
+     * @param currencyId the currency's {@link Currency#getIdentifier() identifier} the transaction was made into
+     * @param initiator  the one who initiated the transaction
+     * @param timestamp  the time at which this transaction occurred. specifying null would mean "now"
+     * @param type       the transaction type
+     * @param reason     optional specification of a string message reason
+     * @param amount     the amount which to deposit/withdraw
      * @since v1.0.0
      */
     public EconomyTransaction(
-            @NotNull String currencyID,
+            @NotNull String currencyId,
             @NotNull EconomyTransactionInitiator<?> initiator,
             @Nullable Temporal timestamp,
-            @NotNull EconomyTransactionType economyTransactionType,
+            @NotNull EconomyTransactionType type,
             @Nullable String reason,
-            @NotNull final BigDecimal transactionAmount,
+            @NotNull final BigDecimal amount,
             @NotNull EconomyTransactionImportance importance
     ) {
-        this.currencyID = Objects.requireNonNull(currencyID, "currencyID");
+        this.currencyId = Objects.requireNonNull(currencyId, "currencyID");
         this.initiator = Objects.requireNonNull(initiator, "initiator");
-        this.economyTransactionType = Objects.requireNonNull(economyTransactionType,
-                "transactionType"
-        );
+        this.type = Objects.requireNonNull(type, "transactionType");
         this.reason = Optional.ofNullable(reason);
-        this.transactionAmount = transactionAmount;
+        this.amount = amount;
         this.timestamp = timestamp == null
                 ? Instant.now()
                 : (timestamp instanceof Instant ? (Instant) timestamp : Instant.from(timestamp));
@@ -83,8 +81,8 @@ public class EconomyTransaction {
      * @since v1.0.0
      */
     @NotNull
-    public BigDecimal getTransactionAmount() {
-        return transactionAmount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
     /**
@@ -94,8 +92,8 @@ public class EconomyTransaction {
      * @since v1.0.0
      */
     @NotNull
-    public EconomyTransactionType getTransactionType() {
-        return economyTransactionType;
+    public EconomyTransactionType getType() {
+        return type;
     }
 
     /**
@@ -109,8 +107,8 @@ public class EconomyTransaction {
      * @since v1.0.0
      */
     @NotNull
-    public String getCurrencyID() {
-        return currencyID;
+    public String getCurrencyId() {
+        return currencyId;
     }
 
     /**
@@ -160,12 +158,12 @@ public class EconomyTransaction {
      */
     public static class Builder {
 
-        private String currencyID;
+        private String currencyId;
         private EconomyTransactionInitiator<?> initiator;
         private Temporal timestamp;
-        private EconomyTransactionType economyTransactionType;
+        private EconomyTransactionType type;
         private String reason;
-        private BigDecimal transactionAmount;
+        private BigDecimal amount;
         private EconomyTransactionImportance importance;
 
         public Builder() {
@@ -177,12 +175,12 @@ public class EconomyTransaction {
          * @param other the other builder to create a new builder from
          */
         public Builder(@NotNull Builder other) {
-            this.currencyID = other.currencyID;
+            this.currencyId = other.currencyId;
             this.initiator = other.initiator;
             this.timestamp = other.timestamp;
-            this.economyTransactionType = other.economyTransactionType;
+            this.type = other.type;
             this.reason = other.reason;
-            this.transactionAmount = other.transactionAmount;
+            this.amount = other.amount;
             this.importance = other.importance;
         }
 
@@ -204,7 +202,7 @@ public class EconomyTransaction {
          */
         @Contract("_ -> this")
         public Builder withCurrency(@NotNull Currency currency) {
-            this.currencyID = Objects.requireNonNull(currency, "currency").getIdentifier();
+            this.currencyId = Objects.requireNonNull(currency, "currency").getIdentifier();
             return this;
         }
 
@@ -216,7 +214,7 @@ public class EconomyTransaction {
          */
         @Contract("_ -> this")
         public Builder withCurrencyId(@NotNull String currencyId) {
-            this.currencyID = Objects.requireNonNull(currencyId, "currencyId");
+            this.currencyId = Objects.requireNonNull(currencyId, "currencyId");
             return this;
         }
 
@@ -247,14 +245,12 @@ public class EconomyTransaction {
         /**
          * Specify the {@link EconomyTransactionType} {@code transactionType} of the transaction.
          *
-         * @param economyTransactionType transaction type
+         * @param type transaction type
          * @return this instance for chaining
          */
         @Contract("_ -> this")
-        public Builder withTransactionType(@NotNull EconomyTransactionType economyTransactionType) {
-            this.economyTransactionType = Objects.requireNonNull(economyTransactionType,
-                    "transactionType"
-            );
+        public Builder withType(@NotNull EconomyTransactionType type) {
+            this.type = Objects.requireNonNull(type, "type");
             return this;
         }
 
@@ -274,12 +270,12 @@ public class EconomyTransaction {
          * Specify the amount this transaction is going to either {@link EconomyTransactionType#WITHDRAWAL} or
          * {@link EconomyTransactionType#DEPOSIT}
          *
-         * @param transactionAmount transaction amount
+         * @param amount transaction amount
          * @return this instance for chaining
          */
         @Contract("_ -> this")
-        public Builder withTransactionAmount(@NotNull BigDecimal transactionAmount) {
-            this.transactionAmount = transactionAmount;
+        public Builder withAmount(@NotNull BigDecimal amount) {
+            this.amount = amount;
             return this;
         }
 
@@ -302,17 +298,17 @@ public class EconomyTransaction {
          */
         @NotNull
         public EconomyTransaction build() {
-            Objects.requireNonNull(currencyID, "currencyID");
+            Objects.requireNonNull(currencyId, "currencyID");
             Objects.requireNonNull(initiator, "initiator");
-            Objects.requireNonNull(economyTransactionType, "transactionType");
-            Objects.requireNonNull(transactionAmount, "transactionAmount");
+            Objects.requireNonNull(type, "transactionType");
+            Objects.requireNonNull(amount, "transactionAmount");
             Objects.requireNonNull(importance, "importance");
-            return new EconomyTransaction(currencyID,
+            return new EconomyTransaction(currencyId,
                     initiator,
                     timestamp,
-                    economyTransactionType,
+                    type,
                     reason,
-                    transactionAmount,
+                    amount,
                     importance
             );
         }
