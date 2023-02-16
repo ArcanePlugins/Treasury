@@ -103,7 +103,7 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> hasPermission(
+    default CompletableFuture<Response<TriState>> hasPermissions(
             @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(player, "player");
@@ -145,14 +145,13 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> setPermission(
-            @NotNull UUID player,
-            @NotNull TriState permissionValue,
-            @NotNull AccountPermission @NotNull ... permissions
+    default CompletableFuture<Response<TriState>> setPermissions(
+            @NotNull UUID player, @NotNull Map<AccountPermission, TriState> permissionsMap
     ) {
         Objects.requireNonNull(player, "player");
 
-        return CompletableFuture.completedFuture(Response.failure(PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
+        return CompletableFuture.completedFuture(Response.failure(
+                PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
     }
 
 }

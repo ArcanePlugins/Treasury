@@ -71,24 +71,19 @@ public interface Currency {
     @NotNull Map<Locale, Character> getLocaleDecimalMap();
 
     /**
-     * Gets the singular form of the currency's user-friendly display name.
-     * The singular form is used when the amount is exactly {@code 1.00}.
+     * Gets this {@code Currency}'s user-friendly display name, based on the specified
+     * {@link BigDecimal} {@code value}. If the value is <= 1, then it should return a singular form
+     * of a display name. If the value is > 1, then it should return a plural form of it. Both
+     * singular and plural forms can be mapped to a specific {@link Locale} via the
+     * specified (if specified) {@code locale}. If a locale is not present, then it should
+     * default to {@link Locale#ENGLISH}.
      *
-     * @return The currency's user-friendly display name.
-     * @since v1.0.0
+     * @param value the value, on which depends whether a singular or a plural display name is
+     *              returned
+     * @param locale a locale
+     * @return display name
      */
-    @NotNull String getDisplayNameSingular();
-
-    /**
-     * Gets the plural form of the currency's user-friendly display name.
-     * The plural form is used when the amount is not exactly {@code 1.00}.
-     * If a plural form of the {@link Currency} is not available, the value from
-     * {@link Currency#getDisplayNameSingular()} should be returned.
-     *
-     * @return The plural form of the currency's user-friendly display name.
-     * @since v1.0.0
-     */
-    @NotNull String getDisplayNamePlural();
+    @NotNull String getDisplayName(@NotNull BigDecimal value, @Nullable Locale locale);
 
     /**
      * Gets the currency's precision of fractional digits when formatting this currency.
