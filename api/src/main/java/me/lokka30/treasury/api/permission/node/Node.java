@@ -15,7 +15,7 @@ public interface Node<Data> {
 
     @NotNull ContextSet contexts();
 
-    @Nullable Integer weight();
+    int weight();
 
     @NotNull String key();
 
