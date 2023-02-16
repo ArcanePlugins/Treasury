@@ -121,7 +121,7 @@ class PlayerAccountMigrationProcess extends Process {
                 this.migration.debug(() -> this.getErrorLog(transactionResponse.getFailureReason()));
                 this.migration.debug(() -> String.format(
                         "Failed to recover from an issue transferring %s from %s, currency will not be migrated!",
-                        currency.getDisplayName(BigDecimal.ONE, null),
+                        currency.getIdentifier(),
                         this.accountId
                 ));
                 Collection<String> currencies = this.migration

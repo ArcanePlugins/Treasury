@@ -75,8 +75,8 @@ public interface Currency {
      * {@link BigDecimal} {@code value}. If the value is <= 1, then it should return a singular form
      * of a display name. If the value is > 1, then it should return a plural form of it. Both
      * singular and plural forms can be mapped to a specific {@link Locale} via the
-     * specified (if specified) {@code locale}. If a locale is not present, then it should
-     * default to {@link Locale#ENGLISH}.
+     * specified (if specified) {@code locale}. If a locale is not present, the implementation
+     * should assume a suitable default.
      *
      * @param value the value, on which depends whether a singular or a plural display name is
      *              returned
