@@ -15,7 +15,7 @@ class IgnoredCallOutcomeTest {
     }
 
     static final EventBus eventBus = EventBus.INSTANCE;
-    static LogCatcher logCatcher = new LogCatcher();
+    static LogAwaiter logCatcher = new LogAwaiter(2);
 
     @BeforeAll
     static void prepare() {
@@ -29,12 +29,7 @@ class IgnoredCallOutcomeTest {
         eventBus.fire(new TestEvent());
         logCatcher.log("fired");
 
-        try {
-            // wait 100ms to make sure everything has settled
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        logCatcher.startWaiting();
 
         Assertions.assertEquals("fired", logCatcher.logs.get(0));
     }
