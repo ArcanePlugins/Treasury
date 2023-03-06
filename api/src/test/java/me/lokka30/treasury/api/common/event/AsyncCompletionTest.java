@@ -15,6 +15,8 @@ class AsyncCompletionTest {
         EventBus bus = EventBus.INSTANCE;
         LogAwaiter log = new LogAwaiter(3);
 
+        log.log("direct");
+
         bus.subscribe(bus
                 .subscriptionFor(Event.class)
                 .whenCalled((Consumer<Event>) event -> log.log("whenCalled"))
@@ -22,7 +24,6 @@ class AsyncCompletionTest {
 
         bus.fire(new Event()).whenCompleteAsync((event, errors) -> log.log("whenCompleteAsync"));
 
-        log.log("direct");
         log.startWaiting();
 
         Assertions.assertEquals(3, log.logs.size());
