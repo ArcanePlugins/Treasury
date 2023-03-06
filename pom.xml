@@ -57,7 +57,7 @@
         <!-- asm is for testing purposes only -->
         <asm.version>9.4</asm.version>
         <sponge.version>8.0.0</sponge.version>
-        <minestom.version>d37f40a1bb</minestom.version>
+        <minestom.version>a9e319f961</minestom.version>
     </properties>
 
     <licenses>
