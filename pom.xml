@@ -49,7 +49,7 @@
         <bstats.version>3.0.0</bstats.version>
         <annotationconfig.version>3.0.1</annotationconfig.version>
         <mockito.version>4.11.0</mockito.version>
-        <placeholderapi.version>2.11.2</placeholderapi.version>
+        <placeholderapi.version>2.11.3</placeholderapi.version>
         <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
         <velocity.version>3.1.1</velocity.version>
     </properties>
