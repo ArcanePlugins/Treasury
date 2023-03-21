@@ -107,7 +107,7 @@ public class BalanceCache extends BukkitRunnable {
             if (!res.isSuccessful()) {
                 return CompletableFuture.completedFuture(Response.failure(res.getFailureReason()));
             }
-            if (res.getResult() == TriState.TRUE) {
+            if (res.getResult()) {
                 return provider.accountAccessor().player().withUniqueId(player.getUniqueId()).get();
             }
             return CompletableFuture.completedFuture(Response.failure(FailureReason.of(
