@@ -5,7 +5,5 @@
 package me.lokka30.treasury.plugin.sponge.apiimpl.economy;
 
 public class EconomyServiceImplProvider {
-
-
-
+    // TODO
 }

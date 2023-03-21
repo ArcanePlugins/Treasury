@@ -16,6 +16,7 @@ import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.economy.account.VirtualAccount;
 
 public class EconomyServiceImpl implements EconomyService {
+    // TODO
 
     @Override
     public Currency defaultCurrency() {
