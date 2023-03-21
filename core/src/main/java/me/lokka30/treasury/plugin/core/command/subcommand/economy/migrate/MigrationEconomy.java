@@ -157,7 +157,7 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public @NotNull CompletableFuture<Response<TriState>> hasAccount(@NotNull AccountData accountData) {
+    public @NotNull CompletableFuture<Response<Boolean>> hasAccount(@NotNull AccountData accountData) {
         return CompletableFuture.completedFuture(Response.failure(MIGRATION));
     }
 

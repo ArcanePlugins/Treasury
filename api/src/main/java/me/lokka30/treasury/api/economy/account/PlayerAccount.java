@@ -80,11 +80,9 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> isMember(@NotNull UUID player) {
+    default CompletableFuture<Response<Boolean>> isMember(@NotNull UUID player) {
         Objects.requireNonNull(player, "player");
-        return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
-                ? TriState.TRUE
-                : TriState.UNSPECIFIED));
+        return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)));
     }
 
     /**

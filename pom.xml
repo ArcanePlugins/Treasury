@@ -57,7 +57,14 @@
         <!-- asm is for testing purposes only -->
         <asm.version>9.4</asm.version>
         <sponge.version>8.0.0</sponge.version>
-        <minestom.version>a9e319f961</minestom.version>
+        <!--
+        WARNING: JitPack sucks. Sometimes when building maven won't pull the Minestom version. If
+        such occurs with you, update it to the latest release/branch version
+        from here: https://jitpack.io/#Minestom/Minestom/
+        If you update it and still doesn't build, and the reason is not Minestom, or non-compiling
+        code, seek help!
+        -->
+        <minestom.version>1.19.3-SNAPSHOT</minestom.version>
     </properties>
 
     <licenses>

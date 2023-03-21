@@ -372,7 +372,7 @@ public interface Account {
      * @since v1.0.0
      */
     @NotNull
-    CompletableFuture<Response<TriState>> isMember(@NotNull UUID player);
+    CompletableFuture<Response<Boolean>> isMember(@NotNull UUID player);
 
     /**
      * Modifies the state of the specified {@link AccountPermission} {@code permissions} for the

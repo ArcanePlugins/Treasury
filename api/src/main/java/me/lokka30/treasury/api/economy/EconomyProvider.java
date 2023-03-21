@@ -60,7 +60,7 @@ public interface EconomyProvider {
      * @see AccountData
      * @since 2.0.0
      */
-    @NotNull CompletableFuture<Response<TriState>> hasAccount(@NotNull AccountData accountData);
+    @NotNull CompletableFuture<Response<Boolean>> hasAccount(@NotNull AccountData accountData);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
