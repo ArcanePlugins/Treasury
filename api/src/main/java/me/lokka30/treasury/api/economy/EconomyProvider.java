@@ -112,7 +112,7 @@ public interface EconomyProvider {
                         if (!res1.isSuccessful()) {
                             return CompletableFuture.completedFuture(TriState.FALSE);
                         }
-                        return CompletableFuture.completedFuture(res1.getResult());
+                        return CompletableFuture.completedFuture(TriState.fromBoolean(res1.getResult()));
                     });
                 }
             }, accountFutures);
