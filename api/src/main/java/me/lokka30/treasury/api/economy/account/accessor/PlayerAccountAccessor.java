@@ -7,7 +7,7 @@ package me.lokka30.treasury.api.economy.account.accessor;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import me.lokka30.treasury.api.common.response.Response;
+import java.util.function.Function;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
@@ -41,12 +41,11 @@ public abstract class PlayerAccountAccessor {
     /**
      * Gets or creates the {@link PlayerAccount player account} needed.
      *
-     * @return future with {@link Response} which if successful returns the resulting
-     *         {@link PlayerAccount}
+     * @return a resulting player account
      * @since 2.0.0
      */
     @NotNull
-    public CompletableFuture<Response<PlayerAccount>> get() {
+    public CompletableFuture<PlayerAccount> get() {
         return this.getOrCreate(new PlayerAccountCreateContext(Objects.requireNonNull(uniqueId,
                 "uniqueId"
         )));
@@ -56,21 +55,15 @@ public abstract class PlayerAccountAccessor {
      * Does the same as what {@link #get()} does, but returns a generic {@link Account}
      * interface, rather a specific {@link PlayerAccount} interface.
      *
-     * @return future with response which if successful returns the resulting
-     *         {@link PlayerAccount} in the form of {@link Account}
+     * @return a player account in the form of {@link Account}
      */
     @NotNull
-    public CompletableFuture<Response<Account>> genericGet() {
-        return this.get().thenApply(resp -> {
-            if (!resp.isSuccessful()) {
-                return Response.failure(resp.getFailureReason());
-            }
-            return Response.success(resp.getResult());
-        });
+    public CompletableFuture<Account> genericGet() {
+        return this.get().thenApply(Function.identity());
     }
 
     @NotNull
-    protected abstract CompletableFuture<Response<PlayerAccount>> getOrCreate(@NotNull PlayerAccountCreateContext context);
+    protected abstract CompletableFuture<PlayerAccount> getOrCreate(@NotNull PlayerAccountCreateContext context);
 
     /**
      * Represents a class, holder of data, needed to create/retrieve a {@link PlayerAccount}

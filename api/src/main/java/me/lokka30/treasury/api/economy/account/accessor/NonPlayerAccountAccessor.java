@@ -6,8 +6,8 @@ package me.lokka30.treasury.api.economy.account.accessor;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import me.lokka30.treasury.api.common.NamespacedKey;
-import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import org.jetbrains.annotations.NotNull;
@@ -58,11 +58,10 @@ public abstract class NonPlayerAccountAccessor {
     /**
      * Gets or creates the {@link NonPlayerAccount non player account} needed.
      *
-     * @return future with {@link Response} which if successful returns the resulting
-     *         {@link NonPlayerAccount}
+     * @return a resulting non player account
      */
     @NotNull
-    public CompletableFuture<Response<NonPlayerAccount>> get() {
+    public CompletableFuture<NonPlayerAccount> get() {
         return this.getOrCreate(new NonPlayerAccountCreateContext(Objects.requireNonNull(identifier,
                 "identifier"
         ), name));
@@ -72,21 +71,15 @@ public abstract class NonPlayerAccountAccessor {
      * Does the same as what {@link #get()} does, but returns a generic {@link Account}
      * interface, rather a specific {@link NonPlayerAccount} interface.
      *
-     * @return future with response which if successful returns the resulting
-     *         {@link NonPlayerAccount} in the form of {@link Account}
+     * @return a non player account in the form of {@link Account}
      */
     @NotNull
-    public CompletableFuture<Response<Account>> genericGet() {
-        return this.get().thenApply(resp -> {
-            if (!resp.isSuccessful()) {
-                return Response.failure(resp.getFailureReason());
-            }
-            return Response.success(resp.getResult());
-        });
+    public CompletableFuture<Account> genericGet() {
+        return this.get().thenApply(Function.identity());
     }
 
     @NotNull
-    protected abstract CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
+    protected abstract CompletableFuture<NonPlayerAccount> getOrCreate(
             @NotNull NonPlayerAccountCreateContext context
     );
 

@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.NamespacedKey;
-import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
@@ -237,6 +237,8 @@ public class EconomyMigrateSub implements Subcommand {
                         playerCompletion,
                         nonPlayerCompletion
                 );
+            } catch (TreasuryException e) {
+                sender.sendMessage(e.getMessage());
             } catch (InterruptedException e) {
                 sender.sendMessage(Message.of(MessageKey.MIGRATE_INTERNAL_ERROR));
                 TreasuryPlugin.getInstance().logger().error("Interrupted whilst migrating");
@@ -272,16 +274,10 @@ public class EconomyMigrateSub implements Subcommand {
     private ProcessesCompletion migratePlayerAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
     ) throws InterruptedException, ExecutionException {
-        Response<Collection<UUID>> accountIdResp = migration
+        Collection<UUID> accountIds = migration
                 .from()
                 .retrievePlayerAccountIds()
                 .get();
-        if (!accountIdResp.isSuccessful()) {
-            throw new RuntimeException("Unable to fetch player account UUIDs for migration: " + accountIdResp
-                    .getFailureReason()
-                    .getDescription());
-        }
-        Collection<UUID> accountIds = accountIdResp.getResult();
         if (accountIds.isEmpty()) {
             return null;
         }
@@ -299,16 +295,10 @@ public class EconomyMigrateSub implements Subcommand {
     private ProcessesCompletion migrateNonPlayerAccounts(
             @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
     ) throws InterruptedException, ExecutionException {
-        Response<Collection<NamespacedKey>> accountIdResp = migration
+        Collection<NamespacedKey> accountIds = migration
                 .from()
                 .retrieveNonPlayerAccountIds()
                 .get();
-        if (!accountIdResp.isSuccessful()) {
-            throw new RuntimeException("Unable to fetch non player account ids for migration: " + accountIdResp
-                    .getFailureReason()
-                    .getDescription());
-        }
-        Collection<NamespacedKey> accountIds = accountIdResp.getResult();
         if (accountIds.isEmpty()) {
             return null;
         }
