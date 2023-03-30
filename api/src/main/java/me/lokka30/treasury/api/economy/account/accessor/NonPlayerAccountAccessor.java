@@ -58,7 +58,7 @@ public abstract class NonPlayerAccountAccessor {
     /**
      * Gets or creates the {@link NonPlayerAccount non player account} needed.
      *
-     * @return a resulting non player account
+     * @return a resulting non-player account
      */
     @NotNull
     public CompletableFuture<NonPlayerAccount> get() {
