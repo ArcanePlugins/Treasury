@@ -81,7 +81,7 @@ public interface EconomyProvider {
      * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
      * @param playerId the player
-     * @return a collection of all the accounts the given player is member
+     * @return a collection of all accounts that the given player is a member of
      * @since v1.0.0
      */
     @NotNull
