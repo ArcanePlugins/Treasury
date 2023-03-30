@@ -421,6 +421,11 @@ public interface Account {
     /**
      * Checks whether given player has the given permissions on this account.
      *
+     * <p>The returned {@link TriState} value priority shall be as follows:
+     * {@link TriState#FALSE}, {@link TriState#UNSPECIFIED} and then {@link TriState#TRUE}. This
+     * means that if there is just a single permission of the specified permissions that has a
+     * value of {@link TriState#FALSE} or {@link TriState#UNSPECIFIED} then such shall be returned.
+     *
      * <p>Just a reminder: a member is any player with at least one allowed permission.
      *
      * @param player      the {@link UUID} of the player to check if they have the permission
