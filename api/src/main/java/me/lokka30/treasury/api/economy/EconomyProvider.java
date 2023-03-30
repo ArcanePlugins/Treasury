@@ -196,7 +196,7 @@ public interface EconomyProvider {
      * @param currency The currency to un-register with the {@link EconomyProvider}.
      * @return a {@link TriState} value representing whether the unregistration was successful. If
      *         the currency was successfully unregistered, {@link TriState#TRUE} is returned,
-     *         otherwise {@link TriState#FALSE} and if that currency is not registered already,
+     *         otherwise {@link TriState#FALSE}, and if that currency is already not registered,
      *         {@link TriState#UNSPECIFIED}.
      * @since v2.0.0
      */
