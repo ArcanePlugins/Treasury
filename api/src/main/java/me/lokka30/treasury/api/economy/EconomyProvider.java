@@ -194,7 +194,7 @@ public interface EconomyProvider {
      * Used to un-register a currency with the {@link EconomyProvider}.
      *
      * @param currency The currency to un-register with the {@link EconomyProvider}.
-     * @return a {@link TriState} value representing whether un-registration was successful. If
+     * @return a {@link TriState} value representing whether the unregistration was successful. If
      *         the currency was successfully un-registered, this shall be {@link TriState#TRUE},
      *         otherwise {@link TriState#FALSE} and if that currency is not registered already,
      *         {@link TriState#UNSPECIFIED}.
