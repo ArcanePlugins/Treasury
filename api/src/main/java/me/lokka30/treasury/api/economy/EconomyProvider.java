@@ -63,7 +63,7 @@ public interface EconomyProvider {
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
      *
-     * @return a collection with player account uuids
+     * @return a collection of player account uuids
      * @since v1.0.0
      */
     @NotNull CompletableFuture<Collection<UUID>> retrievePlayerAccountIds();
