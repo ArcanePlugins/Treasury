@@ -55,7 +55,7 @@ public abstract class PlayerAccountAccessor {
      * Does the same as what {@link #get()} does, but returns a generic {@link Account}
      * interface, rather a specific {@link PlayerAccount} interface.
      *
-     * @return a player account in the form of {@link Account}
+     * @return a player account in the form of an {@link Account}
      */
     @NotNull
     public CompletableFuture<Account> genericGet() {
