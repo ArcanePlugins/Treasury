@@ -302,7 +302,7 @@ public interface Account {
     /**
      * Returns the {@link Currency#getIdentifier()  Currencies} this {@code Account} holds balance for.
      *
-     * @return held currencies in the form of currency ids
+     * @return a collection of held currencies in the form of currency ids
      * @since v1.0.0
      */
     @NotNull CompletableFuture<Collection<String>> retrieveHeldCurrencies();
