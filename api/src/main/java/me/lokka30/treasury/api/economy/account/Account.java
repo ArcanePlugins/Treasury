@@ -405,7 +405,7 @@ public interface Account {
      * {@code player}.
      *
      * @param player the player {@link UUID} to get the permissions for
-     * @return an immutable map of permissions and their values for the specified member.
+     * @return an immutable map of permissions and their values for the specified member
      * @since v1.0.0
      */
     @NotNull CompletableFuture<Map<AccountPermission, TriState>> retrievePermissions(@NotNull UUID player);
