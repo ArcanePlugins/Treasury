@@ -333,7 +333,7 @@ public interface Account {
      * transactions.
      *
      * @param transactionCount the count of the transactions wanted
-     * @return a collection of transaction entries
+     * @return a collection of transactions
      * @since v1.0.0
      */
     @NotNull
