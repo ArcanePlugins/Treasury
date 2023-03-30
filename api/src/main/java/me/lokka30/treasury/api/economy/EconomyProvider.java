@@ -72,7 +72,7 @@ public interface EconomyProvider {
      * Request all {@link NamespacedKey identifiers} with associated {@link NonPlayerAccount
      * NonPlayer Accounts}.
      *
-     * @return a collection with non player account namespaced key identifiers
+     * @return a collection of non-player account namespaced key identifiers
      * @since v1.0.0
      */
     @NotNull CompletableFuture<Collection<NamespacedKey>> retrieveNonPlayerAccountIds();
