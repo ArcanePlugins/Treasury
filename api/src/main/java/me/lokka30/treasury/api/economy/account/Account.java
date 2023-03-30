@@ -319,7 +319,7 @@ public interface Account {
      * @param transactionCount the count of the transactions wanted
      * @param from             the timestamp to get the transactions from
      * @param to               the timestamp to get the transactions to
-     * @return a collection of transaction entries
+     * @return a collection of transactions
      * @since v1.0.0
      */
     @NotNull CompletableFuture<Collection<EconomyTransaction>> retrieveTransactionHistory(
