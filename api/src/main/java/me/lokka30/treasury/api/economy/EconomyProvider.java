@@ -54,7 +54,7 @@ public interface EconomyProvider {
      * whether just created or pulled from a database.
      *
      * @param accountData data about the account type and specific account identifiers
-     * @return whether there is an account or no
+     * @return whether there is an account registered with the given identification from the account data
      * @see AccountData
      * @since 2.0.0
      */
