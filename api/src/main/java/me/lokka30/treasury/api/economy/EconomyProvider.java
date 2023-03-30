@@ -113,7 +113,7 @@ public interface EconomyProvider {
      *
      * @param playerId    the player
      * @param permissions the permissions that the given player has to have on the {@link NonPlayerAccount account}
-     * @return a collection of all the accounts the given player has permission(s)
+     * @return a collection of all accounts that the given player has all given permission(s) in
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID)
      * @since v1.0.0
      */
