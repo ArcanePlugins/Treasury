@@ -413,7 +413,7 @@ public interface Account {
     /**
      * Returns a nested {@link Map}, with the permissions of each account member.
      *
-     * @return a map of member id as a key and permissions map as value.
+     * @return a map of member {@link UUID}s (keys) and their member permissions map (values).
      * @since v2.0.0
      */
     @NotNull CompletableFuture<Map<UUID, Map<AccountPermission, TriState>>> retrievePermissionsMap();
