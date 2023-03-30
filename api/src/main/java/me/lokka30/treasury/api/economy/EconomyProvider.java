@@ -118,7 +118,7 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<NonPlayerAccount>> retrieveAllAccountsPlayerHasPermission(
+    default CompletableFuture<Collection<NonPlayerAccount>> retrieveAllAccountsPlayerHasPermissions(
             @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
