@@ -346,7 +346,7 @@ public interface Account {
     /**
      * Request a listing of all member players of the account.
      *
-     * @return a collection of member {@link UUID unique-ids}, members
+     * @return a collection of members in the form of their {@link UUID}s.
      * @since v1.0.0
      */
     @NotNull CompletableFuture<Collection<UUID>> retrieveMemberIds();
