@@ -167,7 +167,7 @@ public interface Currency {
      * If the specified locale is null, the currency implementation should assume a default.
      * <p>
      * If the specified string cannot be parsed, a failure {@link CompletableFuture} shall be
-     * returned with a suitable message in the form of
+     * returned with a suitable message in the form of a
      * {@link me.lokka30.treasury.api.common.response.TreasuryException}.
      *
      * @param formattedAmount formatted amount string to be parsed
