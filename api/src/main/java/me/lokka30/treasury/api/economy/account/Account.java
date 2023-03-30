@@ -394,7 +394,7 @@ public interface Account {
      *
      * @param player         the player id you want to modify the permissions of
      * @param permissionsMap the permissions to modify
-     * @return whether the permissions of the member were adjusted
+     * @return whether the permissions of the member were changed
      */
     @NotNull CompletableFuture<Boolean> setPermissions(
             @NotNull UUID player, @NotNull Map<AccountPermission, TriState> permissionsMap
