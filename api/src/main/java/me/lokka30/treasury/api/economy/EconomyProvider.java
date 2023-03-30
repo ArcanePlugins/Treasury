@@ -134,9 +134,10 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.joinAndFilter(account -> account
-                    .hasPermissions(playerId, permissions)
-                    .thenCompose(CompletableFuture::completedFuture), accountFutures);
+            return FutureHelper.joinAndFilter(account -> account.hasPermissions(
+                    playerId,
+                    permissions
+            ), accountFutures);
         });
     }
 
