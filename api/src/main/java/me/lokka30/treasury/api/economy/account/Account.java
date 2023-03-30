@@ -228,7 +228,7 @@ public interface Account {
      * Does a {@link EconomyTransaction} on this account.
      *
      * @param economyTransaction the transaction that should be done
-     * @return a {@link BigDecimal} value, representing the new balance
+     * @return a {@link BigDecimal} value representing the new balance resulting from the transaction
      * @since v1.0.0
      */
     @NotNull CompletableFuture<BigDecimal> doTransaction(@NotNull EconomyTransaction economyTransaction);
