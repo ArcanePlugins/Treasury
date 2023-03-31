@@ -14,6 +14,8 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
+import me.lokka30.treasury.plugin.sponge.apiimpl.economy.EconomyServiceImpl;
+import me.lokka30.treasury.plugin.sponge.apiimpl.economy.EconomyServiceImplProvider;
 import org.apache.logging.log4j.Logger;
 import org.bstats.charts.SimplePie;
 import org.bstats.sponge.Metrics;
@@ -23,10 +25,12 @@ import org.spongepowered.api.command.Command;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.LoadedGameEvent;
+import org.spongepowered.api.event.lifecycle.ProvideServiceEvent;
 import org.spongepowered.api.event.lifecycle.RefreshGameEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
+import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -95,6 +99,12 @@ public class TreasurySponge {
         Sponge.eventManager().registerListeners(this.container,
                 new CommandSources.QuitListener(this.sources)
         );
+        EconomyServiceImplProvider.fulfilTreasuryProvider();
+    }
+
+    @Listener
+    public void provideEconomyService(ProvideServiceEvent.GameScoped<EconomyService> event) {
+        event.suggest(EconomyServiceImpl::new);
     }
 
     @Listener

@@ -126,8 +126,7 @@ public interface EconomyTransactionInitiator<T> {
     enum Type {
         PLAYER,
         PLUGIN,
-        SERVER,
-        SPECIAL;
+        SERVER;
     }
 
     /**

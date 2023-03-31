@@ -65,7 +65,6 @@ public class MappedCurrenciesCache {
             );
         }
         SpongeToTreasuryCurrencyImpl curr = new SpongeToTreasuryCurrencyImpl(
-                delegateProvider,
                 getCurrencyIdentifier(
                         PlainTextComponentSerializer.plainText().serialize(currency.symbol()),
                         "treasury:sponge_migrated"

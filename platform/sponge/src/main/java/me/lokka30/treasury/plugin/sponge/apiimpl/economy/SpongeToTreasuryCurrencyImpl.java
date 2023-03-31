@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import me.lokka30.treasury.api.common.response.FailureReason;
-import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.common.misc.FutureHelper;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -21,16 +21,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class SpongeToTreasuryCurrencyImpl implements Currency {
 
-    private final EconomyProvider delegateProvider;
     private final String identifier;
     private final org.spongepowered.api.service.economy.Currency delegateSpongeCurrency;
 
     public SpongeToTreasuryCurrencyImpl(
-            final EconomyProvider delegateProvider,
             final String identifier,
             final org.spongepowered.api.service.economy.Currency delegateSpongeCurrency
     ) {
-        this.delegateProvider = delegateProvider;
         this.identifier = identifier;
         this.delegateSpongeCurrency = delegateSpongeCurrency;
     }
@@ -84,7 +81,8 @@ public class SpongeToTreasuryCurrencyImpl implements Currency {
 
     @Override
     public @NotNull BigDecimal getStartingBalance(@NotNull final Account account) {
-        return BigDecimal.ZERO; // TODO: Figure out how will this be handled
+        // No starting balance for migrated currencies sponge -> treasury
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -96,11 +94,11 @@ public class SpongeToTreasuryCurrencyImpl implements Currency {
     }
 
     @Override
-    public @NotNull CompletableFuture<Response<BigDecimal>> parse(
+    public @NotNull CompletableFuture<BigDecimal> parse(
             @NotNull final String formattedAmount, @Nullable final Locale locale
     ) {
-        return CompletableFuture.completedFuture(Response.failure(FailureReason.of(
-                "Sponge Economy API migrated currency to Treasury Economy API. Currency of Sponge Economy API does not contain a parse method.")));
+        return FutureHelper.failedFuture(new TreasuryException(
+                "Sponge Economy API migrated currency to Treasury Economy API. Currency of Sponge Economy API does not contain a parse method."));
     }
 
     @Override

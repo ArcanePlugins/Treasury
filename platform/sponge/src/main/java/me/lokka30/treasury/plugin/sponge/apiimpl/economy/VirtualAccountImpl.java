@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import me.lokka30.treasury.api.common.response.Response;
+import java.util.UUID;
+import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
@@ -95,13 +96,7 @@ public class VirtualAccountImpl implements VirtualAccount {
         if (migrationResult.getState() == MappedCurrenciesCache.MigrationResult.State.JUST_CREATED) {
             return BigDecimal.ZERO;
         }
-        Response<BigDecimal> response = delegateAccount
-                .retrieveBalance(migrationResult.getCurrency())
-                .join();
-        if (!response.isSuccessful()) {
-            return BigDecimal.ZERO;
-        }
-        return response.getResult();
+        return delegateAccount.retrieveBalance(migrationResult.getCurrency()).join();
     }
 
     @Override
@@ -111,14 +106,12 @@ public class VirtualAccountImpl implements VirtualAccount {
 
     @Override
     public Map<Currency, BigDecimal> balances(final Cause cause) {
-        Response<Collection<String>> heldCurrencies = delegateAccount
-                .retrieveHeldCurrencies()
-                .join();
-        if (!heldCurrencies.isSuccessful()) {
+        Collection<String> heldCurrencies = delegateAccount.retrieveHeldCurrencies().join();
+        if (heldCurrencies.isEmpty()) {
             return Collections.emptyMap();
         }
         Map<Currency, BigDecimal> ret = new HashMap<>();
-        for (String id : heldCurrencies.getResult()) {
+        for (String id : heldCurrencies) {
             me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = delegateProvider
                     .findCurrency(id)
                     .orElse(null);
@@ -155,12 +148,9 @@ public class VirtualAccountImpl implements VirtualAccount {
                 .withCurrency(treasuryCurrency)
                 .withAmount(amount)
                 .withImportance(EconomyTransactionImportance.NORMAL)
-                .withInitiator(EconomyTransactionInitiator.createInitiator(
-                        EconomyTransactionInitiator.Type.SPECIAL,
-                        cause.all()
-                ))
+                .withInitiator(EconomyTransactionInitiator.SERVER)
                 .withType(EconomyTransactionType.SET)
-                .build());
+                .build()).join();
         return new TransactionResultImpl(
                 this,
                 currency,
@@ -178,18 +168,12 @@ public class VirtualAccountImpl implements VirtualAccount {
 
     @Override
     public Map<Currency, TransactionResult> resetBalances(final Cause cause) {
-        Response<Collection<String>> heldCurrencies = delegateAccount
-                .retrieveHeldCurrencies()
-                .join();
-        if (!heldCurrencies.isSuccessful()) {
+        Collection<String> heldCurrencies = delegateAccount.retrieveHeldCurrencies().join();
+        if (heldCurrencies.isEmpty()) {
             return Collections.emptyMap();
         }
-        EconomyTransactionInitiator<?> initiator = EconomyTransactionInitiator.createInitiator(
-                EconomyTransactionInitiator.Type.SPECIAL,
-                cause.all()
-        );
         Map<Currency, TransactionResult> ret = new HashMap<>();
-        for (String id : heldCurrencies.getResult()) {
+        for (String id : heldCurrencies) {
             me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = delegateProvider
                     .findCurrency(id)
                     .orElse(null);
@@ -203,15 +187,16 @@ public class VirtualAccountImpl implements VirtualAccount {
                 sponge = new SpongeCurrencyImpl(treasuryCurrency);
             }
             delegateAccount.resetBalance(
-                    initiator,
+                    EconomyTransactionInitiator.SERVER,
                     treasuryCurrency,
                     EconomyTransactionImportance.NORMAL
-            );
+            ).join();
             ret.put(sponge, new TransactionResultImpl(
                     this,
                     sponge,
-                    treasuryCurrency instanceof SpongeToTreasuryCurrencyImpl ? BigDecimal.ZERO :
-                            treasuryCurrency.getStartingBalance(this.delegateAccount),
+                    treasuryCurrency instanceof SpongeToTreasuryCurrencyImpl
+                            ? BigDecimal.ZERO
+                            : treasuryCurrency.getStartingBalance(this.delegateAccount),
                     SET_TRANSACTION_TYPE,
                     ResultType.SUCCESS,
                     new HashSet<>()
@@ -239,21 +224,18 @@ public class VirtualAccountImpl implements VirtualAccount {
                     new HashSet<>()
             );
         }
-        EconomyTransactionInitiator<?> initiator = EconomyTransactionInitiator.createInitiator(
-                EconomyTransactionInitiator.Type.SPECIAL,
-                cause.all()
-        );
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
         delegateAccount.resetBalance(
-                initiator,
+                EconomyTransactionInitiator.SERVER,
                 treasuryCurrency,
                 EconomyTransactionImportance.NORMAL
-        );
+        ).join();
         return new TransactionResultImpl(
                 this,
                 currency,
-                treasuryCurrency instanceof SpongeToTreasuryCurrencyImpl ? BigDecimal.ZERO :
-                        treasuryCurrency.getStartingBalance(this.delegateAccount),
+                treasuryCurrency instanceof SpongeToTreasuryCurrencyImpl
+                        ? BigDecimal.ZERO
+                        : treasuryCurrency.getStartingBalance(this.delegateAccount),
                 SET_TRANSACTION_TYPE,
                 ResultType.FAILED,
                 new HashSet<>()
@@ -273,16 +255,12 @@ public class VirtualAccountImpl implements VirtualAccount {
     ) {
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
-        EconomyTransactionInitiator<?> initiator = EconomyTransactionInitiator.createInitiator(
-                EconomyTransactionInitiator.Type.SPECIAL,
-                cause.all()
-        );
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
         this.delegateAccount.depositBalance(
                 amount,
-                initiator,
+                EconomyTransactionInitiator.SERVER,
                 treasuryCurrency
-        );
+        ).join();
         return new TransactionResultImpl(
                 this,
                 currency,
@@ -306,16 +284,12 @@ public class VirtualAccountImpl implements VirtualAccount {
     ) {
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
-        EconomyTransactionInitiator<?> initiator = EconomyTransactionInitiator.createInitiator(
-                EconomyTransactionInitiator.Type.SPECIAL,
-                cause.all()
-        );
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
         this.delegateAccount.withdrawBalance(
                 amount,
-                initiator,
+                EconomyTransactionInitiator.SERVER,
                 treasuryCurrency
-        );
+        ).join();
         return new TransactionResultImpl(
                 this,
                 currency,
@@ -340,8 +314,60 @@ public class VirtualAccountImpl implements VirtualAccount {
     public TransferResult transfer(
             final Account to, final Currency currency, final BigDecimal amount, final Cause cause
     ) {
-        // TODO
-        return null;
+        MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
+                currency);
+        me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
+        me.lokka30.treasury.api.economy.account.Account toDelegate = null;
+        if (to instanceof VirtualAccountImpl) {
+            toDelegate = ((VirtualAccountImpl) to).delegateAccount;
+        } else if (to instanceof UniqueAccountImpl) {
+            toDelegate = ((UniqueAccountImpl) to).delegateAccount;
+        }
+        if (toDelegate == null) {
+            // what
+            UUID uuid = null;
+            NamespacedKey id = null;
+            try {
+                uuid = UUID.fromString(to.identifier());
+            } catch (IllegalArgumentException e) {
+                id = NamespacedKey.fromString(to.identifier());
+            }
+            if (uuid != null) {
+                toDelegate = delegateProvider
+                        .accountAccessor()
+                        .player()
+                        .withUniqueId(uuid)
+                        .get()
+                        .join();
+            } else {
+                toDelegate = delegateProvider
+                        .accountAccessor()
+                        .nonPlayer()
+                        .withIdentifier(id)
+                        .get()
+                        .join();
+            }
+            if (toDelegate == null) {
+                throw new IllegalArgumentException("Failed to recover from null delegate: accountId = " + to.identifier());
+            }
+        }
+        delegateAccount.withdrawBalance(
+                amount,
+                EconomyTransactionInitiator.SERVER,
+                treasuryCurrency
+        ).join();
+        toDelegate
+                .depositBalance(amount, EconomyTransactionInitiator.SERVER, treasuryCurrency)
+                .join();
+        return new TransferResultImpl(
+                this,
+                to,
+                currency,
+                amount,
+                TransactionTypes.TRANSFER.get(),
+                ResultType.SUCCESS,
+                new HashSet<>()
+        );
     }
 
     @Override
