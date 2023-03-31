@@ -47,7 +47,7 @@ public enum AccountPermission {
     /**
      * Allows a player to modify the permissions of other players on a {@link Account}
      *
-     * @see NonPlayerAccount#setPermission(UUID, TriState, AccountPermission...)
+     * @see NonPlayerAccount#setPermissions(UUID, TriState, AccountPermission...)
      * @since v1.0.0
      */
     MODIFY_PERMISSIONS

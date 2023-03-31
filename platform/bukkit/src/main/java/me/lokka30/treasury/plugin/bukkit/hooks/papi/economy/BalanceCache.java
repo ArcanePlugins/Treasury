@@ -19,10 +19,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
-import me.lokka30.treasury.api.common.response.FailureReason;
-import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
@@ -104,52 +102,47 @@ public class BalanceCache extends BukkitRunnable {
         }
         OfflinePlayer player = players.get(currentIndex);
         provider.hasAccount(AccountData.forPlayerAccount(player.getUniqueId())).thenCompose(res -> {
-            if (!res.isSuccessful()) {
-                return CompletableFuture.completedFuture(Response.failure(res.getFailureReason()));
-            }
-            if (res.getResult()) {
+            if (res) {
                 return provider.accountAccessor().player().withUniqueId(player.getUniqueId()).get();
             }
-            return CompletableFuture.completedFuture(Response.failure(FailureReason.of(
-                    "accountNotExists")));
-        }).whenComplete((res, ex) -> {
+            return FutureHelper.failedFuture(new TreasuryException("accountNotExists"));
+        }).whenComplete((account, ex) -> {
             if (ex != null) {
-                throw new RuntimeException("An error occurred whilst updating balance cache", ex);
-            }
-
-            if (!res.isSuccessful()) {
-                if (!res.getFailureReason().getDescription().equalsIgnoreCase("accountNotExists")) {
-                    // log the problem and proceed with next entry
-                    TreasuryPlugin.getInstance().logger().error(
-                            "Error whilst trying to update balance cache for " + (player.getName() != null
-                                    ? player.getName()
-                                    : player.getUniqueId().toString()) + ": " + res
-                                    .getFailureReason()
-                                    .getDescription());
-                }
-                proceed(currentIndex + 1, players, provider);
-                return;
-            }
-
-            Account account = res.getResult();
-            List<CompletableFuture<Map.Entry<String, BigDecimal>>> balanceFutures = new ArrayList<>();
-            for (Currency currency : provider.getCurrencies()) {
-                balanceFutures.add(account.retrieveBalance(currency).thenApply(res1 -> {
-                    if (!res1.isSuccessful()) {
+                if (ex instanceof TreasuryException) {
+                    if (!ex.getMessage().equalsIgnoreCase("accountNotExists")) {
+                        // log the problem and proceed with next entry
                         TreasuryPlugin.getInstance().logger().error(
                                 "Error whilst trying to update balance cache for " + (player.getName() != null
                                         ? player.getName()
-                                        : player.getUniqueId().toString()) + ": " + res1
-                                        .getFailureReason()
-                                        .getDescription());
-                        return new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
-                                null
-                        );
+                                        : player
+                                                .getUniqueId()
+                                                .toString()) + ": " + ex.getMessage());
                     }
-                    return new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
-                            res1.getResult()
-                    );
-                }));
+                    proceed(currentIndex + 1, players, provider);
+                    return;
+                }
+                throw new RuntimeException("An error occurred whilst updating balance cache", ex);
+            }
+
+            List<CompletableFuture<Map.Entry<String, BigDecimal>>> balanceFutures = new ArrayList<>();
+            for (Currency currency : provider.getCurrencies()) {
+                balanceFutures.add(account
+                        .retrieveBalance(currency)
+                        .exceptionally(e -> {
+                            if (e instanceof TreasuryException) {
+                                TreasuryPlugin.getInstance().logger().error(
+                                        "Error whilst trying to update balance cache for " + (player.getName() != null
+                                                ? player.getName()
+                                                : player
+                                                        .getUniqueId()
+                                                        .toString()) + ": " + e.getMessage());
+                                return null;
+                            }
+                            throw new RuntimeException(e);
+                        })
+                        .thenApply(balance -> new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
+                                balance
+                        )));
             }
 
             FutureHelper

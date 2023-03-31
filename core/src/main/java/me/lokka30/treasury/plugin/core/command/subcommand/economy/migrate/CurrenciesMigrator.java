@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import me.lokka30.treasury.api.common.misc.TriState;
-import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
@@ -47,22 +47,17 @@ class CurrenciesMigrator implements Runnable {
                 currency = this.makeNonPrimary(currency);
             }
 
+            String id = currency.getIdentifier();
             try {
-                String id = currency.getIdentifier();
-                Response<TriState> response = to.registerCurrency(currency).get();
-                if (!response.isSuccessful()) {
-                    this.migration.debug(() -> "Currency '" + id + "' was not migrated because '" + response
-                            .getFailureReason()
-                            .getDescription() + "'");
-                    continue;
-                }
-
-                if (response.getResult() != TriState.TRUE) {
+                TriState value = to.registerCurrency(currency).get();
+                if (value != TriState.TRUE) {
                     this.migration.debug(() -> "Currency '" + id + "' was not migrated for unknown reason.");
                     continue;
                 }
 
                 this.migration.migratedCurrencies().add(id);
+            } catch (TreasuryException e) {
+                this.migration.debug(() -> "Currency '" + id + "' was not migrated because '" + e.getMessage() + "'");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (ExecutionException e) {
@@ -134,7 +129,7 @@ class CurrenciesMigrator implements Runnable {
 
             @Override
             @NotNull
-            public CompletableFuture<Response<BigDecimal>> parse(
+            public CompletableFuture<BigDecimal> parse(
                     @NotNull String formatted, @Nullable Locale locale
             ) {
                 return c.parse(formatted, locale);

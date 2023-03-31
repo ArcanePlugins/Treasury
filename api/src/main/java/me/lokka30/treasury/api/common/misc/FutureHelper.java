@@ -61,4 +61,20 @@ public class FutureHelper {
         });
     }
 
+    /**
+     * A helper method to create exceptionally completed {@link CompletableFuture futures}.
+     * <p>
+     * This is needed because Treasury API compiles on Java 8.
+     *
+     * @param error the error to complete with
+     * @return completable future which has been completed exceptionally
+     * @param <T> type parameter
+     */
+    @NotNull
+    public static <T> CompletableFuture<T> failedFuture(@NotNull Throwable error) {
+        CompletableFuture<T> ret = new CompletableFuture<>();
+        ret.completeExceptionally(error);
+        return ret;
+    }
+
 }

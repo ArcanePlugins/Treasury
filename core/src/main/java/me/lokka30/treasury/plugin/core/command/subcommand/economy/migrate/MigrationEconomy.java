@@ -15,9 +15,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.NamespacedKey;
+import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
-import me.lokka30.treasury.api.common.response.FailureReason;
-import me.lokka30.treasury.api.common.response.Response;
+import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountData;
@@ -38,7 +38,8 @@ import org.jetbrains.annotations.Nullable;
  */
 class MigrationEconomy implements EconomyProvider {
 
-    private static final FailureReason MIGRATION = () -> "The feature is currently not available during migration.";
+    private static final TreasuryException MIGRATION = new TreasuryException(
+            "The feature is currently not available during migration.");
 
     private final @NotNull Currency currency;
     private final @NotNull AccountAccessor accountAccessor;
@@ -100,10 +101,10 @@ class MigrationEconomy implements EconomyProvider {
 
             @Override
             @NotNull
-            public CompletableFuture<Response<BigDecimal>> parse(
+            public CompletableFuture<BigDecimal> parse(
                     @NotNull final String formatted, @Nullable final Locale locale
             ) {
-                return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+                return FutureHelper.failedFuture(MIGRATION);
             }
 
             @Override
@@ -129,10 +130,10 @@ class MigrationEconomy implements EconomyProvider {
             public @NotNull PlayerAccountAccessor player() {
                 return new PlayerAccountAccessor() {
                     @Override
-                    protected @NotNull CompletableFuture<Response<PlayerAccount>> getOrCreate(
+                    protected @NotNull CompletableFuture<PlayerAccount> getOrCreate(
                             @NotNull PlayerAccountCreateContext context
                     ) {
-                        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+                        return FutureHelper.failedFuture(MIGRATION);
                     }
                 };
             }
@@ -141,10 +142,10 @@ class MigrationEconomy implements EconomyProvider {
             public @NotNull NonPlayerAccountAccessor nonPlayer() {
                 return new NonPlayerAccountAccessor() {
                     @Override
-                    protected @NotNull CompletableFuture<Response<NonPlayerAccount>> getOrCreate(
+                    protected @NotNull CompletableFuture<NonPlayerAccount> getOrCreate(
                             @NotNull NonPlayerAccountCreateContext context
                     ) {
-                        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+                        return FutureHelper.failedFuture(MIGRATION);
                     }
                 };
             }
@@ -157,20 +158,20 @@ class MigrationEconomy implements EconomyProvider {
     }
 
     @Override
-    public @NotNull CompletableFuture<Response<Boolean>> hasAccount(@NotNull AccountData accountData) {
-        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+    public @NotNull CompletableFuture<Boolean> hasAccount(@NotNull AccountData accountData) {
+        return FutureHelper.failedFuture(MIGRATION);
     }
 
     @Override
     @NotNull
-    public CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds() {
-        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+    public CompletableFuture<Collection<UUID>> retrievePlayerAccountIds() {
+        return FutureHelper.failedFuture(MIGRATION);
     }
 
     @Override
     @NotNull
-    public CompletableFuture<Response<Collection<NamespacedKey>>> retrieveNonPlayerAccountIds() {
-        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+    public CompletableFuture<Collection<NamespacedKey>> retrieveNonPlayerAccountIds() {
+        return FutureHelper.failedFuture(MIGRATION);
     }
 
     @Override
@@ -192,14 +193,14 @@ class MigrationEconomy implements EconomyProvider {
 
     @Override
     @NotNull
-    public CompletableFuture<Response<TriState>> registerCurrency(@NotNull final Currency currency) {
-        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+    public CompletableFuture<TriState> registerCurrency(@NotNull final Currency currency) {
+        return FutureHelper.failedFuture(MIGRATION);
     }
 
     @Override
     @NotNull
-    public CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull final Currency currency) {
-        return CompletableFuture.completedFuture(Response.failure(MIGRATION));
+    public CompletableFuture<TriState> unregisterCurrency(@NotNull final Currency currency) {
+        return FutureHelper.failedFuture(MIGRATION);
     }
 
 }
