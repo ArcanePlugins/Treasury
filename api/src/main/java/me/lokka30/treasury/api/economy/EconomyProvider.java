@@ -6,7 +6,6 @@ package me.lokka30.treasury.api.economy;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -15,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
-import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
@@ -56,46 +54,42 @@ public interface EconomyProvider {
      * whether just created or pulled from a database.
      *
      * @param accountData data about the account type and specific account identifiers
-     * @return future with {@link Response} which if successful returns the resulting {@link TriState}
+     * @return whether there is an account registered with the given identification from the account data
      * @see AccountData
      * @since 2.0.0
      */
-    @NotNull CompletableFuture<Response<Boolean>> hasAccount(@NotNull AccountData accountData);
+    @NotNull CompletableFuture<Boolean> hasAccount(@NotNull AccountData accountData);
 
     /**
      * Request all {@link UUID UUIDs} with associated {@link PlayerAccount PlayerAccounts}.
      *
-     * @return future with {@link Response} which if successful returns the resulting value
+     * @return a collection of player account uuids
      * @since v1.0.0
      */
-    @NotNull CompletableFuture<Response<Collection<UUID>>> retrievePlayerAccountIds();
+    @NotNull CompletableFuture<Collection<UUID>> retrievePlayerAccountIds();
 
     /**
      * Request all {@link NamespacedKey identifiers} with associated {@link NonPlayerAccount
      * NonPlayer Accounts}.
      *
-     * @return future with {@link Response} which if successful returns the resulting value
+     * @return a collection of non-player account namespaced key identifiers
      * @since v1.0.0
      */
-    @NotNull CompletableFuture<Response<Collection<NamespacedKey>>> retrieveNonPlayerAccountIds();
+    @NotNull CompletableFuture<Collection<NamespacedKey>> retrieveNonPlayerAccountIds();
 
     /**
      * Request all {@link NonPlayerAccount non player accounts} the given player is a member of.
      *
      * @param playerId the player
-     * @return future with {@link Response} which if successful returns the resulting value
+     * @return a collection of all accounts that the given player is a member of
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<Response<NonPlayerAccount>>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
+    default CompletableFuture<Collection<NonPlayerAccount>> retrieveAllAccountsPlayerIsMemberOf(@NotNull UUID playerId) {
         Objects.requireNonNull(playerId, "playerId");
 
-        return retrieveNonPlayerAccountIds().thenCompose(result -> {
-            if (!result.isSuccessful() || result.getResult().isEmpty()) {
-                return CompletableFuture.completedFuture(Collections.emptyList());
-            }
-            Collection<NamespacedKey> identifiers = result.getResult();
-            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
+        return retrieveNonPlayerAccountIds().thenCompose(identifiers -> {
+            Collection<CompletableFuture<NonPlayerAccount>> accountFutures = new ArrayList<>(
                     identifiers.size());
             for (NamespacedKey identifier : identifiers) {
                 accountFutures.add(this
@@ -104,18 +98,13 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.joinAndFilter(res -> {
-                if (!res.isSuccessful()) {
-                    return CompletableFuture.completedFuture(TriState.FALSE);
-                } else {
-                    return res.getResult().isMember(playerId).thenCompose(res1 -> {
-                        if (!res1.isSuccessful()) {
-                            return CompletableFuture.completedFuture(TriState.FALSE);
-                        }
-                        return CompletableFuture.completedFuture(TriState.fromBoolean(res1.getResult()));
-                    });
-                }
-            }, accountFutures);
+            return FutureHelper.joinAndFilter(
+                    account -> account
+                            .isMember(playerId)
+                            .thenCompose(val -> CompletableFuture.completedFuture(TriState.fromBoolean(
+                                    val))),
+                    accountFutures
+            );
         });
     }
 
@@ -124,23 +113,19 @@ public interface EconomyProvider {
      *
      * @param playerId    the player
      * @param permissions the permissions that the given player has to have on the {@link NonPlayerAccount account}
-     * @return future with {@link Response} which if successful returns the resulting value
+     * @return a collection of all accounts that the given player has all given permission(s) in
      * @see #retrieveAllAccountsPlayerIsMemberOf(UUID)
      * @since v1.0.0
      */
     @NotNull
-    default CompletableFuture<Collection<Response<NonPlayerAccount>>> retrieveAllAccountsPlayerHasPermission(
+    default CompletableFuture<Collection<NonPlayerAccount>> retrieveAllAccountsPlayerHasPermissions(
             @NotNull UUID playerId, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(playerId, "playerId");
         Objects.requireNonNull(permissions, "permissions");
 
-        return retrieveNonPlayerAccountIds().thenCompose(result -> {
-            if (!result.isSuccessful() || result.getResult().isEmpty()) {
-                return CompletableFuture.completedFuture(Collections.emptyList());
-            }
-            Collection<NamespacedKey> identifiers = result.getResult();
-            Collection<CompletableFuture<Response<NonPlayerAccount>>> accountFutures = new ArrayList<>(
+        return retrieveNonPlayerAccountIds().thenCompose(identifiers -> {
+            Collection<CompletableFuture<NonPlayerAccount>> accountFutures = new ArrayList<>(
                     identifiers.size());
             for (NamespacedKey identifier : identifiers) {
                 accountFutures.add(this
@@ -149,21 +134,10 @@ public interface EconomyProvider {
                         .withIdentifier(identifier)
                         .get());
             }
-            return FutureHelper.joinAndFilter(res -> {
-                if (!res.isSuccessful()) {
-                    return CompletableFuture.completedFuture(TriState.FALSE);
-                } else {
-                    return res
-                            .getResult()
-                            .hasPermissions(playerId, permissions)
-                            .thenCompose(res1 -> {
-                                if (!res1.isSuccessful()) {
-                                    return CompletableFuture.completedFuture(TriState.FALSE);
-                                }
-                                return CompletableFuture.completedFuture(res1.getResult());
-                            });
-                }
-            }, accountFutures);
+            return FutureHelper.joinAndFilter(account -> account.hasPermissions(
+                    playerId,
+                    permissions
+            ), accountFutures);
         });
     }
 
@@ -209,24 +183,24 @@ public interface EconomyProvider {
      * other plugins.
      *
      * @param currency The currency to register with the {@link EconomyProvider}.
-     * @return future with {@link Response} which if successful returns a {@link TriState}
-     *         whether the registration was successful. If the currency was successfully registered,
-     *         this shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that
-     *         currency is already registered, {@link TriState#UNSPECIFIED}.
+     * @return a {@link TriState} value representing whether the registration was successful. If
+     *         the currency was successfully registered, this shall be {@link TriState#TRUE}, otherwise
+     *         {@link TriState#FALSE} and if that currency is already registered,
+     *         {@link TriState#UNSPECIFIED}.
      * @since v1.0.0
      */
-    @NotNull CompletableFuture<Response<TriState>> registerCurrency(@NotNull Currency currency);
+    @NotNull CompletableFuture<TriState> registerCurrency(@NotNull Currency currency);
 
     /**
      * Used to un-register a currency with the {@link EconomyProvider}.
      *
      * @param currency The currency to un-register with the {@link EconomyProvider}.
-     * @return future with {@link Response} which if successful returns a {@link TriState}
-     *         whether the registration was successful. If the currency was successfully registered,
-     *         this shall be {@link TriState#TRUE}, otherwise {@link TriState#FALSE} and if that
-     *         currency is not registered already, {@link TriState#UNSPECIFIED}.
+     * @return a {@link TriState} value representing whether the unregistration was successful. If
+     *         the currency was successfully unregistered, {@link TriState#TRUE} is returned,
+     *         otherwise {@link TriState#FALSE}, and if that currency is already not registered,
+     *         {@link TriState#UNSPECIFIED} is returned.
      * @since v2.0.0
      */
-    @NotNull CompletableFuture<Response<TriState>> unregisterCurrency(@NotNull Currency currency);
+    @NotNull CompletableFuture<TriState> unregisterCurrency(@NotNull Currency currency);
 
 }
