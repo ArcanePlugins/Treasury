@@ -87,10 +87,8 @@ public class SpongeToTreasuryCurrencyImpl implements Currency {
 
     @Override
     public @NotNull BigDecimal getConversionRate() {
-        // This is kinda sad imo, currencies coming from the Sponge API will not be able to get
-        // properly converted in between (Sponge API currency -> Sponge API currency) when utilised
-        // by the users of the treasury api.
-        return BigDecimal.ONE;
+        // Sponge does not have a concept of converting currencies
+        return BigDecimal.ZERO;
     }
 
     @Override
