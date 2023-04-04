@@ -9,7 +9,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 
-public class UniqueAccountImpl extends VirtualAccountImpl implements UniqueAccount {
+public class UniqueAccountImpl extends AbstractAccountImpl implements UniqueAccount {
 
     public UniqueAccountImpl(
             EconomyProvider delegateProvider,
@@ -22,6 +22,11 @@ public class UniqueAccountImpl extends VirtualAccountImpl implements UniqueAccou
     @Override
     public UUID uniqueId() {
         return ((PlayerAccount) this.delegateAccount).getUniqueId();
+    }
+
+    @Override
+    public String identifier() {
+        return this.uniqueId().toString();
     }
 
 }
