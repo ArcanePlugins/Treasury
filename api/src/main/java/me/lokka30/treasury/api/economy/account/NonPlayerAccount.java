@@ -4,6 +4,7 @@
 
 package me.lokka30.treasury.api.economy.account;
 
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,5 +27,14 @@ public interface NonPlayerAccount extends Account {
      * @since 2.0.0
      */
     @NotNull NamespacedKey getIdentifier();
+
+    /**
+     * Get this {@code NonPlayerAccount} as a {@link Cause cause}.
+     * <p>
+     * The return value of this method shall be cached upon a {@code NonPlayerAccount} creation.
+     *
+     * @return this non player account, represented by a cause
+     */
+    @NotNull Cause.Account getAsCause();
 
 }

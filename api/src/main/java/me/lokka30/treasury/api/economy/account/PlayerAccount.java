@@ -12,8 +12,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.misc.TriState;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,14 +58,13 @@ public interface PlayerAccount extends Account {
     @NotNull UUID getUniqueId();
 
     /**
-     * Get this {@code PlayerAccount} as a {@link EconomyTransactionInitiator transaction
-     * initiator}.
+     * Get this {@code PlayerAccount} as a {@link Cause cause}.
      * <p>
      * The return value of this method shall be cached upon a {@code PlayerAccount} creation.
      *
-     * @return this player account, represented by an economy transaction initiator
+     * @return this player account, represented by a cause
      */
-    @NotNull EconomyTransactionInitiator<UUID> getAsTransactionInitiator();
+    @NotNull Cause.Player getAsCause();
 
     /**
      * {@inheritDoc}

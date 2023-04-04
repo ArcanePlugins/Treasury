@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.plugin.minestom;
 
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import net.minestom.server.command.CommandSender;
@@ -14,17 +14,14 @@ import org.jetbrains.annotations.NotNull;
 public class MinestomCommandSource implements CommandSource {
 
     private final CommandSender handle;
-    private final EconomyTransactionInitiator<?> initiator;
+    private final Cause<?> cause;
 
     public MinestomCommandSource(CommandSender handle) {
         this.handle = handle;
         if (handle instanceof Player) {
-            this.initiator = EconomyTransactionInitiator.createInitiator(
-                    EconomyTransactionInitiator.Type.PLAYER,
-                    ((Player) handle).getUuid()
-            );
+            this.cause = Cause.player(((Player) handle).getUuid());
         } else {
-            this.initiator = EconomyTransactionInitiator.SERVER;
+            this.cause = Cause.SERVER;
         }
     }
 
@@ -39,8 +36,8 @@ public class MinestomCommandSource implements CommandSource {
     }
 
     @Override
-    public @NotNull EconomyTransactionInitiator<?> getAsTransactionInitiator() {
-        return this.initiator;
+    public @NotNull Cause<?> getAsCause() {
+        return this.cause;
     }
 
 }

@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.plugin.bukkit.command;
 
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.plugin.bukkit.BukkitTreasuryPlugin;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
@@ -15,14 +15,14 @@ import org.jetbrains.annotations.NotNull;
 public class BukkitCommandSource implements CommandSource {
 
     private final CommandSender sender;
-    private final EconomyTransactionInitiator<?> initiator;
+    private final Cause<?> cause;
 
     public BukkitCommandSource(CommandSender sender) {
         this.sender = sender;
         if (sender instanceof Player) {
-            this.initiator = EconomyTransactionInitiator.createInitiator(EconomyTransactionInitiator.Type.PLAYER, ((Player) sender).getUniqueId());
+            this.cause = Cause.player(((Player) sender).getUniqueId());
         } else {
-            this.initiator = EconomyTransactionInitiator.SERVER;
+            this.cause = Cause.SERVER;
         }
     }
 
@@ -37,8 +37,8 @@ public class BukkitCommandSource implements CommandSource {
     }
 
     @Override
-    public @NotNull EconomyTransactionInitiator<?> getAsTransactionInitiator() {
-        return initiator;
+    public @NotNull Cause<?> getAsCause() {
+        return this.cause;
     }
 
 }

@@ -10,27 +10,27 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
 class PlayerAccountMigrationProcess extends Process {
 
-    protected final EconomyTransactionInitiator<?> initiator;
+    protected final Cause<?> cause;
     protected final String accountId;
     protected final MigrationData migration;
     protected Account fromAccount, toAccount;
 
     public PlayerAccountMigrationProcess(
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull String accountId,
             @NotNull MigrationData migration
     ) {
-        this.initiator = initiator;
+        this.cause = cause;
         this.accountId = accountId;
         this.migration = migration;
     }
@@ -93,11 +93,11 @@ class PlayerAccountMigrationProcess extends Process {
 
                 if (balance.compareTo(BigDecimal.ZERO) < 0) {
                     toAccount
-                            .withdrawBalance(balance, this.initiator, currency)
+                            .withdrawBalance(balance, this.cause, currency)
                             .get();
                 } else {
                     toAccount
-                            .depositBalance(balance, this.initiator, currency)
+                            .depositBalance(balance, this.cause, currency)
                             .get();
                 }
             } catch (TreasuryException e) {

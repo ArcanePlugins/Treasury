@@ -19,13 +19,13 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServicePriority;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import me.lokka30.treasury.plugin.core.command.Subcommand;
@@ -156,7 +156,7 @@ public class EconomyMigrateSub implements Subcommand {
 
         MigrationData migration = new MigrationData(from.get(), to.get(), debugEnabled);
 
-        EconomyTransactionInitiator<?> initiator = sender.getAsTransactionInitiator();
+        Cause<?> cause = sender.getAsCause();
         TreasuryPlugin.getInstance().scheduler().runAsync(() -> {
             // Run the currencies migrator first before doing anything else.
             try {
@@ -203,14 +203,14 @@ public class EconomyMigrateSub implements Subcommand {
                     ));
                 };
 
-                ProcessesCompletion playerCompletion = this.migratePlayerAccounts(initiator,
+                ProcessesCompletion playerCompletion = this.migratePlayerAccounts(cause,
                         migration
                 );
 
                 if (playerCompletion == null) {
                     // Weird. No player accounts to migrate.
                     // let's try to migrate just non player accounts
-                    ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(initiator,
+                    ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(cause,
                             migration
                     );
                     if (nonPlayerCompletion == null) {
@@ -222,7 +222,7 @@ public class EconomyMigrateSub implements Subcommand {
                     return;
                 }
 
-                ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(initiator,
+                ProcessesCompletion nonPlayerCompletion = this.migrateNonPlayerAccounts(cause,
                         migration
                 );
 
@@ -272,7 +272,7 @@ public class EconomyMigrateSub implements Subcommand {
     }
 
     private ProcessesCompletion migratePlayerAccounts(
-            @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
+            @NotNull Cause<?> cause, @NotNull MigrationData migration
     ) throws InterruptedException, ExecutionException {
         Collection<UUID> accountIds = migration
                 .from()
@@ -283,7 +283,7 @@ public class EconomyMigrateSub implements Subcommand {
         }
         List<Process> processes = new ArrayList<>(accountIds.size());
         for (UUID uuid : accountIds) {
-            processes.add(new PlayerAccountMigrationProcess(initiator, uuid.toString(), migration));
+            processes.add(new PlayerAccountMigrationProcess(cause, uuid.toString(), migration));
         }
 
         return TreasuryPlugin
@@ -293,7 +293,7 @@ public class EconomyMigrateSub implements Subcommand {
     }
 
     private ProcessesCompletion migrateNonPlayerAccounts(
-            @NotNull EconomyTransactionInitiator<?> initiator, @NotNull MigrationData migration
+            @NotNull Cause<?> cause, @NotNull MigrationData migration
     ) throws InterruptedException, ExecutionException {
         Collection<NamespacedKey> accountIds = migration
                 .from()
@@ -304,7 +304,7 @@ public class EconomyMigrateSub implements Subcommand {
         }
         List<Process> processes = new ArrayList<>(accountIds.size());
         for (NamespacedKey id : accountIds) {
-            processes.add(new NonPlayerAccountMigrationProcess(initiator, id.toString(), migration));
+            processes.add(new NonPlayerAccountMigrationProcess(cause, id.toString(), migration));
         }
 
         return TreasuryPlugin
