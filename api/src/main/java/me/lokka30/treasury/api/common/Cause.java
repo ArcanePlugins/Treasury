@@ -24,7 +24,7 @@ public interface Cause<T> {
     /**
      * Returns the server cause instance.
      */
-    @NotNull ServerCause SERVER = ServerCause.INSTANCE;
+    @NotNull Cause<String> SERVER = ServerCause.INSTANCE;
 
     /**
      * Creates a new player cause with the player {@link UUID unique id} as an identifier.
