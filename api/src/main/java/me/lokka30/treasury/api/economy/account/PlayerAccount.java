@@ -23,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
  * optional.
  * <br>
  * A Player, on all the platforms Treasury plugin aims to support, is described as a minecraft
- * client, mainly identifiable by a {@link #getUniqueId() unique-id}.
+ * client, mainly identifiable by a {@link #identifier() unique-id}.
  *
  * @author lokka30, Geolykt, creatorfromhell
  * @see Account
  * @since v1.0.0
  */
-public interface PlayerAccount extends Account {
+public interface PlayerAccount extends Account, Cause.Player {
 
     /**
      * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
@@ -49,31 +49,13 @@ public interface PlayerAccount extends Account {
     }
 
     /**
-     * Get the {@link UUID unique identifier} of this {@code PlayerAccount}.
-     *
-     * @return account identifier
-     * @see UUID
-     * @since v1.0.0
-     */
-    @NotNull UUID getUniqueId();
-
-    /**
-     * Get this {@code PlayerAccount} as a {@link Cause cause}.
-     * <p>
-     * The return value of this method shall be cached upon a {@code PlayerAccount} creation.
-     *
-     * @return this player account, represented by a cause
-     */
-    @NotNull Cause.Player getAsCause();
-
-    /**
      * {@inheritDoc}
      */
     @Override
     @NotNull
     default CompletableFuture<Boolean> isMember(@NotNull UUID player) {
         Objects.requireNonNull(player, "player");
-        return CompletableFuture.completedFuture(getUniqueId().equals(player));
+        return CompletableFuture.completedFuture(this.identifier().equals(player));
     }
 
     /**
@@ -82,7 +64,7 @@ public interface PlayerAccount extends Account {
     @Override
     @NotNull
     default CompletableFuture<Collection<UUID>> retrieveMemberIds() {
-        return CompletableFuture.completedFuture(Collections.singletonList(getUniqueId()));
+        return CompletableFuture.completedFuture(Collections.singletonList(this.identifier()));
     }
 
     /**
@@ -96,7 +78,7 @@ public interface PlayerAccount extends Account {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(permissions, "permissions");
 
-        return CompletableFuture.completedFuture(TriState.fromBoolean(getUniqueId().equals(player)));
+        return CompletableFuture.completedFuture(TriState.fromBoolean(this.identifier().equals(player)));
     }
 
     /**
@@ -109,7 +91,7 @@ public interface PlayerAccount extends Account {
     ) {
         Objects.requireNonNull(player, "player");
 
-        return CompletableFuture.completedFuture(getUniqueId().equals(player)
+        return CompletableFuture.completedFuture(this.identifier().equals(player)
                 ? ALL_PERMISSIONS_MAP
                 : Collections.emptyMap());
     }
@@ -121,7 +103,7 @@ public interface PlayerAccount extends Account {
     @NotNull
     default CompletableFuture<Map<UUID, Map<AccountPermission, TriState>>> retrievePermissionsMap() {
         return CompletableFuture.completedFuture(Collections.singletonMap(
-                this.getUniqueId(),
+                this.identifier(),
                 ALL_PERMISSIONS_MAP
         ));
     }

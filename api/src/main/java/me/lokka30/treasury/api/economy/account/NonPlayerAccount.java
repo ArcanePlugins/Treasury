@@ -5,8 +5,6 @@
 package me.lokka30.treasury.api.economy.account;
 
 import me.lokka30.treasury.api.common.Cause;
-import me.lokka30.treasury.api.common.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a non-player account. A non-player account is an account that is not owned by a
@@ -17,24 +15,6 @@ import org.jetbrains.annotations.NotNull;
  * @see NonPlayerAccount
  * @since v1.0.0
  */
-public interface NonPlayerAccount extends Account {
-
-    /**
-     * Returns the {@link NamespacedKey} identifier of this {@code NonPlayerAccount}
-     *
-     * @return identifier
-     * @see NamespacedKey
-     * @since 2.0.0
-     */
-    @NotNull NamespacedKey getIdentifier();
-
-    /**
-     * Get this {@code NonPlayerAccount} as a {@link Cause cause}.
-     * <p>
-     * The return value of this method shall be cached upon a {@code NonPlayerAccount} creation.
-     *
-     * @return this non player account, represented by a cause
-     */
-    @NotNull Cause.Account getAsCause();
+public interface NonPlayerAccount extends Account, Cause.Account {
 
 }
