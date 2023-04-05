@@ -20,7 +20,7 @@ public class VirtualAccountImpl extends AbstractAccountImpl implements VirtualAc
 
     @Override
     public String identifier() {
-        return ((NonPlayerAccount) this.delegateAccount).getIdentifier().toString();
+        return ((NonPlayerAccount) this.delegateAccount).identifier().toString();
     }
 
 }

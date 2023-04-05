@@ -16,7 +16,6 @@ import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
@@ -146,7 +145,7 @@ public abstract class AbstractAccountImpl implements Account {
                 .withCurrency(treasuryCurrency)
                 .withAmount(amount)
                 .withImportance(EconomyTransactionImportance.NORMAL)
-                .withInitiator(EconomyTransactionInitiator.SERVER)
+                .withCause(me.lokka30.treasury.api.common.Cause.SERVER)
                 .withType(EconomyTransactionType.SET)
                 .build()).join();
         return new TransactionResultImpl(
@@ -185,7 +184,7 @@ public abstract class AbstractAccountImpl implements Account {
                 sponge = new SpongeCurrencyImpl(treasuryCurrency);
             }
             delegateAccount.resetBalance(
-                    EconomyTransactionInitiator.SERVER,
+                    me.lokka30.treasury.api.common.Cause.SERVER,
                     treasuryCurrency,
                     EconomyTransactionImportance.NORMAL
             ).join();
@@ -224,7 +223,7 @@ public abstract class AbstractAccountImpl implements Account {
         }
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
         delegateAccount.resetBalance(
-                EconomyTransactionInitiator.SERVER,
+                me.lokka30.treasury.api.common.Cause.SERVER,
                 treasuryCurrency,
                 EconomyTransactionImportance.NORMAL
         ).join();
@@ -256,7 +255,7 @@ public abstract class AbstractAccountImpl implements Account {
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
         this.delegateAccount.depositBalance(
                 amount,
-                EconomyTransactionInitiator.SERVER,
+                me.lokka30.treasury.api.common.Cause.SERVER,
                 treasuryCurrency
         ).join();
         return new TransactionResultImpl(
@@ -285,7 +284,7 @@ public abstract class AbstractAccountImpl implements Account {
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
         this.delegateAccount.withdrawBalance(
                 amount,
-                EconomyTransactionInitiator.SERVER,
+                me.lokka30.treasury.api.common.Cause.SERVER,
                 treasuryCurrency
         ).join();
         return new TransactionResultImpl(
@@ -344,16 +343,23 @@ public abstract class AbstractAccountImpl implements Account {
                         .join();
             }
             if (toDelegate == null) {
-                throw new IllegalArgumentException("Failed to recover from null delegate: accountId = " + to.identifier());
+                throw new IllegalArgumentException(
+                        "Failed to recover from null delegate: accountId = " + to.identifier());
             }
         }
-        delegateAccount.withdrawBalance(
-                amount,
-                EconomyTransactionInitiator.SERVER,
-                treasuryCurrency
-        ).join();
+        delegateAccount
+                .withdrawBalance(
+                        amount,
+                        (me.lokka30.treasury.api.common.Cause<?>) delegateAccount,
+                        treasuryCurrency
+                )
+                .join();
         toDelegate
-                .depositBalance(amount, EconomyTransactionInitiator.SERVER, treasuryCurrency)
+                .depositBalance(
+                        amount,
+                        (me.lokka30.treasury.api.common.Cause<?>) delegateAccount,
+                        treasuryCurrency
+                )
                 .join();
         return new TransferResultImpl(
                 this,

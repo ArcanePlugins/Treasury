@@ -21,7 +21,7 @@ public class UniqueAccountImpl extends AbstractAccountImpl implements UniqueAcco
 
     @Override
     public UUID uniqueId() {
-        return ((PlayerAccount) this.delegateAccount).getUniqueId();
+        return ((PlayerAccount) this.delegateAccount).identifier();
     }
 
     @Override
