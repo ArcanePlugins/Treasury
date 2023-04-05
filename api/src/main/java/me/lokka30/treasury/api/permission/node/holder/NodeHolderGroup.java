@@ -4,11 +4,8 @@
 
 package me.lokka30.treasury.api.permission.node.holder;
 
-import me.lokka30.treasury.api.common.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
+import me.lokka30.treasury.api.common.Cause;
 
-public interface NodeHolderGroup extends NodeHolder {
-
-    @NotNull NamespacedKey getIdentifier();
+public interface NodeHolderGroup extends NodeHolder, Cause.NonPlayer {
 
 }
