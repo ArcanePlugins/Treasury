@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.Optional;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class EconomyTransaction {
 
     private final BigDecimal amount;
     private final String currencyId;
-    private final EconomyTransactionInitiator<?> initiator;
+    private final Cause<?> cause;
     private final Instant timestamp;
     private final EconomyTransactionType type;
     private final Optional<String> reason;
@@ -47,7 +48,7 @@ public class EconomyTransaction {
      * Creates a new account transaction object.
      *
      * @param currencyId the currency's {@link Currency#getIdentifier() identifier} the transaction was made into
-     * @param initiator  the one who initiated the transaction
+     * @param cause      the cause of the transaction. See {@link Cause}
      * @param timestamp  the time at which this transaction occurred. specifying null would mean "now"
      * @param type       the transaction type
      * @param reason     optional specification of a string message reason
@@ -56,7 +57,7 @@ public class EconomyTransaction {
      */
     public EconomyTransaction(
             @NotNull String currencyId,
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @Nullable Temporal timestamp,
             @NotNull EconomyTransactionType type,
             @Nullable String reason,
@@ -64,7 +65,7 @@ public class EconomyTransaction {
             @NotNull EconomyTransactionImportance importance
     ) {
         this.currencyId = Objects.requireNonNull(currencyId, "currencyID");
-        this.initiator = Objects.requireNonNull(initiator, "initiator");
+        this.cause = Objects.requireNonNull(cause, "cause");
         this.type = Objects.requireNonNull(type, "transactionType");
         this.reason = Optional.ofNullable(reason);
         this.amount = amount;
@@ -112,13 +113,13 @@ public class EconomyTransaction {
     }
 
     /**
-     * Returns the {@link EconomyTransactionInitiator} of this {@code EconomyTransaction}
+     * Returns the {@link Cause} of this {@code EconomyTransaction}
      *
-     * @return initiator
+     * @return cause
      */
     @NotNull
-    public EconomyTransactionInitiator<?> getInitiator() {
-        return initiator;
+    public Cause<?> getCause() {
+        return cause;
     }
 
     /**
@@ -159,7 +160,7 @@ public class EconomyTransaction {
     public static class Builder {
 
         private String currencyId;
-        private EconomyTransactionInitiator<?> initiator;
+        private Cause<?> cause;
         private Temporal timestamp;
         private EconomyTransactionType type;
         private String reason;
@@ -176,7 +177,7 @@ public class EconomyTransaction {
          */
         public Builder(@NotNull Builder other) {
             this.currencyId = other.currencyId;
-            this.initiator = other.initiator;
+            this.cause = other.cause;
             this.timestamp = other.timestamp;
             this.type = other.type;
             this.reason = other.reason;
@@ -219,14 +220,14 @@ public class EconomyTransaction {
         }
 
         /**
-         * Specify the {@link EconomyTransactionInitiator} the transaction got triggered by.
+         * Specify the {@link Cause} the transaction got triggered by.
          *
-         * @param initiator initiator
+         * @param cause cause
          * @return this instance for chaining
          */
         @Contract("_ -> this")
-        public Builder withInitiator(@NotNull EconomyTransactionInitiator<?> initiator) {
-            this.initiator = Objects.requireNonNull(initiator, "initiator");
+        public Builder withCause(@NotNull Cause<?> cause) {
+            this.cause = Objects.requireNonNull(cause, "cause");
             return this;
         }
 
@@ -299,12 +300,12 @@ public class EconomyTransaction {
         @NotNull
         public EconomyTransaction build() {
             Objects.requireNonNull(currencyId, "currencyID");
-            Objects.requireNonNull(initiator, "initiator");
+            Objects.requireNonNull(cause, "cause");
             Objects.requireNonNull(type, "transactionType");
             Objects.requireNonNull(amount, "transactionAmount");
             Objects.requireNonNull(importance, "importance");
             return new EconomyTransaction(currencyId,
-                    initiator,
+                    cause,
                     timestamp,
                     type,
                     reason,

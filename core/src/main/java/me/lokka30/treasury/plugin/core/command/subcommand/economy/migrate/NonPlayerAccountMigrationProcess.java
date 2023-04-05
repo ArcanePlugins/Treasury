@@ -7,23 +7,23 @@ package me.lokka30.treasury.plugin.core.command.subcommand.economy.migrate;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.NamespacedKey;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.account.AccountPermission;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 
 class NonPlayerAccountMigrationProcess extends PlayerAccountMigrationProcess {
 
     public NonPlayerAccountMigrationProcess(
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull String accountId,
             @NotNull MigrationData migration
     ) {
-        super(initiator, accountId, migration);
+        super(cause, accountId, migration);
     }
 
     @Override
