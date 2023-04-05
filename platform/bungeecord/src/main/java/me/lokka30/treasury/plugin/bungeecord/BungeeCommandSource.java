@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.plugin.bungeecord;
 
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import net.md_5.bungee.api.CommandSender;
@@ -15,17 +15,14 @@ import org.jetbrains.annotations.NotNull;
 public class BungeeCommandSource implements CommandSource {
 
     private final CommandSender sender;
-    private final EconomyTransactionInitiator<?> initiator;
+    private final Cause<?> cause;
 
     public BungeeCommandSource(CommandSender sender) {
         this.sender = sender;
         if (sender instanceof ProxiedPlayer) {
-            this.initiator = EconomyTransactionInitiator.createInitiator(
-                    EconomyTransactionInitiator.Type.PLAYER,
-                    ((ProxiedPlayer) sender).getUniqueId()
-            );
+            this.cause = Cause.player(((ProxiedPlayer) sender).getUniqueId());
         } else {
-            this.initiator = EconomyTransactionInitiator.SERVER;
+            this.cause = Cause.SERVER;
         }
     }
 
@@ -41,8 +38,8 @@ public class BungeeCommandSource implements CommandSource {
     }
 
     @Override
-    public @NotNull EconomyTransactionInitiator<?> getAsTransactionInitiator() {
-        return initiator;
+    public @NotNull Cause<?> getAsCause() {
+        return this.cause;
     }
 
 }

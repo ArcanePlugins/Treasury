@@ -4,7 +4,7 @@
 
 package me.lokka30.treasury.plugin.sponge;
 
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import net.kyori.adventure.audience.Audience;
@@ -16,17 +16,14 @@ public class SpongeCommandSource implements CommandSource {
 
     private final Audience handle;
 
-    private final EconomyTransactionInitiator<?> initiator;
+    private final Cause<?> cause;
 
     public SpongeCommandSource(Audience handle) {
         this.handle = handle;
         if (handle instanceof Player) {
-            this.initiator = EconomyTransactionInitiator.createInitiator(
-                    EconomyTransactionInitiator.Type.PLAYER,
-                    ((Player) handle).uniqueId()
-            );
+            this.cause = Cause.player(((Player) handle).uniqueId());
         } else {
-            this.initiator = EconomyTransactionInitiator.SERVER;
+            this.cause = Cause.SERVER;
         }
     }
 
@@ -37,7 +34,7 @@ public class SpongeCommandSource implements CommandSource {
 
     @Override
     public boolean hasPermission(@NotNull final String node) {
-        if (this.initiator.getType() == EconomyTransactionInitiator.Type.SERVER) {
+        if (this.cause.equals(Cause.SERVER)) {
             return true;
         } else {
             return this.handle.get(PermissionChecker.POINTER).get().test(node);
@@ -45,8 +42,8 @@ public class SpongeCommandSource implements CommandSource {
     }
 
     @Override
-    public @NotNull EconomyTransactionInitiator<?> getAsTransactionInitiator() {
-        return this.initiator;
+    public @NotNull Cause<?> getAsCause() {
+        return this.cause;
     }
 
 }

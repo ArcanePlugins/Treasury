@@ -5,7 +5,7 @@
 package me.lokka30.treasury.plugin.velocity;
 
 import com.velocitypowered.api.proxy.Player;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.plugin.core.command.CommandSource;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -13,17 +13,14 @@ import org.jetbrains.annotations.NotNull;
 public class VelocityCommandSource implements CommandSource {
 
     private final com.velocitypowered.api.command.CommandSource handle;
-    private final EconomyTransactionInitiator<?> initiator;
+    private final Cause<?> cause;
 
     public VelocityCommandSource(com.velocitypowered.api.command.CommandSource handle) {
         this.handle = handle;
         if (handle instanceof Player) {
-            initiator = EconomyTransactionInitiator.createInitiator(
-                    EconomyTransactionInitiator.Type.PLAYER,
-                    ((Player) handle).getUniqueId()
-            );
+            this.cause = Cause.player(((Player) handle).getUniqueId());
         } else {
-            initiator = EconomyTransactionInitiator.SERVER;
+            this.cause = Cause.SERVER;
         }
     }
 
@@ -38,8 +35,8 @@ public class VelocityCommandSource implements CommandSource {
     }
 
     @Override
-    public @NotNull EconomyTransactionInitiator<?> getAsTransactionInitiator() {
-        return initiator;
+    public @NotNull Cause<?> getAsCause() {
+        return cause;
     }
 
 }

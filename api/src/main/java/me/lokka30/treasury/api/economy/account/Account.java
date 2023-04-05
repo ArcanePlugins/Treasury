@@ -15,12 +15,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,33 +73,25 @@ public interface Account {
     /**
      * Withdraw an amount from the {@code Account} balance.
      *
-     * @param amount    the amount the balance will be reduced by
-     * @param initiator the one who initiated the transaction
-     * @param currency  the {@link Currency} of the balance being modified
+     * @param amount   the amount the balance will be reduced by
+     * @param cause    the one who caused the transaction
+     * @param currency the {@link Currency} of the balance being modified
      * @return see {@link #doTransaction(EconomyTransaction)}
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
      */
     @NotNull
     default CompletableFuture<BigDecimal> withdrawBalance(
-            @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
-            @NotNull Currency currency
+            @NotNull BigDecimal amount, @NotNull Cause<?> cause, @NotNull Currency currency
     ) {
-        return withdrawBalance(
-                amount,
-                initiator,
-                currency,
-                EconomyTransactionImportance.NORMAL,
-                null
-        );
+        return withdrawBalance(amount, cause, currency, EconomyTransactionImportance.NORMAL, null);
     }
 
     /**
      * Withdraw an amount from the {@code Account} balance.
      *
      * @param amount     the amount the balance will be reduced by
-     * @param initiator  the one who initiated the transaction
+     * @param cause      the one who caused the transaction
      * @param currency   the {@link Currency} of the balance being modified
      * @param importance how important is the transaction
      * @return see {@link #doTransaction(EconomyTransaction)}
@@ -109,18 +101,18 @@ public interface Account {
     @NotNull
     default CompletableFuture<BigDecimal> withdrawBalance(
             @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance
     ) {
-        return withdrawBalance(amount, initiator, currency, importance, null);
+        return withdrawBalance(amount, cause, currency, importance, null);
     }
 
     /**
      * Withdraw an amount from the {@code Account} balance.
      *
      * @param amount     the amount the balance will be reduced by
-     * @param initiator  the one who initiated the transaction
+     * @param cause      the one who caused the transaction
      * @param currency   the {@link Currency} of the balance being modified
      * @param importance how important is the transaction
      * @param reason     the reason of why the balance is modified
@@ -131,7 +123,7 @@ public interface Account {
     @NotNull
     default CompletableFuture<BigDecimal> withdrawBalance(
             @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
             @Nullable String reason
@@ -139,7 +131,7 @@ public interface Account {
         return doTransaction(EconomyTransaction
                 .newBuilder()
                 .withCurrency(currency)
-                .withInitiator(initiator)
+                .withCause(cause)
                 .withReason(reason)
                 .withAmount(amount)
                 .withImportance(importance)
@@ -150,9 +142,9 @@ public interface Account {
     /**
      * Deposit an amount into the {@code Account} balance.
      *
-     * @param amount    the amount the balance will be increased by
-     * @param initiator the one who initiated the transaction
-     * @param currency  the {@link Currency} of the balance being modified
+     * @param amount   the amount the balance will be increased by
+     * @param cause    the one who caused the transaction
+     * @param currency the {@link Currency} of the balance being modified
      * @return see {@link #doTransaction(EconomyTransaction)}
      * @see Account#doTransaction(EconomyTransaction)
      * @since v1.0.0
@@ -160,12 +152,12 @@ public interface Account {
     @NotNull
     default CompletableFuture<BigDecimal> depositBalance(
             @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency
     ) {
         return depositBalance(
                 amount,
-                initiator,
+                cause,
                 currency,
                 EconomyTransactionImportance.NORMAL,
                 null
@@ -176,7 +168,7 @@ public interface Account {
      * Deposit an amount into the {@code Account} balance.
      *
      * @param amount     the amount the balance will be increased by
-     * @param initiator  the one who initiated the transaction
+     * @param cause      the one who initiated the transaction
      * @param currency   the {@link Currency} of the balance being modified
      * @param importance how important is the transaction
      * @return see {@link #doTransaction(EconomyTransaction)}
@@ -186,18 +178,18 @@ public interface Account {
     @NotNull
     default CompletableFuture<BigDecimal> depositBalance(
             @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance
     ) {
-        return depositBalance(amount, initiator, currency, importance, null);
+        return depositBalance(amount, cause, currency, importance, null);
     }
 
     /**
      * Deposit an amount into the {@code Account} balance.
      *
      * @param amount     the amount the balance will be increased by
-     * @param initiator  the one who initiated the transaction
+     * @param cause      the one who caused the transaction
      * @param currency   the {@link Currency} of the balance being modified
      * @param importance how important is the transaction
      * @param reason     the reason of why the balance is modified
@@ -208,7 +200,7 @@ public interface Account {
     @NotNull
     default CompletableFuture<BigDecimal> depositBalance(
             @NotNull BigDecimal amount,
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
             @Nullable String reason
@@ -216,7 +208,7 @@ public interface Account {
         return doTransaction(EconomyTransaction
                 .newBuilder()
                 .withCurrency(currency)
-                .withInitiator(initiator)
+                .withCause(cause)
                 .withAmount(amount)
                 .withReason(reason)
                 .withImportance(importance)
@@ -239,20 +231,20 @@ public interface Account {
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero
      * starting balances.
      *
-     * @param initiator  the one who initiated the transaction
+     * @param cause      the one who caused the transaction
      * @param currency   the {@link Currency} of the balance being reset
      * @param importance the reset transaction importance
      * @return see {@link #doTransaction(EconomyTransaction)}
-     * @see #resetBalance(EconomyTransactionInitiator, Currency, EconomyTransactionImportance, String)
+     * @see #resetBalance(Cause, Currency, EconomyTransactionImportance, String)
      * @since v2.0.0
      */
     @NotNull
     default CompletableFuture<BigDecimal> resetBalance(
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance
     ) {
-        return resetBalance(initiator, currency, importance, null);
+        return resetBalance(cause, currency, importance, null);
     }
 
     /**
@@ -260,7 +252,7 @@ public interface Account {
      *
      * <p>Certain implementations, such as the {@link PlayerAccount}, may default to non-zero starting balances.
      *
-     * @param initiator  the initiator of the transaction
+     * @param cause      the cause of the transaction
      * @param currency   the {@link Currency} of the balance being reset
      * @param importance the reset transaction importance
      * @param reason     the reset reason
@@ -269,19 +261,19 @@ public interface Account {
      */
     @NotNull
     default CompletableFuture<BigDecimal> resetBalance(
-            @NotNull EconomyTransactionInitiator<?> initiator,
+            @NotNull Cause<?> cause,
             @NotNull Currency currency,
             @NotNull EconomyTransactionImportance importance,
             @Nullable String reason
     ) {
-        Objects.requireNonNull(initiator, "initiator");
+        Objects.requireNonNull(cause, "cause");
         Objects.requireNonNull(currency, "currency");
         Objects.requireNonNull(importance, "importance");
 
         return doTransaction(EconomyTransaction
                 .newBuilder()
                 .withCurrency(currency)
-                .withInitiator(initiator)
+                .withCause(cause)
                 .withAmount(currency.getStartingBalance(this))
                 .withReason(reason)
                 .withImportance(importance)
