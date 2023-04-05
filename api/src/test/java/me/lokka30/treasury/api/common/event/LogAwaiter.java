@@ -1,10 +1,13 @@
 package me.lokka30.treasury.api.common.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 class LogAwaiter {
 
     private CountDownLatch latch;
+    List<String> logs = new ArrayList<>();
 
     LogAwaiter(int logCount) {
         latch = new CountDownLatch(logCount);
@@ -19,7 +22,7 @@ class LogAwaiter {
     }
 
     void log(String message) {
-        System.out.println(message);
+        logs.add(message);
         latch.countDown();
     }
 

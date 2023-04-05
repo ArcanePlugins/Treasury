@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import me.lokka30.treasury.api.common.response.Response;
 import me.lokka30.treasury.api.economy.account.Account;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,8 +74,8 @@ public interface Currency {
      * {@link BigDecimal} {@code value}. If the value is <= 1, then it should return a singular form
      * of a display name. If the value is > 1, then it should return a plural form of it. Both
      * singular and plural forms can be mapped to a specific {@link Locale} via the
-     * specified (if specified) {@code locale}. If a locale is not present, then it should
-     * default to {@link Locale#ENGLISH}.
+     * specified (if specified) {@code locale}. If a locale is not present, the implementation
+     * should assume a suitable default.
      *
      * @param value the value, on which depends whether a singular or a plural display name is
      *              returned
@@ -167,15 +166,15 @@ public interface Currency {
      * If a per-locale formatting system is not used by the currency, the parameter can be ignored.
      * If the specified locale is null, the currency implementation should assume a default.
      * <p>
-     * If the specified string cannot be parsed, a {@link Response} with a suitable
-     * {@link me.lokka30.treasury.api.common.response.FailureReason} is returned.
+     * If the specified string cannot be parsed, a failure {@link CompletableFuture} shall be
+     * returned with a suitable message in the form of a
+     * {@link me.lokka30.treasury.api.common.response.TreasuryException}.
      *
      * @param formattedAmount formatted amount string to be parsed
-     * @return future containing a {@link Response response} which, if successful, contains the
-     *         resulting {@link BigDecimal} that is represented by the specified string .
+     * @return the parsed value represented as a {@link BigDecimal} object.
      * @since v2.0.0
      */
-    @NotNull CompletableFuture<Response<BigDecimal>> parse(
+    @NotNull CompletableFuture<BigDecimal> parse(
             @NotNull String formattedAmount, @Nullable Locale locale
     );
 

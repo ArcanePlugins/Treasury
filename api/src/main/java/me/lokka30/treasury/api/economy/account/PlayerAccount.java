@@ -12,10 +12,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.misc.TriState;
-import me.lokka30.treasury.api.common.response.FailureReason;
-import me.lokka30.treasury.api.common.response.Response;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
  * optional.
  * <br>
  * A Player, on all the platforms Treasury plugin aims to support, is described as a minecraft
- * client, mainly identifiable by a {@link #getUniqueId() unique-id}.
+ * client, mainly identifiable by a {@link #identifier() unique-id}.
  *
  * @author lokka30, Geolykt, creatorfromhell
  * @see Account
  * @since v1.0.0
  */
-public interface PlayerAccount extends Account {
+public interface PlayerAccount extends Account, Cause.Player {
 
     /**
      * Returns a map fulfilled with all {@link AccountPermission} with {@link TriState} values of
@@ -42,49 +40,22 @@ public interface PlayerAccount extends Account {
             .collect(Collectors.toConcurrentMap(p -> p, $ -> TriState.TRUE)));
 
     /**
-     * A {@link FailureReason}, describing that for {@code PlayerAccounts}, modifying the
-     * permissions are not supported.
-     */
-    FailureReason PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED = () -> "Cannot modify the permissions of a player account!";
-
-    /**
      * {@inheritDoc}
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> setName(@Nullable String name) {
-        return CompletableFuture.completedFuture(Response.success(TriState.FALSE));
+    default CompletableFuture<Boolean> setName(@Nullable String name) {
+        return CompletableFuture.completedFuture(false);
     }
 
     /**
-     * Get the {@link UUID unique identifier} of this {@code PlayerAccount}.
-     *
-     * @return account identifier
-     * @see UUID
-     * @since v1.0.0
-     */
-    @NotNull UUID getUniqueId();
-
-    /**
-     * Get this {@code PlayerAccount} as a {@link EconomyTransactionInitiator transaction
-     * initiator}.
-     * <p>
-     * The return value of this method shall be cached upon a {@code PlayerAccount} creation.
-     *
-     * @return this player account, represented by an economy transaction initiator
-     */
-    @NotNull EconomyTransactionInitiator<UUID> getAsTransactionInitiator();
-
-    /**
      * {@inheritDoc}
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> isMember(@NotNull UUID player) {
+    default CompletableFuture<Boolean> isMember(@NotNull UUID player) {
         Objects.requireNonNull(player, "player");
-        return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
-                ? TriState.TRUE
-                : TriState.UNSPECIFIED));
+        return CompletableFuture.completedFuture(this.identifier().equals(player));
     }
 
     /**
@@ -92,9 +63,8 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<Collection<UUID>>> retrieveMemberIds() {
-        return CompletableFuture.completedFuture(Response.success(Collections.singletonList(
-                getUniqueId())));
+    default CompletableFuture<Collection<UUID>> retrieveMemberIds() {
+        return CompletableFuture.completedFuture(Collections.singletonList(this.identifier()));
     }
 
     /**
@@ -102,14 +72,13 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> hasPermissions(
+    default CompletableFuture<TriState> hasPermissions(
             @NotNull UUID player, @NotNull AccountPermission @NotNull ... permissions
     ) {
         Objects.requireNonNull(player, "player");
         Objects.requireNonNull(permissions, "permissions");
 
-        return CompletableFuture.completedFuture(Response.success(TriState.fromBoolean(getUniqueId().equals(
-                player))));
+        return CompletableFuture.completedFuture(TriState.fromBoolean(this.identifier().equals(player)));
     }
 
     /**
@@ -117,14 +86,14 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<Map<AccountPermission, TriState>>> retrievePermissions(
+    default CompletableFuture<Map<AccountPermission, TriState>> retrievePermissions(
             @NotNull UUID player
     ) {
         Objects.requireNonNull(player, "player");
 
-        return CompletableFuture.completedFuture(Response.success(getUniqueId().equals(player)
+        return CompletableFuture.completedFuture(this.identifier().equals(player)
                 ? ALL_PERMISSIONS_MAP
-                : Collections.emptyMap()));
+                : Collections.emptyMap());
     }
 
     /**
@@ -132,11 +101,11 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<Map<UUID, Map<AccountPermission, TriState>>>> retrievePermissionsMap() {
-        return CompletableFuture.completedFuture(Response.success(Collections.singletonMap(
-                this.getUniqueId(),
+    default CompletableFuture<Map<UUID, Map<AccountPermission, TriState>>> retrievePermissionsMap() {
+        return CompletableFuture.completedFuture(Collections.singletonMap(
+                this.identifier(),
                 ALL_PERMISSIONS_MAP
-        )));
+        ));
     }
 
     /**
@@ -144,13 +113,12 @@ public interface PlayerAccount extends Account {
      */
     @Override
     @NotNull
-    default CompletableFuture<Response<TriState>> setPermissions(
+    default CompletableFuture<Boolean> setPermissions(
             @NotNull UUID player, @NotNull Map<AccountPermission, TriState> permissionsMap
     ) {
         Objects.requireNonNull(player, "player");
 
-        return CompletableFuture.completedFuture(Response.failure(
-                PLAYER_ACCOUNT_PERMISSION_MODIFICATION_NOT_SUPPORTED));
+        return CompletableFuture.completedFuture(false);
     }
 
 }

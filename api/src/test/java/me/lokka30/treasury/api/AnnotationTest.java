@@ -45,7 +45,8 @@ public class AnnotationTest {
     private static final String[] ACCEPTED_ANNOTATIONS = {
             "Lorg/jetbrains/annotations/Nullable;",
             "Lorg/jetbrains/annotations/NotNull;",
-            "Lorg/jetbrains/annotations/Contract;"
+            "Lorg/jetbrains/annotations/Contract;",
+            "Lorg/jetbrains/annotations/UnknownNullability;"
     };
 
     @Test

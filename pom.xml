@@ -44,20 +44,27 @@
 
         <!-- Versions of the dependencies Treasury uses -->
         <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
-        <jetbrains.annotations.version>24.0.0</jetbrains.annotations.version>
+        <jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>
         <junit.version>5.9.2</junit.version>
         <gson.version>2.8.9</gson.version>
         <guava.version>21.0</guava.version>
         <bstats.version>3.0.0</bstats.version>
         <annotationconfig.version>3.0.1</annotationconfig.version>
-        <placeholderapi.version>2.11.2</placeholderapi.version>
+        <placeholderapi.version>2.11.3</placeholderapi.version>
         <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
         <velocity.version>3.1.1</velocity.version>
         <process.version>0.0.1-SNAPSHOT</process.version>
         <!-- asm is for testing purposes only -->
         <asm.version>9.4</asm.version>
         <sponge.version>8.0.0</sponge.version>
-        <minestom.version>d37f40a1bb</minestom.version>
+        <!--
+        WARNING: JitPack sucks. Sometimes when building maven won't pull the Minestom version. If
+        such occurs with you, update it to the latest release/branch version
+        from here: https://jitpack.io/#Minestom/Minestom/
+        If you update it and still doesn't build, and the reason is not Minestom, or non-compiling
+        code, seek help!
+        -->
+        <minestom.version>1.19.3-SNAPSHOT</minestom.version>
     </properties>
 
     <licenses>
@@ -121,7 +128,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.0.0</version>
                 <configuration>
                     <parallel>all</parallel>
                     <useUnlimitedThreads>true</useUnlimitedThreads>
@@ -175,7 +182,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <showDeprecation>false</showDeprecation>
                     <showWarnings>false</showWarnings>
