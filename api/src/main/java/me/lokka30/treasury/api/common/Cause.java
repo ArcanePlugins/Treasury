@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents a cause.
  * <p>A cause is a reason of why something got triggered.
  * <p>Causes are divided in 4 types: {@link Cause.Player}, {@link Cause.Plugin},
- * {@link Cause.Account} and {@link Cause#SERVER}. The server cause should only be used when
+ * {@link Cause.NonPlayer} and {@link Cause#SERVER}. The server cause should only be used when
  * there is no other suitable cause, or there is not a possibility to create one.
  *
  * @param <T> generic
@@ -51,14 +51,14 @@ public interface Cause<T> {
     }
 
     /**
-     * Creates a new account cause with a {@link NamespacedKey key} as an account identifier.
+     * Creates a new account cause with a {@link NamespacedKey key} as a non-player identifier.
      *
-     * @param id namespaced key account identifier
+     * @param id namespaced key non-player identifier
      * @return new account cause
      */
     @Contract("_ -> new")
     @NotNull
-    static Cause.Account account(@NotNull NamespacedKey id) {
+    static Cause.NonPlayer nonPlayer(@NotNull NamespacedKey id) {
         return () -> id;
     }
 
@@ -129,22 +129,22 @@ public interface Cause<T> {
     }
 
     /**
-     * Represents an account cause.
+     * Represents a non-player cause.
      *
      * @author MrIvanPlays
      * @since 2.0.0
      * @see Cause
-     * @see Cause#account(NamespacedKey)
+     * @see Cause#nonPlayer(NamespacedKey)
      */
-    interface Account extends Cause<NamespacedKey> {
+    interface NonPlayer extends Cause<NamespacedKey> {
 
         /**
          * {@inheritDoc}
          */
         @Override
         default boolean equals(@NotNull Cause<?> other) {
-            if (other instanceof Cause.Account) {
-                return ((Cause.Account) other).identifier().equals(this.identifier());
+            if (other instanceof Cause.NonPlayer) {
+                return ((NonPlayer) other).identifier().equals(this.identifier());
             }
             if (other.identifier() instanceof NamespacedKey) {
                 return ((NamespacedKey) other.identifier()).equals(this.identifier());

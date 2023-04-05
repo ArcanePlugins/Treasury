@@ -12,9 +12,8 @@ import me.lokka30.treasury.api.common.Cause;
  *
  * @author lokka30, MrNemo64, MrIvanPlays
  * @see Account
- * @see NonPlayerAccount
  * @since v1.0.0
  */
-public interface NonPlayerAccount extends Account, Cause.Account {
+public interface NonPlayerAccount extends Account, Cause.NonPlayer {
 
 }
