@@ -10,19 +10,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class NodeEvent implements Cancellable {
 
-    private Node<?> node;
+    private Node node;
     private boolean cancelled;
 
-    public NodeEvent(@NotNull Node<?> node) {
+    public NodeEvent(@NotNull Node node) {
         this.node = node;
     }
 
     @NotNull
-    public Node<?> getNode() {
+    public Node getNode() {
         return this.node;
     }
 
-    public void setNode(@NotNull Node<?> node) {
+    public void setNode(@NotNull Node node) {
         this.node = node;
     }
 

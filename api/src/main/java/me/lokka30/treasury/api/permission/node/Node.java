@@ -4,25 +4,49 @@
 
 package me.lokka30.treasury.api.permission.node;
 
+import java.util.Optional;
 import me.lokka30.treasury.api.permission.context.ContextSet;
-import me.lokka30.treasury.api.permission.node.type.NodeType;
+import me.lokka30.treasury.api.permission.node.holder.NodeHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface Node<Data> {
+public interface Node {
 
-    @NotNull NodeType<Data> nodeType();
+    @NotNull
+    Type type();
 
-    @NotNull ContextSet contexts();
+    @NotNull
+    String key();
 
     int weight();
 
-    @NotNull String key();
+    boolean isInherited();
 
-    @NotNull Data data();
+    @NotNull
+    Optional<NodeHolder> inheritedFrom();
 
-    @NotNull Node<Data> copyWithNewData(
-            @NotNull ContextSet contexts, @Nullable Integer weight, @NotNull Data data
-    );
+    @NotNull
+    Optional<NodeHolder> owner();
+
+    @NotNull
+    ContextSet contextSet();
+
+    final class Type {
+
+        public static final Type PERMISSION = new Type(PermissionNode.class);
+        public static final Type PREFIX = new Type(PrefixNode.class);
+        public static final Type SUFFIX = new Type(SuffixNode.class);
+
+        private final Class<? extends Node> nodeClass;
+
+        public Type(@NotNull Class<? extends Node> nodeClass) {
+            this.nodeClass = nodeClass;
+        }
+
+        @NotNull
+        public Class<? extends Node> getNodeClass() {
+            return nodeClass;
+        }
+
+    }
 
 }

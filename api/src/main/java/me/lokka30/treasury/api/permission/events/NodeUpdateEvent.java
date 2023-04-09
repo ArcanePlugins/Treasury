@@ -12,7 +12,7 @@ public class NodeUpdateEvent extends NodeEvent {
 
     private final NodeHolder nodeHolder;
 
-    public NodeUpdateEvent(@NotNull NodeHolder nodeHolder, @NotNull Node<?> node) {
+    public NodeUpdateEvent(@NotNull NodeHolder nodeHolder, @NotNull Node node) {
         super(node);
         this.nodeHolder = nodeHolder;
     }
