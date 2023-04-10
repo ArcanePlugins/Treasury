@@ -43,9 +43,9 @@ public interface NodeHolder {
 
     @NotNull CompletableFuture<Optional<Node>> retrieveNode(@NotNull String key);
 
-    @NotNull CompletableFuture<Boolean> insertOrModifyNode(@NotNull Node node, Cause<?> cause);
+    @NotNull CompletableFuture<Boolean> insertOrModifyNode(@NotNull Node node, @NotNull Cause<?> cause);
 
-    @NotNull CompletableFuture<Boolean> removeNode(@NotNull String nodeKey, Cause<?> cause);
+    @NotNull CompletableFuture<Boolean> removeNode(@NotNull String nodeKey, @NotNull Cause<?> cause);
 
     @NotNull CompletableFuture<TriState> retrievePermissionValue(@NotNull String permissionNodeKey);
 
