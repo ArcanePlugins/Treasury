@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import me.lokka30.treasury.api.common.Cause;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.permission.context.ContextSet;
 import me.lokka30.treasury.api.permission.node.Node;
@@ -42,9 +43,9 @@ public interface NodeHolder {
 
     @NotNull CompletableFuture<Optional<Node>> retrieveNode(@NotNull String key);
 
-    @NotNull CompletableFuture<Boolean> insertOrModifyNode(@NotNull Node node);
+    @NotNull CompletableFuture<Boolean> insertOrModifyNode(@NotNull Node node, Cause<?> cause);
 
-    @NotNull CompletableFuture<Boolean> removeNode(@NotNull String nodeKey);
+    @NotNull CompletableFuture<Boolean> removeNode(@NotNull String nodeKey, Cause<?> cause);
 
     @NotNull CompletableFuture<TriState> retrievePermissionValue(@NotNull String permissionNodeKey);
 

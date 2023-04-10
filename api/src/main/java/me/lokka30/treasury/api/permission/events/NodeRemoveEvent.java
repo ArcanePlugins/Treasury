@@ -9,11 +9,11 @@ import me.lokka30.treasury.api.permission.node.Node;
 import me.lokka30.treasury.api.permission.node.holder.NodeHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class NodeUpdateEvent extends NodeEvent {
+public class NodeRemoveEvent extends NodeEvent {
 
     private final NodeHolder nodeHolder;
 
-    public NodeUpdateEvent(
+    public NodeRemoveEvent(
             @NotNull NodeHolder nodeHolder, @NotNull Node node, @NotNull Cause<?> cause
     ) {
         super(node, cause);
@@ -22,7 +22,7 @@ public class NodeUpdateEvent extends NodeEvent {
 
     @NotNull
     public NodeHolder getNodeHolder() {
-        return nodeHolder;
+        return this.nodeHolder;
     }
 
 }

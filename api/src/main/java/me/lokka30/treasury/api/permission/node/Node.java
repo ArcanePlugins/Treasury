@@ -30,7 +30,7 @@ public interface Node {
     @NotNull
     ContextSet contextSet();
 
-    final class Type {
+    class Type { // not final to allow custom nodes :)
 
         public static final Type PERMISSION = new Type(PermissionNode.class);
         public static final Type PREFIX = new Type(PrefixNode.class);
