@@ -30,7 +30,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     private final Platform platform;
 
     private Messages messages;
-    private Settings settings;
+    private SpongeSettings settings;
 
     private final File messagesFile, settingsFile;
     private final Path pluginsFolder;
@@ -90,7 +90,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     public void loadSettings() {
-        settings = Settings.load(settingsFile);
+        settings = SpongeSettings.loadSponge(settingsFile);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
-    public @NotNull Settings getSettings() {
+    public @NotNull SpongeSettings getSettings() {
         return this.settings;
     }
 

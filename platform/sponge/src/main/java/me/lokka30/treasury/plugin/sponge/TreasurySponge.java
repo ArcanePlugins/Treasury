@@ -104,7 +104,9 @@ public class TreasurySponge {
 
     @Listener
     public void provideEconomyService(ProvideServiceEvent.GameScoped<EconomyService> event) {
-        event.suggest(EconomyServiceImpl::new);
+        if (treasuryPlugin.getSettings().shouldSyncEcoApi()) {
+            event.suggest(EconomyServiceImpl::new);
+        }
     }
 
     @Listener
