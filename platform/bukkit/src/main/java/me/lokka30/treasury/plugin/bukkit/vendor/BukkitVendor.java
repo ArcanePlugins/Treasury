@@ -4,6 +4,8 @@
 
 package me.lokka30.treasury.plugin.bukkit.vendor;
 
+import me.lokka30.treasury.plugin.core.Platform;
+
 /**
  * Represents a handler for determining on what server vendor we're running. This is in order
  * to optimise some stuff which can be optimised.
@@ -17,6 +19,28 @@ public final class BukkitVendor {
     private static boolean ranPaperCheck = false;
     private static boolean spigot = false;
     private static boolean ranSpigotCheck = false;
+    private static boolean folia = false;
+    private static boolean ranFoliaCheck = false;
+
+    private static Platform platform;
+
+    public static Platform getPlatformClass() {
+        if (platform == null) {
+            String specificationName;
+            if (isFolia()) {
+                specificationName = "Folia";
+            } else if (isPaper()) {
+                specificationName = "Paper";
+            } else if (isSpigot()) {
+                specificationName = "Spigot";
+            } else {
+                // Definitely CraftBukkit
+                specificationName = "CraftBukkit";
+            }
+            platform = new Platform("Bukkit", specificationName);
+        }
+        return platform;
+    }
 
     /**
      * Returns whether we're running spigot.
@@ -52,6 +76,24 @@ public final class BukkitVendor {
             ranPaperCheck = true;
         }
         return paper;
+    }
+
+    /**
+     * Returns whether we're running Folia.
+     *
+     * @return folia?
+     */
+    public static boolean isFolia() {
+        if (!ranFoliaCheck) {
+            try {
+                Class.forName("io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader");
+                folia = true;
+            } catch (ClassNotFoundException e) {
+                folia = false;
+            }
+            ranFoliaCheck = true;
+        }
+        return folia;
     }
 
     private BukkitVendor() {

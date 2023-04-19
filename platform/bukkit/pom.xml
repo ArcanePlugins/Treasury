@@ -102,17 +102,17 @@
             </exclusions>
         </dependency>
         <!--
-        Note: just because the dependency is paper doesn't mean we always use paper specific methods
-        or that Treasury is a paper-only plugin
+        Note: just because the dependency is folia doesn't mean we always use folia specific methods
+        or that Treasury is a paper/folia-only plugin
         -->
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
+            <groupId>dev.folia</groupId>
+            <artifactId>folia-api</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-mojangapi</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
