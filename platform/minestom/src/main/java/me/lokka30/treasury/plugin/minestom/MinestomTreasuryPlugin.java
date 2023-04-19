@@ -27,6 +27,7 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     public static final ComponentLogger PLATFORM_LOGGER = ComponentLogger.logger("Treasury");
     private final PluginVersion version;
+    private final Platform platform;
 
     private Messages messages;
     private Settings settings;
@@ -39,6 +40,7 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
         settingsFile = new File(plugin.getDataDirectory().toFile(), "settings.yml");
 
         this.version = new PluginVersion(plugin.getOrigin().getVersion(), this);
+        this.platform = new Platform("Minestom", "");
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     @Override
     public @NotNull Platform platform() {
-        return Platform.MINESTOM;
+        return this.platform;
     }
 
     @Override

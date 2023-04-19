@@ -25,6 +25,7 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     private final TreasuryVelocity plugin;
     private final PluginVersion version;
+    private final Platform platform;
     private Messages messages;
     private Settings settings;
 
@@ -45,6 +46,7 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
         );
         messagesFile = plugin.getDataDirectory().resolve("messages.yml").toFile();
         settingsFile = plugin.getDataDirectory().resolve("settings.yml").toFile();
+        this.platform = new Platform("Velocity", "");
     }
 
 
@@ -55,7 +57,7 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
 
     @Override
     public @NotNull Platform platform() {
-        return Platform.VELOCITY;
+        return this.platform;
     }
 
     @Override

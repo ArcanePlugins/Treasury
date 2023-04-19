@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
+import me.lokka30.treasury.plugin.bukkit.vendor.CoreScheduler;
 import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
@@ -19,15 +20,14 @@ import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Scheduler,
-        ConfigAdapter {
+public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, ConfigAdapter {
 
     private final TreasuryBukkit plugin;
     private final PluginVersion pluginVersion;
+    private final CoreScheduler coreScheduler;
     private Messages messages;
     private Settings settings;
 
@@ -36,6 +36,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     public BukkitTreasuryPlugin(@NotNull TreasuryBukkit plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
+        this.coreScheduler = new CoreScheduler(plugin);
         this.pluginVersion = new PluginVersion(plugin.getDescription().getVersion(), this);
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         settingsFile = new File(plugin.getDataFolder(), "settings.yml");
@@ -48,7 +49,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public @NotNull Platform platform() {
-        return Platform.BUKKIT;
+        return BukkitVendor.getPlatformClass();
     }
 
     @Override
@@ -63,7 +64,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public @NotNull Scheduler scheduler() {
-        return this;
+        return coreScheduler.getImpl();
     }
 
     @Override
@@ -164,16 +165,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     public void error(String message, Throwable t) {
         // TODO: colorize() will NOT work on Paper
         plugin.getLogger().log(Level.SEVERE, colorize(message), t);
-    }
-
-    @Override
-    public void runSync(Runnable task) {
-        Bukkit.getScheduler().runTask(plugin, task);
-    }
-
-    @Override
-    public void runAsync(Runnable task) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, task);
     }
 
 }
