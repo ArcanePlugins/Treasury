@@ -37,20 +37,20 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public boolean hasAccount(final UUID uuid) {
-        SpongeUtil.checkMainThread("hasAccount");
+        SpongeUtil.checkMainThread("hasAccount", getCallerClassName());
         return getHandle().hasAccount(AccountData.forPlayerAccount(uuid)).join();
     }
 
     @Override
     public boolean hasAccount(final String identifier) {
-        SpongeUtil.checkMainThread("hasAccount");
+        SpongeUtil.checkMainThread("hasAccount", getCallerClassName());
         return getHandle().hasAccount(AccountData.forNonPlayerAccount(NamespacedKey.fromString(
                 identifier))).join();
     }
 
     @Override
     public Optional<UniqueAccount> findOrCreateAccount(final UUID uuid) {
-        SpongeUtil.checkMainThread("findOrCreateAccount");
+        SpongeUtil.checkMainThread("findOrCreateAccount", getCallerClassName());
         return Optional.of(new UniqueAccountImpl(
                 getHandle(),
                 cache,
@@ -60,7 +60,7 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Optional<Account> findOrCreateAccount(final String identifier) {
-        SpongeUtil.checkMainThread("findOrCreateAccount");
+        SpongeUtil.checkMainThread("findOrCreateAccount", getCallerClassName());
         return Optional.of(new VirtualAccountImpl(
                 getHandle(),
                 cache,
@@ -71,13 +71,13 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Stream<UniqueAccount> streamUniqueAccounts() {
-        SpongeUtil.checkMainThread("streamUniqueAccounts");
+        SpongeUtil.checkMainThread("streamUniqueAccounts", getCallerClassName());
         return uniqueAccounts().stream();
     }
 
     @Override
     public Collection<UniqueAccount> uniqueAccounts() {
-        SpongeUtil.checkMainThread("uniqueAccounts");
+        SpongeUtil.checkMainThread("uniqueAccounts", getCallerClassName());
         return getHandle().retrievePlayerAccountIds().thenCompose(uuids -> {
             Collection<CompletableFuture<PlayerAccount>> accounts = new ArrayList<>();
             for (UUID id : uuids) {
@@ -93,13 +93,13 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Stream<VirtualAccount> streamVirtualAccounts() {
-        SpongeUtil.checkMainThread("streamVirtualAccounts");
+        SpongeUtil.checkMainThread("streamVirtualAccounts", getCallerClassName());
         return virtualAccounts().stream();
     }
 
     @Override
     public Collection<VirtualAccount> virtualAccounts() {
-        SpongeUtil.checkMainThread("virtualAccounts");
+        SpongeUtil.checkMainThread("virtualAccounts", getCallerClassName());
         return getHandle().retrieveNonPlayerAccountIds().thenCompose(ids -> {
             Collection<CompletableFuture<NonPlayerAccount>> accounts = new ArrayList<>();
             for (NamespacedKey id : ids) {
@@ -115,7 +115,7 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public AccountDeletionResultType deleteAccount(final UUID uuid) {
-        SpongeUtil.checkMainThread("deleteAccount");
+        SpongeUtil.checkMainThread("deleteAccount", getCallerClassName());
         PlayerAccount account = getHandle()
                 .accountAccessor()
                 .player()
@@ -130,7 +130,7 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public AccountDeletionResultType deleteAccount(final String identifier) {
-        SpongeUtil.checkMainThread("deleteAccount");
+        SpongeUtil.checkMainThread("deleteAccount", getCallerClassName());
         NonPlayerAccount account = getHandle().accountAccessor().nonPlayer().withIdentifier(
                 NamespacedKey.fromString(identifier)).get().join();
         boolean result = account.deleteAccount().join();
@@ -146,6 +146,24 @@ public class EconomyServiceImpl implements EconomyService {
                     "Too early usage of Economy API. Provider unavailable");
         }
         return EconomyServiceImplProvider.PROVIDER.get();
+    }
+
+    private String getCallerClassName() {
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        String callerClassName = null;
+        for (int i = 1; i < elements.length; i++) {
+            StackTraceElement element = elements[i];
+            if (!element.getClassName().equals(NamespacedKey.class.getName()) && element
+                    .getClassName()
+                    .indexOf("java.lang.Thread") != 0) {
+                if (callerClassName == null) {
+                    callerClassName = element.getClassName();
+                } else if (!callerClassName.equals(element.getClassName())) {
+                    return callerClassName;
+                }
+            }
+        }
+        return null;
     }
 
 }
