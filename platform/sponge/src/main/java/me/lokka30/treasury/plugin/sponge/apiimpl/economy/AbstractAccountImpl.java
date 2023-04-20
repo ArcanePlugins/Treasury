@@ -17,6 +17,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionImportance;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionType;
+import me.lokka30.treasury.plugin.sponge.util.SpongeUtil;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
@@ -88,6 +89,7 @@ public abstract class AbstractAccountImpl implements Account {
 
     @Override
     public BigDecimal balance(final Currency currency, final Cause cause) {
+        SpongeUtil.checkMainThread("balance");
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
         if (migrationResult.getState() == MappedCurrenciesCache.MigrationResult.State.JUST_CREATED) {
@@ -103,6 +105,7 @@ public abstract class AbstractAccountImpl implements Account {
 
     @Override
     public Map<Currency, BigDecimal> balances(final Cause cause) {
+        SpongeUtil.checkMainThread("balances");
         Collection<String> heldCurrencies = delegateAccount.retrieveHeldCurrencies().join();
         if (heldCurrencies.isEmpty()) {
             return Collections.emptyMap();
@@ -137,6 +140,7 @@ public abstract class AbstractAccountImpl implements Account {
     public TransactionResult setBalance(
             final Currency currency, final BigDecimal amount, final Cause cause
     ) {
+        SpongeUtil.checkMainThread("setBalance");
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = mappedCurrenciesCache
                 .migrateCurrency(currency)
                 .getCurrency();
@@ -165,6 +169,7 @@ public abstract class AbstractAccountImpl implements Account {
 
     @Override
     public Map<Currency, TransactionResult> resetBalances(final Cause cause) {
+        SpongeUtil.checkMainThread("resetBalances");
         Collection<String> heldCurrencies = delegateAccount.retrieveHeldCurrencies().join();
         if (heldCurrencies.isEmpty()) {
             return Collections.emptyMap();
@@ -209,6 +214,7 @@ public abstract class AbstractAccountImpl implements Account {
 
     @Override
     public TransactionResult resetBalance(final Currency currency, final Cause cause) {
+        SpongeUtil.checkMainThread("resetBalance");
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
         if (migrationResult.getState() == MappedCurrenciesCache.MigrationResult.State.JUST_CREATED) {
@@ -250,6 +256,7 @@ public abstract class AbstractAccountImpl implements Account {
     public TransactionResult deposit(
             final Currency currency, final BigDecimal amount, final Cause cause
     ) {
+        SpongeUtil.checkMainThread("deposit");
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
@@ -279,6 +286,7 @@ public abstract class AbstractAccountImpl implements Account {
     public TransactionResult withdraw(
             final Currency currency, final BigDecimal amount, final Cause cause
     ) {
+        SpongeUtil.checkMainThread("withdraw");
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();
@@ -311,6 +319,7 @@ public abstract class AbstractAccountImpl implements Account {
     public TransferResult transfer(
             final Account to, final Currency currency, final BigDecimal amount, final Cause cause
     ) {
+        SpongeUtil.checkMainThread("transfer");
         MappedCurrenciesCache.MigrationResult migrationResult = mappedCurrenciesCache.migrateCurrency(
                 currency);
         me.lokka30.treasury.api.economy.currency.Currency treasuryCurrency = migrationResult.getCurrency();

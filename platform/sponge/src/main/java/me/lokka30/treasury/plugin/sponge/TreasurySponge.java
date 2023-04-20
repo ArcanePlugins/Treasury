@@ -99,7 +99,9 @@ public class TreasurySponge {
         Sponge.eventManager().registerListeners(this.container,
                 new CommandSources.QuitListener(this.sources)
         );
-        EconomyServiceImplProvider.fulfilTreasuryProvider();
+        if (treasuryPlugin.getSettings().shouldSyncEcoApi()) {
+            EconomyServiceImplProvider.fulfilTreasuryProvider();
+        }
     }
 
     @Listener

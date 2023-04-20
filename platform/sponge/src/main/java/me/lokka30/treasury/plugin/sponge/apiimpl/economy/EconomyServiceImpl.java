@@ -17,6 +17,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.account.NonPlayerAccount;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
+import me.lokka30.treasury.plugin.sponge.util.SpongeUtil;
 import org.spongepowered.api.service.economy.Currency;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.Account;
@@ -36,17 +37,20 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public boolean hasAccount(final UUID uuid) {
+        SpongeUtil.checkMainThread("hasAccount");
         return getHandle().hasAccount(AccountData.forPlayerAccount(uuid)).join();
     }
 
     @Override
     public boolean hasAccount(final String identifier) {
+        SpongeUtil.checkMainThread("hasAccount");
         return getHandle().hasAccount(AccountData.forNonPlayerAccount(NamespacedKey.fromString(
                 identifier))).join();
     }
 
     @Override
     public Optional<UniqueAccount> findOrCreateAccount(final UUID uuid) {
+        SpongeUtil.checkMainThread("findOrCreateAccount");
         return Optional.of(new UniqueAccountImpl(
                 getHandle(),
                 cache,
@@ -56,6 +60,7 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Optional<Account> findOrCreateAccount(final String identifier) {
+        SpongeUtil.checkMainThread("findOrCreateAccount");
         return Optional.of(new VirtualAccountImpl(
                 getHandle(),
                 cache,
@@ -66,11 +71,13 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Stream<UniqueAccount> streamUniqueAccounts() {
+        SpongeUtil.checkMainThread("streamUniqueAccounts");
         return uniqueAccounts().stream();
     }
 
     @Override
     public Collection<UniqueAccount> uniqueAccounts() {
+        SpongeUtil.checkMainThread("uniqueAccounts");
         return getHandle().retrievePlayerAccountIds().thenCompose(uuids -> {
             Collection<CompletableFuture<PlayerAccount>> accounts = new ArrayList<>();
             for (UUID id : uuids) {
@@ -86,11 +93,13 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Stream<VirtualAccount> streamVirtualAccounts() {
+        SpongeUtil.checkMainThread("streamVirtualAccounts");
         return virtualAccounts().stream();
     }
 
     @Override
     public Collection<VirtualAccount> virtualAccounts() {
+        SpongeUtil.checkMainThread("virtualAccounts");
         return getHandle().retrieveNonPlayerAccountIds().thenCompose(ids -> {
             Collection<CompletableFuture<NonPlayerAccount>> accounts = new ArrayList<>();
             for (NamespacedKey id : ids) {
@@ -106,6 +115,7 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public AccountDeletionResultType deleteAccount(final UUID uuid) {
+        SpongeUtil.checkMainThread("deleteAccount");
         PlayerAccount account = getHandle()
                 .accountAccessor()
                 .player()
@@ -120,6 +130,7 @@ public class EconomyServiceImpl implements EconomyService {
 
     @Override
     public AccountDeletionResultType deleteAccount(final String identifier) {
+        SpongeUtil.checkMainThread("deleteAccount");
         NonPlayerAccount account = getHandle().accountAccessor().nonPlayer().withIdentifier(
                 NamespacedKey.fromString(identifier)).get().join();
         boolean result = account.deleteAccount().join();
