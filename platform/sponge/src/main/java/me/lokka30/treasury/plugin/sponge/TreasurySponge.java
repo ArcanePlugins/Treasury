@@ -108,6 +108,7 @@ public class TreasurySponge {
     public void provideEconomyService(ProvideServiceEvent.GameScoped<EconomyService> event) {
         if (treasuryPlugin.getSettings().shouldSyncEcoApi()) {
             event.suggest(EconomyServiceImpl::new);
+            logger.info("Wrapping Treasury Economy API -> Sponge Economy API (Provider registered)");
         }
     }
 
@@ -128,13 +129,11 @@ public class TreasurySponge {
         EconomyProvider economyProvider = service == null ? null : service.get();
         String pluginName = service == null ? null : service.registrarName();
 
-        metrics.addCustomChart(new SimplePie(
-                "economy-provider-name",
+        metrics.addCustomChart(new SimplePie("economy-provider-name",
                 () -> economyProvider == null ? "None" : pluginName
         ));
 
-        metrics.addCustomChart(new SimplePie(
-                "plugin-update-checking-enabled",
+        metrics.addCustomChart(new SimplePie("plugin-update-checking-enabled",
                 () -> Boolean.toString(treasuryPlugin
                         .configAdapter()
                         .getSettings()
