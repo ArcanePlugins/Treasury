@@ -69,49 +69,14 @@ public abstract class SimpleEventSubscriber<T> extends EventSubscriber<T> {
         };
     }
 
-    /**
-     * Creates a new {@link SimpleEventSubscriber} via a {@link Consumer} function.
-     *
-     * @param eventClass      event class
-     * @param priority        event priority
-     * @param ignoreCancelled whether to ignore cancelled event object(s)
-     * @param subscribeFunc   on event handler
-     * @param <T>             event type
-     * @return simple event subscriber
-     */
-    @NotNull
-    public static <T> SimpleEventSubscriber<T> functional(
-            @NotNull Class<T> eventClass,
-            @NotNull EventPriority priority,
-            boolean ignoreCancelled,
-            @NotNull Consumer<T> subscribeFunc
-    ) {
-        return new SimpleEventSubscriber<T>(eventClass, priority, ignoreCancelled) {
-            @Override
-            public void subscribe(@NotNull final T event) {
-                subscribeFunc.accept(event);
-            }
-        };
-    }
-
     public SimpleEventSubscriber(@NotNull Class<T> eventClass) {
         super(eventClass);
-    }
-
-    public SimpleEventSubscriber(@NotNull Class<T> eventClass, boolean ignoreCancelled) {
-        super(eventClass, ignoreCancelled);
     }
 
     public SimpleEventSubscriber(
             @NotNull Class<T> eventClass, @NotNull EventPriority priority
     ) {
         super(eventClass, priority);
-    }
-
-    public SimpleEventSubscriber(
-            @NotNull Class<T> eventClass, @NotNull EventPriority priority, boolean ignoreCancelled
-    ) {
-        super(eventClass, priority, ignoreCancelled);
     }
 
     /**

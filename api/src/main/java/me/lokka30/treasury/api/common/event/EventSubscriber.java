@@ -86,53 +86,18 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
         };
     }
 
-    /**
-     * Creates a new {@link EventSubscriber} via a {@link Function}
-     *
-     * @param eventClass      event class
-     * @param priority        event priority
-     * @param ignoreCancelled whether to ignore cancelled event object(s)
-     * @param onEventFunc     on event handler function
-     * @param <T>             event type
-     * @return event subscriber
-     */
-    @NotNull
-    public static <T> EventSubscriber<T> functional(
-            @NotNull Class<T> eventClass,
-            @NotNull EventPriority priority,
-            boolean ignoreCancelled,
-            @NotNull Function<T, Completion> onEventFunc
-    ) {
-        return new EventSubscriber<T>(eventClass, priority, ignoreCancelled) {
-            @Override
-            public @NotNull Completion onEvent(@NotNull final T event) {
-                return onEventFunc.apply(event);
-            }
-        };
-    }
-
     private final Class<T> eventClass;
     private final EventPriority priority;
-    private final boolean ignoreCancelled;
 
     public EventSubscriber(@NotNull Class<T> eventClass) {
         this(eventClass, EventPriority.NORMAL);
     }
 
-    public EventSubscriber(@NotNull Class<T> eventClass, boolean ignoreCancelled) {
-        this(eventClass, EventPriority.NORMAL, ignoreCancelled);
-    }
-
-    public EventSubscriber(@NotNull Class<T> eventClass, @NotNull EventPriority priority) {
-        this(eventClass, priority, false);
-    }
-
     public EventSubscriber(
-            @NotNull Class<T> eventClass, @NotNull EventPriority priority, boolean ignoreCancelled
+            @NotNull Class<T> eventClass, @NotNull EventPriority priority
     ) {
         this.eventClass = Objects.requireNonNull(eventClass, "eventClass");
         this.priority = Objects.requireNonNull(priority, "priority");
-        this.ignoreCancelled = ignoreCancelled;
     }
 
     /**
@@ -160,15 +125,6 @@ public abstract class EventSubscriber<T> implements Comparable<EventSubscriber<T
     @NotNull
     public EventPriority priority() {
         return priority;
-    }
-
-    /**
-     * Returns whether this subscriber is ignoring already cancelled events or not.
-     *
-     * @return true if ignore cancelled
-     */
-    public boolean ignoreCancelled() {
-        return ignoreCancelled;
     }
 
     /**

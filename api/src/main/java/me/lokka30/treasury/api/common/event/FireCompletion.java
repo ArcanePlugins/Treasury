@@ -25,15 +25,12 @@ public final class FireCompletion<T> {
     private CountDownLatch latch = new CountDownLatch(1);
     private final Executor async;
 
-    private final Class<?> event;
-
     @Nullable
     private T result;
     @Nullable
     private Collection<@NotNull Throwable> errors;
 
-    public FireCompletion(@NotNull Class<?> event) {
-        this.event = event;
+    public FireCompletion() {
         this.async = ExecutorHolder.INSTANCE.getExecutor();
     }
 
