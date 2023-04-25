@@ -1,13 +1,13 @@
 package me.lokka30.treasury.api.common.event;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 class LogAwaiter {
 
     private CountDownLatch latch;
-    List<String> logs = new ArrayList<>();
+    Set<String> logs = ConcurrentHashMap.newKeySet();
 
     LogAwaiter(int logCount) {
         latch = new CountDownLatch(logCount);
@@ -24,6 +24,17 @@ class LogAwaiter {
     void log(String message) {
         logs.add(message);
         latch.countDown();
+    }
+
+    String getLog(int pos) {
+        int idx = 0;
+        for (String log : logs) {
+            if (pos == idx) {
+                return log;
+            }
+            idx++;
+        }
+        return null;
     }
 
 }

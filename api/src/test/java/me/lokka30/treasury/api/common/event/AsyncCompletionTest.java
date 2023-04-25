@@ -27,9 +27,9 @@ class AsyncCompletionTest {
         log.startWaiting();
 
         Assertions.assertEquals(3, log.logs.size());
-        Assertions.assertEquals("direct", log.logs.get(0));
-        Assertions.assertEquals("whenCalled", log.logs.get(1));
-        Assertions.assertEquals("whenCompleteAsync", log.logs.get(2));
+        Assertions.assertEquals("direct", log.getLog(0));
+        Assertions.assertEquals("whenCalled", log.getLog(1));
+        Assertions.assertEquals("whenCompleteAsync", log.getLog(2));
     }
 
 }
