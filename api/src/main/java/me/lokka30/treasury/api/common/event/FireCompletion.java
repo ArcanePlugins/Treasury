@@ -38,9 +38,7 @@ public final class FireCompletion<T> {
 
     public FireCompletion(@NotNull Class<?> event) {
         this.event = event;
-        this.async = EventExecutorTracker.INSTANCE.getExecutor(Objects.requireNonNull(event,
-                "event"
-        ));
+        this.async = ExecutorHolder.INSTANCE.getExecutor();
     }
 
     /**

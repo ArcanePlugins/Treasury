@@ -34,7 +34,7 @@ class EventCaller {
             return Completion.completed();
         }
         Completion completion = new Completion();
-        EventExecutorTracker.INSTANCE.getExecutor(eventClass).execute(() -> {
+        ExecutorHolder.INSTANCE.getExecutor().execute(() -> {
             ParallelProcessing parallelAnno = event
                     .getClass()
                     .getAnnotation(ParallelProcessing.class);
@@ -89,7 +89,7 @@ class EventCaller {
         CountDownLatch latch = new CountDownLatch(subscriptions.size());
         Set<Throwable> errors = ConcurrentHashMap.newKeySet();
         for (EventSubscriber subscriber : subscriptions) {
-            EventExecutorTracker.INSTANCE.getExecutor(this.eventClass).submit(() -> {
+            ExecutorHolder.INSTANCE.getExecutor().submit(() -> {
                 subscriber.onEvent(event).whenComplete(e -> {
                     if (!e.isEmpty()) {
                         errors.addAll(e);

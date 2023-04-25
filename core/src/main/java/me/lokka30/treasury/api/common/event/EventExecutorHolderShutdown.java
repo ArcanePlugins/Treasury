@@ -4,10 +4,10 @@
 
 package me.lokka30.treasury.api.common.event;
 
-public class EventExecutorTrackerShutdown {
+public class EventExecutorHolderShutdown {
 
     public static void shutdown() {
-        EventExecutorTracker.INSTANCE.shutdown();
+        ExecutorHolder.INSTANCE.shutdown();
     }
 
 }

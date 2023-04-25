@@ -6,7 +6,6 @@ package me.lokka30.treasury.plugin.minestom;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import me.lokka30.treasury.api.common.event.EventExecutorTrackerShutdown;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;

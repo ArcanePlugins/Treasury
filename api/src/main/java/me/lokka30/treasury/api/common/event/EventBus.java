@@ -68,9 +68,8 @@ public enum EventBus {
     public <T> FireCompletion<T> fire(@NotNull T event) {
         Objects.requireNonNull(event, "event");
         List<Class<?>> friends = eventTypes.getFriendsOf(event.getClass());
-        ExecutorService async = EventExecutorTracker.INSTANCE.getExecutor(event.getClass());
         FireCompletion<T> ret = new FireCompletion<>(event.getClass());
-        async.execute(() -> {
+        ExecutorHolder.INSTANCE.getExecutor().execute(() -> {
             List<Completion> completions = new ArrayList<>();
             EventCaller caller = events.get(event.getClass());
             if (caller != null) {
