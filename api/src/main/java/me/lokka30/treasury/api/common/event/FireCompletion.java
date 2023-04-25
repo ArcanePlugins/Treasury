@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,9 +31,6 @@ public final class FireCompletion<T> {
     private T result;
     @Nullable
     private Collection<@NotNull Throwable> errors;
-
-    private final AtomicBoolean waitCompletionCalled = new AtomicBoolean(false), whenCompleteCalled = new AtomicBoolean(
-            false);
 
     public FireCompletion(@NotNull Class<?> event) {
         this.event = event;
@@ -68,16 +64,6 @@ public final class FireCompletion<T> {
         }
         this.errors = Objects.requireNonNull(errors, "errors");
         latch.countDown();
-        if (!this.waitCompletionCalled.get() && !this.whenCompleteCalled.get()) {
-            if (!errors.isEmpty()) {
-                for (Throwable e : errors) {
-                    new RuntimeException(
-                            "[Treasury] Error encountered whilst calling '" + event.getName() + "'. THIS IS NOT TREASURY RELATED PROBLEM",
-                            e
-                    ).printStackTrace();
-                }
-            }
-        }
     }
 
     /**
@@ -86,7 +72,6 @@ public final class FireCompletion<T> {
      * to use this method, it is highly recommended that you do it asynchronously.</b>
      */
     public void waitCompletion() {
-        this.waitCompletionCalled.set(true);
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -109,7 +94,6 @@ public final class FireCompletion<T> {
     public void whenCompleteBlocking(
             @Nullable BiConsumer<@Nullable T, @NotNull Collection<@NotNull Throwable>> completedTask
     ) {
-        this.whenCompleteCalled.set(completedTask != null);
         if (completedTask != null) {
             if (latch.getCount() == 0) {
                 completedTask.accept(result, errors == null ? Collections.emptyList() : errors);

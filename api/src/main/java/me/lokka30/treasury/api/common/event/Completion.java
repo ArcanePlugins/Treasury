@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,9 +87,6 @@ public final class Completion {
     private CountDownLatch latch = new CountDownLatch(1);
     private Collection<Throwable> errors;
 
-    private final AtomicBoolean waitCompletionCalled = new AtomicBoolean(false), whenCompleteCalled = new AtomicBoolean(
-            false);
-
     /**
      * Creates a new {@code Completion} which is not completed.
      */
@@ -149,12 +145,6 @@ public final class Completion {
         Objects.requireNonNull(error, "error");
         this.errors = Collections.singletonList(error);
         latch.countDown();
-        if (!this.waitCompletionCalled.get() && !this.whenCompleteCalled.get()) {
-            throw new RuntimeException(
-                    "[Treasury] Encountered error with a Completion. Source: unknown. THIS IS 90% NOT A TREASURY RELATED ISSUE",
-                    error
-            );
-        }
     }
 
     /**
@@ -171,16 +161,6 @@ public final class Completion {
         Objects.requireNonNull(errors, "errors");
         this.errors = errors;
         latch.countDown();
-        if (!this.waitCompletionCalled.get() && !this.whenCompleteCalled.get()) {
-            if (!errors.isEmpty()) {
-                for (Throwable e : errors) {
-                    new RuntimeException(
-                            "[Treasury] Encountered error with a Completion. Source: unknown. THIS IS 90% NOT A TREASURY RELATED PROBLEM",
-                            e
-                    ).printStackTrace();
-                }
-            }
-        }
     }
 
     /**
@@ -189,7 +169,6 @@ public final class Completion {
      * to use this method, it is highly recommended that you do it asynchronously.</b>
      */
     public void waitCompletion() {
-        waitCompletionCalled.set(true);
         try {
             latch.await();
         } catch (InterruptedException e) {
@@ -218,7 +197,6 @@ public final class Completion {
      * @param completedTask task to run
      */
     public void whenComplete(@Nullable Consumer<@NotNull Collection<@NotNull Throwable>> completedTask) {
-        whenCompleteCalled.set(completedTask != null);
         if (completedTask != null) {
             if (latch.getCount() == 0) {
                 completedTask.accept(getErrors());
