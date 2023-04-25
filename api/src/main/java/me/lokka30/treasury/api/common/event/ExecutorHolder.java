@@ -41,7 +41,9 @@ class ExecutorHolder {
     }
 
     void shutdown() {
-        this.executor.shutdown();
+        if (this.executor != null) {
+            this.executor.shutdown();
+        }
     }
 
 }
