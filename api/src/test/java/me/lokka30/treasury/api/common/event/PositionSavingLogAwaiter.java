@@ -4,16 +4,16 @@
 
 package me.lokka30.treasury.api.common.event;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
-class LogAwaiter {
+class PositionSavingLogAwaiter {
 
     private CountDownLatch latch;
-    Set<String> logs = ConcurrentHashMap.newKeySet();
+    Map<Integer, String> logs = new ConcurrentHashMap<>();
 
-    LogAwaiter(int logCount) {
+    PositionSavingLogAwaiter(int logCount) {
         latch = new CountDownLatch(logCount);
     }
 
@@ -26,19 +26,8 @@ class LogAwaiter {
     }
 
     void log(String message) {
-        logs.add(message);
+        logs.put(logs.size(), message);
         latch.countDown();
-    }
-
-    String getLog(int pos) {
-        int idx = 0;
-        for (String log : logs) {
-            if (pos == idx) {
-                return log;
-            }
-            idx++;
-        }
-        return null;
     }
 
 }

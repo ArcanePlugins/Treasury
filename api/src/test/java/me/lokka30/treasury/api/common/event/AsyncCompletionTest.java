@@ -1,3 +1,7 @@
+/*
+ * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
+ */
+
 package me.lokka30.treasury.api.common.event;
 
 import java.util.function.Consumer;
@@ -10,10 +14,10 @@ class AsyncCompletionTest {
 
     }
 
-    //@Test // TODO: inconsistent outputs. Was fixed once, but still inconsistent.
+    @Test
     void testAsyncCompletion() {
         EventBus bus = EventBus.INSTANCE;
-        LogAwaiter log = new LogAwaiter(3);
+        PositionSavingLogAwaiter log = new PositionSavingLogAwaiter(3);
 
         log.log("direct");
 

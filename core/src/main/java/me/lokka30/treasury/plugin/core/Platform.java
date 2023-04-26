@@ -4,37 +4,38 @@
 
 package me.lokka30.treasury.plugin.core;
 
-import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The platform on which this core is running
  *
  * @author MrIvanPlays
  */
-public enum Platform {
-    BUKKIT,
-    BUNGEECORD,
-    VELOCITY,
-    SPONGE,
-    MINESTOM
-    ;
+public final class Platform {
 
-    private final String coolName;
+    private final String platformName, specificationName;
 
-    Platform() {
-        String name = this.name();
-        char first = name.charAt(0);
-        name = name.substring(1).toLowerCase(Locale.ROOT);
-        this.coolName = first + name;
+    public Platform(@NotNull String platformName, @NotNull String specificationName) {
+        this.platformName = platformName;
+        this.specificationName = specificationName;
     }
 
-    /**
-     * Returns the platform enum name, but it's better.
-     * <p>Example: SPONGE's display name is Sponge, BUKKIT is Bukkit, etc.
-     *
-     * @return display name
-     */
+    @NotNull
+    public String platformName() {
+        return platformName;
+    }
+
+    @NotNull
+    public String specificationName() {
+        return specificationName.isEmpty() ? platformName : specificationName;
+    }
+
+    @NotNull
     public String displayName() {
-        return this.coolName;
+        if (!specificationName.isEmpty()) {
+            return platformName + " (" + specificationName + ")";
+        }
+        return platformName;
     }
+
 }

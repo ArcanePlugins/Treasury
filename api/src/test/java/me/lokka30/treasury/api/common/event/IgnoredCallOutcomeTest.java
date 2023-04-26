@@ -31,7 +31,7 @@ class IgnoredCallOutcomeTest {
 
         logCatcher.startWaiting();
 
-        Assertions.assertEquals("fired", logCatcher.logs.get(0));
+        Assertions.assertEquals("fired", logCatcher.getLog(0));
     }
 
 }

@@ -27,9 +27,10 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     private final TreasurySponge plugin;
     private final PluginVersion version;
+    private final Platform platform;
 
     private Messages messages;
-    private Settings settings;
+    private SpongeSettings settings;
 
     private final File messagesFile, settingsFile;
     private final Path pluginsFolder;
@@ -45,6 +46,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
                 plugin.getContainer().metadata().version().toString(),
                 this
         );
+        this.platform = new Platform("Sponge", "");
     }
 
     @Override
@@ -54,7 +56,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public @NotNull Platform platform() {
-        return Platform.SPONGE;
+        return this.platform;
     }
 
     @Override
@@ -88,7 +90,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     public void loadSettings() {
-        settings = Settings.load(settingsFile);
+        settings = SpongeSettings.loadSponge(settingsFile);
     }
 
     @Override
@@ -97,7 +99,7 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
-    public @NotNull Settings getSettings() {
+    public @NotNull SpongeSettings getSettings() {
         return this.settings;
     }
 

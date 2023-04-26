@@ -4,7 +4,6 @@
 
 package me.lokka30.treasury.api.economy.events;
 
-import me.lokka30.treasury.api.common.event.Cancellable;
 import me.lokka30.treasury.api.economy.account.Account;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransaction;
 import org.jetbrains.annotations.NotNull;
@@ -15,13 +14,12 @@ import org.jetbrains.annotations.NotNull;
  * @author lokka30, MrNemo64, MrIvanPlays
  * @since v1.1.0
  */
-public class AccountTransactionEvent implements Cancellable {
+public class AccountTransactionEvent {
 
     @NotNull
     private final EconomyTransaction economyTransaction;
     @NotNull
     private final Account account;
-    private boolean isCancelled = false;
 
     public AccountTransactionEvent(
             @NotNull EconomyTransaction economyTransaction, @NotNull Account account
@@ -48,22 +46,6 @@ public class AccountTransactionEvent implements Cancellable {
     @NotNull
     public EconomyTransaction getTransaction() {
         return economyTransaction;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.isCancelled = cancel;
     }
 
 }

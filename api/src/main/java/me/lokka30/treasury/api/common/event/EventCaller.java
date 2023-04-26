@@ -5,7 +5,6 @@
 package me.lokka30.treasury.api.common.event;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -18,10 +17,8 @@ import org.jetbrains.annotations.NotNull;
 class EventCaller {
 
     private List<EventSubscriber> subscriptions = new SortedList<>();
-    private final Class<?> eventClass;
 
-    EventCaller(@NotNull Class<?> eventClass) {
-        this.eventClass = eventClass;
+    EventCaller() {
     }
 
     public void register(@NotNull EventSubscriber subscriber) {
@@ -34,7 +31,7 @@ class EventCaller {
             return Completion.completed();
         }
         Completion completion = new Completion();
-        EventExecutorTracker.INSTANCE.getExecutor(eventClass).execute(() -> {
+        ExecutorHolder.INSTANCE.getExecutor().execute(() -> {
             ParallelProcessing parallelAnno = event
                     .getClass()
                     .getAnnotation(ParallelProcessing.class);
@@ -46,11 +43,6 @@ class EventCaller {
                     completion.complete();
                 }
             } else {
-                if (event instanceof Cancellable) {
-                    completion.completeExceptionally(Collections.singletonList(new IllegalStateException(
-                            "@ParallelProcessing at cancellable event.")));
-                    return;
-                }
                 parallelCall(event, (errors) -> {
                     if (!errors.isEmpty()) {
                         completion.completeExceptionally(errors);
@@ -64,24 +56,19 @@ class EventCaller {
     }
 
     private List<Throwable> call(Object event, List<Throwable> errorsToThrow, int startIndex) {
-        for (int i = startIndex; i < subscriptions.size(); i++) {
-            EventSubscriber subscriber = subscriptions.get(i);
-            if (event instanceof Cancellable) {
-                if (((Cancellable) event).isCancelled() && subscriber.ignoreCancelled()) {
-                    continue;
-                }
+        EventSubscriber subscriber = subscriptions.get(startIndex);
+        final int nextStart = startIndex + 1;
+        subscriber.onEvent(event).whenComplete(errors -> {
+            if (!errors.isEmpty()) {
+                errorsToThrow.addAll(errors);
+                return;
             }
-            final int nextStart = i + 1;
-            subscriber.onEvent(event).whenComplete(errors -> {
-                if (!errors.isEmpty()) {
-                    errorsToThrow.addAll(errors);
-                    return;
-                }
 
+            if (nextStart < subscriptions.size()) {
                 call(event, errorsToThrow, nextStart);
-            });
-            break;
-        }
+            }
+        });
+
         return errorsToThrow;
     }
 
@@ -89,7 +76,7 @@ class EventCaller {
         CountDownLatch latch = new CountDownLatch(subscriptions.size());
         Set<Throwable> errors = ConcurrentHashMap.newKeySet();
         for (EventSubscriber subscriber : subscriptions) {
-            EventExecutorTracker.INSTANCE.getExecutor(this.eventClass).submit(() -> {
+            ExecutorHolder.INSTANCE.getExecutor().submit(() -> {
                 subscriber.onEvent(event).whenComplete(e -> {
                     if (!e.isEmpty()) {
                         errors.addAll(e);

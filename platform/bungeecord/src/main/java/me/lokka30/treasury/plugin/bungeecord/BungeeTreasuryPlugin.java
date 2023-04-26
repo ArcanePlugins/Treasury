@@ -26,6 +26,7 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     private final TreasuryBungee plugin;
     private final PluginVersion pluginVersion;
+    private final Platform platform;
     private Messages messages;
     private Settings settings;
 
@@ -37,6 +38,7 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         this.pluginVersion = new PluginVersion(plugin.getDescription().getVersion(), this);
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         settingsFile = new File(plugin.getDataFolder(), "settings.yml");
+        this.platform = new Platform("BungeeCord", "");
     }
 
     @Override
@@ -46,7 +48,7 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public @NotNull Platform platform() {
-        return Platform.BUNGEECORD;
+        return this.platform;
     }
 
     @Override

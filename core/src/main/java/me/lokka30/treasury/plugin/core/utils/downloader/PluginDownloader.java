@@ -51,7 +51,7 @@ public final class PluginDownloader {
                 .configAdapter()
                 .getSettings()
                 .getDownloadPlatform();
-        String platformName = plugin.platform().name().toLowerCase(Locale.ROOT);
+        String platformName = plugin.platform().specificationName();
         try {
             // first get the latest build
             URL latestBuild = new URL(downloadPlatform.buildUrl());

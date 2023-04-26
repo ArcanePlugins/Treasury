@@ -27,6 +27,9 @@ api-version: '1.13' # This is Spigot's API version, NOT Treasury's API version.
 load: "STARTUP"
 loadbefore: [ ]
 
+# Marks whether PaperMC's Folia is supported
+folia-supported: true
+
 # All registered base commands are listed here
 commands:
   treasury:

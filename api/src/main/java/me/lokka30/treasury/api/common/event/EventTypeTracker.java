@@ -33,7 +33,7 @@ class EventTypeTracker {
                 .getTypes()
                 .rawTypes()
                 .stream()
-                .filter(type -> type != Object.class && type != Cancellable.class);
+                .filter(type -> type != Object.class);
     }
 
 }

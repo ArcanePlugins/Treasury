@@ -14,9 +14,6 @@ import java.lang.annotation.Target;
 /**
  * Tells the {@link EventBus} that for the annotated event can process the
  * {@link EventSubscriber} calls in parallel.
- * <p><b>WARNING: </b>This annotation is not applicable to {@link Cancellable} events.
- * <b>Applying this annotation onto a cancellable event will result in {@link FireCompletion}
- * with an exception when {@link EventBus#fire(Object)} is called.</b>
  *
  * @author MrIvanPlays
  * @since 2.0.0
