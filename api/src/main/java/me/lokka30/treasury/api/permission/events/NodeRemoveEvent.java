@@ -4,8 +4,6 @@
 
 package me.lokka30.treasury.api.permission.events;
 
-import me.lokka30.treasury.api.common.Cause;
-import me.lokka30.treasury.api.permission.node.Node;
 import me.lokka30.treasury.api.permission.node.holder.NodeHolder;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,9 +12,9 @@ public class NodeRemoveEvent extends NodeEvent {
     private final NodeHolder nodeHolder;
 
     public NodeRemoveEvent(
-            @NotNull NodeHolder nodeHolder, @NotNull Node node, @NotNull Cause<?> cause
+            @NotNull NodeHolder nodeHolder, @NotNull NodeEvent.Result initialResult
     ) {
-        super(node, cause);
+        super(initialResult);
         this.nodeHolder = nodeHolder;
     }
 
