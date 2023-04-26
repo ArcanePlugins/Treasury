@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import me.lokka30.treasury.api.common.event.EventExecutorHolderShutdown;
 import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
@@ -208,7 +207,6 @@ public abstract class TreasuryPlugin {
     public void shutdown(boolean noColors, Runnable psShutdownCode) {
         QuickTimer shutdownTimer = new QuickTimer();
 
-        EventExecutorHolderShutdown.shutdown();
         if (psShutdownCode != null) {
             psShutdownCode.run();
         }

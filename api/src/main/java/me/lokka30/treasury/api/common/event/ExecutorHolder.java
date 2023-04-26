@@ -36,14 +36,13 @@ class ExecutorHolder {
                     return thread;
                 }
             });
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (this.executor != null) {
+                    this.executor.shutdown();
+                }
+            }));
         }
         return this.executor;
-    }
-
-    void shutdown() {
-        if (this.executor != null) {
-            this.executor.shutdown();
-        }
     }
 
 }
