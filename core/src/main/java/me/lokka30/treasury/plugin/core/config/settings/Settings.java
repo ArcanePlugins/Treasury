@@ -4,13 +4,13 @@
 
 package me.lokka30.treasury.plugin.core.config.settings;
 
-import com.google.common.reflect.TypeToken;
 import com.mrivanplays.annotationconfig.core.annotations.ConfigObject;
 import com.mrivanplays.annotationconfig.core.annotations.Ignore;
 import com.mrivanplays.annotationconfig.core.annotations.Key;
 import com.mrivanplays.annotationconfig.core.annotations.comment.Comment;
 import com.mrivanplays.annotationconfig.core.serialization.AdvancedEnumSerializer;
 import com.mrivanplays.annotationconfig.core.serialization.SerializerRegistry;
+import com.mrivanplays.annotationconfig.core.utils.TypeToken;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
 import java.io.File;
 import java.lang.reflect.Type;
@@ -46,6 +46,13 @@ import me.lokka30.treasury.plugin.core.utils.downloader.DownloadPlatform;
 public class Settings {
 
     public static Settings load(File file) {
+        registerSerializers();
+        Settings settings = new Settings();
+        YamlConfig.getConfigResolver().loadOrDump(settings, file);
+        return settings;
+    }
+
+    public static void registerSerializers() {
         Type debugCategoryList = new TypeToken<List<DebugCategory>>() {
         }.getType();
         if (!SerializerRegistry.INSTANCE.hasSerializer(debugCategoryList)) {
@@ -58,9 +65,6 @@ public class Settings {
                     AdvancedEnumSerializer.forEnum(DownloadPlatform.class)
             );
         }
-        Settings settings = new Settings();
-        YamlConfig.getConfigResolver().loadOrDump(settings, file);
-        return settings;
     }
 
     @Key("update-checker")
