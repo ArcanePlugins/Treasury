@@ -5,47 +5,62 @@
 package me.lokka30.treasury.api.permission.events;
 
 import me.lokka30.treasury.api.common.Cause;
-import me.lokka30.treasury.api.common.event.Cancellable;
 import me.lokka30.treasury.api.permission.node.Node;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class NodeEvent implements Cancellable {
+public class NodeEvent {
 
-    private Node node;
-    private Cause<?> cause;
-    private boolean cancelled;
+    private Result result;
 
-    public NodeEvent(@NotNull Node node, @NotNull Cause<?> cause) {
-        this.node = node;
-        this.cause = cause;
+    public NodeEvent(@NotNull Result initialResult) {
+        this.result = initialResult;
     }
 
     @NotNull
     public Node getNode() {
-        return this.node;
-    }
-
-    public void setNode(@NotNull Node node) {
-        this.node = node;
+        return result.getNode();
     }
 
     @NotNull
     public Cause<?> getCause() {
-        return cause;
+        return result.getCause();
     }
 
-    public void setCause(@NotNull Cause<?> cause) {
-        this.cause = cause;
+    @NotNull
+    public Result asResult() {
+        return this.result;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public void withNewResult(@NotNull Result result) {
+        this.result = result;
     }
 
-    @Override
-    public void setCancelled(final boolean cancel) {
-        this.cancelled = cancel;
+    public static class Result {
+
+        @NotNull
+        @Contract(value = "_, _ -> new", pure = true)
+        public static Result of(@NotNull Node node, @NotNull Cause<?> cause) {
+            return new Result(node, cause);
+        }
+
+        private final Node node;
+        private final Cause<?> cause;
+
+        private Result(@NotNull Node node, @NotNull Cause<?> cause) {
+            this.node = node;
+            this.cause = cause;
+        }
+
+        @NotNull
+        public Node getNode() {
+            return this.node;
+        }
+
+        @NotNull
+        public Cause<?> getCause() {
+            return this.cause;
+        }
     }
 
 }
