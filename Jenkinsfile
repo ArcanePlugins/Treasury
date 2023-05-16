@@ -16,14 +16,11 @@ pipeline {
     }
 
     stage('Build & Deploy') {
-      tools {
-        jdk 'java 17'
-        maven 'Default'
-      }
       steps {
-         withMaven {
-           sh 'mvn clean deploy -P deployToMrIvanPlays'
-         }
+         sh '''
+         export JAVA_HOME=/usr/lib/jvm/java17-openjdk-amd64
+         mvn clean deploy -P deployToMrIvanPlays
+         '''
       }
     }
 
