@@ -8,11 +8,17 @@ pipeline {
     maven 'Default'
   }
 
-  node {
-    env.JAVA_HOME = '/usr/lib/jvm/java17-openjdk-amd64'
-  }
-
   stages {
+    stage('Check environment') {
+      steps {
+        sh '''
+        java -version
+        echo $JAVA_HOME
+        mvn --version
+        '''
+      }
+    }
+
     stage('Check SCM Skip') {
       steps {
         scmSkip(deleteBuild:true, skipPattern:'.*\\[ci skip\\].*')
@@ -30,11 +36,13 @@ pipeline {
         branch 'master'
       }
       steps {
-        sh 'cd api'
-        sh 'jd-maven treasury/api'
-        sh 'cd -'
-        sh 'cd platform/bukkit/api'
-        sh 'jd-maven treasury/api-bukkit'
+        sh '''
+        cd api
+        jd-maven treasury/api
+        cd -
+        cd platform/bukkit/api
+        jd-maven treasury/api-bukkit
+        '''
       }
     }
 
@@ -43,8 +51,10 @@ pipeline {
         branch 'dev/2.0.0'
       }
       steps {
-        sh 'cd api'
-        sh 'jd-maven treasury/api-v2'
+        sh '''
+        cd api
+        jd-maven treasury/api-v2
+        '''
       }
     }
 
