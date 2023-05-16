@@ -17,11 +17,7 @@ pipeline {
 
     stage('Build & Deploy') {
       steps {
-         sh '''
-         export JAVA_HOME=/usr/lib/jvm/java17-openjdk-amd64
-         export PATH=$JAVA_HOME/bin:$PATH
-         mvn clean deploy -P deployToMrIvanPlays
-         '''
+         sh 'mvn clean deploy -P deployToMrIvanPlays'
       }
     }
 
