@@ -9,16 +9,6 @@ pipeline {
   }
 
   stages {
-    stage('Check environment') {
-      steps {
-        sh '''
-        java -version
-        echo $JAVA_HOME
-        mvn --version
-        '''
-      }
-    }
-
     stage('Check SCM Skip') {
       steps {
         scmSkip(deleteBuild:true, skipPattern:'.*\\[ci skip\\].*')
