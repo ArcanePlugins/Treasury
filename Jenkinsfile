@@ -8,6 +8,10 @@ pipeline {
     maven 'Default'
   }
 
+  node {
+    env.JAVA_HOME = '/usr/lib/jvm/java17-openjdk-amd64'
+  }
+
   stages {
     stage('Check SCM Skip') {
       steps {
