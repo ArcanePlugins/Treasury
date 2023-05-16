@@ -26,8 +26,14 @@ pipeline {
     }
 
     stage('Build & Deploy') {
+      tools {
+        jdk 'java 17'
+        maven 'Default'
+      }
       steps {
-         sh 'mvn clean deploy -P deployToMrIvanPlays'
+         withMaven {
+           sh 'mvn clean deploy -P deployToMrIvanPlays'
+         }
       }
     }
 
