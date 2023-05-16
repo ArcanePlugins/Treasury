@@ -1,6 +1,20 @@
+properties([pipelineTriggers([githubPush()])])
+
 pipeline {
   agent any
+
+  tools {
+    jdk 'java 17'
+    maven 'Default'
+  }
+
   stages {
+    stage('Check SCM Skip') {
+      steps {
+        scmSkip(deleteBuild:true, skipPattern:'.*\\[ci skip\\].*')
+      }
+    }
+
     stage('Build & Deploy') {
       steps {
          sh 'mvn clean deploy -P deployToMrIvanPlays'
@@ -35,7 +49,7 @@ pipeline {
         branch 'master'
       }
       steps {
-        archiveArtifacts artifacts: 'platform/*/plugin/target/treasury-*-*-*-*.jar, platform/*/target/treasury-*-*-*-*.jar', excludes: 'platform/*/plugin/target/treasury-*-*-*-*-sources.jar, platform/*/target/treasury-*-*-*-*-sources.jar'
+        archiveArtifacts artifacts: 'platform/*/plugin/target/treasury-*-*-*-*.jar, platform/*/target/treasury-*-*-*-*.jar', excludes: 'platform/*/plugin/target/treasury-*-*-*-*-sources.jar, platform/*/target/treasury-*-*-*-*-sources.jar', fingerprint: true
       }
     }
 
@@ -44,7 +58,7 @@ pipeline {
         branch 'dev/2.0.0'
       }
       steps {
-        archiveArtifacts artifacts: 'platform/*/target/treasury-*-*-*.jar', excludes: 'platform/*/target/treasury-*-*-*-*-sources.jar'
+        archiveArtifacts artifacts: 'platform/*/target/treasury-*-*-*.jar', excludes: 'platform/*/target/treasury-*-*-*-*-sources.jar', fingerprint: true
       }
     }
   }
