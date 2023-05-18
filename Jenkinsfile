@@ -3,6 +3,10 @@ properties([pipelineTriggers([githubPush()])])
 pipeline {
   agent any
 
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '15'))
+  }
+
   tools {
     jdk 'java 17'
     maven 'Default'
