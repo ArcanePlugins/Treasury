@@ -63,8 +63,7 @@ public final class PluginDownloader {
                 OffsetDateTime currentJarDate = OffsetDateTime.parse(PluginDownloader.class
                         .getPackage()
                         .getImplementationVersion());
-                OffsetDateTime buildDate = parseDate(build
-                        .getAsJsonObject("changeSet")
+                OffsetDateTime buildDate = parseDate(getChangeSetObject(build, downloadPlatform)
                         .getAsJsonArray("items")
                         .get(0)
                         .getAsJsonObject()
@@ -143,6 +142,18 @@ public final class PluginDownloader {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(
             "yyyy-MM-dd HH:mm:ss Z");
+
+    private static JsonObject getChangeSetObject(
+            JsonObject build, DownloadPlatform downloadPlatform
+    ) {
+        String changeSetWord = downloadPlatform.changeSetWord();
+        if (changeSetWord.charAt(changeSetWord.length() - 1) == 's') { // changeSets
+            // parse from an array
+            return build.getAsJsonArray(changeSetWord).get(0).getAsJsonObject();
+        } else { // changeSet
+            return build.getAsJsonObject(changeSetWord);
+        }
+    }
 
     private static OffsetDateTime parseDate(String date) {
         OffsetDateTime parsed = OffsetDateTime.parse(date, DATE_TIME_FORMATTER);

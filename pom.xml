@@ -136,6 +136,8 @@
                     <archive>
                         <manifestEntries>
                             <Implementation-Version>${git.commit.time}</Implementation-Version>
+                            <!-- used for downloads from mrivanplays.com -->
+                            <releaseChannel>master</releaseChannel>
                         </manifestEntries>
                     </archive>
                 </configuration>
