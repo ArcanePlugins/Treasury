@@ -64,7 +64,7 @@
         If you update it and still doesn't build, and the reason is not Minestom, or non-compiling
         code, seek help!
         -->
-        <minestom.version>8ad2c77</minestom.version>
+        <minestom.version>e0427a36f3</minestom.version>
     </properties>
 
     <licenses>
@@ -175,6 +175,8 @@
                             <Specification-Version>${project.version}</Specification-Version>
                             <Specification-Vendor>${plugin.authors}</Specification-Vendor>
                             <Implementation-Version>${git.commit.time}</Implementation-Version>
+                            <!-- used for downloads from mrivanplays.com -->
+                            <releaseChannel>dev/2.0.0</releaseChannel>
                         </manifestEntries>
                     </archive>
                 </configuration>
