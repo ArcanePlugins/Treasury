@@ -28,7 +28,7 @@ public class BukkitCommandSource implements CommandSource {
 
     @Override
     public void sendMessage(@NotNull String message) {
-        sender.sendMessage(((BukkitTreasuryPlugin) TreasuryPlugin.getInstance()).colorize(message));
+        sender.sendMessage(BukkitTreasuryPlugin.colorize(message));
     }
 
     @Override
