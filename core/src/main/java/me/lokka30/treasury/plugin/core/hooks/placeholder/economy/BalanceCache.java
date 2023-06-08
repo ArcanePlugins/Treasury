@@ -2,20 +2,20 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
+package me.lokka30.treasury.plugin.core.hooks.placeholder.economy;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
@@ -23,28 +23,32 @@ import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.AccountData;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.lokka30.treasury.plugin.core.hooks.PlayerData;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
+import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.Nullable;
 
-public class BalanceCache extends BukkitRunnable {
+public class BalanceCache extends Scheduler.ScheduledTask {
 
+    private final PlaceholdersExpansion base;
     private final Multimap<UUID, Map.Entry<String, BigDecimal>> balances = HashMultimap.create();
     private final int delay;
     private final AtomicReference<EconomyProvider> providerRef;
     private final AtomicReference<CountDownLatch> doneLatch = new AtomicReference<>(new CountDownLatch(
             1));
 
-    public BalanceCache(int delay, AtomicReference<EconomyProvider> providerRef) {
+    public BalanceCache(
+            PlaceholdersExpansion base, int delay, AtomicReference<EconomyProvider> providerRef
+    ) {
+        super(TreasuryPlugin.getInstance().scheduler());
+        this.base = base;
         this.delay = delay;
         this.providerRef = providerRef;
     }
 
-    public void start(TreasuryBukkit plugin) {
-        runTaskTimerAsynchronously(plugin, 20, delay * 20L);
+    public void start() {
+        start(1, delay, TimeUnit.SECONDS);
     }
 
     public @Nullable BigDecimal getBalance(UUID uuid, String currencyId) {
@@ -76,7 +80,7 @@ public class BalanceCache extends BukkitRunnable {
             return;
         }
         balances.clear();
-        this.proceed(0, Arrays.asList(Bukkit.getOfflinePlayers()), provider);
+        this.proceed(0, base.requestPlayerData(), provider);
         CountDownLatch latch = this.doneLatch.get();
         if (latch.getCount() != 0) {
             try {
@@ -88,7 +92,7 @@ public class BalanceCache extends BukkitRunnable {
     }
 
     private void proceed(
-            int currentIndex, List<OfflinePlayer> players, EconomyProvider provider
+            int currentIndex, List<PlayerData> players, EconomyProvider provider
     ) {
         CountDownLatch latch = doneLatch.get();
         if (latch.getCount() != 1) {
@@ -100,10 +104,10 @@ public class BalanceCache extends BukkitRunnable {
             this.doneLatch.get().countDown();
             return;
         }
-        OfflinePlayer player = players.get(currentIndex);
-        provider.hasAccount(AccountData.forPlayerAccount(player.getUniqueId())).thenCompose(res -> {
+        PlayerData player = players.get(currentIndex);
+        provider.hasAccount(AccountData.forPlayerAccount(player.uniqueId())).thenCompose(res -> {
             if (res) {
-                return provider.accountAccessor().player().withUniqueId(player.getUniqueId()).get();
+                return provider.accountAccessor().player().withUniqueId(player.uniqueId()).get();
             }
             return FutureHelper.failedFuture(new TreasuryException("accountNotExists"));
         }).whenComplete((account, ex) -> {
@@ -112,11 +116,9 @@ public class BalanceCache extends BukkitRunnable {
                     if (!ex.getMessage().equalsIgnoreCase("accountNotExists")) {
                         // log the problem and proceed with next entry
                         TreasuryPlugin.getInstance().logger().error(
-                                "Error whilst trying to update balance cache for " + (player.getName() != null
-                                        ? player.getName()
-                                        : player
-                                                .getUniqueId()
-                                                .toString()) + ": " + ex.getMessage());
+                                "Error whilst trying to update balance cache for " + (player.name() != null
+                                        ? player.name()
+                                        : player.uniqueId().toString()) + ": " + ex.getMessage());
                     }
                     proceed(currentIndex + 1, players, provider);
                     return;
@@ -131,10 +133,10 @@ public class BalanceCache extends BukkitRunnable {
                         .exceptionally(e -> {
                             if (e instanceof TreasuryException) {
                                 TreasuryPlugin.getInstance().logger().error(
-                                        "Error whilst trying to update balance cache for " + (player.getName() != null
-                                                ? player.getName()
+                                        "Error whilst trying to update balance cache for " + (player.name() != null
+                                                ? player.name()
                                                 : player
-                                                        .getUniqueId()
+                                                        .uniqueId()
                                                         .toString()) + ": " + e.getMessage());
                                 return null;
                             }
@@ -155,7 +157,7 @@ public class BalanceCache extends BukkitRunnable {
                                     ex1
                             );
                         }
-                        this.balances.putAll(player.getUniqueId(), balances);
+                        this.balances.putAll(player.uniqueId(), balances);
                         proceed(currentIndex + 1, players, provider);
                     });
         });

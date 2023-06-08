@@ -22,6 +22,8 @@ import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiExpansion;
 import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHook;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.economy.BalTop;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.economy.BalanceCache;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -153,6 +155,7 @@ public class EconomyHook implements TreasuryPapiHook {
                 })
                 .completeSubscription());
 
+        /* // TODO: basically move this to core too
         this.balanceCache = new BalanceCache(expansion.getInt("balance.cache_check_delay", 60),
                 providerRef
         );
@@ -167,6 +170,7 @@ public class EconomyHook implements TreasuryPapiHook {
         if (this.baltop.isEnabled()) {
             this.baltop.start(plugin);
         }
+         */
         return true;
     }
 

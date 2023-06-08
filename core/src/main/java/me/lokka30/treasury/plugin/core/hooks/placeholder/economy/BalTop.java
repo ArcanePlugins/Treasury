@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
+package me.lokka30.treasury.plugin.core.hooks.placeholder.economy;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -12,19 +12,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.lokka30.treasury.plugin.core.hooks.PlayerData;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
+import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BalTop extends BukkitRunnable {
+public class BalTop extends Scheduler.ScheduledTask {
 
+    private final PlaceholdersExpansion base;
     private final boolean enabled;
     private final int topSize;
     private final int taskDelay;
@@ -34,12 +35,15 @@ public class BalTop extends BukkitRunnable {
     private final Multimap<String, TopPlayer> baltop;
 
     public BalTop(
+            PlaceholdersExpansion base,
             boolean enabled,
             int topSize,
             int taskDelay,
             BalanceCache balanceCache,
             AtomicReference<EconomyProvider> provider
     ) {
+        super(TreasuryPlugin.getInstance().scheduler());
+        this.base = base;
         this.enabled = enabled;
         this.topSize = topSize;
         this.taskDelay = taskDelay;
@@ -50,8 +54,8 @@ public class BalTop extends BukkitRunnable {
         );
     }
 
-    public void start(TreasuryBukkit plugin) {
-        runTaskTimerAsynchronously(plugin, 20, taskDelay * 20L);
+    public void start() {
+        start(1, taskDelay, TimeUnit.SECONDS);
     }
 
     public boolean isEnabled() {
@@ -132,13 +136,13 @@ public class BalTop extends BukkitRunnable {
         }
         baltop.clear();
 
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            String playerName = player.getName();
+        for (PlayerData player : base.requestPlayerData()) {
+            String playerName = player.name();
             if (playerName == null) {
                 continue;
             }
             for (Currency currency : provider.getCurrencies()) {
-                BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
+                BigDecimal balance = balanceCache.getBalance(player.uniqueId(),
                         currency.getIdentifier()
                 );
                 if (balance == null) {
