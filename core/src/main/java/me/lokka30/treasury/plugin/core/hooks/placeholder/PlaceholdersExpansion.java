@@ -4,15 +4,7 @@
 
 package me.lokka30.treasury.plugin.core.hooks.placeholder;
 
-import java.util.List;
-import me.lokka30.treasury.plugin.core.hooks.PlayerData;
-
 public abstract class PlaceholdersExpansion {
 
-    /**
-     * Request player data for balance caching.
-     *
-     * @return player data
-     */
-    public abstract List<PlayerData> requestPlayerData();
+    public abstract String pluginName();
 }

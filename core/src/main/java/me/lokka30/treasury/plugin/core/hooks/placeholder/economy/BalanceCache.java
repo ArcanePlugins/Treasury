@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,28 +22,25 @@ import me.lokka30.treasury.api.common.misc.FutureHelper;
 import me.lokka30.treasury.api.common.misc.TriState;
 import me.lokka30.treasury.api.common.response.TreasuryException;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.AccountData;
+import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.hooks.PlayerData;
-import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.Nullable;
 
 public class BalanceCache extends Scheduler.ScheduledTask {
 
-    private final PlaceholdersExpansion base;
     private final Multimap<UUID, Map.Entry<String, BigDecimal>> balances = HashMultimap.create();
+    private Map<UUID, String> playerDataNames = new ConcurrentHashMap<>();
     private final int delay;
     private final AtomicReference<EconomyProvider> providerRef;
     private final AtomicReference<CountDownLatch> doneLatch = new AtomicReference<>(new CountDownLatch(
             1));
 
     public BalanceCache(
-            PlaceholdersExpansion base, int delay, AtomicReference<EconomyProvider> providerRef
+            int delay, AtomicReference<EconomyProvider> providerRef
     ) {
         super(TreasuryPlugin.getInstance().scheduler());
-        this.base = base;
         this.delay = delay;
         this.providerRef = providerRef;
     }
@@ -65,6 +63,10 @@ public class BalanceCache extends Scheduler.ScheduledTask {
                 .orElse(null);
     }
 
+    public Map<UUID, String> getPlayerDataNames() {
+        return this.playerDataNames;
+    }
+
     public boolean available() {
         return this.doneLatch.get().getCount() == 0;
     }
@@ -80,7 +82,40 @@ public class BalanceCache extends Scheduler.ScheduledTask {
             return;
         }
         balances.clear();
-        this.proceed(0, base.requestPlayerData(), provider);
+        provider.retrievePlayerAccountIds().whenComplete((ids, ex) -> {
+            if (ex != null) {
+                TreasuryPlugin.getInstance().logger().error(
+                        "Error retrieving player account ids",
+                        ex
+                );
+                return;
+            }
+            List<CompletableFuture<PlayerAccount>> accountsFutures = new ArrayList<>();
+            for (UUID uuid : ids) {
+                accountsFutures.add(provider.accountAccessor().player().withUniqueId(uuid).get());
+            }
+            FutureHelper
+                    .joinAndFilter(
+                            $ -> CompletableFuture.completedFuture(TriState.TRUE),
+                            accountsFutures
+                    )
+                    .whenComplete((accounts, ex1) -> {
+                        if (ex1 != null) {
+                            TreasuryPlugin.getInstance().logger().error(
+                                    "Error retrieving player accounts",
+                                    ex1
+                            );
+                            return;
+                        }
+                        // fill out names
+                        for (PlayerAccount account : accounts) {
+                            if (account.getName().isPresent()) {
+                                playerDataNames.put(account.identifier(), account.getName().get());
+                            }
+                        }
+                        this.proceed(0, new ArrayList<>(accounts), provider);
+                    });
+        });
         CountDownLatch latch = this.doneLatch.get();
         if (latch.getCount() != 0) {
             try {
@@ -92,7 +127,7 @@ public class BalanceCache extends Scheduler.ScheduledTask {
     }
 
     private void proceed(
-            int currentIndex, List<PlayerData> players, EconomyProvider provider
+            int currentIndex, List<PlayerAccount> players, EconomyProvider provider
     ) {
         CountDownLatch latch = doneLatch.get();
         if (latch.getCount() != 1) {
@@ -104,63 +139,45 @@ public class BalanceCache extends Scheduler.ScheduledTask {
             this.doneLatch.get().countDown();
             return;
         }
-        PlayerData player = players.get(currentIndex);
-        provider.hasAccount(AccountData.forPlayerAccount(player.uniqueId())).thenCompose(res -> {
-            if (res) {
-                return provider.accountAccessor().player().withUniqueId(player.uniqueId()).get();
-            }
-            return FutureHelper.failedFuture(new TreasuryException("accountNotExists"));
-        }).whenComplete((account, ex) -> {
-            if (ex != null) {
-                if (ex instanceof TreasuryException) {
-                    if (!ex.getMessage().equalsIgnoreCase("accountNotExists")) {
-                        // log the problem and proceed with next entry
-                        TreasuryPlugin.getInstance().logger().error(
-                                "Error whilst trying to update balance cache for " + (player.name() != null
-                                        ? player.name()
-                                        : player.uniqueId().toString()) + ": " + ex.getMessage());
-                    }
-                    proceed(currentIndex + 1, players, provider);
-                    return;
-                }
-                throw new RuntimeException("An error occurred whilst updating balance cache", ex);
-            }
+        PlayerAccount account = players.get(currentIndex);
+        String name = account.getName().orElse(null);
 
-            List<CompletableFuture<Map.Entry<String, BigDecimal>>> balanceFutures = new ArrayList<>();
-            for (Currency currency : provider.getCurrencies()) {
-                balanceFutures.add(account
-                        .retrieveBalance(currency)
-                        .exceptionally(e -> {
-                            if (e instanceof TreasuryException) {
-                                TreasuryPlugin.getInstance().logger().error(
-                                        "Error whilst trying to update balance cache for " + (player.name() != null
-                                                ? player.name()
-                                                : player
-                                                        .uniqueId()
-                                                        .toString()) + ": " + e.getMessage());
-                                return null;
-                            }
-                            throw new RuntimeException(e);
-                        })
-                        .thenApply(balance -> new AbstractMap.SimpleImmutableEntry<>(currency.getIdentifier(),
-                                balance
-                        )));
-            }
-
-            FutureHelper
-                    .joinAndFilter(bal -> CompletableFuture.completedFuture(TriState.fromBoolean(bal.getValue() != null && !bal
-                            .getValue()
-                            .equals(BigDecimal.ZERO))), balanceFutures)
-                    .whenComplete((balances, ex1) -> {
-                        if (ex1 != null) {
-                            throw new RuntimeException("An error occurred whilst updating balance cache",
-                                    ex1
-                            );
+        List<CompletableFuture<Map.Entry<String, BigDecimal>>> balanceFutures = new ArrayList<>();
+        for (Currency currency : provider.getCurrencies()) {
+            balanceFutures.add(account
+                    .retrieveBalance(currency)
+                    .exceptionally(e -> {
+                        if (e instanceof TreasuryException) {
+                            TreasuryPlugin.getInstance().logger().error(
+                                    "Error whilst trying to update balance cache for " + (name != null
+                                            ? name
+                                            : account
+                                                    .identifier()
+                                                    .toString()) + ": " + e.getMessage());
+                            return null;
                         }
-                        this.balances.putAll(player.uniqueId(), balances);
-                        proceed(currentIndex + 1, players, provider);
-                    });
-        });
+                        throw new RuntimeException(e);
+                    })
+                    .thenApply(balance -> new AbstractMap.SimpleImmutableEntry<>(
+                            currency.getIdentifier(),
+                            balance
+                    )));
+        }
+
+        FutureHelper
+                .joinAndFilter(bal -> CompletableFuture.completedFuture(TriState.fromBoolean(bal.getValue() != null && !bal
+                        .getValue()
+                        .equals(BigDecimal.ZERO))), balanceFutures)
+                .whenComplete((balances, ex1) -> {
+                    if (ex1 != null) {
+                        throw new RuntimeException(
+                                "An error occurred whilst updating balance cache",
+                                ex1
+                        );
+                    }
+                    this.balances.putAll(account.identifier(), balances);
+                    proceed(currentIndex + 1, players, provider);
+                });
     }
 
 }

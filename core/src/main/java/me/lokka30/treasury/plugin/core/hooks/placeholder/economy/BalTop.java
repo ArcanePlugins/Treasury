@@ -11,13 +11,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.hooks.PlayerData;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.NotNull;
@@ -127,28 +128,23 @@ public class BalTop extends Scheduler.ScheduledTask {
             if (!balanceCache.available()) {
                 // We'll just wait for the next cycle to update the baltop
                 // Also print a warning that it failed to update the baltop
-                TreasuryPlugin
-                        .getInstance()
-                        .logger()
-                        .warn("Couldn't update baltop placeholders for PlaceholderAPI!");
+                TreasuryPlugin.getInstance().logger().warn(
+                        "Couldn't update baltop placeholders for " + base.pluginName() + "!");
                 return;
             }
         }
         baltop.clear();
 
-        for (PlayerData player : base.requestPlayerData()) {
-            String playerName = player.name();
-            if (playerName == null) {
-                continue;
-            }
+        for (Map.Entry<UUID, String> entry : balanceCache.getPlayerDataNames().entrySet()) {
             for (Currency currency : provider.getCurrencies()) {
-                BigDecimal balance = balanceCache.getBalance(player.uniqueId(),
+                BigDecimal balance = balanceCache.getBalance(
+                        entry.getKey(),
                         currency.getIdentifier()
                 );
-                if (balance == null) {
+                if (balance == null || balance.equals(BigDecimal.ZERO)) {
                     continue;
                 }
-                baltop.put(currency.getIdentifier(), new TopPlayer(playerName, balance));
+                baltop.put(currency.getIdentifier(), new TopPlayer(entry.getValue(), balance));
             }
         }
 
