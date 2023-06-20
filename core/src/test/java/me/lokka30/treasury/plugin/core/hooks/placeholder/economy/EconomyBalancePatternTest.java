@@ -1,9 +1,8 @@
-package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
+package me.lokka30.treasury.plugin.core.hooks.placeholder.economy;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
-import me.lokka30.treasury.plugin.bukkit.hooks.papi.economy.EconomyHook;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;

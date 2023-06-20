@@ -5,7 +5,6 @@
 package me.lokka30.treasury.plugin.core.hooks;
 
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -18,7 +17,10 @@ public interface PlayerData {
     @Nullable
     String name();
 
-    @NotNull
+    @Nullable
     UUID uniqueId();
+
+    @Nullable
+    String getLocale();
 
 }
