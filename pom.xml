@@ -176,7 +176,7 @@
                             <Specification-Vendor>${plugin.authors}</Specification-Vendor>
                             <Implementation-Version>${git.commit.time}</Implementation-Version>
                             <!-- used for downloads from mrivanplays.com -->
-                            <releaseChannel>dev/2.0.0</releaseChannel>
+                            <releaseChannel>dev/v2</releaseChannel>
                         </manifestEntries>
                     </archive>
                 </configuration>
