@@ -52,7 +52,7 @@ public class BalanceCache extends Scheduler.ScheduledTask {
     public @Nullable BigDecimal getBalance(UUID uuid, String currencyId) {
         Collection<Map.Entry<String, BigDecimal>> collection = balances.get(uuid);
         // optimise
-        if (collection.isEmpty()) {
+        if (collection == null || collection.isEmpty()) {
             return null;
         }
         return collection
@@ -90,7 +90,7 @@ public class BalanceCache extends Scheduler.ScheduledTask {
                 );
                 return;
             }
-            List<CompletableFuture<PlayerAccount>> accountsFutures = new ArrayList<>();
+            List<CompletableFuture<PlayerAccount>> accountsFutures = new ArrayList<>(ids.size());
             for (UUID uuid : ids) {
                 accountsFutures.add(provider.accountAccessor().player().withUniqueId(uuid).get());
             }
@@ -109,9 +109,7 @@ public class BalanceCache extends Scheduler.ScheduledTask {
                         }
                         // fill out names
                         for (PlayerAccount account : accounts) {
-                            if (account.getName().isPresent()) {
-                                playerDataNames.put(account.identifier(), account.getName().get());
-                            }
+                            account.getName().ifPresent(accountName -> playerDataNames.put(account.identifier(), accountName));
                         }
                         this.proceed(0, new ArrayList<>(accounts), provider);
                     });

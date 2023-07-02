@@ -26,7 +26,7 @@ public class PlaceholdersExpansionImplPapi extends PlaceholdersExpansion {
 
     @Override
     public String pluginName() {
-        return "PlaceholdersAPI";
+        return "PlaceholderAPI";
     }
 
     @Override

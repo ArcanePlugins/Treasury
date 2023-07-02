@@ -84,9 +84,6 @@ public interface Scheduler {
                         }
                     }
                     while (!cancelled.get()) {
-                        if (cancelled.get()) {
-                            break;
-                        }
                         task.run();
                         if (repeatInner <= 0) {
                             done.set(true);

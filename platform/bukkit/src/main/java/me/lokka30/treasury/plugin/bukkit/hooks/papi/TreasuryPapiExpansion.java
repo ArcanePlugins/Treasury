@@ -15,6 +15,7 @@ import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.hooks.PlayerData;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +92,12 @@ public class TreasuryPapiExpansion extends PlaceholderExpansion implements Confi
 
             @Override
             public @Nullable String getLocale() {
-                return player != null && player.isOnline() ? player.getPlayer().getLocale() : null;
+                if (player == null) {
+                    return null;
+                }
+
+                Player onlinePlayer = player.getPlayer();
+                return onlinePlayer != null ? onlinePlayer.getLocale() : null;
             }
         }, param);
     }
