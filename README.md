@@ -1,65 +1,86 @@
 <div align="center">
 
-<!-- Badges -->
-![Latest Version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fother-developers%2Fme%2Flokka30%2Ftreasury-api%2Fmaven-metadata.xml)
-[![Support Discord](https://img.shields.io/discord/752310043214479462.svg?colorB=Blue&logo=discord&label=support)](https://discord.gg/HqZwdcJ) 
-![Issues Open](https://img.shields.io/github/issues/ArcanePlugins/Treasury.svg)
-![License](https://img.shields.io/github/license/ArcanePlugins/Treasury.svg)
-[![MrIvanPlays CI Status](https://ci.mrivanplays.com/job/Treasury/badge/icon)](https://ci.mrivanplays.com/job/Treasury)
-
-![Treasury Logo](https://i.ibb.co/gPN6x5P/Treasury250.png)
+![Treasury Logo][Treasury Logo]
 
 # Welcome to Treasury
 
-A modern, multi-platform library taking plugin integrations to the next level.
+A powerful multi-platform library for next-level plugin integrations.
 
-Maintained by [lokka30](https://github.com/lokka30), [MrIvanPlays](https://github.com/MrIvanPlays) and [Jikoo](https://github.com/Jikoo), with [several kind contributors](https://github.com/ArcanePlugins/Treasury/wiki/Credits).
+by [lokka30][lokka30], [MrIvanPlays][MrIvanPlays], [Jikoo][Jikoo], and [several kind contributors][Credits].
 
-### [Download @ SpigotMC.org](https://www.spigotmc.org/resources/99531/) &bullet; [Read the Wiki](https://github.com/ArcanePlugins/Treasury/wiki)
-
-#### [Frequently Asked Questions](https://github.com/ArcanePlugins/Treasury/wiki/Frequently-Asked-Questions) &bullet; [Integration Guide](https://github.com/ArcanePlugins/Treasury/wiki/Using-Treasury-in-your-Project) &bullet; [Support Discord](https://www.discord.io/arcaneplugins)
+### [Wiki][Wiki] &bullet; [FAQ][FAQ] &bullet; [Discord][Discord] &bullet; [Repository][GitHub Repository]
 
 </div>
 
 ***
 
-## About
+## Synopsys
 
-Treasury is a library which is designed to provide multiple APIs for the plugins on your Minecraft server to forge strong integrations with each other. Treasury currently provides its staple Economy API, among a few others such as an Events and Services API which make it easier for plugins to work on a wider range of platforms.
+Treasury is a *library* plugin which provides other plugins on your server a standardised way of 
+communicating with each other through Treasury's *API* suite. It aims to be a modern spin on 
+[Vault][Vault], offering concurrency support, multi-platform support, and
+[a variety of other bonuses][API Comparison].
 
-<details>
-<summary>I'm confused... 'APIs'?</summary>
+> For example, you may have a virtual economy set up on your server where players can buy and sell 
+goods. Using Treasury's Economy API, your Shops plugin can make transactions in the economy to 
+whichever economy '*provider*' plugin you have installed without them directly speaking to each 
+other. This avoids plugins having to create an integration for every single other plugin they 
+wish to support. 
 
-This can be thought of as Treasury providing a different languages to speak for all of the plugins on your server, each language being suited for a different purpose. Treasury offers an Economy language for your Economy plugins to speak, the developers of the Economy plugins just need to tweak their plugins to speak the language so that it can automatically integrate with every other plugin that does so. For instance, a Job and Shop plugin which use the Economy API are able to indirectly communicate with an economy provider that supports the API and form a functional virtual economy on your server.
+Treasury is best known for its *Economy* API, but it also provides APIs for *Events*, *Services*,
+and more to come. All of Treasury's APIs work on multiple platforms, from *Bukkit* to 
+*Velocity* and even *Minestom*. Treasury's APIs take strong inspiration from existing ones and aim
+to offer the best experience to share without any platform dependence.
 
-</details>
-<br />
+We aim to keep Treasury stable, robust, lightweight, powerful, and supported. To achieve
+this, Treasury maintainers conduct deep reviews into any changes to the plugin, especially
+additions to the APIs so that we can guarantee their stability for the future. Free support is 
+provided on our community [Discord][Discord] where maintainers, helpers, and other users discuss.
 
-Treasury currently provides the following APIs: Economy, Services, Events. [Several more are planned](https://github.com/ArcanePlugins/Treasury/issues/131) for the future, such as Permissions and Chat.
+Want to learn more about Treasury? Continue reading [here][About Treasury].
 
-The scope of this library is narrowly focused on making it easy to facilitate powerful integrations between plugins on multiple platforms.
-
-This is scratching the surface – we encourage you to read more about the library:
-
-#### [Learn more about Treasury here: our mission, why you should choose it, and more!](https://github.com/ArcanePlugins/Treasury/wiki/About-Treasury)
+Want to empower your plugin with Treasury's APIs? Check out the [Quickstart][Quickstart] guides.
 
 ***
 
 ## License
 
-Treasury is free, libre software. See `LICENSE.md` for more details.
+Treasury is free, libre software. It is a community project which thrives via community 
+contributions. See [`LICENSE.md`][License] for more details.
 
-## bStats Metrics
+## bStats
 
 Never heard of bStats? Read more below.
 
 <details>
 <summary>View Notice</summary>
 
-> Treasury utilizes bStats metrics, as do thousands of other Minecraft plugins and software, from PaperMC to EssentialsX. This service collects very basic data on the server which is all public, e.g., how many servers are running Treasury, how many players are online, and so on. None of this data can be pinpointed back to a individual server, they all contribute to a single pool of data.
+> Treasury utilizes bStats metrics, as do thousands of other Minecraft plugins and software, 
+> from PaperMC to EssentialsX. This service collects very basic data on the server which is all 
+> public, e.g., how many servers are running Treasury, how many players are online, and so on. 
+> None of this data can be pinpointed back to a individual server, they all contribute to a 
+> single pool of data. This basic data is extremely valuable for the project's maintainers to ensure
+> the needs of Treasury's userbase are best catered for.
 >
-> All of the collected data is available [here](https://bstats.org/plugin/bukkit/Treasury/12927).
+> All of the collected data is available [here][bStats Metrics].
 > 
-> To change whether bStats metrics should run on your server, simply visit the `/plugins/bStats/config.yml` file and edit it to your preference.
+> Should you wish to opt-out of bStats, simply disable it in the bStats `config.yml` file.
 
 </details>
+
+
+[GitHub Repository]: https://github.com/ArcanePlugins/Treasury
+[Discord]: https://discord.gg/arcaneplugins-752310043214479462
+[FAQ]: https://github.com/ArcanePlugins/Treasury/wiki/Frequently-Asked-Questions
+[About Treasury]: https://github.com/ArcanePlugins/Treasury/wiki/About-Treasury
+[API Comparison]: https://github.com/ArcanePlugins/Treasury/wiki/Comparison-to-other-APIs
+[bStats Metrics]: https://bstats.org/plugin/bukkit/Treasury/12927
+[License]: LICENSE.md
+[lokka30]: https://github.com/lokka30
+[MrIvanPlays]: https://github.com/MrIvanPlays
+[Jikoo]: https://github.com/Jikoo
+[Credits]: https://github.com/ArcanePlugins/Treasury/wiki/Credits
+[Treasury Logo]: https://i.ibb.co/gPN6x5P/Treasury250.png
+[Wiki]: https://github.com/ArcanePlugins/Treasury/wiki
+[Vault]: https://github.com/MilkBowl/VaultAPI/
+[Quickstart]: https://github.com/ArcanePlugins/Treasury/wiki/Quickstart

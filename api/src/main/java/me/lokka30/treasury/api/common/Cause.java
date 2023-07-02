@@ -120,9 +120,6 @@ public interface Cause<T> {
             if (other instanceof Cause.Plugin) {
                 return ((Cause.Plugin) other).identifier().equals(this.identifier());
             }
-            if (other.identifier() instanceof NamespacedKey) {
-                return ((NamespacedKey) other.identifier()).equals(this.identifier());
-            }
             return false;
         }
 
@@ -145,9 +142,6 @@ public interface Cause<T> {
         default boolean equals(@NotNull Cause<?> other) {
             if (other instanceof Cause.NonPlayer) {
                 return ((NonPlayer) other).identifier().equals(this.identifier());
-            }
-            if (other.identifier() instanceof NamespacedKey) {
-                return ((NamespacedKey) other.identifier()).equals(this.identifier());
             }
             return false;
         }
