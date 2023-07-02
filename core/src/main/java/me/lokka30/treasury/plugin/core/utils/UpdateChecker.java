@@ -35,16 +35,6 @@ public final class UpdateChecker {
      */
     public static void checkForUpdates() {
         TreasuryPlugin plugin = TreasuryPlugin.getInstance();
-        if (true) {
-            // todo: v2 still in development, disable update checking
-            plugin.logger().warn("\n" +
-                    "You are running an in-development snapshot of Treasury v2.\n\n" +
-                    "These versions are only intended for advanced users to test on non-" +
-                    "production servers.\n" +
-                    "Plugins developed against Treasury v1 will not work with Treasury v2.\n\n" +
-                    "Please regularly check for new builds at << ci.mrivanplays.com >>.");
-            return;
-        }
         if (!plugin.configAdapter().getSettings().checkForUpdates()) {
             return;
         }
