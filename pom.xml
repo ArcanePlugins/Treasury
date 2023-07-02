@@ -55,7 +55,7 @@
         <velocity.version>3.1.1</velocity.version>
         <process.version>0.0.1-SNAPSHOT</process.version>
         <!-- asm is for testing purposes only -->
-        <asm.version>9.4</asm.version>
+        <asm.version>9.5</asm.version>
         <sponge.version>8.0.0</sponge.version>
         <!--
         WARNING: JitPack sucks. Sometimes when building maven won't pull the Minestom version. If
