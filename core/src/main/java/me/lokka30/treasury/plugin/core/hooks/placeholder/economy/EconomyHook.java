@@ -153,7 +153,7 @@ public class EconomyHook implements SpecificPlaceholderHook {
                 .getPlaceholdersConfig()
                 .getBoolean("baltop.enabled", false),
                 expansion.getPlaceholdersConfig().getInt("baltop.cache_size", 100),
-                expansion.getPlaceholdersConfig().getInt("baltop.cache_delay", 30),
+                expansion.getPlaceholdersConfig().getInt("baltop.check_delay", 30),
                 balanceCache,
                 providerRef
         );

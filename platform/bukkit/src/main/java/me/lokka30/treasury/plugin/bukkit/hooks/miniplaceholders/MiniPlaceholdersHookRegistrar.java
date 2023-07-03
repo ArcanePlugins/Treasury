@@ -6,13 +6,19 @@ package me.lokka30.treasury.plugin.bukkit.hooks.miniplaceholders;
 
 import io.github.miniplaceholders.api.Expansion;
 import java.io.File;
+import java.util.Locale;
+import java.util.UUID;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.bukkit.hooks.Hook;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
+import me.lokka30.treasury.plugin.core.hooks.PlayerData;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.minipspecific.MiniPlaceholdersConfig;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MiniPlaceholdersHookRegistrar implements Hook {
 
@@ -25,18 +31,50 @@ public class MiniPlaceholdersHookRegistrar implements Hook {
 
     @Override
     public boolean register(@NotNull final TreasuryBukkit plugin) {
-        if (!BukkitVendor.isPaper() || !BukkitVendor.isFolia()) {
+        if (!BukkitVendor.isPaper() && !BukkitVendor.isFolia()) {
             return false;
         }
         PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
                 plugin.getDataFolder(),
                 "miniPlaceholders_config.yml"
         ));
-        this. basicExpansion = new BasicPlaceholderExpansion(config);
-        // TODO: Seek help from 4drian3d !!!
-        Expansion expansion = Expansion.builder("treasury").build();
+        this.basicExpansion = new BasicPlaceholderExpansion(config);
+        Expansion expansion = Expansion.builder("treasury").globalPlaceholder(
+                "eco_na",
+                (queue, ctx) -> {
+                    String argument = queue.popOr("No placeholder provided").value();
+                    String parsed = basicExpansion.onRequest(null, "eco_" + argument);
+                    if (parsed == null) {
+                        return Tag.preProcessParsed("");
+                    }
+                    return Tag.preProcessParsed(parsed);
+                }
+        ).audiencePlaceholder("eco", (aud, queue, ctx) -> {
+            String argument = queue.popOr("No placeholder provided").value();
+            String parsed = basicExpansion.onRequest(new PlayerData() {
+                @Override
+                public @Nullable String name() {
+                    return aud.get(Identity.NAME).orElse(null);
+                }
+
+                @Override
+                public @Nullable UUID uniqueId() {
+                    return aud.get(Identity.UUID).orElse(null);
+                }
+
+                @Override
+                public @Nullable String getLocale() {
+                    Locale locale = aud.get(Identity.LOCALE).orElse(null);
+                    return locale == null ? null : locale.toString();
+                }
+            }, "eco_" + argument);
+            if (parsed == null) {
+                return Tag.preProcessParsed("");
+            }
+            return Tag.preProcessParsed(parsed);
+        }).build();
         expansion.register();
-        return expansion.registered();
+        return basicExpansion.register() && expansion.registered();
     }
 
     @Override
