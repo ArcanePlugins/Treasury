@@ -5,6 +5,7 @@
 package me.lokka30.treasury.plugin.bukkit.vendor;
 
 import me.lokka30.treasury.plugin.core.Platform;
+import org.bukkit.Bukkit;
 
 /**
  * Represents a handler for determining on what server vendor we're running. This is in order
@@ -67,12 +68,7 @@ public final class BukkitVendor {
      */
     public static boolean isPaper() {
         if (!ranPaperCheck) {
-            try {
-                Class.forName("com.destroystokyo.paper.PaperConfig");
-                paper = true;
-            } catch (ClassNotFoundException e) {
-                paper = false;
-            }
+            paper = Bukkit.getName().equalsIgnoreCase("Paper");
             ranPaperCheck = true;
         }
         return paper;
@@ -85,12 +81,7 @@ public final class BukkitVendor {
      */
     public static boolean isFolia() {
         if (!ranFoliaCheck) {
-            try {
-                Class.forName("io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader");
-                folia = true;
-            } catch (ClassNotFoundException e) {
-                folia = false;
-            }
+            folia = Bukkit.getName().equalsIgnoreCase("Folia");
             ranFoliaCheck = true;
         }
         return folia;
