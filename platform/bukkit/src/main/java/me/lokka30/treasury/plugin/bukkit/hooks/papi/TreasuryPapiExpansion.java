@@ -13,23 +13,22 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.hooks.PlayerData;
-import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TreasuryPapiExpansion extends PlaceholderExpansion implements Configurable, Cacheable {
+public class TreasuryPapiExpansion extends PlaceholderExpansion implements Configurable, Cacheable,
+        PlaceholdersConfig {
 
     private final String author;
-    private final PlaceholdersExpansion base;
+    private final BasicPlaceholderExpansion base;
 
     public TreasuryPapiExpansion(@NotNull TreasuryBukkit plugin) {
         this.author = String.join(", ", plugin.getDescription().getAuthors());
-        this.base = new PlaceholdersExpansionImplPapi(this::getString,
-                this::getInt,
-                this::getBoolean
-        );
+        this.base = new BasicPlaceholderExpansion(this);
     }
 
     @Override

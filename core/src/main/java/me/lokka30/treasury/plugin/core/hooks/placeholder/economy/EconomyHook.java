@@ -20,7 +20,7 @@ import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.core.hooks.PlayerData;
-import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.SpecificPlaceholderHook;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +95,7 @@ public class EconomyHook implements SpecificPlaceholderHook {
 
     private final AtomicReference<EconomyProvider> providerRef;
     private final DecimalFormat format = new DecimalFormat("#,###");
-    private final PlaceholdersExpansion expansion;
+    private final BasicPlaceholderExpansion expansion;
     private final String k;
     private final String m;
     private final String b;
@@ -104,14 +104,14 @@ public class EconomyHook implements SpecificPlaceholderHook {
     private BalTop baltop;
     private BalanceCache balanceCache;
 
-    public EconomyHook(@NotNull PlaceholdersExpansion expansion) {
+    public EconomyHook(@NotNull BasicPlaceholderExpansion expansion) {
         this.providerRef = new AtomicReference<>();
         this.expansion = expansion;
-        this.k = expansion.getString("formatting.thousands", "k");
-        this.m = expansion.getString("formatting.millions", "M");
-        this.b = expansion.getString("formatting.billions", "B");
-        this.t = expansion.getString("formatting.trillions", "T");
-        this.q = expansion.getString("formatting.quadrillions", "Q");
+        this.k = expansion.getPlaceholdersConfig().getString("formatting.thousands", "k");
+        this.m = expansion.getPlaceholdersConfig().getString("formatting.millions", "M");
+        this.b = expansion.getPlaceholdersConfig().getString("formatting.billions", "B");
+        this.t = expansion.getPlaceholdersConfig().getString("formatting.trillions", "T");
+        this.q = expansion.getPlaceholdersConfig().getString("formatting.quadrillions", "Q");
     }
 
     @Override
@@ -129,36 +129,31 @@ public class EconomyHook implements SpecificPlaceholderHook {
         handleServiceChange();
 
         EventBus eventBus = EventBus.INSTANCE;
-        eventBus.subscribe(eventBus
-                .subscriptionFor(ServiceRegisteredEvent.class)
-                .withPriority(EventPriority.LOW)
-                .whenCalled(event -> {
-                    if (!(event.getService().get() instanceof EconomyProvider)) {
-                        return;
-                    }
-                    handleServiceChange();
-                })
-                .completeSubscription());
-        eventBus.subscribe(eventBus
-                .subscriptionFor(ServiceUnregisteredEvent.class)
-                .withPriority(EventPriority.LOW)
-                .whenCalled(event -> {
-                    if (!(event.getService().get() instanceof EconomyProvider)) {
-                        return;
-                    }
-                    handleServiceChange();
-                })
-                .completeSubscription());
+        eventBus.subscribe(eventBus.subscriptionFor(ServiceRegisteredEvent.class).withPriority(
+                EventPriority.LOW).whenCalled(event -> {
+            if (!(event.getService().get() instanceof EconomyProvider)) {
+                return;
+            }
+            handleServiceChange();
+        }).completeSubscription());
+        eventBus.subscribe(eventBus.subscriptionFor(ServiceUnregisteredEvent.class).withPriority(
+                EventPriority.LOW).whenCalled(event -> {
+            if (!(event.getService().get() instanceof EconomyProvider)) {
+                return;
+            }
+            handleServiceChange();
+        }).completeSubscription());
 
-        this.balanceCache = new BalanceCache(expansion.getInt("balance.cache_check_delay", 60),
-                providerRef
-        );
+        this.balanceCache = new BalanceCache(expansion
+                .getPlaceholdersConfig()
+                .getInt("balance.cache_check_delay", 60), providerRef);
         this.balanceCache.start();
 
-        this.baltop = new BalTop(expansion,
-                expansion.getBoolean("baltop.enabled", false),
-                expansion.getInt("baltop.cache_size", 100),
-                expansion.getInt("baltop.cache_delay", 30),
+        this.baltop = new BalTop(expansion
+                .getPlaceholdersConfig()
+                .getBoolean("baltop.enabled", false),
+                expansion.getPlaceholdersConfig().getInt("baltop.cache_size", 100),
+                expansion.getPlaceholdersConfig().getInt("baltop.cache_delay", 30),
                 balanceCache,
                 providerRef
         );

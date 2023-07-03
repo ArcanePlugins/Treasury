@@ -11,11 +11,14 @@ import me.lokka30.treasury.plugin.core.hooks.placeholder.economy.EconomyHook;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PlaceholdersExpansion {
+public final class BasicPlaceholderExpansion {
 
     private Set<SpecificPlaceholderHook> hooks = new HashSet<>();
 
-    public PlaceholdersExpansion() {
+    private final PlaceholdersConfig placeholdersConfig;
+
+    public BasicPlaceholderExpansion(PlaceholdersConfig placeholdersConfig) {
+        this.placeholdersConfig = placeholdersConfig;
         hooks.add(new EconomyHook(this));
     }
 
@@ -32,6 +35,10 @@ public abstract class PlaceholdersExpansion {
         hooks.forEach(SpecificPlaceholderHook::clear);
     }
 
+    public PlaceholdersConfig getPlaceholdersConfig() {
+        return this.placeholdersConfig;
+    }
+
     @Nullable
     public String onRequest(@Nullable PlayerData playerData, @NotNull String param) {
         for (SpecificPlaceholderHook hook : hooks) {
@@ -44,21 +51,4 @@ public abstract class PlaceholdersExpansion {
         return null;
     }
 
-    public abstract String pluginName();
-
-    /**
-     * Get a string from the specific config where stuff about placeholder expansions is held.
-     *
-     * @param key the config key
-     * @param def the default value
-     * @return value
-     */
-    public abstract String getString(@NotNull String key, String def);
-
-    // the getString javadoc is also applied for the next 2 methods
-    // except it's not a string
-
-    public abstract int getInt(@NotNull String key, int def);
-
-    public abstract boolean getBoolean(@NotNull String key, boolean def);
 }

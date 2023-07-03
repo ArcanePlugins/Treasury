@@ -19,14 +19,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersExpansion;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BalTop extends Scheduler.ScheduledTask {
 
-    private final PlaceholdersExpansion base;
     private final boolean enabled;
     private final int topSize;
     private final int taskDelay;
@@ -36,7 +34,6 @@ public class BalTop extends Scheduler.ScheduledTask {
     private final Multimap<String, TopPlayer> baltop;
 
     public BalTop(
-            PlaceholdersExpansion base,
             boolean enabled,
             int topSize,
             int taskDelay,
@@ -44,7 +41,6 @@ public class BalTop extends Scheduler.ScheduledTask {
             AtomicReference<EconomyProvider> provider
     ) {
         super(TreasuryPlugin.getInstance().scheduler());
-        this.base = base;
         this.enabled = enabled;
         this.topSize = topSize;
         this.taskDelay = taskDelay;
@@ -128,8 +124,7 @@ public class BalTop extends Scheduler.ScheduledTask {
             if (!balanceCache.available()) {
                 // We'll just wait for the next cycle to update the baltop
                 // Also print a warning that it failed to update the baltop
-                TreasuryPlugin.getInstance().logger().warn(
-                        "Couldn't update baltop placeholders for " + base.pluginName() + "!");
+                TreasuryPlugin.getInstance().logger().warn("Couldn't update baltop placeholders!");
                 return;
             }
         }
@@ -137,8 +132,7 @@ public class BalTop extends Scheduler.ScheduledTask {
 
         for (Map.Entry<UUID, String> entry : balanceCache.getPlayerDataNames().entrySet()) {
             for (Currency currency : provider.getCurrencies()) {
-                BigDecimal balance = balanceCache.getBalance(
-                        entry.getKey(),
+                BigDecimal balance = balanceCache.getBalance(entry.getKey(),
                         currency.getIdentifier()
                 );
                 if (balance == null || balance.equals(BigDecimal.ZERO)) {
