@@ -25,7 +25,7 @@ public class MiniPlaceholdersHookRegistrar implements Hook {
 
     @Override
     public boolean register(@NotNull final TreasuryBukkit plugin) {
-        if (!BukkitVendor.isPaper()) { // Paper, Folia
+        if (!BukkitVendor.isPaper() || !BukkitVendor.isFolia()) {
             return false;
         }
         PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
