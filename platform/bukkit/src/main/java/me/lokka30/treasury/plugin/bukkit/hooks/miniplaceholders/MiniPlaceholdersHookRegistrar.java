@@ -5,14 +5,18 @@
 package me.lokka30.treasury.plugin.bukkit.hooks.miniplaceholders;
 
 import io.github.miniplaceholders.api.Expansion;
+import java.io.File;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.bukkit.hooks.Hook;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.minipspecific.MiniPlaceholdersConfig;
 import org.jetbrains.annotations.NotNull;
 
 public class MiniPlaceholdersHookRegistrar implements Hook {
 
-    private Expansion expansion;
+    private BasicPlaceholderExpansion basicExpansion;
 
     @Override
     public @NotNull String getPlugin() {
@@ -24,16 +28,22 @@ public class MiniPlaceholdersHookRegistrar implements Hook {
         if (!BukkitVendor.isPaper()) { // Paper, Folia
             return false;
         }
+        PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
+                plugin.getDataFolder(),
+                "miniPlaceholders_config.yml"
+        ));
+        this. basicExpansion = new BasicPlaceholderExpansion(config);
         // TODO: Seek help from 4drian3d !!!
-        this.expansion = Expansion.builder("treasury")
-                .build();
+        Expansion expansion = Expansion.builder("treasury").build();
         expansion.register();
         return expansion.registered();
     }
 
     @Override
     public void shutdown() {
-        expansion.unregister();
+        if (basicExpansion != null) {
+            basicExpansion.clear();
+        }
     }
 
 }
