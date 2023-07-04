@@ -21,8 +21,14 @@ class SchedulerTest {
         }
 
         @Override
-        public void runAsync(final Runnable task) {
+        public int runAsync(final Runnable task) {
             ForkJoinPool.commonPool().execute(task);
+            return -1; // don't care for test purposes
+        }
+
+        @Override
+        public void cancelTask(final int id) {
+            // don't need this for testing purposes
         }
 
     }

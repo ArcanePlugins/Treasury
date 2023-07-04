@@ -53,7 +53,7 @@
         <placeholderapi.version>2.11.3</placeholderapi.version>
         <miniplaceholders.version>2.2.0</miniplaceholders.version>
         <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
-        <velocity.version>3.1.1</velocity.version>
+        <velocity.version>3.2.0-SNAPSHOT</velocity.version>
         <process.version>0.0.1-SNAPSHOT</process.version>
         <!-- asm is for testing purposes only -->
         <asm.version>9.5</asm.version>

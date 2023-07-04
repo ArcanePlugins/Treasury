@@ -8,9 +8,9 @@ import io.github.miniplaceholders.api.Expansion;
 import java.io.File;
 import java.util.Locale;
 import java.util.UUID;
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.bukkit.hooks.Hook;
+import me.lokka30.treasury.plugin.bukkit.BukkitTreasuryPlugin;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
+import me.lokka30.treasury.plugin.core.hooks.Hook;
 import me.lokka30.treasury.plugin.core.hooks.PlayerData;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
@@ -20,7 +20,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MiniPlaceholdersHookRegistrar implements Hook {
+public class MiniPlaceholdersHook implements Hook {
 
     private BasicPlaceholderExpansion basicExpansion;
 
@@ -30,12 +30,12 @@ public class MiniPlaceholdersHookRegistrar implements Hook {
     }
 
     @Override
-    public boolean register(@NotNull final TreasuryBukkit plugin) {
+    public boolean register() {
         if (!BukkitVendor.isPaper() && !BukkitVendor.isFolia()) {
             return false;
         }
         PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
-                plugin.getDataFolder(),
+                ((BukkitTreasuryPlugin) BukkitTreasuryPlugin.getInstance()).dataFolder(),
                 "miniPlaceholders_config.yml"
         ));
         this.basicExpansion = new BasicPlaceholderExpansion(config);

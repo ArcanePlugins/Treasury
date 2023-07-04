@@ -5,12 +5,17 @@
 package me.lokka30.treasury.plugin.bukkit.hooks.papi;
 
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.bukkit.hooks.Hook;
+import me.lokka30.treasury.plugin.core.hooks.Hook;
 import org.jetbrains.annotations.NotNull;
 
-public class TreasuryPapiHookRegistrar implements Hook {
+public class TreasuryPapiHook implements Hook {
 
     private TreasuryPapiExpansion expansion;
+    private final TreasuryBukkit plugin;
+
+    public TreasuryPapiHook(final TreasuryBukkit plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public @NotNull String getPlugin() {
@@ -18,7 +23,7 @@ public class TreasuryPapiHookRegistrar implements Hook {
     }
 
     @Override
-    public boolean register(@NotNull TreasuryBukkit plugin) {
+    public boolean register() {
         if (expansion == null) {
             expansion = new TreasuryPapiExpansion(plugin);
         }

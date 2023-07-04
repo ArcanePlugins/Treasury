@@ -19,6 +19,7 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.ExecutionType;
+import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 
@@ -137,11 +138,20 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
     }
 
     @Override
-    public void runAsync(final Runnable task) {
-        MinecraftServer.getSchedulerManager().submitTask(() -> {
+    public int runAsync(final Runnable task) {
+        Task minestomTask = MinecraftServer.getSchedulerManager().submitTask(() -> {
             task.run();
             return TaskSchedule.immediate();
         }, ExecutionType.ASYNC);
+        minestomTask.cancel();
+        return minestomTask.id();
+    }
+
+    @Override
+    public void cancelTask(final int id) {
+        // TODO: Find a way to cancel??
+        // although this method was added primarily for bukkit tasks, soo it can remain like that
+        // here
     }
 
 }

@@ -9,5 +9,11 @@
         "Jikoo",
         "MrIvanPlays"
     ],
-    "main": "me.lokka30.treasury.plugin.velocity.TreasuryVelocity"
+    "main": "me.lokka30.treasury.plugin.velocity.TreasuryVelocity",
+    "dependencies": [
+        {
+            "id": "miniplaceholders",
+            "optional": true
+        }
+    ]
 }

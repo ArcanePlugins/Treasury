@@ -26,8 +26,11 @@ public interface Scheduler {
      * Runs the specified task asynchronously.
      *
      * @param task the task you want to run
+     * @return task id
      */
-    void runAsync(Runnable task);
+    int runAsync(Runnable task);
+
+    void cancelTask(int id);
 
     default Scheduled runAsync(
             Runnable task, long delay, long repeat, TimeUnit unit
@@ -40,6 +43,8 @@ public interface Scheduler {
             private long delayInner = delay;
             private long repeatInner = repeat;
             private TimeUnit unitInner = unit;
+
+            private int taskId;
 
             @Override
             public void start(long delayNew, long repeatNew, TimeUnit unitNew) {
@@ -68,6 +73,7 @@ public interface Scheduler {
             @Override
             public void cancel() {
                 cancelled.set(true);
+                cancelTask(taskId);
             }
 
             @Override
@@ -75,7 +81,7 @@ public interface Scheduler {
                 if (cancelled.get()) {
                     return;
                 }
-                runAsync(() -> {
+                this.taskId = runAsync(() -> {
                     if (delayInner > 0) {
                         try {
                             Thread.sleep(unitInner.toMillis(delayInner));

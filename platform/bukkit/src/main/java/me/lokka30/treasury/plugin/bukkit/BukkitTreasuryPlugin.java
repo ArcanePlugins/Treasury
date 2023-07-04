@@ -55,6 +55,10 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements ConfigAdapte
         return BukkitVendor.getPlatformClass();
     }
 
+    public File dataFolder() {
+        return plugin.getDataFolder();
+    }
+
     @Override
     public @NotNull Path pluginsFolder() {
         return plugin.getDataFolder().getParentFile().toPath();
