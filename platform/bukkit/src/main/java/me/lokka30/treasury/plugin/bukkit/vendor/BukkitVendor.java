@@ -5,7 +5,6 @@
 package me.lokka30.treasury.plugin.bukkit.vendor;
 
 import me.lokka30.treasury.plugin.core.Platform;
-import org.bukkit.Bukkit;
 
 /**
  * Represents a handler for determining on what server vendor we're running. This is in order
@@ -44,18 +43,30 @@ public final class BukkitVendor {
     }
 
     /**
+     * Returns whether we're running any of the specified classes.
+     *
+     * @param classNames the class names to check for
+     * @return any of the specified classes?
+     */
+    private static boolean hasClass(String... classNames) {
+        for (String className : classNames) {
+            try {
+                Class.forName(className);
+                return true;
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns whether we're running spigot.
      *
      * @return spigot?
      */
     public static boolean isSpigot() {
         if (!ranSpigotCheck) {
-            try {
-                Class.forName("net.md_5.bungee.api.chat.ChatColor");
-                spigot = true;
-            } catch (ClassNotFoundException e) {
-                spigot = false;
-            }
+            spigot = hasClass("org.spigotmc.SpigotConfig");
             ranSpigotCheck = true;
         }
         return spigot;
@@ -68,7 +79,10 @@ public final class BukkitVendor {
      */
     public static boolean isPaper() {
         if (!ranPaperCheck) {
-            paper = Bukkit.getName().equalsIgnoreCase("Paper");
+            paper = hasClass(
+                    "com.destroystokyo.paper.PaperConfig",
+                    "io.papermc.paper.configuration.Configuration"
+            );
             ranPaperCheck = true;
         }
         return paper;
@@ -81,7 +95,7 @@ public final class BukkitVendor {
      */
     public static boolean isFolia() {
         if (!ranFoliaCheck) {
-            folia = Bukkit.getName().equalsIgnoreCase("Folia");
+            folia = hasClass("io.papermc.paper.threadedregions.RegionizedServer");
             ranFoliaCheck = true;
         }
         return folia;
