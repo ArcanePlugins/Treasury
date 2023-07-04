@@ -74,9 +74,9 @@ public class TreasurySponge {
         }
 
         treasuryPlugin = new SpongeTreasuryPlugin(this);
+        TreasuryPlugin.setInstance(treasuryPlugin);
         treasuryPlugin.loadSettings();
         treasuryPlugin.loadMessages();
-        TreasuryPlugin.setInstance(treasuryPlugin);
 
         UpdateChecker.checkForUpdates();
         //loadMetrics(); // TODO: Something's wrong with the metrics class. Needs investigation
