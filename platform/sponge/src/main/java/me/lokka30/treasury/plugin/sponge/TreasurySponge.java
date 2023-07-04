@@ -16,6 +16,7 @@ import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import me.lokka30.treasury.plugin.sponge.apiimpl.economy.EconomyServiceImpl;
 import me.lokka30.treasury.plugin.sponge.apiimpl.economy.EconomyServiceImplProvider;
+import me.lokka30.treasury.plugin.sponge.hooks.miniplaceholders.MiniPlaceholdersHook;
 import org.apache.logging.log4j.Logger;
 import org.bstats.charts.SimplePie;
 import org.bstats.sponge.Metrics;
@@ -77,6 +78,9 @@ public class TreasurySponge {
         TreasuryPlugin.setInstance(treasuryPlugin);
         treasuryPlugin.loadSettings();
         treasuryPlugin.loadMessages();
+        if (Sponge.pluginManager().plugin("miniplaceholders").isPresent() && MiniPlaceholdersHook.load()) {
+            logger.info("MiniPlaceholders hook registered & working");
+        }
 
         UpdateChecker.checkForUpdates();
         //loadMetrics(); // TODO: Something's wrong with the metrics class. Needs investigation
@@ -87,6 +91,7 @@ public class TreasurySponge {
     @Listener
     public void onShutdown(StoppingEngineEvent<Server> event) {
         treasuryPlugin.shutdown(true);
+        MiniPlaceholdersHook.disable();
     }
 
     @Listener

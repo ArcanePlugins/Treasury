@@ -57,7 +57,7 @@
         <process.version>0.0.1-SNAPSHOT</process.version>
         <!-- asm is for testing purposes only -->
         <asm.version>9.5</asm.version>
-        <sponge.version>8.0.0</sponge.version>
+        <sponge.version>8.1.0</sponge.version>
         <!--
         WARNING: JitPack sucks. Sometimes when building maven won't pull the Minestom version. If
         such occurs with you, update it to the latest release/branch version

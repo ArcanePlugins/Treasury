@@ -67,6 +67,10 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         return pluginsFolder;
     }
 
+    public Path getDataDirectory() {
+        return plugin.getDataDir();
+    }
+
     @Override
     public @NotNull Logger logger() {
         return this;
