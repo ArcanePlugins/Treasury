@@ -5,7 +5,7 @@
 package me.lokka30.treasury.plugin.bukkit.vendor;
 
 import me.lokka30.treasury.plugin.core.Platform;
-import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a handler for determining on what server vendor we're running. This is in order
@@ -25,7 +25,7 @@ public final class BukkitVendor {
 
     private static Platform platform;
 
-    public static Platform getPlatformClass() {
+    public static @NotNull Platform getPlatformClass() {
         if (platform == null) {
             String specificationName;
             if (isFolia()) {
@@ -44,18 +44,31 @@ public final class BukkitVendor {
     }
 
     /**
+     * Returns whether any of the specified classpaths are currently loaded by the JVM. Useful for
+     * checking for server software implementations.
+     *
+     * @param classpaths classpaths to check the existence of
+     * @return whether any of the specified classpaths are currently loaded by the JVM
+     */
+    private static boolean hasAnyClasspath(@NotNull String @NotNull... classpaths) {
+        for (final String classpath : classpaths) {
+            try {
+                Class.forName(classpath);
+                return true;
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns whether we're running spigot.
      *
      * @return spigot?
      */
     public static boolean isSpigot() {
         if (!ranSpigotCheck) {
-            try {
-                Class.forName("net.md_5.bungee.api.chat.ChatColor");
-                spigot = true;
-            } catch (ClassNotFoundException e) {
-                spigot = false;
-            }
+            spigot = hasAnyClasspath("org.spigotmc.SpigotConfig");
             ranSpigotCheck = true;
         }
         return spigot;
@@ -68,7 +81,10 @@ public final class BukkitVendor {
      */
     public static boolean isPaper() {
         if (!ranPaperCheck) {
-            paper = Bukkit.getName().equalsIgnoreCase("Paper");
+            paper = hasAnyClasspath(
+                    "com.destroystokyo.paper.PaperConfig",
+                    "io.papermc.paper.configuration.Configuration"
+            );
             ranPaperCheck = true;
         }
         return paper;
@@ -81,7 +97,7 @@ public final class BukkitVendor {
      */
     public static boolean isFolia() {
         if (!ranFoliaCheck) {
-            folia = Bukkit.getName().equalsIgnoreCase("Folia");
+            folia = hasAnyClasspath("io.papermc.paper.threadedregions.RegionizedServer");
             ranFoliaCheck = true;
         }
         return folia;
