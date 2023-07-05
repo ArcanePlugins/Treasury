@@ -17,6 +17,7 @@ import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.minipspecific.MiniPlaceholdersConfig;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.minimessage.tag.Tag;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,15 +32,12 @@ public class MiniPlaceholdersHook implements Hook {
 
     @Override
     public boolean register() {
-        if (!BukkitVendor.isPaper() && !BukkitVendor.isFolia()) {
-            return false;
-        }
         PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
                 ((BukkitTreasuryPlugin) BukkitTreasuryPlugin.getInstance()).dataFolder(),
                 "miniPlaceholders_config.yml"
         ));
         this.basicExpansion = new BasicPlaceholderExpansion(config);
-        Expansion expansion = Expansion.builder("treasury").globalPlaceholder(
+        Expansion expansion = Expansion.builder("treasury").filter(Player.class).globalPlaceholder(
                 "eco_na",
                 (queue, ctx) -> {
                     String argument = queue.popOr("No placeholder provided").value();
