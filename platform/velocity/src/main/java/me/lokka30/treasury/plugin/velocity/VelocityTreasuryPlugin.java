@@ -141,14 +141,8 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
     }
 
     @Override
-    public int runAsync(final Runnable task) {
+    public void runAsync(final Runnable task) {
         plugin.getProxy().getScheduler().buildTask(plugin, task).schedule();
-        return -1; // velocity doesn't have such task id system, and we also don't need it
-    }
-
-    @Override
-    public void cancelTask(final int id) {
-        // don't need this here
     }
 
 }

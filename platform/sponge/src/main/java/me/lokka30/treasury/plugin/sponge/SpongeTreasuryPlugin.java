@@ -6,11 +6,7 @@ package me.lokka30.treasury.plugin.sponge;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
@@ -153,26 +149,10 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
                 .build());
     }
 
-    private Map<Integer, UUID> tasksIdToUuid = new HashMap<>();
-
     @Override
-    public int runAsync(final Runnable task) {
-        org.spongepowered.api.scheduler.ScheduledTask spongeTask = Sponge.asyncScheduler().submit(
+    public void runAsync(final Runnable task) {
+        Sponge.asyncScheduler().submit(
                 Task.builder().plugin(this.plugin.getContainer()).execute(task).build());
-        int id = ThreadLocalRandom.current().nextInt(10000);
-        tasksIdToUuid.put(id, spongeTask.uniqueId());
-        return id;
-    }
-
-    @Override
-    public void cancelTask(final int id) {
-        UUID taskId = tasksIdToUuid.remove(id);
-        if (taskId != null) {
-            Sponge
-                    .asyncScheduler()
-                    .findTask(taskId)
-                    .ifPresent(org.spongepowered.api.scheduler.ScheduledTask::cancel);
-        }
     }
 
 }

@@ -153,17 +153,8 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     }
 
     @Override
-    public int runAsync(final Runnable task) {
-        net.md_5.bungee.api.scheduler.ScheduledTask scheduledTask = plugin
-                .getProxy()
-                .getScheduler()
-                .runAsync(plugin, task);
-        return scheduledTask.getId();
-    }
-
-    @Override
-    public void cancelTask(final int id) {
-        plugin.getProxy().getScheduler().cancel(id);
+    public void runAsync(final Runnable task) {
+        plugin.getProxy().getScheduler().runAsync(plugin, task);
     }
 
 }

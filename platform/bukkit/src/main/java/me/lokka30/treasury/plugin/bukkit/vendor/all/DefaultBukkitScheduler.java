@@ -6,7 +6,6 @@ package me.lokka30.treasury.plugin.bukkit.vendor.all;
 
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultBukkitScheduler implements Scheduler {
@@ -23,14 +22,8 @@ public class DefaultBukkitScheduler implements Scheduler {
     }
 
     @Override
-    public int runAsync(final Runnable task) {
-        BukkitTask bukkit = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
-        return bukkit.getTaskId();
-    }
-
-    @Override
-    public void cancelTask(final int id) {
-        plugin.getServer().getScheduler().cancelTask(id);
+    public void runAsync(final Runnable task) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
     }
 
 }
