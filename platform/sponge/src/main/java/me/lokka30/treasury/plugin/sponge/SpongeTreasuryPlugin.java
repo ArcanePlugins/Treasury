@@ -151,8 +151,11 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void runAsync(final Runnable task) {
-        Sponge.asyncScheduler().submit(
-                Task.builder().plugin(this.plugin.getContainer()).execute(task).build());
+        Sponge.asyncScheduler().submit(Task
+                .builder()
+                .plugin(this.plugin.getContainer())
+                .execute(task)
+                .build());
     }
 
 }

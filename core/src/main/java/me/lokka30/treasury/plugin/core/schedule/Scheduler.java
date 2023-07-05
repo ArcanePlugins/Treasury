@@ -26,7 +26,6 @@ public interface Scheduler {
      * Runs the specified task asynchronously.
      *
      * @param task the task you want to run
-     * @return task id
      */
     void runAsync(Runnable task);
 
