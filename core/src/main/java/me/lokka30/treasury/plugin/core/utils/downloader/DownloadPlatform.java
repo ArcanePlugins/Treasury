@@ -24,21 +24,31 @@ public enum DownloadPlatform {
     MRIVANPLAYS(() -> {
         try {
             String releaseChannel;
-            File pluginFile = new File(DownloadPlatform.class
-                    .getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .toURI());
-            if (TreasuryPlugin.getInstance().validatePluginJar(pluginFile)) {
-                JarFile jar = new JarFile(pluginFile);
-                Manifest manifest = jar.getManifest();
-                releaseChannel = manifest.getMainAttributes().getValue("releaseChannel");
+            if (!TreasuryPlugin
+                    .getInstance()
+                    .platform()
+                    .platformName()
+                    .equalsIgnoreCase("Sponge")) {
+                File pluginFile = new File(DownloadPlatform.class
+                        .getProtectionDomain()
+                        .getCodeSource()
+                        .getLocation()
+                        .toURI());
+                if (TreasuryPlugin.getInstance().validatePluginJar(pluginFile)) {
+                    JarFile jar = new JarFile(pluginFile);
+                    Manifest manifest = jar.getManifest();
+                    releaseChannel = manifest.getMainAttributes().getValue("releaseChannel");
+                } else {
+                    TreasuryPlugin.getInstance().logger().warn(
+                            "Couldn't validate plugin jar, falling back to master release channel");
+                    releaseChannel = "dev/v2";
+                }
             } else {
-                TreasuryPlugin
-                        .getInstance()
-                        .logger()
-                        .warn("Couldn't validate plugin jar, falling back to master release channel");
-                releaseChannel = "master";
+                TreasuryPlugin.getInstance().logger().warn(
+                        "Due to no suitable way of accessing Treasury jar internal files on Sponge, '" +
+                                "when using \"mrivanplays\" as download platform, the release channel will always be \"dev/v2\". " +
+                                "If you use any other release channel, DO NOT use the '/treasury downloadLatest' command.");
+                releaseChannel = "dev/v2";
             }
             return "https://ci.mrivanplays.com/job/Treasury/job/" + URLEncoder.encode(releaseChannel,
                     "UTF-8"
