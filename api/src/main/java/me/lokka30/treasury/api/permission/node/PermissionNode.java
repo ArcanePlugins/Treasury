@@ -69,11 +69,11 @@ public interface PermissionNode extends Node {
             super();
         }
 
-        public PermissionNodeBuilder(PermissionNode other) {
+        public PermissionNodeBuilder(@NotNull PermissionNode other) {
             super(other);
         }
 
-        public PermissionNodeBuilder(PermissionNodeBuilder other) {
+        public PermissionNodeBuilder(@NotNull PermissionNodeBuilder other) {
             super(other);
         }
 
