@@ -11,105 +11,79 @@ import me.lokka30.treasury.api.permission.node.holder.NodeHolder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a permission {@link Node node}. A {@code PermissionNode} is exactly what the name
+ * says - an indication whether a {@link NodeHolder node holder} has a permit to do something (e
+ * .g. execute a command).
+ *
+ * @author <a href="mailto:ivan@mrivanplays.com">Ivan Pekov</a>
+ */
 public interface PermissionNode extends Node {
 
+    /**
+     * Create a new {@code PermissionNode} builder.
+     *
+     * @return new permission node builder
+     */
     @Contract(value = "-> new", pure = true)
     @NotNull
-    static PermissionNode.Builder newBuilder() {
-        return new PermissionNode.Builder();
+    static PermissionNode.PermissionNodeBuilder newBuilder() {
+        return new PermissionNode.PermissionNodeBuilder();
     }
 
+    /**
+     * Create a new {@code PermissionNode} builder.
+     *
+     * @param fromNode a permission node to create the builder from.
+     * @return new permission node builder
+     */
     @Contract(value = "_ -> new", pure = true)
     @NotNull
-    static PermissionNode.Builder newBuilder(@NotNull PermissionNode fromNode) {
-        return new PermissionNode.Builder(fromNode);
+    static PermissionNode.PermissionNodeBuilder newBuilder(@NotNull PermissionNode fromNode) {
+        return new PermissionNode.PermissionNodeBuilder(fromNode);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     @NotNull
     default Node.Type type() {
         return Type.PERMISSION;
     }
 
+    /**
+     * Returns the value, held by this {@code PermissionNode}, represented by a {@link TriState
+     * tri-state}.
+     *
+     * @return value
+     * @see TriState
+     */
     @NotNull TriState value();
 
-    final class Builder {
+    final class PermissionNodeBuilder extends Builder<PermissionNode, TriState> {
 
-        private String key;
-        private TriState value;
-        private int weight;
-        private boolean inherited;
-        private NodeHolder owner, inheritedFrom;
-        private ContextSet contextSet;
-
-        public Builder() {
+        public PermissionNodeBuilder() {
+            super();
         }
 
-        public Builder(@NotNull PermissionNode fromNode) {
-            this.key = fromNode.key();
-            this.value = fromNode.value();
-            this.weight = fromNode.weight();
-            this.inherited = fromNode.isInherited();
-            this.inheritedFrom = fromNode.inheritedFrom().orElse(null);
-            this.owner = fromNode.owner().orElse(null);
-            this.contextSet = fromNode.contextSet();
+        public PermissionNodeBuilder(PermissionNode other) {
+            super(other);
         }
 
-        public Builder(@NotNull Builder other) {
-            this.key = other.key;
-            this.value = other.value;
-            this.weight = other.weight;
-            this.inherited = other.inherited;
-            this.inheritedFrom = other.inheritedFrom;
-            this.owner = other.owner;
-            this.contextSet = other.contextSet;
+        public PermissionNodeBuilder(PermissionNodeBuilder other) {
+            super(other);
         }
 
-        @Contract("-> new")
-        @NotNull
-        public Builder copy() {
-            return new Builder(this);
+        @Override
+        public @NotNull Builder<PermissionNode, TriState> copy() {
+            return new PermissionNodeBuilder(this);
         }
 
-        @Contract("_ -> this")
-        public Builder withKey(@NotNull String key) {
-            this.key = key;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public Builder withValue(@NotNull TriState value) {
-            this.value = value;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public Builder withWeight(int weight) {
-            this.weight = weight;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public Builder withOwner(@NotNull NodeHolder owner) {
-            this.owner = owner;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public Builder withInheritedFrom(@NotNull NodeHolder inheritedFrom) {
-            this.inherited = true;
-            this.inheritedFrom = inheritedFrom;
-            return this;
-        }
-
-        @Contract("_ -> this")
-        public Builder withContextSet(@NotNull ContextSet contextSet) {
-            this.contextSet = contextSet;
-            return this;
-        }
-
-        @NotNull
-        public PermissionNode build() {
+        @Override
+        public @NotNull PermissionNode build() {
             Objects.requireNonNull(key, "key");
             Objects.requireNonNull(value, "value");
             return new DefaultPermissionNodeImpl(
