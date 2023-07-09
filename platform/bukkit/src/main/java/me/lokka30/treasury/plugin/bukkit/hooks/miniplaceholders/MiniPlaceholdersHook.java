@@ -34,7 +34,7 @@ public class MiniPlaceholdersHook implements Hook {
     public boolean register() {
         PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
                 ((BukkitTreasuryPlugin) BukkitTreasuryPlugin.getInstance()).dataFolder(),
-                "miniPlaceholders_config.yml"
+                "miniplaceholders-hook.yml"
         ));
         this.basicExpansion = new BasicPlaceholderExpansion(config);
         Expansion expansion = Expansion.builder("treasury").filter(Player.class).globalPlaceholder(

@@ -79,7 +79,7 @@ public class TreasurySponge {
         treasuryPlugin.loadSettings();
         treasuryPlugin.loadMessages();
         if (Sponge.pluginManager().plugin("miniplaceholders").isPresent() && MiniPlaceholdersHook.load()) {
-            logger.info("MiniPlaceholders hook registered & working");
+            logger.info("MiniPlaceholders hook registered successfully");
         }
 
         UpdateChecker.checkForUpdates();

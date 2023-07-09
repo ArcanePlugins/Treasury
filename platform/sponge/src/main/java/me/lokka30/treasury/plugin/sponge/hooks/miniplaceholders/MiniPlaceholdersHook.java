@@ -47,7 +47,7 @@ public class MiniPlaceholdersHook implements Hook {
     public boolean register() {
         PlaceholdersConfig config = MiniPlaceholdersConfig.load(new File(
                 ((SpongeTreasuryPlugin) SpongeTreasuryPlugin.getInstance()).getDataDirectory().toFile(),
-                "miniPlaceholders_config.yml"
+                "miniplaceholders-hook.yml"
         ));
         this.basicExpansion = new BasicPlaceholderExpansion(config);
         Expansion expansion = Expansion.builder("treasury").globalPlaceholder(

@@ -65,7 +65,7 @@ public class TreasuryVelocity {
         TreasuryCommand.register(this);
 
         if (proxy.getPluginManager().isLoaded("miniplaceholders") && MiniPlaceholdersHook.load()) {
-            treasuryPlugin.info("&fMiniPlaceholders hook registered & working");
+            treasuryPlugin.info("&fMiniPlaceholders hook registered successfully");
         }
 
         UpdateChecker.checkForUpdates();
