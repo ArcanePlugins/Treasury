@@ -4,18 +4,37 @@
 
 package me.lokka30.treasury.plugin.bukkit.hooks.papi;
 
-import org.bukkit.OfflinePlayer;
+import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
+import me.lokka30.treasury.plugin.core.hooks.Hook;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface TreasuryPapiHook {
+public class TreasuryPapiHook implements Hook {
 
-    String getPrefix();
+    private TreasuryPapiExpansion expansion;
+    private final TreasuryBukkit plugin;
 
-    boolean setup();
+    public TreasuryPapiHook(final TreasuryBukkit plugin) {
+        this.plugin = plugin;
+    }
 
-    void clear();
+    @Override
+    public @NotNull String getPlugin() {
+        return "PlaceholderAPI";
+    }
 
-    @Nullable String onRequest(@Nullable OfflinePlayer player, @NotNull String param);
+    @Override
+    public boolean register() {
+        if (expansion == null) {
+            expansion = new TreasuryPapiExpansion(plugin);
+        }
+        return expansion.register();
+    }
+
+    @Override
+    public void shutdown() {
+        if (expansion != null) {
+            expansion.clear();
+        }
+    }
 
 }

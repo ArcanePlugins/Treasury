@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
+package me.lokka30.treasury.plugin.core.hooks.placeholder.economy;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -11,19 +11,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitRunnable;
+import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BalTop extends BukkitRunnable {
+public class BalTop extends Scheduler.ScheduledTask {
 
     private final boolean enabled;
     private final int topSize;
@@ -40,6 +40,7 @@ public class BalTop extends BukkitRunnable {
             BalanceCache balanceCache,
             AtomicReference<EconomyProvider> provider
     ) {
+        super(TreasuryPlugin.getInstance().scheduler());
         this.enabled = enabled;
         this.topSize = topSize;
         this.taskDelay = taskDelay;
@@ -50,8 +51,8 @@ public class BalTop extends BukkitRunnable {
         );
     }
 
-    public void start(TreasuryBukkit plugin) {
-        runTaskTimerAsynchronously(plugin, 20, taskDelay * 20L);
+    public void start() {
+        start(1, taskDelay, TimeUnit.SECONDS);
     }
 
     public boolean isEnabled() {
@@ -123,28 +124,21 @@ public class BalTop extends BukkitRunnable {
             if (!balanceCache.available()) {
                 // We'll just wait for the next cycle to update the baltop
                 // Also print a warning that it failed to update the baltop
-                TreasuryPlugin
-                        .getInstance()
-                        .logger()
-                        .warn("Couldn't update baltop placeholders for PlaceholderAPI!");
+                TreasuryPlugin.getInstance().logger().warn("Couldn't update baltop placeholders!");
                 return;
             }
         }
         baltop.clear();
 
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            String playerName = player.getName();
-            if (playerName == null) {
-                continue;
-            }
+        for (Map.Entry<UUID, String> entry : balanceCache.getPlayerDataNames().entrySet()) {
             for (Currency currency : provider.getCurrencies()) {
-                BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
+                BigDecimal balance = balanceCache.getBalance(entry.getKey(),
                         currency.getIdentifier()
                 );
-                if (balance == null) {
+                if (balance == null || balance.equals(BigDecimal.ZERO)) {
                     continue;
                 }
-                baltop.put(currency.getIdentifier(), new TopPlayer(playerName, balance));
+                baltop.put(currency.getIdentifier(), new TopPlayer(entry.getValue(), balance));
             }
         }
 

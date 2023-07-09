@@ -129,6 +129,12 @@
             <version>${placeholderapi.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.miniplaceholders</groupId>
+            <artifactId>miniplaceholders-api</artifactId>
+            <version>${miniplaceholders.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

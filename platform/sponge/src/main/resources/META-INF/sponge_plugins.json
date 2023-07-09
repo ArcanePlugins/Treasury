@@ -33,9 +33,15 @@
             "dependencies": [
                 {
                     "id": "spongeapi",
-                    "version": "8.0.0",
+                    "version": "${sponge.version}",
                     "load-order": "after",
                     "optional": false
+                },
+                {
+                    "id": "miniplaceholders",
+                    "version": "${miniplaceholders.version}",
+                    "load-order": "after",
+                    "optional": true
                 }
             ]
         }

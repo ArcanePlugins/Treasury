@@ -96,6 +96,12 @@
             <version>${bstats.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.miniplaceholders</groupId>
+            <artifactId>miniplaceholders-api</artifactId>
+            <version>${miniplaceholders.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

@@ -65,6 +65,10 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
         return plugin.getDataDirectory().getParent();
     }
 
+    public Path getDataDirectory() {
+        return plugin.getDataDirectory();
+    }
+
     @Override
     public @NotNull Logger logger() {
         return this;

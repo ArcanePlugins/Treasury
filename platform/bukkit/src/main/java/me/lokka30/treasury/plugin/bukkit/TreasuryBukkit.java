@@ -19,6 +19,7 @@ import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitWorker;
 
 /**
  * This is the plugin's main class, loaded by Bukkit's plugin manager.
@@ -118,6 +119,11 @@ public class TreasuryBukkit extends JavaPlugin {
     @Override
     public void onDisable() {
         treasuryPlugin.shutdown(false, () -> this.hookRegistrar.shutdownHooks());
+        for (BukkitWorker worker : getServer().getScheduler().getActiveWorkers()) {
+            if (worker.getOwner().getName().equalsIgnoreCase(this.getName())) {
+                worker.getThread().interrupt();
+            }
+        }
     }
 
     /**

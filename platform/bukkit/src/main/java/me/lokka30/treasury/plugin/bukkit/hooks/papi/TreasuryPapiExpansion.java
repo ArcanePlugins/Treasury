@@ -4,42 +4,36 @@
 
 package me.lokka30.treasury.plugin.bukkit.hooks.papi;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.bukkit.hooks.papi.economy.EconomyHook;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
+import me.lokka30.treasury.plugin.core.hooks.PlayerData;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TreasuryPapiExpansion extends PlaceholderExpansion implements Configurable, Cacheable {
+public class TreasuryPapiExpansion extends PlaceholderExpansion implements Configurable, Cacheable,
+        PlaceholdersConfig {
 
     private final String author;
-    private final Collection<TreasuryPapiHook> hooks = new HashSet<>();
+    private final BasicPlaceholderExpansion base;
 
     public TreasuryPapiExpansion(@NotNull TreasuryBukkit plugin) {
         this.author = String.join(", ", plugin.getDescription().getAuthors());
-        this.hooks.add(new EconomyHook(this, plugin));
+        this.base = new BasicPlaceholderExpansion(this);
     }
 
     @Override
     public boolean register() {
-        // Remove all failing hooks.
-        hooks.removeIf(hook -> !hook.setup());
-
-        // If any hooks are active, register.
-        if (!hooks.isEmpty()) {
-            return super.register();
-        }
-
-        // Otherwise, do not enable the expansion.
-        return false;
+        return base.register() && super.register();
     }
 
     @Override
@@ -84,19 +78,32 @@ public class TreasuryPapiExpansion extends PlaceholderExpansion implements Confi
 
     @Override
     public String onRequest(@Nullable OfflinePlayer player, @NotNull String param) {
-        for (TreasuryPapiHook hook : hooks) {
-            if (param.startsWith(hook.getPrefix())) {
-                // Pass request to specified hook sans prefix.
-                return hook.onRequest(player, param.replace(hook.getPrefix(), ""));
+        return base.onRequest(new PlayerData() {
+            @Override
+            public @Nullable String name() {
+                return player != null ? player.getName() : null;
             }
-        }
 
-        return null;
+            @Override
+            public @Nullable UUID uniqueId() {
+                return player != null ? player.getUniqueId() : null;
+            }
+
+            @Override
+            public @Nullable String getLocale() {
+                if (player == null) {
+                    return null;
+                }
+
+                Player onlinePlayer = player.getPlayer();
+                return onlinePlayer != null ? onlinePlayer.getLocale() : null;
+            }
+        }, param);
     }
 
     @Override
     public void clear() {
-        hooks.forEach(TreasuryPapiHook::clear);
+        base.clear();
     }
 
 }

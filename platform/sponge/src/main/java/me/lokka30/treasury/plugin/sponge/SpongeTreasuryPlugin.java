@@ -11,7 +11,6 @@ import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.config.messaging.Messages;
-import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
@@ -62,6 +61,10 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
     @Override
     public @NotNull Path pluginsFolder() {
         return pluginsFolder;
+    }
+
+    public Path getDataDirectory() {
+        return plugin.getDataDir();
     }
 
     @Override

@@ -2,7 +2,7 @@
  * This file is/was part of Treasury. To read more information about Treasury such as its licensing, see <https://github.com/ArcanePlugins/Treasury>.
  */
 
-package me.lokka30.treasury.plugin.bukkit.hooks.papi.economy;
+package me.lokka30.treasury.plugin.core.hooks.placeholder.economy;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -19,14 +19,13 @@ import me.lokka30.treasury.api.common.service.event.ServiceRegisteredEvent;
 import me.lokka30.treasury.api.common.service.event.ServiceUnregisteredEvent;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.currency.Currency;
-import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiExpansion;
-import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHook;
-import org.bukkit.OfflinePlayer;
+import me.lokka30.treasury.plugin.core.hooks.PlayerData;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.BasicPlaceholderExpansion;
+import me.lokka30.treasury.plugin.core.hooks.placeholder.SpecificPlaceholderHook;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EconomyHook implements TreasuryPapiHook {
+public class EconomyHook implements SpecificPlaceholderHook {
 
     /*
      * Pattern matching various top balance formats.
@@ -96,8 +95,7 @@ public class EconomyHook implements TreasuryPapiHook {
 
     private final AtomicReference<EconomyProvider> providerRef;
     private final DecimalFormat format = new DecimalFormat("#,###");
-    private final TreasuryPapiExpansion expansion;
-    private final TreasuryBukkit plugin;
+    private final BasicPlaceholderExpansion expansion;
     private final String k;
     private final String m;
     private final String b;
@@ -106,19 +104,18 @@ public class EconomyHook implements TreasuryPapiHook {
     private BalTop baltop;
     private BalanceCache balanceCache;
 
-    public EconomyHook(@NotNull TreasuryPapiExpansion expansion, @NotNull TreasuryBukkit plugin) {
+    public EconomyHook(@NotNull BasicPlaceholderExpansion expansion) {
         this.providerRef = new AtomicReference<>();
         this.expansion = expansion;
-        this.plugin = plugin;
-        this.k = expansion.getString("formatting.thousands", "k");
-        this.m = expansion.getString("formatting.millions", "M");
-        this.b = expansion.getString("formatting.billions", "B");
-        this.t = expansion.getString("formatting.trillions", "T");
-        this.q = expansion.getString("formatting.quadrillions", "Q");
+        this.k = expansion.getPlaceholdersConfig().getString("formatting.thousands", "k");
+        this.m = expansion.getPlaceholdersConfig().getString("formatting.millions", "M");
+        this.b = expansion.getPlaceholdersConfig().getString("formatting.billions", "B");
+        this.t = expansion.getPlaceholdersConfig().getString("formatting.trillions", "T");
+        this.q = expansion.getPlaceholdersConfig().getString("formatting.quadrillions", "Q");
     }
 
     @Override
-    public String getPrefix() {
+    public @NotNull String prefix() {
         return "eco_";
     }
 
@@ -132,40 +129,36 @@ public class EconomyHook implements TreasuryPapiHook {
         handleServiceChange();
 
         EventBus eventBus = EventBus.INSTANCE;
-        eventBus.subscribe(eventBus
-                .subscriptionFor(ServiceRegisteredEvent.class)
-                .withPriority(EventPriority.LOW)
-                .whenCalled(event -> {
-                    if (!(event.getService().get() instanceof EconomyProvider)) {
-                        return;
-                    }
-                    handleServiceChange();
-                })
-                .completeSubscription());
-        eventBus.subscribe(eventBus
-                .subscriptionFor(ServiceUnregisteredEvent.class)
-                .withPriority(EventPriority.LOW)
-                .whenCalled(event -> {
-                    if (!(event.getService().get() instanceof EconomyProvider)) {
-                        return;
-                    }
-                    handleServiceChange();
-                })
-                .completeSubscription());
+        eventBus.subscribe(eventBus.subscriptionFor(ServiceRegisteredEvent.class).withPriority(
+                EventPriority.LOW).whenCalled(event -> {
+            if (!(event.getService().get() instanceof EconomyProvider)) {
+                return;
+            }
+            handleServiceChange();
+        }).completeSubscription());
+        eventBus.subscribe(eventBus.subscriptionFor(ServiceUnregisteredEvent.class).withPriority(
+                EventPriority.LOW).whenCalled(event -> {
+            if (!(event.getService().get() instanceof EconomyProvider)) {
+                return;
+            }
+            handleServiceChange();
+        }).completeSubscription());
 
-        this.balanceCache = new BalanceCache(expansion.getInt("balance.cache_check_delay", 60),
-                providerRef
-        );
-        this.balanceCache.start(plugin);
+        this.balanceCache = new BalanceCache(expansion
+                .getPlaceholdersConfig()
+                .getInt("balance.cache_check_delay", 60), providerRef);
+        this.balanceCache.start();
 
-        this.baltop = new BalTop(expansion.getBoolean("baltop.enabled", false),
-                expansion.getInt("baltop.cache_size", 100),
-                expansion.getInt("baltop.cache_delay", 30),
+        this.baltop = new BalTop(expansion
+                .getPlaceholdersConfig()
+                .getBoolean("baltop.enabled", false),
+                expansion.getPlaceholdersConfig().getInt("baltop.cache_size", 100),
+                expansion.getPlaceholdersConfig().getInt("baltop.check_delay", 30),
                 balanceCache,
                 providerRef
         );
         if (this.baltop.isEnabled()) {
-            this.baltop.start(plugin);
+            this.baltop.start();
         }
         return true;
     }
@@ -202,7 +195,7 @@ public class EconomyHook implements TreasuryPapiHook {
 
     @Override
     public @Nullable String onRequest(
-            @Nullable OfflinePlayer player, @NotNull String param
+            @Nullable PlayerData player, @NotNull String param
     ) {
         // If provider is not present, return quickly.
         EconomyProvider provider = providerRef.get();
@@ -230,9 +223,9 @@ public class EconomyHook implements TreasuryPapiHook {
         }
 
         if (param.startsWith("top_rank_")) {
-            return baltop.getPositionAsString(param.replace("top_rank_", ""), player.getName());
+            return baltop.getPositionAsString(param.replace("top_rank_", ""), player.name());
         } else if (param.equalsIgnoreCase("top_rank")) {
-            return baltop.getPositionAsString(provider.getPrimaryCurrencyId(), player.getName());
+            return baltop.getPositionAsString(provider.getPrimaryCurrencyId(), player.name());
         }
 
         // Delegate balance request.
@@ -243,7 +236,7 @@ public class EconomyHook implements TreasuryPapiHook {
     }
 
     private @Nullable String requestTopBalance(
-            @NotNull EconomyProvider provider, @Nullable OfflinePlayer player, @NotNull String param
+            @NotNull EconomyProvider provider, @Nullable PlayerData player, @NotNull String param
     ) {
         // Exactly "top_balance" - no parsing required.
         if (param.length() == 11) {
@@ -278,8 +271,8 @@ public class EconomyHook implements TreasuryPapiHook {
         // Formatting mode "formatted" yields a number using localizable multiples of 1000.
         if ("formatted".equals(type)) {
             Locale locale = Locale.ENGLISH;
-            if (player != null && player.isOnline()) {
-                locale = Locale.forLanguageTag(player.getPlayer().getLocale().replace('_', '-'));
+            if (player != null && player.getLocale() != null) {
+                locale = Locale.forLanguageTag(player.getLocale().replace('_', '-'));
             }
             int precision = parseInt(matcher.group("precision"), -1);
             Currency currency = provider
@@ -319,7 +312,7 @@ public class EconomyHook implements TreasuryPapiHook {
     }
 
     private @Nullable String requestBalance(
-            @NotNull EconomyProvider provider, @NotNull OfflinePlayer player, @NotNull String param
+            @NotNull EconomyProvider provider, @NotNull PlayerData player, @NotNull String param
     ) {
         Matcher matcher = BALANCE.matcher(param);
         if (!matcher.matches()) {
@@ -331,9 +324,7 @@ public class EconomyHook implements TreasuryPapiHook {
                 matcher.group("currency")
         )).orElse(provider.getPrimaryCurrency());
 
-        BigDecimal balance = balanceCache.getBalance(player.getUniqueId(),
-                currency.getIdentifier()
-        );
+        BigDecimal balance = balanceCache.getBalance(player.uniqueId(), currency.getIdentifier());
         if (balance == null) {
             return "0";
         }
@@ -348,8 +339,7 @@ public class EconomyHook implements TreasuryPapiHook {
 
         if (type.equalsIgnoreCase("formatted")) {
             int precision = parseInt(matcher.group("precision"), -1);
-            Locale locale = player.isOnline() ? Locale.forLanguageTag(player
-                    .getPlayer()
+            Locale locale = player.getLocale() != null ? Locale.forLanguageTag(player
                     .getLocale()
                     .replace('_', '-')) : Locale.ENGLISH;
             return fixMoney(balance, currency, locale, precision);
