@@ -13,8 +13,9 @@ import java.io.File;
 import me.lokka30.treasury.plugin.core.hooks.placeholder.PlaceholdersConfig;
 import org.jetbrains.annotations.NotNull;
 
-@Comment("Placeholders config")
-@Comment("This config is only used if you're running MiniPlaceholders")
+@Comment("Configuration for the MiniPlaceholders Hook")
+@Comment("If you've got MiniPlaceholders installed,")
+@Comment("you can configure how Treasury hooks to it here.")
 public class MiniPlaceholdersConfig implements PlaceholdersConfig {
 
     public static MiniPlaceholdersConfig load(File file) {
