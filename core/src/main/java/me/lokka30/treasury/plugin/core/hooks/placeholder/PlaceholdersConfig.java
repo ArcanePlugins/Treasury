@@ -17,11 +17,23 @@ public interface PlaceholdersConfig {
      */
     String getString(@NotNull String key, String def);
 
-    // the getString javadoc is also applied for the next 2 methods
-    // except it's not a string
 
+    /**
+     * Get an int from the specific config where stuff about placeholder expansions is held.
+     *
+     * @param key the config key
+     * @param def the default value
+     * @return value
+     */
     int getInt(@NotNull String key, int def);
 
+    /**
+     * Get a boolean from the specific config where stuff about placeholder expansions is held.
+     *
+     * @param key the config key
+     * @param def the default value
+     * @return value
+     */
     boolean getBoolean(@NotNull String key, boolean def);
 
 }
