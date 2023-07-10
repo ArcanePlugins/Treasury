@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
  * <p>Causes are divided in 4 types: {@link Cause.Player}, {@link Cause.Plugin},
  * {@link Cause.NonPlayer} and {@link Cause#SERVER}. The server cause should only be used when
  * there is no other suitable cause, or there is not a possibility to create one.
+ * <p>The raw {@code Cause} interface shall NOT be implemented, instead, if a custom cause
+ * implementation is needed, please do so by implementing one of the causes already existing (e.g.
+ * {@link Cause.Player}, {@link Cause.NonPlayer} or {@link Cause.Plugin}).
  *
  * @param <T> generic
  * @author MrIvanPlays
