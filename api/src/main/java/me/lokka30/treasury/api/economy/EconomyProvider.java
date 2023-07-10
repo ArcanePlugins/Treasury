@@ -4,8 +4,10 @@
 
 package me.lokka30.treasury.api.economy;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -22,6 +24,7 @@ import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.account.accessor.AccountAccessor;
 import me.lokka30.treasury.api.economy.currency.Currency;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementors providing and managing economy data create a class which implements this
@@ -158,6 +161,32 @@ public interface EconomyProvider {
      * @since v1.0.0
      */
     @NotNull Optional<Currency> findCurrency(@NotNull String identifier);
+
+    /**
+     * Used to find a currency based on its display name.
+     * <p>We <b>strongly</b> encourage economy implementors to override this and provide a better
+     * implementation.
+     *
+     * @param displayName the {@link Currency#getDisplayName(BigDecimal, Locale)} of the
+     *                    {@link Currency} we are searching for.
+     * @param value       whether we're going to compare against a singular or a plural display name of a
+     *                    currency
+     * @param locale      a locale
+     * @return the {@link Optional} containing the search result. This will contain the resulting
+     *         {@link Currency} if it exists, otherwise it will return {@link Optional#empty()}
+     * @since 2.0.1
+     */
+    @NotNull
+    default Optional<Currency> findCurrencyByDisplayName(
+            @NotNull String displayName, @NotNull BigDecimal value, @Nullable Locale locale
+    ) {
+        for (Currency currency : getCurrencies()) {
+            if (currency.getDisplayName(value, locale).equalsIgnoreCase(displayName)) {
+                return Optional.of(currency);
+            }
+        }
+        return Optional.empty();
+    }
 
     /**
      * Used to get a set of every  {@link Currency} object for the server.
