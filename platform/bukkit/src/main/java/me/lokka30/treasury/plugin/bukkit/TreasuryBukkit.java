@@ -69,7 +69,7 @@ public class TreasuryBukkit extends JavaPlugin {
 
         loadMetrics();
 
-        treasuryPlugin.logStartupMessage(startupTimer, false);
+        treasuryPlugin.logStartupMessage(startupTimer);
     }
 
     private void loadMetrics() {
@@ -118,12 +118,14 @@ public class TreasuryBukkit extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        treasuryPlugin.shutdown(false, () -> this.hookRegistrar.shutdownHooks());
-        for (BukkitWorker worker : getServer().getScheduler().getActiveWorkers()) {
-            if (worker.getOwner().getName().equalsIgnoreCase(this.getName())) {
-                worker.getThread().interrupt();
+        treasuryPlugin.shutdown(() -> {
+            this.hookRegistrar.shutdownHooks();
+            for (BukkitWorker worker : getServer().getScheduler().getActiveWorkers()) {
+                if (worker.getOwner().getName().equalsIgnoreCase(this.getName())) {
+                    worker.getThread().interrupt();
+                }
             }
-        }
+        });
     }
 
     /**

@@ -52,12 +52,12 @@ class NonPlayerAccountMigrationProcess extends PlayerAccountMigrationProcess {
 
     @Override
     @NotNull String getInitLog() {
-        return "Migrating non player account of ID '&b" + this.accountId + "&7'.";
+        return "Migrating non player account of ID '" + this.accountId + "'.";
     }
 
     @Override
     @NotNull String getErrorLog(@NotNull TreasuryException e) {
-        return "Error migrating non player account ID '&b" + this.accountId + "&7': &b" + e.getMessage();
+        return "Error migrating non player account ID '" + this.accountId + "': " + e.getMessage();
     }
 
     @Override

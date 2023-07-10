@@ -129,22 +129,22 @@ public class BungeeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void info(final String message) {
-        plugin.getLogger().info(colorize(message));
+        plugin.getLogger().info(message);
     }
 
     @Override
     public void warn(final String message) {
-        plugin.getLogger().warning(colorize(message));
+        plugin.getLogger().warning(message);
     }
 
     @Override
     public void error(final String message) {
-        plugin.getLogger().severe(colorize(message));
+        plugin.getLogger().severe(message);
     }
 
     @Override
     public void error(final String message, final Throwable t) {
-        plugin.getLogger().log(Level.SEVERE, colorize(message), t);
+        plugin.getLogger().log(Level.SEVERE, message, t);
     }
 
     @Override

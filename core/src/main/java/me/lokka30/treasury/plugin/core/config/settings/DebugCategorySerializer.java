@@ -42,7 +42,7 @@ public class DebugCategorySerializer implements FieldTypeSerializer<List<DebugCa
                 TreasuryPlugin
                         .getInstance()
                         .logger()
-                        .error("Invalid DebugCategory '&b" + val + "&7' specified in &bsettings.yml&7 at location " + "'&bdebug.enabled-categories.list&7'! Please fix this ASAP.");
+                        .error("Invalid DebugCategory '" + val + "' specified in settings.yml at location 'debug.enabled-categories.list'! Please fix this ASAP.");
             }
         }
         return ret;

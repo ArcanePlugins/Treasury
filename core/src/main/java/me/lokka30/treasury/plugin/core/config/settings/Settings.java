@@ -179,7 +179,7 @@ public class Settings {
                 break;
             default:
                 TreasuryPlugin.getInstance().logger().error(
-                        "Invalid list mode specified in &bsettings.yml&7 at location " + "'&bdebug.enabled-categories.mode&7'! " + "You can only use '&bWHITELIST&7' or '&bBLACKLIST&7'. Please fix this ASAP.");
+                        "Invalid list mode specified in settings.yml at location 'debug.enabled-categories.mode'! You can only use 'WHITELIST' or 'BLACKLIST'. Please fix this ASAP.");
         }
         return enabledCategories;
     }

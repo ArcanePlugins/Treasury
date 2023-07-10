@@ -108,31 +108,24 @@ public class VelocityTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
         return settings;
     }
 
-    // adventure parses hex colors for us :)
-    private String color(String message) {
-        return LegacyComponentSerializer.legacySection().serialize(LegacyComponentSerializer
-                .legacyAmpersand()
-                .deserialize(message));
-    }
-
     @Override
     public void info(final String message) {
-        plugin.getLogger().info(color(message));
+        plugin.getLogger().info(message);
     }
 
     @Override
     public void warn(final String message) {
-        plugin.getLogger().warn(color(message));
+        plugin.getLogger().warn(message);
     }
 
     @Override
     public void error(final String message) {
-        plugin.getLogger().error(color(message));
+        plugin.getLogger().error(message);
     }
 
     @Override
     public void error(final String message, final Throwable t) {
-        plugin.getLogger().error(color(message), t);
+        plugin.getLogger().error(message, t);
     }
 
     @Override

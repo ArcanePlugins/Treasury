@@ -125,6 +125,9 @@ public class MinestomTreasuryPlugin extends TreasuryPlugin implements Logger, Sc
     }
 
     public Component deserialize(String message) {
+        if (message.indexOf('&') == -1) {
+            return Component.text(message);
+        }
         return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
     }
 

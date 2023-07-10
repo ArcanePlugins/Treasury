@@ -151,9 +151,9 @@ public final class UpdateChecker {
             // this statement means that the "latestVersionRead" is newer than the version we're running.
             plugin
                     .logger()
-                    .warn("A new Treasury update is available - '&bv" + latestVersionRead + "&e' " +
-                            "- please update as soon as possible. &8(&7You're running '&bv" +
-                            currentVersion + "&7'&8)");
+                    .warn("A new Treasury update is available - 'v" + latestVersionRead + "' " +
+                            "- please update as soon as possible. (You're running 'v" +
+                            currentVersion + "')");
         } else if (comparisonResult == PluginVersion.ComparisonResult.OLDER) {
             // this statement means that the "latestVersionRead" is older than the version we're running.
             plugin.logger().warn(

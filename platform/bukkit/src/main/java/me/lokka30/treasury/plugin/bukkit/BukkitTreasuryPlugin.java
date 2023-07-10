@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.lokka30.treasury.plugin.bukkit.vendor.BukkitVendor;
-import me.lokka30.treasury.plugin.bukkit.vendor.CoreLogger;
 import me.lokka30.treasury.plugin.bukkit.vendor.CoreScheduler;
 import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
@@ -24,12 +23,11 @@ import me.lokka30.treasury.plugin.core.utils.PluginVersion;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-public class BukkitTreasuryPlugin extends TreasuryPlugin implements ConfigAdapter {
+public class BukkitTreasuryPlugin extends TreasuryPlugin implements ConfigAdapter, Logger {
 
     private final TreasuryBukkit plugin;
     private final PluginVersion pluginVersion;
     private final CoreScheduler coreScheduler;
-    private final CoreLogger coreLogger;
     private Messages messages;
     private Settings settings;
 
@@ -39,7 +37,6 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements ConfigAdapte
     public BukkitTreasuryPlugin(@NotNull TreasuryBukkit plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.coreScheduler = new CoreScheduler(plugin);
-        this.coreLogger = new CoreLogger(plugin);
         this.pluginVersion = new PluginVersion(plugin.getDescription().getVersion(), this.logger());
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         settingsFile = new File(plugin.getDataFolder(), "settings.yml");
@@ -66,7 +63,7 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements ConfigAdapte
 
     @Override
     public @NotNull Logger logger() {
-        return coreLogger.getImpl();
+        return this;
     }
 
     @Override
@@ -133,6 +130,26 @@ public class BukkitTreasuryPlugin extends TreasuryPlugin implements ConfigAdapte
             );
         }
         return matcher.appendTail(buffer).toString();
+    }
+
+    @Override
+    public void info(final String message) {
+        plugin.getLogger().info(message);
+    }
+
+    @Override
+    public void warn(final String message) {
+        plugin.getLogger().warning(message);
+    }
+
+    @Override
+    public void error(final String message) {
+        plugin.getLogger().severe(message);
+    }
+
+    @Override
+    public void error(final String message, final Throwable t) {
+        plugin.getLogger().log(Level.SEVERE, message, t);
     }
 
 }

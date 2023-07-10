@@ -65,13 +65,13 @@ public class TreasuryVelocity {
         TreasuryCommand.register(this);
 
         if (proxy.getPluginManager().isLoaded("miniplaceholders") && MiniPlaceholdersHook.load()) {
-            treasuryPlugin.info("&fMiniPlaceholders hook registered successfully");
+            treasuryPlugin.info("MiniPlaceholders hook registered successfully");
         }
 
         UpdateChecker.checkForUpdates();
         loadMetrics();
 
-        treasuryPlugin.logStartupMessage(startupTimer, false);
+        treasuryPlugin.logStartupMessage(startupTimer);
     }
 
     private void loadMetrics() {
@@ -114,8 +114,7 @@ public class TreasuryVelocity {
 
     @Subscribe
     public void onDisable(ProxyShutdownEvent event) {
-        MiniPlaceholdersHook.disable();
-        treasuryPlugin.shutdown(false);
+        treasuryPlugin.shutdown(MiniPlaceholdersHook::disable);
     }
 
     @Subscribe

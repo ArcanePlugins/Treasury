@@ -63,7 +63,7 @@ class PlayerAccountMigrationProcess extends Process {
                 currency = currencyOpt.get();
                 oldCurrency = oldCurrencyOpt.get();
             } else {
-                this.migration.debug(() -> "Currency with ID '&b" + id + "&7' will not be migrated for account '" + this.accountId + "'.");
+                this.migration.debug(() -> "Currency with ID '" + id + "' will not be migrated for account '" + this.accountId + "'.");
                 Collection<String> currencies = this.migration
                         .nonMigratedCurrencies()
                         .get(this.accountId);

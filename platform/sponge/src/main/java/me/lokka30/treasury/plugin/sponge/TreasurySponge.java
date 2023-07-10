@@ -85,13 +85,12 @@ public class TreasurySponge {
         UpdateChecker.checkForUpdates();
         //loadMetrics(); // TODO: Something's wrong with the metrics class. Needs investigation
 
-        treasuryPlugin.logStartupMessage(startupTimer, true);
+        treasuryPlugin.logStartupMessage(startupTimer);
     }
 
     @Listener
     public void onShutdown(StoppingEngineEvent<Server> event) {
-        treasuryPlugin.shutdown(true);
-        MiniPlaceholdersHook.disable();
+        treasuryPlugin.shutdown(MiniPlaceholdersHook::disable);
     }
 
     @Listener

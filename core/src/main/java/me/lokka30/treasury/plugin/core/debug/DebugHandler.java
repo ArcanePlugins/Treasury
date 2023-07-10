@@ -40,7 +40,7 @@ public class DebugHandler {
         TreasuryPlugin
                 .getInstance()
                 .logger()
-                .info("&8[&3DEBUG &8| &3" + debugCategory + "&8]: &7" + msg);
+                .info("[DEBUG | " + debugCategory + "]: " + msg);
     }
 
 }
