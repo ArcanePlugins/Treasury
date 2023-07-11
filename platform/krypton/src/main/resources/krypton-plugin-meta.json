@@ -1,0 +1,16 @@
+{
+    "id": "treasury",
+    "name": "Treasury",
+    "version": "${plugin.version}-${git.commit.id.abbrev}-${plugin.specificationVersion}",
+    "authors": [
+        "lokka30", "MrIvanPlays", "Jikoo"
+    ],
+    "description": "A modern, multi-platform library facilitating the interaction between 'provider' plugins on your server.",
+    "dependencies": [
+        {
+            "id": "miniplaceholders",
+            "optional": true
+        }
+    ],
+    "main": "me.lokka30.treasury.plugin.krypton.TreasuryKrypton"
+}

@@ -19,6 +19,7 @@
         <module>platform/velocity</module>
         <module>platform/sponge</module>
         <module>platform/minestom</module>
+        <module>platform/krypton</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -66,6 +67,7 @@
         code, seek help!
         -->
         <minestom.version>954e8b3915</minestom.version>
+        <krypton.version>041f6b8894</krypton.version>
     </properties>
 
     <licenses>
