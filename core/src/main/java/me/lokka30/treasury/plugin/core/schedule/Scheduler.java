@@ -4,6 +4,9 @@
 
 package me.lokka30.treasury.plugin.core.schedule;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Represents a scheduler wrapper.
  *
@@ -25,5 +28,128 @@ public interface Scheduler {
      * @param task the task you want to run
      */
     void runAsync(Runnable task);
+
+    default Scheduled runAsync(
+            Runnable task, long delay, long repeat, TimeUnit unit
+    ) {
+        Scheduled scheduled = new Scheduled() {
+
+            private AtomicBoolean cancelled = new AtomicBoolean(false);
+            private AtomicBoolean done = new AtomicBoolean(false);
+
+            private long delayInner = delay;
+            private long repeatInner = repeat;
+            private TimeUnit unitInner = unit;
+
+            @Override
+            public void start(long delayNew, long repeatNew, TimeUnit unitNew) {
+                if (cancelled.get()) {
+                    cancelled.set(false);
+                }
+                if (done.get()) {
+                    done.set(false);
+                }
+                this.delayInner = delayNew;
+                this.repeatInner = repeatNew;
+                this.unitInner = unitNew;
+                this.run();
+            }
+
+            @Override
+            public boolean cancelled() {
+                return cancelled.get();
+            }
+
+            @Override
+            public boolean done() {
+                return done.get() || cancelled.get();
+            }
+
+            @Override
+            public void cancel() {
+                cancelled.set(true);
+            }
+
+            @Override
+            public void run() {
+                if (cancelled.get()) {
+                    return;
+                }
+                runAsync(() -> {
+                    if (delayInner > 0) {
+                        try {
+                            Thread.sleep(unitInner.toMillis(delayInner));
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    while (!cancelled.get()) {
+                        task.run();
+                        if (repeatInner <= 0) {
+                            done.set(true);
+                            break;
+                        }
+                        try {
+                            Thread.sleep(unitInner.toMillis(repeatInner));
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                });
+            }
+        };
+        scheduled.run();
+        return scheduled;
+    }
+
+    interface Scheduled extends Runnable {
+
+        void start(long delay, long repeat, TimeUnit unit);
+
+        boolean cancelled();
+
+        boolean done();
+
+        void cancel();
+
+    }
+
+    abstract class ScheduledTask implements Scheduled {
+
+        private final Scheduler scheduler;
+        private Scheduled parent;
+
+        public ScheduledTask(Scheduler scheduler) {
+            this.scheduler = scheduler;
+        }
+
+        @Override
+        public void start(long delay, long repeat, TimeUnit unit) {
+            if (this.parent != null) {
+                this.parent.start(delay, repeat, unit);
+                return;
+            }
+            this.parent = scheduler.runAsync(this, delay, repeat, unit);
+        }
+
+        @Override
+        public boolean cancelled() {
+            return this.parent != null && this.parent.cancelled();
+        }
+
+        @Override
+        public void cancel() {
+            if (this.parent != null) {
+                this.parent.cancel();
+            }
+        }
+
+        @Override
+        public boolean done() {
+            return this.parent != null && this.parent.done();
+        }
+
+    }
 
 }

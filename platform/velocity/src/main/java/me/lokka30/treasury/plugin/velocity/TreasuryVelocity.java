@@ -20,6 +20,7 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.utils.QuickTimer;
 import me.lokka30.treasury.plugin.core.utils.UpdateChecker;
+import me.lokka30.treasury.plugin.velocity.hooks.miniplaceholders.MiniPlaceholdersHook;
 import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -63,10 +64,14 @@ public class TreasuryVelocity {
         treasuryPlugin.loadSettings();
         TreasuryCommand.register(this);
 
+        if (proxy.getPluginManager().isLoaded("miniplaceholders") && MiniPlaceholdersHook.load()) {
+            treasuryPlugin.info("MiniPlaceholders hook registered successfully");
+        }
+
         UpdateChecker.checkForUpdates();
         loadMetrics();
 
-        treasuryPlugin.logStartupMessage(startupTimer, false);
+        treasuryPlugin.logStartupMessage(startupTimer);
     }
 
     private void loadMetrics() {
@@ -109,7 +114,7 @@ public class TreasuryVelocity {
 
     @Subscribe
     public void onDisable(ProxyShutdownEvent event) {
-        treasuryPlugin.shutdown(false);
+        treasuryPlugin.shutdown(MiniPlaceholdersHook::disable);
     }
 
     @Subscribe

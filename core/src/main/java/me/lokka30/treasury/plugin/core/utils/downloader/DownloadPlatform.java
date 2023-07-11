@@ -40,7 +40,7 @@ public enum DownloadPlatform {
                     releaseChannel = manifest.getMainAttributes().getValue("releaseChannel");
                 } else {
                     TreasuryPlugin.getInstance().logger().warn(
-                            "Couldn't validate plugin jar, falling back to master release channel");
+                            "Couldn't validate plugin jar, falling back to dev/v2 release channel");
                     releaseChannel = "dev/v2";
                 }
             } else {

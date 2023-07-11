@@ -175,49 +175,26 @@ public abstract class TreasuryPlugin {
      * Logs the plugin startup message
      *
      * @param startupTimer startup timer
-     * @param noColors     whether the message should contain colors
      */
-    public void logStartupMessage(QuickTimer startupTimer, boolean noColors) {
-        if (!noColors) {
-            this.logger().info("&fRunning on " + this.platform().displayName());
-            this.logger().info("&fStart-up complete (took &b" + startupTimer.getTimer() + "ms&f).");
-        } else {
-            this.logger().info("Running on " + this.platform().displayName());
-            this.logger().info("Start-up complete (took " + startupTimer.getTimer() + "ms).");
-        }
+    public void logStartupMessage(QuickTimer startupTimer) {
+        this.logger().info("Running on " + this.platform().displayName());
+        this.logger().info("Start-up complete (took " + startupTimer.getTimer() + "ms).");
     }
 
     /**
      * Due to the shut-down logic being the same on all the platforms, the disable method has
      * been abstracted into here.
      *
-     * @param noColors whether the logged shutdown message should contain colors
-     */
-    public void shutdown(boolean noColors) {
-        this.shutdown(noColors, null);
-    }
-
-    /**
-     * Due to the shut-down logic being the same on all the platforms, the disable method has
-     * been abstracted into here.
-     *
-     * @param noColors whether the logged shutdown message should contain colors
      * @param psShutdownCode platform specific shutdown code to run
      */
-    public void shutdown(boolean noColors, Runnable psShutdownCode) {
+    public void shutdown(Runnable psShutdownCode) {
         QuickTimer shutdownTimer = new QuickTimer();
 
         if (psShutdownCode != null) {
             psShutdownCode.run();
         }
 
-        if (!noColors) {
-            this
-                    .logger()
-                    .info("&fShut-down complete (took &b" + shutdownTimer.getTimer() + "ms&f).");
-        } else {
-            this.logger().info("Shut-down complete (took " + shutdownTimer.getTimer() + "ms).");
-        }
+        this.logger().info("Shut-down complete (took " + shutdownTimer.getTimer() + "ms).");
     }
 
 }

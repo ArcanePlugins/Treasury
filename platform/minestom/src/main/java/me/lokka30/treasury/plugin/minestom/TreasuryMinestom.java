@@ -35,12 +35,12 @@ public class TreasuryMinestom extends Extension {
 
         UpdateChecker.checkForUpdates();
 
-        treasuryPlugin.logStartupMessage(startupTimer, false);
+        treasuryPlugin.logStartupMessage(startupTimer);
     }
 
     @Override
     public void terminate() {
-        treasuryPlugin.shutdown(false);
+        treasuryPlugin.shutdown(null);
     }
 
 }

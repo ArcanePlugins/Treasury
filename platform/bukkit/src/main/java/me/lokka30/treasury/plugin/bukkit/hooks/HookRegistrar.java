@@ -7,7 +7,9 @@ package me.lokka30.treasury.plugin.bukkit.hooks;
 import java.util.HashMap;
 import java.util.Map;
 import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
-import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHookRegistrar;
+import me.lokka30.treasury.plugin.bukkit.hooks.miniplaceholders.MiniPlaceholdersHook;
+import me.lokka30.treasury.plugin.bukkit.hooks.papi.TreasuryPapiHook;
+import me.lokka30.treasury.plugin.core.hooks.Hook;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
@@ -20,7 +22,8 @@ public class HookRegistrar implements Listener {
 
     public HookRegistrar(TreasuryBukkit plugin) {
         this.treasuryBukkit = plugin;
-        registerHook(new TreasuryPapiHookRegistrar());
+        registerHook(new TreasuryPapiHook(plugin));
+        registerHook(new MiniPlaceholdersHook());
     }
 
     void registerHook(Hook hook) {
@@ -40,7 +43,7 @@ public class HookRegistrar implements Listener {
             return;
         }
         Hook hook = this.hooks.get(plugin.getName());
-        if (hook.register(treasuryBukkit)) {
+        if (hook.register()) {
             treasuryBukkit.getLogger().info(plugin.getName() + " hook registered successfully");
         }
     }

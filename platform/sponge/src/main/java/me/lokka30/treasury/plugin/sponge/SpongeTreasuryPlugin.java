@@ -11,7 +11,6 @@ import me.lokka30.treasury.plugin.core.Platform;
 import me.lokka30.treasury.plugin.core.TreasuryPlugin;
 import me.lokka30.treasury.plugin.core.config.ConfigAdapter;
 import me.lokka30.treasury.plugin.core.config.messaging.Messages;
-import me.lokka30.treasury.plugin.core.config.settings.Settings;
 import me.lokka30.treasury.plugin.core.logging.Logger;
 import me.lokka30.treasury.plugin.core.schedule.Scheduler;
 import me.lokka30.treasury.plugin.core.utils.PluginVersion;
@@ -64,6 +63,10 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
         return pluginsFolder;
     }
 
+    public Path getDataDirectory() {
+        return plugin.getDataDir();
+    }
+
     @Override
     public @NotNull Logger logger() {
         return this;
@@ -105,22 +108,22 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
 
     @Override
     public void info(final String message) {
-        plugin.getLogger().info(this.stripColor(message));
+        plugin.getLogger().info(message);
     }
 
     @Override
     public void warn(final String message) {
-        plugin.getLogger().warn(this.stripColor(message));
+        plugin.getLogger().warn(message);
     }
 
     @Override
     public void error(final String message) {
-        plugin.getLogger().error(this.stripColor(message));
+        plugin.getLogger().error(message);
     }
 
     @Override
     public void error(final String message, final Throwable t) {
-        plugin.getLogger().error(this.stripColor(message), t);
+        plugin.getLogger().error(message, t);
     }
 
     public Component color(String message) {
@@ -128,13 +131,6 @@ public class SpongeTreasuryPlugin extends TreasuryPlugin implements Logger, Sche
             return Component.text(message);
         }
         return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
-    }
-
-    private String stripColor(String message) {
-        if (message.indexOf('&') == -1) {
-            return message;
-        }
-        return PlainTextComponentSerializer.plainText().serialize(this.color(message));
     }
 
     @Override

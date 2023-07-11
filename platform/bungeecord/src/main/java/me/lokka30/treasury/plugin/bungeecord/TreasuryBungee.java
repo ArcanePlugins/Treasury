@@ -37,7 +37,7 @@ public class TreasuryBungee extends Plugin {
         UpdateChecker.checkForUpdates();
         loadMetrics();
 
-        treasuryPlugin.logStartupMessage(startupTimer, false);
+        treasuryPlugin.logStartupMessage(startupTimer);
     }
 
     private void loadMetrics() {
@@ -78,7 +78,7 @@ public class TreasuryBungee extends Plugin {
 
     @Override
     public void onDisable() {
-        treasuryPlugin.shutdown(false);
+        treasuryPlugin.shutdown(null);
     }
 
 }
