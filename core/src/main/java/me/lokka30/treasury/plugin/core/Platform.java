@@ -26,11 +26,6 @@ public final class Platform {
     }
 
     @NotNull
-    public String specificationName() {
-        return specificationName.isEmpty() ? platformName : specificationName;
-    }
-
-    @NotNull
     public String displayName() {
         if (!specificationName.isEmpty()) {
             return platformName + " (" + specificationName + ")";
