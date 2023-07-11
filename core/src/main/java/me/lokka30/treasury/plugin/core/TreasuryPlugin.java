@@ -177,8 +177,8 @@ public abstract class TreasuryPlugin {
      * @param startupTimer startup timer
      */
     public void logStartupMessage(QuickTimer startupTimer) {
-            this.logger().info("Running on " + this.platform().displayName());
-            this.logger().info("Start-up complete (took " + startupTimer.getTimer() + "ms).");
+        this.logger().info("Running on " + this.platform().displayName());
+        this.logger().info("Start-up complete (took " + startupTimer.getTimer() + "ms).");
     }
 
     /**
