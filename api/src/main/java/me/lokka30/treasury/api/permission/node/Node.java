@@ -126,6 +126,13 @@ public interface Node {
 
     }
 
+    /**
+     * Represents an abstract representation of a builder for a {@link Node}.
+     *
+     * @param <NodeType> the node built
+     * @param <ValueType> the value type of the node type built
+     * @author <a href="mailto:ivan@mrivanplays.com">Ivan Pekov</a>
+     */
     abstract class Builder<NodeType extends Node, ValueType> {
 
         protected String key;
@@ -135,9 +142,17 @@ public interface Node {
         protected NodeHolder owner, inheritedFrom;
         protected ContextSet contextSet;
 
+        /**
+         * Create a new empty node builder
+         */
         public Builder() {
         }
 
+        /**
+         * Create a node builder which is a copy from an existing node.
+         *
+         * @param fromNode node to copy data from
+         */
         public Builder(@NotNull NodeType fromNode) {
             this.key = fromNode.key();
             this.weight = fromNode.weight();
@@ -147,6 +162,11 @@ public interface Node {
             this.contextSet = fromNode.contextSet();
         }
 
+        /**
+         * Create a node builder copy from an existing builder.
+         *
+         * @param other other builder to copy values from
+         */
         public Builder(@NotNull Builder<NodeType, ValueType> other) {
             this.key = other.key;
             this.value = other.value;
@@ -157,34 +177,69 @@ public interface Node {
             this.contextSet = other.contextSet;
         }
 
+        /**
+         * Copy this node builder in another.
+         *
+         * @return a new instance copy of this builder
+         */
         @Contract("-> new")
         @NotNull
         public abstract Builder<NodeType, ValueType> copy();
 
+        /**
+         * Specify a key of the built node.
+         *
+         * @param key key
+         * @return this builder instance for chaining
+         */
         @Contract("_ -> this")
         public Builder<NodeType, ValueType> withKey(@NotNull String key) {
             this.key = key;
             return this;
         }
 
+        /**
+         * Specify a value of the built node.
+         *
+         * @param value value
+         * @return this builder instance for chaining
+         */
         @Contract("_ -> this")
         public Builder<NodeType, ValueType> withValue(@NotNull ValueType value) {
             this.value = value;
             return this;
         }
 
+        /**
+         * Specify the weight of the built node.
+         *
+         * @param weight weight
+         * @return this builder instance for chaining
+         */
         @Contract("_ -> this")
         public Builder<NodeType, ValueType> withWeight(int weight) {
             this.weight = weight;
             return this;
         }
 
+        /**
+         * Specify a {@link NodeHolder owner} of the built node.
+         *
+         * @param owner owner
+         * @return this builder instance for chaining
+         */
         @Contract("_ -> this")
         public Builder<NodeType, ValueType> withOwner(@NotNull NodeHolder owner) {
             this.owner = owner;
             return this;
         }
 
+        /**
+         * Specify a {@link NodeHolder parent} of the built node.
+         *
+         * @param inheritedFrom where this node is inherited from
+         * @return this builder instance for chaining
+         */
         @Contract("_ -> this")
         public Builder<NodeType, ValueType> withInheritedFrom(@NotNull NodeHolder inheritedFrom) {
             this.inherited = true;
@@ -192,12 +247,23 @@ public interface Node {
             return this;
         }
 
+        /**
+         * Specify a {@link ContextSet context set} for the built node.
+         *
+         * @param contextSet the context set of the node
+         * @return this builder instance for chaining
+         */
         @Contract("_ -> this")
         public Builder<NodeType, ValueType> withContextSet(@NotNull ContextSet contextSet) {
             this.contextSet = contextSet;
             return this;
         }
 
+        /**
+         * Builds this builder into the needed node.
+         *
+         * @return freshly built node
+         */
         @NotNull
         public abstract NodeType build();
     }

@@ -77,11 +77,21 @@ public interface PermissionNode extends Node {
             super(other);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @Override
         public @NotNull Builder<PermissionNode, TriState> copy() {
             return new PermissionNodeBuilder(this);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @Override
         public @NotNull PermissionNode build() {
             Objects.requireNonNull(key, "key");
