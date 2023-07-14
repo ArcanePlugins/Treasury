@@ -10,7 +10,7 @@
 
     <groupId>me.lokka30</groupId>
     <artifactId>treasury-parent</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2-SNAPSHOT</version>
     <modules>
         <module>api</module>
         <module>core</module>
@@ -38,8 +38,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Versions for specifying in plugin.yml's -->
-        <plugin.version>2.0.1</plugin.version>
-        <plugin.specificationVersion>RELEASE</plugin.specificationVersion>
+        <plugin.version>2.0.2</plugin.version>
+        <plugin.specificationVersion>SNAPSHOT</plugin.specificationVersion>
         <plugin.authors>lokka30, MrIvanPlays, Jikoo</plugin.authors>
 
         <!-- Versions of the dependencies Treasury uses -->
