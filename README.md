@@ -14,7 +14,7 @@ by [lokka30][lokka30], [MrIvanPlays][MrIvanPlays], [Jikoo][Jikoo], and [several 
 
 ***
 
-## Synopsys
+## Synopsis
 
 Treasury is a *library* plugin which provides other plugins on your server a standardised way of 
 communicating with each other through Treasury's *API* suite. It aims to be a modern spin on 
