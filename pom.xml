@@ -65,7 +65,7 @@
         If you update it and still doesn't build, and the reason is not Minestom, or non-compiling
         code, seek help!
         -->
-        <minestom.version>954e8b3915</minestom.version>
+        <minestom.version>2cdb3911b0</minestom.version>
     </properties>
 
     <licenses>
