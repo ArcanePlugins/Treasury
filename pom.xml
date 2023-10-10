@@ -52,7 +52,7 @@
         <annotationconfig.version>3.0.2</annotationconfig.version>
         <placeholderapi.version>2.11.4</placeholderapi.version>
         <miniplaceholders.version>2.2.1</miniplaceholders.version>
-        <bungeecord.version>1.18-R0.1-SNAPSHOT</bungeecord.version>
+        <bungeecord.version>1.20-R0.1</bungeecord.version>
         <velocity.version>3.2.0-SNAPSHOT</velocity.version>
         <process.version>0.0.1-SNAPSHOT</process.version>
         <!-- asm is for testing purposes only -->
