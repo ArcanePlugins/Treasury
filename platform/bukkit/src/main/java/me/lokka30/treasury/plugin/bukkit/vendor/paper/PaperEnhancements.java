@@ -10,15 +10,11 @@ import me.lokka30.treasury.plugin.bukkit.TreasuryBukkit;
 public class PaperEnhancements {
 
     public static void enhance(TreasuryBukkit plugin) {
-        String pckg = plugin.getServer().getClass().getPackage().getName();
-        int[] version = Arrays.stream(pckg
-                .substring(pckg.lastIndexOf('.') + 1)
-                .replace("v", "")
-                .replace("_", ".")
-                .replace("R", "")
-                .split("\\.")).mapToInt(Integer::parseInt).toArray();
+        String pckg = plugin.getServer().getClass().getPackage().getImplementationVersion();
+        String version = pckg.split("\\.")[1].split("-")[0];
+        int intVersion = Integer.parseInt(version);
 
-        if (version[1] >= 15) {
+        if (intVersion >= 15) {
             // brigadier enhancement
             plugin.getServer().getPluginManager().registerEvents(new PaperBrigadierEnhancement(),
                     plugin
